@@ -33,7 +33,7 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
 
   return (
-    <div className={cn('flex h-full w-64 flex-col bg-[hsl(var(--app-sidebar))] shadow-lg', className)}>
+    <div className={cn('flex h-full w-64 flex-col bg-slate-800 shadow-lg', className)}>
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href
@@ -44,8 +44,8 @@ export function Sidebar({ className }: SidebarProps) {
               className={cn(
                 'flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors group',
                 isActive
-                  ? 'bg-[hsl(var(--app-hover))] text-white'
-                  : 'text-gray-300 hover:bg-[hsl(var(--app-hover))] hover:text-white'
+                  ? 'bg-slate-700 text-white'
+                  : 'text-gray-300 hover:bg-slate-700 hover:text-white'
               )}
             >
               <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />

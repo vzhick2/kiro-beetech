@@ -5,16 +5,15 @@ import { Plus, Search, Filter, MoreVertical } from 'lucide-react'
 export default function ItemsPage() {
   return (
     <AppLayout>
-      <div className="p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-semibold text-gray-800">Items</h1>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Item
-            </Button>
-          </div>
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-semibold text-gray-800">Items</h1>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Item
+          </Button>
+        </div>
           
           {/* Search and Filter Bar */}
           <div className="flex items-center space-x-4">
@@ -195,7 +194,6 @@ export default function ItemsPage() {
             </table>
           </div>
         </div>
-      </div>
     </AppLayout>
   )
 }

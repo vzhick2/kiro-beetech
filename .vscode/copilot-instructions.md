@@ -54,6 +54,20 @@ This workspace contains multiple projects including business applications. Follo
 6. If user says "brainstorm" or "suggest" - STOP after providing options
 ```
 
+### **NEXT.JS DEVELOPMENT SPECIFIC RULES**
+- **NEVER edit files while dev server is running** - Always check server status first
+- **ALWAYS validate file syntax after edits** - Use get_errors to check for compilation issues
+- **BEFORE large file replacements**: Read the full file first to understand structure
+- **WHEN editing React components**: Include sufficient context (5+ lines) in replace operations
+- **TERMINAL COMMANDS**: Use proper path escaping for Windows paths with spaces
+- **DEV SERVER**: Check if server is already running before starting new instances
+- **FILE CORRUPTION PREVENTION**: After any edit, immediately check for errors with get_errors
+
+### **WINDOWS PATH HANDLING**
+- Use PowerShell-compatible path escaping: `cd 'c:\path with spaces'`
+- Always check current directory before running commands
+- Kill existing dev servers before starting new ones
+
 ### Communication Standards  
 - **USE ESTABLISHED TERMS**: Never create or use made-up industry terms, labels, or unnecessary characterizations
 - **FACTUAL LANGUAGE**: Describe what you observe without inventing labels like "obsession," "ritual," "theater"

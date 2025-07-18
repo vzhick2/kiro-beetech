@@ -24,10 +24,10 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
   if (breadcrumbItems.length <= 1) return null
 
   return (
-    <nav className={cn('flex items-center space-x-1 text-sm text-muted-foreground', className)}>
+    <nav className={cn('flex items-center space-x-1 text-sm text-gray-600', className)}>
       <Link
         href="/"
-        className="flex items-center hover:text-foreground transition-colors"
+        className="flex items-center hover:text-gray-900 transition-colors"
       >
         <Home className="h-4 w-4" />
       </Link>
@@ -37,12 +37,12 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
           {item.href && index < breadcrumbItems.length - 1 ? (
             <Link
               href={item.href}
-              className="hover:text-foreground transition-colors"
+              className="hover:text-gray-900 transition-colors"
             >
               {item.label}
             </Link>
           ) : (
-            <span className="text-foreground font-medium">{item.label}</span>
+            <span className="text-gray-900 font-medium">{item.label}</span>
           )}
         </div>
       ))}

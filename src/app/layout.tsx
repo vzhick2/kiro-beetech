@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { QueryProvider } from '@/providers/query-provider'
+import ErrorBoundary from '@/components/error-boundary'
+import { logger } from '@/lib/debug'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Inventory Management',
-  description: 'Small business inventory management system',
+  title: 'KIRO Inventory Management',
+  description: 'Modern inventory management system for small businesses',
 }
 
 export default function RootLayout({
@@ -15,12 +17,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Log layout initialization
+  logger.componentLifecycle('RootLayout', 'initialized')
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <QueryProvider>
-          {children}
-        </QueryProvider>
+        <ErrorBoundary>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

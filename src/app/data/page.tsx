@@ -7,16 +7,17 @@ export default function DataPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-gray-800">Data</h1>
+          <p className="text-gray-600">
             Import and export data, download templates
           </p>
         </div>
         
         <div className="grid gap-6 md:grid-cols-2">
           {/* Import Data Section */}
-          <div className="rounded-lg border bg-card p-6">
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Upload className="h-5 w-5 text-primary" />
+              <Upload className="h-5 w-5 text-slate-900" />
               <h3 className="text-lg font-semibold">Import Data</h3>
             </div>
             <div className="space-y-3">
@@ -36,9 +37,9 @@ export default function DataPage() {
           </div>
 
           {/* Export Data Section */}
-          <div className="rounded-lg border bg-card p-6">
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Download className="h-5 w-5 text-primary" />
+              <Download className="h-5 w-5 text-slate-900" />
               <h3 className="text-lg font-semibold">Export Data</h3>
             </div>
             <div className="space-y-3">
@@ -58,12 +59,12 @@ export default function DataPage() {
           </div>
 
           {/* Templates Section */}
-          <div className="rounded-lg border bg-card p-6 md:col-span-2">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <FileText className="h-5 w-5 text-primary" />
+              <FileText className="h-5 w-5 text-slate-900" />
               <h3 className="text-lg font-semibold">Download Templates</h3>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-gray-600 mb-4">
               Download properly formatted CSV templates to ensure correct import format
             </p>
             <div className="grid gap-3 md:grid-cols-3">

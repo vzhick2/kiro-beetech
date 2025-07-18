@@ -5,13 +5,14 @@ export default function SalesPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-gray-800">Sales</h1>
+          <p className="text-gray-600">
             Track sales and inventory deductions
           </p>
         </div>
         
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-muted-foreground">Sales tracking will be implemented here.</p>
+        <div className="rounded-lg border border-gray-200 bg-white p-6">
+          <p className="text-gray-600">Sales tracking will be implemented here.</p>
         </div>
       </div>
     </AppLayout>

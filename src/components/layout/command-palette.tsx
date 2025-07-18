@@ -44,6 +44,9 @@ export function CommandPalette() {
         e.preventDefault()
         setOpen((open) => !open)
       }
+      if (e.key === 'Escape') {
+        setOpen(false)
+      }
     }
 
     document.addEventListener('keydown', down)
@@ -58,14 +61,14 @@ export function CommandPalette() {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
-      <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm" onClick={() => setOpen(false)}>
+      <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg" onClick={(e) => e.stopPropagation()}>
         <CommandPrimitive className="overflow-hidden rounded-md border">
           <div className="flex items-center border-b px-3">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <CommandPrimitive.Input
               placeholder="Type a command or search..."
-              className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
           <CommandPrimitive.List className="max-h-[300px] overflow-y-auto overflow-x-hidden">
@@ -78,7 +81,7 @@ export function CommandPalette() {
                   key={item.href}
                   value={item.name}
                   onSelect={() => runCommand(() => router.push(item.href))}
-                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-gray-100 aria-selected:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                 >
                   <item.icon className="mr-2 h-4 w-4" />
                   <span>{item.name}</span>
@@ -91,7 +94,7 @@ export function CommandPalette() {
                   key={action.href}
                   value={action.name}
                   onSelect={() => runCommand(() => router.push(action.href))}
-                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-gray-100 aria-selected:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                 >
                   <action.icon className="mr-2 h-4 w-4" />
                   <span>{action.name}</span>
@@ -100,9 +103,9 @@ export function CommandPalette() {
             </CommandPrimitive.Group>
           </CommandPrimitive.List>
         </CommandPrimitive>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-xs text-gray-500">
           <span>Press Esc to close</span>
-          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-gray-100 px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
             <span className="text-xs">⌘</span>K
           </kbd>
         </div>

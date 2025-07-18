@@ -3,21 +3,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { Sidebar } from './sidebar'
 import { CommandPalette } from './command-palette'
-// import { SearchBar } from './search-bar'
-// import { NotificationsButton } from './notifications-button'
-// import { SettingsMenu } from './settings-menu'
 import { usePageTitle } from '@/hooks/use-page-title'
 import { Button } from '@/components/ui/button'
 import { Menu, X, Search, Bell, User } from 'lucide-react'
 
 interface AppLayoutProps {
   children: React.ReactNode
-  // hidePageTitle?: boolean
 }
 
 export function AppLayout({ 
-  children,
-  // hidePageTitle = false
+  children
 }: AppLayoutProps) {
   const pageTitle = usePageTitle()
   const [sidebarOpen, setSidebarOpen] = useState(true) // Start with sidebar open
@@ -70,13 +65,13 @@ export function AppLayout({
   }, [isMobile])
 
   return (
-    <div className="flex h-screen bg-[hsl(var(--app-background))]">
+    <div className="flex h-screen bg-gray-50">
       {/* Fixed Header - Dark Blue */}
-      <header className="fixed top-0 left-0 right-0 h-16 flex items-center bg-[hsl(var(--app-header))] z-50 border-b border-gray-700">
+      <header className="fixed top-0 left-0 right-0 h-16 flex items-center bg-slate-800 z-50 border-b border-gray-700">
         {/* Static Hamburger/X Button - Always at top-left */}
         <button
           onClick={toggleSidebar}
-          className="h-16 w-16 flex items-center justify-center text-white hover:bg-[hsl(var(--app-hover))] transition-colors border-r border-gray-600"
+          className="h-16 w-16 flex items-center justify-center text-white hover:bg-slate-700 transition-colors border-r border-gray-600"
         >
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           <span className="sr-only">Toggle sidebar</span>
@@ -105,7 +100,7 @@ export function AppLayout({
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 text-white hover:text-white hover:bg-[hsl(var(--app-hover))] rounded-md transition-colors"
+            className="h-10 w-10 text-white hover:text-white hover:bg-slate-700 rounded-md transition-colors"
           >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
@@ -113,7 +108,7 @@ export function AppLayout({
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-10 w-10 text-white hover:text-white hover:bg-[hsl(var(--app-hover))] rounded-md transition-colors"
+            className="h-10 w-10 text-white hover:text-white hover:bg-slate-700 rounded-md transition-colors"
           >
             <User className="h-5 w-5" />
             <span className="sr-only">Profile</span>
@@ -136,9 +131,9 @@ export function AppLayout({
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${sidebarOpen && !isMobile ? 'ml-0' : 'ml-0'}`}>
           {/* Page Content */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto p-6">
             {children}
           </main>
         </div>
