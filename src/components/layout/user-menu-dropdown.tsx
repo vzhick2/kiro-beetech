@@ -1,48 +1,47 @@
-'use client'
+'use client';
 
-import { 
-  User, 
-  LogOut, 
-  Bell, 
-  Building2, 
-  Shield, 
-  Download, 
-  FileDown, 
-  Database 
-} from 'lucide-react'
-import Link from 'next/link'
+import {
+  User,
+  LogOut,
+  Bell,
+  Building2,
+  Shield,
+  Download,
+  FileDown,
+  Database,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface UserMenuDropdownProps {
-  isOpen: boolean
-  onClose: () => void
-  userEmail?: string
-  businessName?: string
+  isOpen: boolean;
+  onClose: () => void;
+  userEmail?: string;
+  businessName?: string;
 }
 
-export function UserMenuDropdown({ 
-  isOpen, 
-  onClose, 
-  userEmail = "user@example.com",
-  businessName = "Your Business" 
+export function UserMenuDropdown({
+  isOpen,
+  onClose,
+  userEmail = 'user@example.com',
+  businessName = 'Your Business',
 }: UserMenuDropdownProps) {
-  
   const handleExportData = () => {
     // Export functionality will be implemented when needed
-    onClose()
-  }
+    onClose();
+  };
 
   const handleExportRecentChanges = () => {
     // Recent changes export will be implemented when needed
-    onClose()
-  }
+    onClose();
+  };
 
   const handleLogout = () => {
     // Logout functionality will be implemented when needed
-    onClose()
-  }
+    onClose();
+  };
 
   if (!isOpen) {
-    return null
+    return null;
   }
 
   return (
@@ -57,9 +56,7 @@ export function UserMenuDropdown({
             <h3 className="text-sm font-semibold text-white truncate">
               {businessName}
             </h3>
-            <p className="text-xs text-slate-400 truncate">
-              {userEmail}
-            </p>
+            <p className="text-xs text-slate-400 truncate">{userEmail}</p>
           </div>
         </div>
       </div>
@@ -80,10 +77,12 @@ export function UserMenuDropdown({
               <Bell className="w-4 h-4" />
               <div className="flex-1">
                 <div className="font-medium">Notification Preferences</div>
-                <div className="text-xs text-slate-400">Alert thresholds, email settings</div>
+                <div className="text-xs text-slate-400">
+                  Alert thresholds, email settings
+                </div>
               </div>
             </Link>
-            
+
             <Link
               href="/settings#business"
               onClick={onClose}
@@ -92,7 +91,9 @@ export function UserMenuDropdown({
               <Building2 className="w-4 h-4" />
               <div className="flex-1">
                 <div className="font-medium">Business Configuration</div>
-                <div className="text-xs text-slate-400">Labor rates, currency, units</div>
+                <div className="text-xs text-slate-400">
+                  Labor rates, currency, units
+                </div>
               </div>
             </Link>
 
@@ -104,7 +105,9 @@ export function UserMenuDropdown({
               <Shield className="w-4 h-4" />
               <div className="flex-1">
                 <div className="font-medium">Security & Privacy</div>
-                <div className="text-xs text-slate-400">Account security, data privacy</div>
+                <div className="text-xs text-slate-400">
+                  Account security, data privacy
+                </div>
               </div>
             </Link>
           </div>
@@ -123,7 +126,9 @@ export function UserMenuDropdown({
               <Download className="w-4 h-4" />
               <div className="flex-1 text-left">
                 <div className="font-medium">Export All Data</div>
-                <div className="text-xs text-slate-400">Items, purchases, suppliers (CSV)</div>
+                <div className="text-xs text-slate-400">
+                  Items, purchases, suppliers (CSV)
+                </div>
               </div>
             </button>
 
@@ -134,7 +139,9 @@ export function UserMenuDropdown({
               <FileDown className="w-4 h-4" />
               <div className="flex-1 text-left">
                 <div className="font-medium">Export Recent Changes</div>
-                <div className="text-xs text-slate-400">Last 30 days activity (CSV)</div>
+                <div className="text-xs text-slate-400">
+                  Last 30 days activity (CSV)
+                </div>
               </div>
             </button>
 
@@ -146,7 +153,9 @@ export function UserMenuDropdown({
               <Database className="w-4 h-4" />
               <div className="flex-1">
                 <div className="font-medium">View Reports</div>
-                <div className="text-xs text-slate-400">Analytics, financial insights</div>
+                <div className="text-xs text-slate-400">
+                  Analytics, financial insights
+                </div>
               </div>
             </Link>
           </div>
@@ -167,7 +176,7 @@ export function UserMenuDropdown({
       {/* Footer */}
       <div className="p-3 border-t border-slate-700/50 bg-slate-800/30">
         <div className="text-xs text-slate-400 text-center">
-          <Link 
+          <Link
             href="/help"
             onClick={onClose}
             className="hover:text-white transition-colors"
@@ -175,7 +184,7 @@ export function UserMenuDropdown({
             Help & Documentation
           </Link>
           <span className="mx-2">•</span>
-          <Link 
+          <Link
             href="/about"
             onClick={onClose}
             className="hover:text-white transition-colors"
@@ -185,5 +194,5 @@ export function UserMenuDropdown({
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

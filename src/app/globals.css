@@ -1,10 +1,12 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   body {
     background-color: #f8fafc;
     color: #1f2937;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+      Cantarell, sans-serif;
     overflow: hidden; /* Prevent body scroll - scrollbar will be in content area only */
     /* Simple responsive base font - good for inventory data readability */
     font-size: clamp(14px, 1.1vw, 16px);
@@ -13,21 +15,27 @@
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
   }
-  
+
   /* Prevent zoom on all input elements across the entire app */
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     font-size: 16px; /* Prevents iOS zoom on focus */
   }
-  
+
   /* Prevent zoom on all interactive elements */
-  button, a, [role="button"] {
+  button,
+  a,
+  [role='button'] {
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   /* Headers for inventory sections - subtle scaling */
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: clamp(1.25rem, 2vw, 1.75rem);
     font-weight: 600;
     line-height: 1.3;
@@ -43,16 +51,16 @@
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   .no-flash:focus {
     /* Remove onclick Border Color Change */
     outline: none !important;
   }
-  
+
   .no-flash:active {
     outline: none !important;
   }
-  
+
   .no-flash::-moz-focus-inner {
     border: 0;
   }
@@ -68,12 +76,12 @@
     box-shadow: none !important;
     -webkit-tap-highlight-color: transparent !important;
   }
-  
+
   /* Prevent WebKit tap highlighting */
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   /* Remove focus rings from all interactive elements in sidebar */
   nav a:focus,
   nav a:active,
@@ -146,14 +154,18 @@
 }
 
 /* Enhanced viewport control for tables and complex layouts */
-table, .table-container {
+table,
+.table-container {
   /* Prevent zoom on table content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
 
 /* Prevent zoom on all interactive elements in tables */
-table button, table input, table select, table a {
+table button,
+table input,
+table select,
+table a {
   -webkit-tap-highlight-color: transparent;
   font-size: 16px; /* Prevents iOS zoom on focus */
 }

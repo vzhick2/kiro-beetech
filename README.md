@@ -17,30 +17,35 @@ KIRO is a **private, internal inventory management system** designed specificall
 ## ✨ **Key Features**
 
 ### 🏪 **Inventory Management**
+
 - Real-time stock tracking with automated alerts
 - Cycle counting and reconciliation
 - Negative inventory warnings
 - Multi-location inventory support
 
 ### 📦 **Purchase Management**
+
 - Supplier management and catalog integration
 - Purchase order creation and tracking
 - Smart bank CSV import with automated drafts
 - WAC (Weighted Average Cost) calculation
 
 ### 🍰 **Recipe & Batch Management**
+
 - Recipe creation with ingredient tracking
 - Batch production logging with yield analysis
 - Ingredient consumption tracking
 - Cost per unit calculations
 
 ### 📊 **Analytics & Reporting**
+
 - Real-time dashboard with KPIs
 - Cycle count alerts for proactive management
 - Financial reporting and cost analysis
 - Low-stock Action Center
 
 ### 🔍 **Advanced Search**
+
 - Global search with Next.js 15 Form component
 - Smart filtering and suggestions
 - Recent activity tracking
@@ -49,6 +54,7 @@ KIRO is a **private, internal inventory management system** designed specificall
 ## 🚀 **Technology Stack**
 
 ### **Frontend**
+
 - **Next.js 15.4.1** with App Router and Turbopack
 - **React 19.1.0** with Server Components
 - **TypeScript 5.8.3** for type safety
@@ -56,12 +62,14 @@ KIRO is a **private, internal inventory management system** designed specificall
 - **Radix UI** for accessible components
 
 ### **Backend & Database**
+
 - **Supabase** for database and authentication
 - **Server Actions** for form handling
 - **TanStack Query** for data fetching
 - **Zod 4.0.5** for validation
 
 ### **Developer Experience**
+
 - **ESLint 9** with Next.js config
 - **React Compiler** for automatic optimization
 - **Instrumentation** for monitoring
@@ -70,6 +78,7 @@ KIRO is a **private, internal inventory management system** designed specificall
 ## 📦 **Installation**
 
 ### **Prerequisites**
+
 - Node.js 18.18+ (recommended: 20+)
 - pnpm (recommended) or npm
 - Git
@@ -77,28 +86,33 @@ KIRO is a **private, internal inventory management system** designed specificall
 ### **Setup**
 
 1. **Clone the repository**
+
    ```bash
    git clone <private-repository-url>
    cd kiro-inventory-management
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Environment setup**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Add your environment variables:
+
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
 4. **Run development server**
+
    ```bash
    pnpm dev
    ```
@@ -121,6 +135,7 @@ This app prioritizes simplicity and flexibility for small businesses with irregu
 ## 🎯 **Key Features Implemented**
 
 ### **Navigation System**
+
 - ✅ Unified sidebar for mobile and desktop
 - ✅ Static hamburger menu button
 - ✅ BigCommerce-inspired design system
@@ -128,18 +143,21 @@ This app prioritizes simplicity and flexibility for small businesses with irregu
 - ✅ Command palette for quick actions
 
 ### **Search & Discovery**
+
 - ✅ Global search with Next.js 15 Form component
 - ✅ Smart filtering and suggestions
 - ✅ Recent activity tracking
 - ✅ Quick navigation shortcuts
 
 ### **Performance Optimizations**
+
 - ✅ Turbopack for 76% faster development
 - ✅ React Compiler for automatic memoization
 - ✅ Server Components for better performance
 - ✅ Image optimization with Next.js
 
 ### **Developer Experience**
+
 - ✅ TypeScript strict mode
 - ✅ ESLint 9 with Next.js config
 - ✅ Instrumentation for monitoring
@@ -148,30 +166,35 @@ This app prioritizes simplicity and flexibility for small businesses with irregu
 ## 🗺️ **Development Roadmap**
 
 ### **Phase 1: Foundation ✅ (100% Complete)**
+
 - ✅ Next.js 15.4.1 + React 19.1.0 setup
 - ✅ Application layout and navigation
 - ✅ Core TypeScript interfaces and utilities
 - ✅ Performance optimizations
 
 ### **Phase 2: Core Features 🚧 (15% Complete)**
+
 - 📋 Database schema implementation
 - 📋 Core business logic functions (WAC, cycle count alerts)
 - 🚧 Items management completion
 - 📋 Suppliers management
 
 ### **Phase 3: Business Workflows 📋 (0% Complete)**
+
 - 📋 Purchase management workflow
 - 📋 CSV import and draft purchase system
 - 📋 Recipe and batch management
 - 📋 Sales tracking and reporting
 
 ### **Phase 4: Advanced Features 📋 (0% Complete)**
+
 - 📋 Forecasting and reorder point management
 - 📋 Transaction logging and audit trail
 - 📋 Error handling and validation system
 - 📋 Real-time updates and notifications
 
 ### **Phase 5: Polish & Optimization 📋 (0% Complete)**
+
 - 📋 Mobile-first responsive design
 - 📋 Data import/export functionality
 - 📋 Authentication and security
@@ -197,6 +220,7 @@ pnpm run deploy          # Deploy production
 ```
 
 ### **Code Quality**
+
 - **ESLint**: Strict linting with Next.js recommendations
 - **TypeScript**: Strict type checking enabled
 - **Prettier**: Code formatting (recommended)
@@ -233,4 +257,4 @@ pnpm run deploy          # Deploy production
 
 **Built with ❤️ for internal business operations using Next.js 15, React 19, and modern web technologies**
 
-*For detailed changelog, see [CHANGELOG.md](./CHANGELOG.md)*
+_For detailed changelog, see [CHANGELOG.md](./CHANGELOG.md)_

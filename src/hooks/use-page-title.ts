@@ -1,77 +1,77 @@
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
 
 export function usePageTitle() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const getPageTitle = () => {
     switch (pathname) {
       case '/':
-        return 'Dashboard'
+        return 'Dashboard';
       case '/items':
-        return 'Items'
+        return 'Items';
       case '/purchases':
-        return 'Purchases'
+        return 'Purchases';
       case '/recipes':
-        return 'Recipes'
+        return 'Recipes';
       case '/batches':
-        return 'Batches'
+        return 'Batches';
       case '/sales':
-        return 'Sales'
+        return 'Sales';
       case '/reports':
-        return 'Reports'
+        return 'Reports';
       case '/data':
-        return 'Data'
+        return 'Data';
       case '/suppliers':
-        return 'Suppliers'
+        return 'Suppliers';
       case '/products':
-        return 'Products'
+        return 'Products';
       case '/search':
-        return 'Search'
+        return 'Search';
       case '/import-export':
-        return 'Import/Export'
+        return 'Import/Export';
       case '/test-connection':
-        return 'Test Connection'
+        return 'Test Connection';
       default:
         // Handle nested routes
         if (pathname.startsWith('/items/')) {
-          return 'Items'
+          return 'Items';
         }
         if (pathname.startsWith('/purchases/')) {
-          return 'Purchases'
+          return 'Purchases';
         }
         if (pathname.startsWith('/recipes/')) {
-          return 'Recipes'
+          return 'Recipes';
         }
         if (pathname.startsWith('/batches/')) {
-          return 'Batches'
+          return 'Batches';
         }
         if (pathname.startsWith('/sales/')) {
-          return 'Sales'
+          return 'Sales';
         }
         if (pathname.startsWith('/reports/')) {
-          return 'Reports'
+          return 'Reports';
         }
         if (pathname.startsWith('/data/')) {
-          return 'Data'
+          return 'Data';
         }
         if (pathname.startsWith('/suppliers/')) {
-          return 'Suppliers'
+          return 'Suppliers';
         }
         if (pathname.startsWith('/products/')) {
-          return 'Products'
+          return 'Products';
         }
         if (pathname.startsWith('/search/')) {
-          return 'Search'
+          return 'Search';
         }
         if (pathname.startsWith('/import-export/')) {
-          return 'Import/Export'
+          return 'Import/Export';
         }
         if (pathname.startsWith('/test-connection/')) {
-          return 'Test Connection'
+          return 'Test Connection';
         }
-        return 'Dashboard'
+        return 'Dashboard';
     }
-  }
+  };
 
-  return getPageTitle()
+  return getPageTitle();
 }

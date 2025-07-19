@@ -7,10 +7,12 @@ export default function PurchasesPage() {
           Manage your purchase orders and invoices
         </p>
       </div>
-      
+
       <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <p className="text-gray-600">Purchase management will be implemented here.</p>
+        <p className="text-gray-600">
+          Purchase management will be implemented here.
+        </p>
       </div>
     </div>
-  )
+  );
 }

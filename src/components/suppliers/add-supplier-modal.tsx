@@ -1,58 +1,64 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { createSupplier } from '@/app/actions/suppliers'
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { createSupplier } from '@/app/actions/suppliers';
 
 interface AddSupplierModalProps {
-  onSupplierAdded?: () => void
+  onSupplierAdded?: () => void;
 }
 
 export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     contactEmail: '',
     contactPhone: '',
     address: '',
-    notes: ''
-  })
+    notes: '',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const result = await createSupplier(formData)
+      const result = await createSupplier(formData);
       if (result.success) {
-        setIsOpen(false)
+        setIsOpen(false);
         setFormData({
           name: '',
           contactEmail: '',
           contactPhone: '',
           address: '',
-          notes: ''
-        })
-        onSupplierAdded?.()
+          notes: '',
+        });
+        onSupplierAdded?.();
       } else {
-        console.error('Failed to create supplier:', result.error)
+        console.error('Failed to create supplier:', result.error);
       }
     } catch (error) {
-      console.error('Error creating supplier:', error)
+      console.error('Error creating supplier:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -69,10 +75,13 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
             Add New Supplier
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Supplier Name *
             </label>
             <input
@@ -80,7 +89,7 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
               id="name"
               required
               value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
+              onChange={e => handleInputChange('name', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter supplier name"
             />
@@ -88,28 +97,38 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="contactEmail"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email
               </label>
               <input
                 type="email"
                 id="contactEmail"
                 value={formData.contactEmail}
-                onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+                onChange={e =>
+                  handleInputChange('contactEmail', e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="contact@supplier.com"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="contactPhone"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Phone
               </label>
               <input
                 type="tel"
                 id="contactPhone"
                 value={formData.contactPhone}
-                onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                onChange={e =>
+                  handleInputChange('contactPhone', e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="(555) 123-4567"
               />
@@ -117,28 +136,34 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
           </div>
 
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Address
             </label>
             <textarea
               id="address"
               rows={3}
               value={formData.address}
-              onChange={(e) => handleInputChange('address', e.target.value)}
+              onChange={e => handleInputChange('address', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter full address"
             />
           </div>
 
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="notes"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Notes
             </label>
             <textarea
               id="notes"
               rows={3}
               value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
+              onChange={e => handleInputChange('notes', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Additional notes about this supplier"
             />
@@ -164,5 +189,5 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
         </form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

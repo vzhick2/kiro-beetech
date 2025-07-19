@@ -1,14 +1,10 @@
 {
-  "extends": [
-    "next/core-web-vitals"
-  ],
+  "extends": ["next/core-web-vitals"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     // Code quality rules
     "prefer-const": "error",
@@ -16,21 +12,15 @@
     "no-console": "warn",
     "eqeqeq": "error",
     "curly": "error",
-    
+
     // React specific rules
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/no-unescaped-entities": "off",
-    
+
     // Next.js specific rules
     "@next/next/no-img-element": "off",
     "@next/next/no-html-link-for-pages": "off"
   },
-  "ignorePatterns": [
-    "node_modules/",
-    ".next/",
-    "out/",
-    "build/",
-    "dist/"
-  ]
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "build/", "dist/"]
 }

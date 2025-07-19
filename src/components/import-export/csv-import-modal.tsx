@@ -1,172 +1,193 @@
-'use client'
+'use client';
 
-import { useState, useRef } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Upload, FileText, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
-import { previewQBOImport, processQBOImport } from '@/app/actions/csv-import'
+import { useState, useRef } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import {
+  Upload,
+  FileText,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+} from 'lucide-react';
+import { previewQBOImport, processQBOImport } from '@/app/actions/csv-import';
 
 interface CSVImportModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onImportComplete?: (result: unknown) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onImportComplete?: (result: unknown) => void;
 }
 
 interface PreviewData {
-  totalRows: number
-  validRows: number
+  totalRows: number;
+  validRows: number;
   items: Array<{
-    itemName: string
-    totalQuantity: number
-    totalRevenue: number
-    saleCount: number
-    dateRange: { start: Date; end: Date }
-  }>
-  dateRange: { start: number; end: number }
+    itemName: string;
+    totalQuantity: number;
+    totalRevenue: number;
+    saleCount: number;
+    dateRange: { start: Date; end: Date };
+  }>;
+  dateRange: { start: number; end: number };
 }
 
 interface ImportResult {
-  itemsCreated: number
-  itemsUpdated: number
-  salesLogged: number
-  totalProcessed: number
-  successRate: string
-  errors: string[]
+  itemsCreated: number;
+  itemsUpdated: number;
+  salesLogged: number;
+  totalProcessed: number;
+  successRate: string;
+  errors: string[];
 }
 
-export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportModalProps) {
-  const [step, setStep] = useState<'upload' | 'preview' | 'importing' | 'complete'>('upload')
-  const [csvContent, setCsvContent] = useState('')
-  const [previewData, setPreviewData] = useState<PreviewData | null>(null)
-  const [importResult, setImportResult] = useState<ImportResult | null>(null)
-  const [errors, setErrors] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [createMissingItems, setCreateMissingItems] = useState(true)
-  const [effectiveDate, setEffectiveDate] = useState('')
-  
-  const fileInputRef = useRef<HTMLInputElement>(null)
+export function CSVImportModal({
+  isOpen,
+  onClose,
+  onImportComplete,
+}: CSVImportModalProps) {
+  const [step, setStep] = useState<
+    'upload' | 'preview' | 'importing' | 'complete'
+  >('upload');
+  const [csvContent, setCsvContent] = useState('');
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [createMissingItems, setCreateMissingItems] = useState(true);
+  const [effectiveDate, setEffectiveDate] = useState('');
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
     if (!file) {
-      return
+      return;
     }
 
     if (!file.name.toLowerCase().endsWith('.csv')) {
-      setErrors(['Please select a CSV file'])
-      return
+      setErrors(['Please select a CSV file']);
+      return;
     }
 
-    setIsLoading(true)
-    setErrors([])
+    setIsLoading(true);
+    setErrors([]);
 
     try {
-      const content = await file.text()
-      setCsvContent(content)
-      
+      const content = await file.text();
+      setCsvContent(content);
+
       // Auto-preview the file
-      const formData = new FormData()
-      formData.append('csvContent', content)
-      const previewResult = await previewQBOImport(formData)
-      
+      const formData = new FormData();
+      formData.append('csvContent', content);
+      const previewResult = await previewQBOImport(formData);
+
       if (previewResult.success && previewResult.data) {
-        setPreviewData(previewResult.data.summary)
-        setStep('preview')
+        setPreviewData(previewResult.data.summary);
+        setStep('preview');
       } else {
-        setErrors([(previewResult as any).error || 'Failed to preview CSV file'])
+        setErrors([
+          (previewResult as any).error || 'Failed to preview CSV file',
+        ]);
       }
     } catch {
-      setErrors(['Failed to read file'])
+      setErrors(['Failed to read file']);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handlePreview = async () => {
     if (!csvContent) {
-      return
+      return;
     }
 
-    setIsLoading(true)
-    setErrors([])
+    setIsLoading(true);
+    setErrors([]);
 
     try {
-      const formData = new FormData()
-      formData.append('csvContent', csvContent)
-      
-      const result = await previewQBOImport(formData)
-      
+      const formData = new FormData();
+      formData.append('csvContent', csvContent);
+
+      const result = await previewQBOImport(formData);
+
       if (result.success && result.data) {
-        setPreviewData(result.data.summary)
-        setStep('preview')
+        setPreviewData(result.data.summary);
+        setStep('preview');
       } else {
-        setErrors([(result as any).error || 'Failed to preview CSV data'])
+        setErrors([(result as any).error || 'Failed to preview CSV data']);
       }
     } catch {
-      setErrors(['Failed to preview CSV data'])
+      setErrors(['Failed to preview CSV data']);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleImport = async () => {
     if (!csvContent) {
-      return
+      return;
     }
 
-    setIsLoading(true)
-    setStep('importing')
-    setErrors([])
+    setIsLoading(true);
+    setStep('importing');
+    setErrors([]);
 
     try {
-      const formData = new FormData()
-      formData.append('csvContent', csvContent)
-      formData.append('createMissingItems', createMissingItems.toString())
+      const formData = new FormData();
+      formData.append('csvContent', csvContent);
+      formData.append('createMissingItems', createMissingItems.toString());
       if (effectiveDate) {
-        formData.append('effectiveDate', effectiveDate)
+        formData.append('effectiveDate', effectiveDate);
       }
-      
-      const result = await processQBOImport(formData)
-      
+
+      const result = await processQBOImport(formData);
+
       if (result.success && result.data) {
-        setImportResult(result.data.results)
-        setStep('complete')
-        onImportComplete?.(result.data)
+        setImportResult(result.data.results);
+        setStep('complete');
+        onImportComplete?.(result.data);
       } else {
-        setErrors([(result as any).error || 'Failed to import CSV data'])
-        setStep('preview')
+        setErrors([(result as any).error || 'Failed to import CSV data']);
+        setStep('preview');
       }
     } catch {
-      setErrors(['Failed to import CSV data'])
-      setStep('preview')
+      setErrors(['Failed to import CSV data']);
+      setStep('preview');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleReset = () => {
-    setStep('upload')
-    setCsvContent('')
-    setPreviewData(null)
-    setImportResult(null)
-    setErrors([])
-    setCreateMissingItems(true)
-    setEffectiveDate('')
+    setStep('upload');
+    setCsvContent('');
+    setPreviewData(null);
+    setImportResult(null);
+    setErrors([]);
+    setCreateMissingItems(true);
+    setEffectiveDate('');
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = '';
     }
-  }
+  };
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString()
-  }
+    return new Date(timestamp).toLocaleDateString();
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
-    }).format(amount)
-  }
+      currency: 'USD',
+    }).format(amount);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -183,9 +204,10 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
           <div className="space-y-6">
             <div className="text-center">
               <p className="text-gray-600 mb-4">
-                Upload a CSV file exported from QuickBooks Online containing sales data.
+                Upload a CSV file exported from QuickBooks Online containing
+                sales data.
               </p>
-              
+
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                 <input
                   ref={fileInputRef}
@@ -194,7 +216,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                   onChange={handleFileSelect}
                   className="hidden"
                 />
-                
+
                 <Button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isLoading}
@@ -207,7 +229,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                   )}
                   Select CSV File
                 </Button>
-                
+
                 <p className="text-sm text-gray-500">
                   Supported format: QBO Sales Export CSV
                 </p>
@@ -222,8 +244,12 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                     {csvContent.slice(0, 500)}...
                   </pre>
                 </div>
-                
-                <Button onClick={handlePreview} disabled={isLoading} className="w-full">
+
+                <Button
+                  onClick={handlePreview}
+                  disabled={isLoading}
+                  className="w-full"
+                >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
@@ -254,7 +280,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         {step === 'preview' && previewData && (
           <div className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-800 mb-2">Import Summary</h3>
+              <h3 className="font-semibold text-blue-800 mb-2">
+                Import Summary
+              </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <span className="text-blue-600">Total Rows:</span>
@@ -266,12 +294,15 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                 </div>
                 <div>
                   <span className="text-blue-600">Items:</span>
-                  <div className="font-semibold">{previewData.items.length}</div>
+                  <div className="font-semibold">
+                    {previewData.items.length}
+                  </div>
                 </div>
                 <div>
                   <span className="text-blue-600">Date Range:</span>
                   <div className="font-semibold">
-                    {formatDate(previewData.dateRange.start)} - {formatDate(previewData.dateRange.end)}
+                    {formatDate(previewData.dateRange.start)} -{' '}
+                    {formatDate(previewData.dateRange.end)}
                   </div>
                 </div>
               </div>
@@ -294,7 +325,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                       <tr key={index} className="border-t">
                         <td className="p-3 font-medium">{item.itemName}</td>
                         <td className="p-3 text-right">{item.totalQuantity}</td>
-                        <td className="p-3 text-right">{formatCurrency(item.totalRevenue)}</td>
+                        <td className="p-3 text-right">
+                          {formatCurrency(item.totalRevenue)}
+                        </td>
                         <td className="p-3 text-right">{item.saleCount}</td>
                       </tr>
                     ))}
@@ -309,7 +342,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                   type="checkbox"
                   id="createMissingItems"
                   checked={createMissingItems}
-                  onChange={(e) => setCreateMissingItems(e.target.checked)}
+                  onChange={e => setCreateMissingItems(e.target.checked)}
                   className="rounded"
                 />
                 <label htmlFor="createMissingItems" className="text-sm">
@@ -318,14 +351,17 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
               </div>
 
               <div>
-                <label htmlFor="effectiveDate" className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="effectiveDate"
+                  className="block text-sm font-medium mb-1"
+                >
                   Effective Date (Optional)
                 </label>
                 <input
                   type="date"
                   id="effectiveDate"
                   value={effectiveDate}
-                  onChange={(e) => setEffectiveDate(e.target.value)}
+                  onChange={e => setEffectiveDate(e.target.value)}
                   className="w-full p-2 border rounded-md"
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -335,10 +371,18 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={handleReset} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                className="flex-1"
+              >
                 Start Over
               </Button>
-              <Button onClick={handleImport} disabled={isLoading} className="flex-1">
+              <Button
+                onClick={handleImport}
+                disabled={isLoading}
+                className="flex-1"
+              >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
@@ -355,7 +399,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
             <h3 className="font-semibold mb-2">Importing Sales Data...</h3>
-            <p className="text-gray-600">Please wait while we process your data.</p>
+            <p className="text-gray-600">
+              Please wait while we process your data.
+            </p>
           </div>
         )}
 
@@ -365,24 +411,34 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <div className="flex items-center gap-2 text-green-800 mb-2">
                 <CheckCircle className="h-5 w-5" />
-                <span className="font-semibold">Import Completed Successfully!</span>
+                <span className="font-semibold">
+                  Import Completed Successfully!
+                </span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <span className="text-green-600">Items Created:</span>
-                  <div className="font-semibold">{importResult.itemsCreated}</div>
+                  <div className="font-semibold">
+                    {importResult.itemsCreated}
+                  </div>
                 </div>
                 <div>
                   <span className="text-green-600">Items Updated:</span>
-                  <div className="font-semibold">{importResult.itemsUpdated}</div>
+                  <div className="font-semibold">
+                    {importResult.itemsUpdated}
+                  </div>
                 </div>
                 <div>
                   <span className="text-green-600">Sales Logged:</span>
-                  <div className="font-semibold">{importResult.salesLogged}</div>
+                  <div className="font-semibold">
+                    {importResult.salesLogged}
+                  </div>
                 </div>
                 <div>
                   <span className="text-green-600">Success Rate:</span>
-                  <div className="font-semibold">{importResult.successRate}</div>
+                  <div className="font-semibold">
+                    {importResult.successRate}
+                  </div>
                 </div>
               </div>
             </div>
@@ -395,14 +451,20 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
                 </div>
                 <div className="text-sm text-yellow-700 max-h-32 overflow-y-auto">
                   {importResult.errors.map((error, index) => (
-                    <div key={index} className="mb-1">• {error}</div>
+                    <div key={index} className="mb-1">
+                      • {error}
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={handleReset} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                className="flex-1"
+              >
                 Import Another File
               </Button>
               <Button onClick={onClose} className="flex-1">
@@ -413,5 +475,5 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         )}
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

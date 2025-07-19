@@ -1,186 +1,323 @@
 ---
-title: "Requirements"
-description: "User stories and acceptance criteria for internal inventory management system"
-purpose: "Reference for feature specifications and business requirements"
-last_updated: "July 18, 2025"
-doc_type: "requirements-specification"
-related: ["README.md", "technical-design.md", "data-model.md", "ui-blueprint.md"]
+title: 'Requirements'
+description: 'Functional and non-functional requirements for internal inventory management system'
+purpose: 'Reference for feature specifications and business requirements'
+last_updated: 'July 18, 2025'
+doc_type: 'requirements-specification'
+related: ['data-model.md', 'technical-design.md', 'ui-blueprint.md']
 ---
 
-# Requirements Document
+# Requirements
 
-## Introduction
-
-This document outlines the requirements for a **private, internal inventory management application** designed to handle the complete inventory lifecycle from procurement to sales for small business operations. The system prioritizes flexibility and real-world workflows through mutable transaction logs, proactive cycle count alerts, and mobile-first design for workshop operations with desktop optimization for administrative tasks.
+Comprehensive requirements specification for the internal KIRO inventory management system, including functional requirements, non-functional requirements, and business rules.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
-The application supports small businesses with irregular workflows by allowing editable records, back-dating transactions, and providing intelligent alerts rather than rigid constraints. Key features include automated bank CSV import for purchases, recipe-based production tracking, and comprehensive inventory monitoring with negative inventory support.
+## 🎯 **Business Requirements**
 
-## Requirements
+### **Core Business Objectives**
 
-### Requirement 1: Core Data Management
+1. **Streamline Inventory Management**: Reduce time spent on manual inventory tracking and reconciliation
+2. **Improve Purchase Planning**: Optimize reorder points and reduce stockouts
+3. **Enhance Production Tracking**: Monitor batch yields and ingredient consumption
+4. **Support Flexible Workflows**: Accommodate real-world business operations with forgiving data entry
+5. **Enable Mobile Operations**: Support workshop and warehouse use with touch-friendly interfaces
 
-**User Story:** As a small business owner, I want to manage my suppliers and inventory items with flexible data entry, so that I can maintain accurate records despite irregular business workflows.
+### **Target Users**
 
-#### Acceptance Criteria
+- **Primary**: Small business owners and operators
+- **Secondary**: Workshop staff and warehouse workers
+- **Tertiary**: Administrative staff for reporting and analysis
 
-1. WHEN I create a new supplier THEN the system SHALL store supplier information including name, store URL, phone, and archive status
-2. WHEN I create a new inventory item THEN the system SHALL store item details including name, SKU, type (ingredient/packaging/product), inventory unit, current quantity, weighted average cost, reorder point, primary supplier (primarySupplierId), and lead time (leadTimeDays)
-3. WHEN I archive a supplier or item THEN the system SHALL use soft deletion to preserve historical data relationships
-4. WHEN I search for items THEN the system SHALL allow search by SKU or name with the SKU serving as the primary user-facing identifier
-5. IF I attempt to create duplicate SKUs THEN the system SHALL prevent creation and display an error message
+### **Business Context**
 
-### Requirement 2: Purchase Management and Cost Tracking
+- **Scale**: Small to medium businesses (1-50 employees)
+- **Industry**: Manufacturing, food production, craft businesses
+- **Workflow**: Irregular operations with frequent corrections and back-dating
+- **Technology**: Modern web browsers, mobile devices
 
-**User Story:** As a business owner, I want to log purchases and automatically calculate weighted average costs, so that I can maintain accurate inventory valuation and cost of goods sold.
+## 📋 **Functional Requirements**
 
-#### Acceptance Criteria
+### **1. Inventory Management** ✅ **COMPLETED**
 
-1. WHEN I create a purchase THEN the system SHALL auto-generate a display ID in format 'PO-YYYYMMDD-XXX' and store purchase details including supplier, date, totals, and line items
-2. WHEN I save a purchase THEN the system SHALL update item quantities and recalculate weighted average cost for affected items
-3. WHEN I allocate shipping and taxes THEN the system SHALL distribute costs proportionally only to inventory items (excluding non-inventory types)
-4. WHEN I import bank CSV data THEN the system SHALL match transactions to suppliers and create draft purchases for review
-5. IF I import duplicate transactions THEN the system SHALL detect and prevent duplicate creation based on supplier, date, and total amount
-6. WHEN I edit an existing purchase THEN the system SHALL update the mutable transaction log with timestamp and user information
+#### **1.1 Item Management** ✅ **COMPLETED**
+- ✅ **Create, read, update, delete inventory items**
+- ✅ **Item categorization (ingredient, packaging, product)**
+- ✅ **SKU management with auto-generation**
+- ✅ **Inventory unit support (each, lb, oz, kg, g, gal, qt, pt, cup, fl_oz, ml, l)**
+- ✅ **Current quantity tracking with negative inventory support**
+- ✅ **Weighted average cost (WAC) calculation**
+- ✅ **Reorder point management**
+- ✅ **Lead time tracking**
+- ✅ **Primary supplier assignment**
+- ✅ **Archive/unarchive functionality**
 
-### Requirement 3: Recipe and Production Management
+#### **1.2 Advanced Items Interface** ✅ **COMPLETED**
+- ✅ **Spreadsheet-style table with inline editing**
+- ✅ **Real-time search and filtering**
+- ✅ **Bulk operations (delete, archive)**
+- ✅ **Inline quantity editing with +/- controls**
+- ✅ **Visual quantity indicators (color-coded)**
+- ✅ **Mobile-responsive design**
+- ✅ **Keyboard navigation support**
 
-**User Story:** As a manufacturer, I want to define recipes and log production batches, so that I can track ingredient consumption and product creation with yield analysis.
+#### **1.3 Seed Data System** ✅ **COMPLETED**
+- ✅ **Sample data generation for testing**
+- ✅ **16 realistic items (ingredients + packaging)**
+- ✅ **Batch processing with error handling**
+- ✅ **User feedback and progress tracking**
+- ✅ **Success/error reporting with statistics**
 
-#### Acceptance Criteria
+### **2. Purchase Management** 🚧 **PARTIALLY COMPLETED**
 
-1. WHEN I create a recipe THEN the system SHALL store recipe details including name, version, output product, ingredients with quantities, expected yield, and labor minutes
-2. WHEN I log a production batch THEN the system SHALL auto-generate a display ID in format 'BATCH-YYYYMMDD-XXX' and consume ingredient quantities while creating finished products
-3. WHEN I create a batch THEN the system SHALL calculate yield percentage, material cost, and cost variance compared to recipe projections
-4. IF insufficient ingredients are available THEN the system SHALL display warnings but allow negative inventory with alert notifications and proceed with the transaction
-5. WHEN I edit a recipe THEN the system SHALL increment the version number and track changes in the transaction log
-6. WHEN I query maximum possible batches THEN the system SHALL calculate based on current ingredient availability
-7. WHEN I want to make a different batch size THEN the system SHALL allow me to scale recipe quantities proportionally and calculate scaled ingredient requirements
-8. WHEN I scale a recipe THEN the system SHALL maintain ingredient ratios and update expected yield, labor time, and material costs proportionally
-9. WHEN I create frequently used batch configurations THEN the system SHALL allow me to save them as templates for quick reuse
-10. WHEN I use a batch template THEN the system SHALL pre-populate the batch form with saved configuration while allowing modifications
+#### **2.1 Purchase Creation** 🚧 **IN PROGRESS**
+- ✅ **Draft purchase creation and management**
+- ✅ **Line item management with cost allocation**
+- ✅ **Supplier assignment and tracking**
+- ✅ **Purchase date and effective date support**
+- ✅ **Shipping, taxes, and other costs tracking**
+- ✅ **Notes and documentation support**
 
-### Requirement 4: Sales and Inventory Deduction
+#### **2.2 Purchase Workflow** 🚧 **IN PROGRESS**
+- ✅ **Draft to final purchase conversion**
+- ✅ **Inventory updates on purchase finalization**
+- ✅ **Transaction logging for audit trail**
+- ✅ **WAC recalculation on purchases**
+- 🚧 **Purchase order generation (planned)**
+- 🚧 **Supplier catalog integration (planned)**
 
-**User Story:** As a business owner, I want to record sales and automatically deduct inventory, so that I can maintain accurate stock levels and track revenue.
+#### **2.3 CSV Import System** ✅ **COMPLETED**
+- ✅ **QBO sales CSV import functionality**
+- ✅ **Format validation and error reporting**
+- ✅ **Data preview before import**
+- ✅ **Automatic item creation for missing items**
+- ✅ **Transaction logging for imported sales**
+- ✅ **Effective date override support**
+- ✅ **Import statistics and error reporting**
 
-#### Acceptance Criteria
+### **3. Recipe and Batch Management** 📋 **PLANNED**
 
-1. WHEN I import sales data via CSV THEN the system SHALL process sales periods with date ranges and automatically deduct inventory quantities
-2. WHEN I create a sales period THEN the system SHALL store item, channel, date range, quantity sold, and optional revenue information
-3. IF I attempt to sell more than available inventory THEN the system SHALL allow the transaction but generate negative inventory alerts
-4. WHEN I process sales THEN the system SHALL create transaction log entries with type 'sale' and update current quantities
-5. WHEN I specify sales channels THEN the system SHALL support 'qbo' and 'bigcommerce' channel types for future integration
+#### **3.1 Recipe Management** 📋 **PLANNED**
+- **Recipe creation with ingredient lists**
+- **Recipe versioning and change tracking**
+- **Expected yield and labor time tracking**
+- **Cost projection and material cost calculation**
+- **Recipe scaling and adjustment**
 
-### Requirement 5: Inventory Monitoring and Cycle Count Alerts
+#### **3.2 Batch Production** 📋 **PLANNED**
+- **Batch creation from recipes**
+- **Ingredient consumption tracking**
+- **Yield percentage calculation**
+- **Cost variance analysis**
+- **Expiry date management**
 
-**User Story:** As a business owner, I want proactive inventory alerts and cycle count recommendations, so that I can maintain accurate stock levels without constant manual monitoring.
+### **4. Sales and Reporting** 📋 **PLANNED**
 
-#### Acceptance Criteria
+#### **4.1 Sales Tracking** 📋 **PLANNED**
+- **Sales period logging**
+- **Revenue tracking by item**
+- **Customer and channel tracking**
+- **Sales forecasting and trend analysis**
 
-1. WHEN inventory goes negative THEN the system SHALL generate immediate alerts showing shortage amounts and affected items
-2. WHEN items fall below reorder points THEN the system SHALL generate low stock alerts using the cycle count algorithm
-3. WHEN I access the dashboard THEN the system SHALL display top 5 items needing attention sorted by priority score calculated as: ((CURRENT_DATE - lastCountedDate) / 30) + (1 - currentQuantity / GREATEST(reorderPoint, 1)) where higher scores indicate higher priority
-4. WHEN I perform a cycle count THEN the system SHALL update item quantities, record the count date, and log the adjustment in transaction history
-5. IF I haven't counted items recently THEN the system SHALL prioritize them in cycle count alerts based on time since last count
+#### **4.2 Reporting and Analytics** 📋 **PLANNED**
+- **Inventory valuation reports**
+- **Purchase history analysis**
+- **Sales performance metrics**
+- **Cost analysis and margin calculations**
 
-### Requirement 6: Inventory Forecasting and Smart Reorder Points
+### **5. Import/Export System** ✅ **COMPLETED**
 
-**User Story:** As a business owner, I want the system to predict my inventory needs and automatically suggest reorder points, so that I can maintain optimal stock levels without constant manual analysis.
+#### **5.1 Data Import** ✅ **COMPLETED**
+- ✅ **QBO sales CSV import with validation**
+- ✅ **Format detection and error handling**
+- ✅ **Preview functionality before import**
+- ✅ **Batch processing with progress tracking**
+- ✅ **Error recovery and reporting**
 
-#### Acceptance Criteria
+#### **5.2 Data Export** 📋 **PLANNED**
+- **CSV export for all data types**
+- **Custom date range exports**
+- **Template downloads for data entry**
+- **Backup and restore functionality**
 
-1. WHEN I have sufficient sales history THEN the system SHALL predict future inventory needs based on sales patterns and seasonality using simple moving averages (minimum 3 months of sales data required)
-2. WHEN I create new items THEN the system SHALL default to automatic reorder point calculation based on usage patterns and lead times (using item.leadTimeDays or default to 7)
-3. WHEN I want to override automatic reorder points THEN the system SHALL allow me to set manual reorder points that take precedence over automatic calculations
-4. WHEN I have manual reorder points set THEN the system SHALL provide an option to switch back to automatic calculation
-5. WHEN automatic reorder points are enabled THEN the system SHALL recalculate them monthly based on recent usage trends
-6. WHEN I view item details THEN the system SHALL clearly indicate whether reorder points are automatic or manual
-7. WHEN forecasting shows seasonal patterns THEN the system SHALL adjust reorder points higher during peak demand periods
+### **6. User Interface** ✅ **COMPLETED**
 
-### Requirement 7: Transaction History and Audit Trail
+#### **6.1 Navigation and Layout** ✅ **COMPLETED**
+- ✅ **Responsive sidebar navigation**
+- ✅ **Mobile-first design with touch support**
+- ✅ **Breadcrumb navigation**
+- ✅ **Command palette for quick actions**
+- ✅ **User menu and notifications**
 
-**User Story:** As a business owner, I want complete transaction history with the ability to make corrections, so that I can maintain accurate records and fix mistakes easily.
+#### **6.2 Search and Discovery** ✅ **COMPLETED**
+- ✅ **Global search functionality**
+- ✅ **Advanced filtering options**
+- ✅ **Real-time search results**
+- ✅ **Search history and suggestions**
 
-#### Acceptance Criteria
+#### **6.3 Data Entry and Editing** ✅ **COMPLETED**
+- ✅ **Inline editing for quick updates**
+- ✅ **Modal forms for complex operations**
+- ✅ **Bulk operations with selection**
+- ✅ **Simplified mobile-first navigation**
 
-1. WHEN any inventory change occurs THEN the system SHALL create a transaction log entry with type, quantity change, source reference, effective date, and user information
-2. WHEN I edit any transaction THEN the system SHALL update the mutable log with timestamp and maintain audit trail
-3. WHEN I view transaction history THEN the system SHALL display user-friendly source references (display IDs) rather than internal database IDs
-4. WHEN I make inventory adjustments THEN the system SHALL allow back-dating with effective date different from creation date
-5. WHEN I query recent activity THEN the system SHALL provide chronological feed of all inventory changes with context
+## 🔧 **Non-Functional Requirements**
 
-### Requirement 8: Mobile-First User Interface
+### **Performance Requirements**
 
-**User Story:** As a business owner working in my workshop, I want mobile-optimized interfaces for inventory tasks, so that I can manage inventory while moving around my facility.
+#### **Response Time**
+- **Page Load**: < 3 seconds for initial page load
+- **Search Results**: < 1 second for filtered results
+- **Data Updates**: < 500ms for inline edits
+- **Import Processing**: < 30 seconds for 1000 records
 
-#### Acceptance Criteria
+#### **Scalability**
+- **Concurrent Users**: Support 10+ simultaneous users
+- **Data Volume**: Handle 10,000+ items and 100,000+ transactions
+- **File Upload**: Support CSV files up to 10MB
 
-1. WHEN I access the app on mobile THEN the system SHALL provide touch-friendly interfaces with minimum 44x44px touch targets
-2. WHEN I need quick inventory updates THEN the system SHALL provide direct-edit capabilities with plus/minus buttons for quantity adjustments
-3. WHEN I view lists on mobile THEN the system SHALL show essential information first with expandable details
-4. WHEN I navigate on mobile THEN the system SHALL use hamburger menu with persistent sidebar on desktop
-5. WHEN I perform common actions THEN the system SHALL provide global "+" button and command palette (Cmd+K) for quick access
+### **Usability Requirements**
 
-### Requirement 9: Data Import and Export Capabilities
+#### **Accessibility**
+- **WCAG 2.1 AA Compliance**: Full accessibility support
+- **Keyboard Navigation**: Complete keyboard-only operation
+- **Screen Reader Support**: ARIA labels and semantic HTML
+- **Color Contrast**: Minimum 4.5:1 contrast ratio
 
-**User Story:** As a business owner, I want to import data from external sources and export my data for analysis, so that I can integrate with existing workflows and perform business analysis.
+#### **Mobile Experience**
+- **Touch Targets**: Minimum 44px × 44px for all interactive elements
+- **Gesture Support**: Swipe navigation and touch gestures
+- **Responsive Design**: Optimized for all screen sizes
+- **Offline Capability**: Basic offline functionality for viewing
 
-#### Acceptance Criteria
+### **Reliability Requirements**
 
-1. WHEN I import bank CSV files THEN the system SHALL automatically match transactions to suppliers and create purchase drafts
-2. WHEN I export data THEN the system SHALL provide CSV export for items, purchases, and recent changes with one-click access
-3. WHEN I import sales data THEN the system SHALL accept CSV format with date ranges and channel specification
-4. WHEN I download templates THEN the system SHALL provide properly formatted CSV templates to reduce import errors
-5. IF import data has errors THEN the system SHALL provide clear validation messages and allow correction before processing
+#### **Data Integrity**
+- **Atomic Operations**: All database operations are atomic
+- **Transaction Logging**: Complete audit trail for all changes
+- **Error Recovery**: Graceful handling of network failures
+- **Data Validation**: Comprehensive input validation
 
-### Requirement 10: Cost Calculation and Financial Tracking
+#### **Availability**
+- **Uptime**: 99.9% availability during business hours
+- **Backup**: Daily automated backups with 30-day retention
+- **Recovery**: Point-in-time recovery capability
 
-**User Story:** As a business owner, I want accurate cost calculations and basic financial insights, so that I can understand my profitability and make informed business decisions.
+### **Security Requirements**
 
-#### Acceptance Criteria
+#### **Authentication and Authorization**
+- **User Authentication**: Secure login with multi-factor support
+- **Row-Level Security**: Database-level access control
+- **Session Management**: Secure session handling
+- **API Security**: Protected API endpoints
 
-1. WHEN I purchase items THEN the system SHALL calculate weighted average cost using all non-draft purchase history, defaulting to 0 with alert notification if no purchase history exists
-2. WHEN I view dashboard THEN the system SHALL display basic margin calculator showing estimated margins from revenue minus COGS
-3. WHEN I create batches THEN the system SHALL calculate material costs, labor costs, and cost variance against recipe projections
-4. WHEN costs are allocated THEN the system SHALL exclude non-inventory items from shipping and tax allocation to maintain COGS accuracy
-5. WHEN I query item costs THEN the system SHALL provide on-demand WAC calculation with caching for performance
+#### **Data Protection**
+- **Encryption**: Data encrypted in transit and at rest
+- **Input Validation**: Protection against injection attacks
+- **XSS Prevention**: Content Security Policy implementation
+- **CSRF Protection**: Cross-site request forgery prevention
 
-### Requirement 11: Quick Reorder and Automated Restocking
+## 📊 **Business Rules**
 
-**User Story:** As a business owner, I want automated assistance with restocking low inventory items, so that I can quickly replenish stock without manual data entry.
+### **Inventory Management Rules**
 
-#### Acceptance Criteria
+#### **Quantity Management**
+- **Negative Inventory**: Allowed with warnings (supports real-world flexibility)
+- **Quantity Updates**: All changes logged with timestamps
+- **Unit Conversion**: Automatic conversion between compatible units
+- **Rounding**: Consistent rounding rules for all calculations
 
-1. WHEN I view low-stock items THEN the system SHALL display "Quick Reorder" buttons for items below reorder point
-2. WHEN I click Quick Reorder THEN the system SHALL auto-generate a draft purchase using the item's primary supplier and reorder point quantity
-3. WHEN a draft purchase is created THEN the system SHALL allow me to review and modify before finalizing
-4. WHEN I have multiple suppliers for an item THEN the system SHALL use primarySupplierId if set; else most recent from purchase history
-5. WHEN I complete a quick reorder THEN the system SHALL follow the standard purchase workflow including WAC recalculation
+#### **Cost Management**
+- **WAC Calculation**: Based on all non-draft purchases
+- **Cost Allocation**: Proportional allocation of additional costs
+- **Cost Updates**: Automatic recalculation on new purchases
+- **Historical Cost**: Maintain cost history for analysis
 
-### Requirement 12: System Configuration and Settings
+### **Purchase Management Rules**
 
-**User Story:** As a business owner, I want to configure system settings and notification preferences, so that I can customize the application to match my business needs.
+#### **Draft System**
+- **Draft Purchases**: Can be created and modified before finalization
+- **Finalization**: Converts draft to final and updates inventory
+- **Deletion**: Only draft purchases can be deleted
+- **Line Items**: Required for all purchases
 
-#### Acceptance Criteria
+#### **Supplier Management**
+- **Supplier Assignment**: Optional primary supplier per item
+- **Supplier History**: Track last used supplier automatically
+- **Supplier Data**: Name, contact info, and notes
 
-1. WHEN I access settings THEN the system SHALL provide configuration options for labor rate, cycle count alert thresholds, and notification preferences
-2. WHEN I enable email alerts THEN the system SHALL send notifications when cycle count alerts exceed the configured threshold (default: 5+ items flagged)
-3. WHEN I set labor rates THEN the system SHALL use these values for batch cost calculations and variance analysis
-4. WHEN I configure alert thresholds THEN the system SHALL apply these settings to the cycle count alert algorithm
-5. WHEN I update settings THEN the system SHALL validate configuration values and provide immediate feedback
-6. WHEN I configure notification rules THEN the system SHALL allow me to customize alert types, delivery methods (email, in-app), and trigger conditions
-7. WHEN I set up custom notifications THEN the system SHALL support rules for low stock, negative inventory, batch completion, and purchase approvals
+### **Data Entry Rules**
 
-### Requirement 13: System Security and Data Integrity
+#### **Flexibility Requirements**
+- **Back-Dating**: All transactions support historical dates
+- **Corrections**: All records can be edited with audit trail
+- **Partial Data**: Support for incomplete data entry
+- **Batch Operations**: Bulk updates and operations
 
-**User Story:** As a business owner, I want secure access to my data with proper validation, so that I can trust the system with my business-critical information.
+#### **Validation Rules**
+- **Required Fields**: SKU, name, type for items
+- **Format Validation**: Email, phone, date formats
+- **Business Logic**: Reorder points, lead times, quantities
+- **Cross-Reference**: Supplier existence, item relationships
 
-#### Acceptance Criteria
+## 🎨 **User Experience Requirements**
 
-1. WHEN I access the system THEN the system SHALL use Supabase Auth with Row Level Security for data protection
-2. WHEN I perform database operations THEN the system SHALL use PostgreSQL RPCs for critical multi-step operations to ensure atomicity
-3. WHEN I enter data THEN the system SHALL validate inputs both client-side for immediate feedback and server-side for final authority
-4. WHEN I reference archived records THEN the system SHALL prevent new relationships while preserving historical data
-5. IF validation fails THEN the system SHALL provide standardized error messages with clear resolution guidance
+### **Interface Design**
+
+#### **Visual Design**
+- **Consistent Branding**: Professional, clean interface
+- **Color Coding**: Intuitive color usage for status and alerts
+- **Typography**: Readable fonts with proper hierarchy
+- **Icons**: Clear, meaningful iconography
+
+#### **Interaction Design**
+- **Direct Manipulation**: Click-to-edit, drag-to-reorder
+- **Progressive Disclosure**: Show details on demand
+- **Contextual Actions**: Actions available where needed
+- **Feedback**: Clear feedback for all user actions
+
+### **Workflow Design**
+
+#### **Efficiency Focus**
+- **Quick Actions**: One-click common operations
+- **Mobile-First Design**: Touch-optimized for mobile workflows
+- **Bulk Operations**: Multi-select and batch processing
+- **Auto-Save**: Automatic saving of work in progress
+
+#### **Error Prevention**
+- **Validation**: Real-time input validation
+- **Confirmation**: Important actions require confirmation
+- **Undo/Redo**: Support for reversing actions
+- **Recovery**: Clear error messages with recovery options
+
+## 📈 **Success Metrics**
+
+### **Business Metrics**
+- **Time Savings**: 50% reduction in inventory management time
+- **Accuracy**: 95%+ inventory accuracy
+- **Stockouts**: 80% reduction in stockout incidents
+- **User Adoption**: 90%+ user adoption within 30 days
+
+### **Technical Metrics**
+- **Performance**: < 3 second page load times
+- **Reliability**: 99.9% uptime
+- **Security**: Zero security incidents
+- **Accessibility**: WCAG 2.1 AA compliance
+
+## 🔄 **Future Requirements**
+
+### **Phase 2 Features** 📋 **PLANNED**
+- **Advanced Reporting**: Custom report builder
+- **Multi-Location**: Support for multiple warehouses
+- **Barcode Integration**: Barcode scanning support
+- **API Integration**: Third-party system integration
+
+### **Phase 3 Features** 📋 **PLANNED**
+- **Advanced Analytics**: Predictive analytics and forecasting
+- **Mobile App**: Native mobile application
+- **Automation**: Automated reorder and alert systems
+- **Advanced Permissions**: Role-based access control
+
+---
+
+_For technical implementation details, see [technical-design.md](./technical-design.md). For database schema, see [data-model.md](./data-model.md)._

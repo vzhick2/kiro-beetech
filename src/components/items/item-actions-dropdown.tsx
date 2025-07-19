@@ -1,18 +1,29 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { MoreVertical, Edit, Archive, ShoppingCart, Calculator } from 'lucide-react'
-import { updateItem } from '@/app/actions/items'
-import type { Item } from '@/types'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  MoreVertical,
+  Edit,
+  Archive,
+  ShoppingCart,
+  Calculator,
+} from 'lucide-react';
+import { updateItem } from '@/app/actions/items';
+import type { Item } from '@/types';
 
 interface ItemActionsDropdownProps {
-  item: Item
-  onEdit?: (item: Item) => void
-  onQuickReorder?: (item: Item) => void
-  onManualCount?: (item: Item) => void
-  onItemArchived?: () => void
+  item: Item;
+  onEdit?: (item: Item) => void;
+  onQuickReorder?: (item: Item) => void;
+  onManualCount?: (item: Item) => void;
+  onItemArchived?: () => void;
 }
 
 export function ItemActionsDropdown({
@@ -20,36 +31,36 @@ export function ItemActionsDropdown({
   onEdit,
   onQuickReorder,
   onManualCount,
-  onItemArchived
+  onItemArchived,
 }: ItemActionsDropdownProps) {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleArchive = async () => {
     if (!confirm(`Are you sure you want to archive "${item.name}"?`)) {
-      return
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await updateItem(item.itemId, { isarchived: true })
+      const result = await updateItem(item.itemId, { isarchived: true });
       if (result.success) {
-        onItemArchived?.()
+        onItemArchived?.();
       } else {
-        alert(`Failed to archive item: ${result.error}`)
+        alert(`Failed to archive item: ${result.error}`);
       }
     } catch {
-      alert('An unexpected error occurred')
+      alert('An unexpected error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="hover:bg-gray-100"
           disabled={loading}
         >
@@ -61,18 +72,18 @@ export function ItemActionsDropdown({
           <Edit className="h-4 w-4 mr-2" />
           Edit Item
         </DropdownMenuItem>
-        
+
         <DropdownMenuItem onClick={() => onQuickReorder?.(item)}>
           <ShoppingCart className="h-4 w-4 mr-2" />
           Quick Reorder
         </DropdownMenuItem>
-        
+
         <DropdownMenuItem onClick={() => onManualCount?.(item)}>
           <Calculator className="h-4 w-4 mr-2" />
           Manual Count
         </DropdownMenuItem>
-        
-        <DropdownMenuItem 
+
+        <DropdownMenuItem
           onClick={handleArchive}
           className="text-red-600 focus:text-red-600"
         >
@@ -81,5 +92,5 @@ export function ItemActionsDropdown({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-} 
+  );
+}

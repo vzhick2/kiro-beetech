@@ -1,22 +1,20 @@
-'use client'
+'use client';
 
-import { Suspense, useState, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Search, Filter, X } from 'lucide-react'
-import { AddSupplierModal } from '@/components/suppliers/add-supplier-modal'
-import { SuppliersTable } from '@/components/suppliers/suppliers-table'
+import { Suspense, useState, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Search, Filter, X } from 'lucide-react';
+import { AddSupplierModal } from '@/components/suppliers/add-supplier-modal';
+import { SuppliersTable } from '@/components/suppliers/suppliers-table';
 
 export default function SuppliersPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query)
-  }, [])
+    setSearchQuery(query);
+  }, []);
 
-
-
-  const hasActiveFilters = searchQuery
+  const hasActiveFilters = searchQuery;
 
   return (
     <div className="space-y-6 page-container">
@@ -28,7 +26,7 @@ export default function SuppliersPage() {
             <AddSupplierModal />
           </div>
         </div>
-          
+
         {/* Search and Filter Bar */}
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
@@ -37,7 +35,7 @@ export default function SuppliersPage() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={e => handleSearch(e.target.value)}
                 placeholder="Search suppliers by name, email, or phone..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -50,8 +48,8 @@ export default function SuppliersPage() {
                 </button>
               )}
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex items-center border-blue-200 hover:bg-blue-50"
               onClick={() => setShowFilters(!showFilters)}
             >
@@ -76,12 +74,10 @@ export default function SuppliersPage() {
 
       {/* Suppliers Table */}
       <Suspense fallback={<SuppliersTableSkeleton />}>
-        <SuppliersTable 
-          searchQuery={searchQuery}
-        />
+        <SuppliersTable searchQuery={searchQuery} />
       </Suspense>
     </div>
-  )
+  );
 }
 
 function SuppliersTableSkeleton() {
@@ -98,5 +94,5 @@ function SuppliersTableSkeleton() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

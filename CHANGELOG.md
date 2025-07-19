@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - **Complete Supabase Development Environment Setup**
   - Remote Supabase project integration (`cursor-kiro-beetech`)
   - Comprehensive npm scripts for database management
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Sample data with 3 suppliers, 7 items, 2 recipes, 2 purchases, 5 transactions, 2 batches, 2 sales periods
 
 ### Database & Infrastructure
+
 - **Supabase CLI Integration**: Available via `npx supabase` with full command support
 - **Database Schema**: Complete schema with all tables, relationships, and business logic functions
 - **Environment Configuration**: Remote Supabase URLs for production-ready development
@@ -24,11 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation**: Comprehensive setup guide and troubleshooting
 
 ### Development Tools
+
 - **Database Scripts**: npm scripts for remote development
 - **Type Generation**: Automatic TypeScript types from database schema
 - **Migration Management**: Schema versioning and deployment tools
 
 ### Changed
+
 - Enhanced error handling for business workflows
 - Improved mobile interface for workshop use
 - Updated notification system for internal alerts
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2024-12-19
 
 ### Added
+
 - Initial internal business application setup
 - Next.js 15.4.1 with React 19.1.0 foundation
 - Modern UI optimized for small business workflows
@@ -47,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Server Actions for business operations
 
 ### Technical Foundation
+
 - **Next.js**: 15.4.1 with Turbopack for faster development
 - **React**: 19.1.0 with enhanced features
 - **TypeScript**: 5.8.3 for type safety
@@ -56,12 +62,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ESLint**: 9.31.0 for code quality
 
 ### Performance Improvements
+
 - 76% faster development server with Turbopack
 - Automatic memoization with React Compiler
 - Optimized for internal business workflows
 - Enhanced server-side rendering
 
 ### Internal Business Features
+
 - Mobile-first design for workshop operations
 - Forgiving data entry workflows
 - Support for back-dating and corrections
@@ -72,11 +80,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
-| Version | Date | Major Changes |
-|---------|------|---------------|
-| 0.1.0 | 2024-12-19 | Initial internal business application setup |
-| Unreleased | - | Core inventory management features |
+| Version    | Date       | Major Changes                               |
+| ---------- | ---------- | ------------------------------------------- |
+| 0.1.0      | 2024-12-19 | Initial internal business application setup |
+| Unreleased | -          | Core inventory management features          |
 
 ---
 
-*For detailed technical specifications, see [docs/technical-design.md](./docs/technical-design.md)* 
+_For detailed technical specifications, see [docs/technical-design.md](./docs/technical-design.md)_

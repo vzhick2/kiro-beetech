@@ -1,11 +1,17 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { InventoryUnit, ItemType } from '@/types'
-import { createItem } from '@/app/actions/items'
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { InventoryUnit, ItemType } from '@/types';
+import { createItem } from '@/app/actions/items';
 
 const INVENTORY_UNITS: { value: InventoryUnit; label: string }[] = [
   { value: 'each', label: 'Each' },
@@ -19,22 +25,22 @@ const INVENTORY_UNITS: { value: InventoryUnit; label: string }[] = [
   { value: 'cup', label: 'Cups' },
   { value: 'fl_oz', label: 'Fluid Ounces (fl oz)' },
   { value: 'ml', label: 'Milliliters (ml)' },
-  { value: 'l', label: 'Liters (l)' }
-]
+  { value: 'l', label: 'Liters (l)' },
+];
 
 const ITEM_TYPES: { value: ItemType; label: string }[] = [
   { value: 'ingredient', label: 'Ingredient' },
   { value: 'packaging', label: 'Packaging' },
-  { value: 'product', label: 'Product' }
-]
+  { value: 'product', label: 'Product' },
+];
 
 interface AddItemModalProps {
-  onItemAdded?: () => void
+  onItemAdded?: () => void;
 }
 
 export function AddItemModal({ onItemAdded }: AddItemModalProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     SKU: '',
@@ -42,12 +48,12 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
     inventoryUnit: 'each' as InventoryUnit,
     currentQuantity: 0,
     reorderPoint: 0,
-    leadTimeDays: 7
-  })
+    leadTimeDays: 7,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       // Map frontend field names to database field names
@@ -60,12 +66,12 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
         reorderpoint: formData.reorderPoint,
         leadtimedays: formData.leadTimeDays,
         weightedaveragecost: 0,
-        isarchived: false
-      }
-      
-      const result = await createItem(dbFormData)
+        isarchived: false,
+      };
+
+      const result = await createItem(dbFormData);
       if (result.success) {
-        setIsOpen(false)
+        setIsOpen(false);
         setFormData({
           name: '',
           SKU: '',
@@ -73,25 +79,25 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
           inventoryUnit: 'each',
           currentQuantity: 0,
           reorderPoint: 0,
-          leadTimeDays: 7
-        })
-        onItemAdded?.()
+          leadTimeDays: 7,
+        });
+        onItemAdded?.();
       } else {
-        console.error('Failed to create item:', result.error)
+        console.error('Failed to create item:', result.error);
       }
     } catch (error) {
-      console.error('Error creating item:', error)
+      console.error('Error creating item:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -108,11 +114,14 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
             Add New Item
           </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Item Name *
               </label>
               <input
@@ -120,14 +129,17 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 id="name"
                 required
                 value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                onChange={e => handleInputChange('name', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter item name"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="sku"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 SKU *
               </label>
               <input
@@ -135,7 +147,7 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 id="sku"
                 required
                 value={formData.SKU}
-                onChange={(e) => handleInputChange('SKU', e.target.value)}
+                onChange={e => handleInputChange('SKU', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter SKU"
               />
@@ -144,14 +156,19 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="type"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Item Type *
               </label>
               <select
                 id="type"
                 required
                 value={formData.type}
-                onChange={(e) => handleInputChange('type', e.target.value as ItemType)}
+                onChange={e =>
+                  handleInputChange('type', e.target.value as ItemType)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {ITEM_TYPES.map(type => (
@@ -161,16 +178,24 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 ))}
               </select>
             </div>
-            
+
             <div>
-              <label htmlFor="inventoryUnit" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="inventoryUnit"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Unit *
               </label>
               <select
                 id="inventoryUnit"
                 required
                 value={formData.inventoryUnit}
-                onChange={(e) => handleInputChange('inventoryUnit', e.target.value as InventoryUnit)}
+                onChange={e =>
+                  handleInputChange(
+                    'inventoryUnit',
+                    e.target.value as InventoryUnit
+                  )
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {INVENTORY_UNITS.map(unit => (
@@ -184,7 +209,10 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label htmlFor="currentQuantity" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="currentQuantity"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Current Quantity
               </label>
               <input
@@ -192,14 +220,19 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 id="currentQuantity"
                 min="0"
                 value={formData.currentQuantity}
-                onChange={(e) => handleInputChange('currentQuantity', Number(e.target.value))}
+                onChange={e =>
+                  handleInputChange('currentQuantity', Number(e.target.value))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="reorderPoint" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="reorderPoint"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Reorder Point
               </label>
               <input
@@ -207,14 +240,19 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 id="reorderPoint"
                 min="0"
                 value={formData.reorderPoint}
-                onChange={(e) => handleInputChange('reorderPoint', Number(e.target.value))}
+                onChange={e =>
+                  handleInputChange('reorderPoint', Number(e.target.value))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="leadTimeDays" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="leadTimeDays"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Lead Time (days)
               </label>
               <input
@@ -222,7 +260,9 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
                 id="leadTimeDays"
                 min="1"
                 value={formData.leadTimeDays}
-                onChange={(e) => handleInputChange('leadTimeDays', Number(e.target.value))}
+                onChange={e =>
+                  handleInputChange('leadTimeDays', Number(e.target.value))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="7"
               />
@@ -249,5 +289,5 @@ export function AddItemModal({ onItemAdded }: AddItemModalProps) {
         </form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

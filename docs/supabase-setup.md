@@ -7,6 +7,7 @@ This project is configured for **remote Supabase development** using the cloud-h
 ## Current Configuration
 
 ### Remote Project
+
 - **Project ID**: `jjpklpivpvywagmjjwpu`
 - **Project Name**: `cursor-kiro-beetech`
 - **Region**: `us-east-2`
@@ -15,6 +16,7 @@ This project is configured for **remote Supabase development** using the cloud-h
 ## Available Scripts
 
 ### Remote Development
+
 ```bash
 # Generate types from remote database
 pnpm supabase:types
@@ -23,6 +25,7 @@ pnpm supabase:types
 ## Development Workflow
 
 ### Remote Development
+
 1. **Start development**: `pnpm dev`
 2. **Generate types**: `pnpm supabase:types` (when schema changes)
 3. **Make changes** in your code
@@ -32,6 +35,7 @@ pnpm supabase:types
 ## Environment Variables
 
 ### Remote Development
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
@@ -42,12 +46,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 ### Remote Development Issues
 
 #### Authentication Issues
+
 ```bash
 # Re-link to remote project
 npx supabase link --project-ref jjpklpivpvywagmjjwpu
 ```
 
 #### Schema Sync Issues
+
 ```bash
 # Force pull latest schema
 npx supabase db pull --force
@@ -56,6 +62,7 @@ npx supabase db pull --force
 ## Database Schema
 
 The current schema includes:
+
 - **Items**: Inventory items with SKU, quantities, and metadata
 - **Transactions**: Inventory movement tracking
 - **Purchases**: Purchase order management
@@ -74,4 +81,4 @@ The current schema includes:
 
 - [Supabase CLI Documentation](https://supabase.com/docs/reference/cli)
 - [Database Schema Reference](docs/data-model.md)
-- [API Documentation](docs/api-documentation.md) 
+- [API Documentation](docs/api-documentation.md)

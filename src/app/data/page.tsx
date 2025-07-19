@@ -1,17 +1,19 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { CSVImportModal } from '@/components/import-export/csv-import-modal'
-import { Button } from '@/components/ui/button'
-import { Upload } from 'lucide-react'
+import { useState } from 'react';
+import { CSVImportModal } from '@/components/import-export/csv-import-modal';
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
 
 export default function DataPage() {
-  const [showQBOImport, setShowQBOImport] = useState(false)
+  const [showQBOImport, setShowQBOImport] = useState(false);
 
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">Data Management</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+          Data Management
+        </h1>
         <p className="text-gray-600">
           Import, export, and manage your inventory data
         </p>
@@ -20,7 +22,9 @@ export default function DataPage() {
       {/* Import/Export Section */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Import Data</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Import Data
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -71,7 +75,9 @@ export default function DataPage() {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Export Data</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Export Data
+          </h2>
           <div className="space-y-4">
             <button className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors">
               Export Items to CSV
@@ -91,7 +97,9 @@ export default function DataPage() {
 
       {/* Database Tools */}
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Tools</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Database Tools
+        </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <button className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 transition-colors">
             Backup Database
@@ -107,7 +115,9 @@ export default function DataPage() {
 
       {/* Recent Activity */}
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Data Operations</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Recent Data Operations
+        </h2>
         <div className="text-gray-500 text-center py-8">
           No recent data operations
         </div>
@@ -117,11 +127,11 @@ export default function DataPage() {
       <CSVImportModal
         isOpen={showQBOImport}
         onClose={() => setShowQBOImport(false)}
-        onImportComplete={(result) => {
-          console.log('QBO Import completed:', result)
+        onImportComplete={result => {
+          console.log('QBO Import completed:', result);
           // Could refresh data or show success message
         }}
       />
     </div>
-  )
-} 
+  );
+}

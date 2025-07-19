@@ -1,44 +1,46 @@
-'use client'
+'use client';
 
-import { Suspense, useState, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Search, Filter, X } from 'lucide-react'
-import { AddItemModal } from '@/components/items/add-item-modal'
-import { SpreadsheetTable } from '@/components/items/spreadsheet-table'
-import { SeedDataButton } from '@/components/items/seed-data-button'
+import { Suspense, useState, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Search, Filter, X } from 'lucide-react';
+import { AddItemModal } from '@/components/items/add-item-modal';
+import { SpreadsheetTable } from '@/components/items/spreadsheet-table';
+import { SeedDataButton } from '@/components/items/seed-data-button';
 
 export default function ItemsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedType, setSelectedType] = useState('all')
-  const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query)
-  }, [])
+    setSearchQuery(query);
+  }, []);
 
   const handleTypeFilter = useCallback((type: string) => {
-    setSelectedType(type)
-  }, [])
+    setSelectedType(type);
+  }, []);
 
   const clearFilters = useCallback(() => {
-    setSearchQuery('')
-    setSelectedType('all')
-  }, [])
+    setSearchQuery('');
+    setSelectedType('all');
+  }, []);
 
-  const hasActiveFilters = searchQuery || selectedType !== 'all'
+  const hasActiveFilters = searchQuery || selectedType !== 'all';
 
   return (
     <div className="space-y-6 page-container">
       {/* Header */}
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-3 sm:space-y-0">
-          <h1 className="text-2xl font-semibold text-gray-800">Inventory Items</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Inventory Items
+          </h1>
           <div className="flex items-center space-x-3">
             <SeedDataButton />
             <AddItemModal />
           </div>
         </div>
-          
+
         {/* Search and Filter Bar */}
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
@@ -47,7 +49,7 @@ export default function ItemsPage() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={e => handleSearch(e.target.value)}
                 placeholder="Search ingredients, packaging, or products..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
               />
@@ -60,8 +62,8 @@ export default function ItemsPage() {
                 </button>
               )}
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex items-center border-amber-200 hover:bg-amber-50"
               onClick={() => setShowFilters(!showFilters)}
             >
@@ -84,15 +86,15 @@ export default function ItemsPage() {
                   </button>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Item Type
                   </label>
-                  <select 
+                  <select
                     value={selectedType}
-                    onChange={(e) => handleTypeFilter(e.target.value)}
+                    onChange={e => handleTypeFilter(e.target.value)}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                   >
                     <option value="all">All Types</option>
@@ -126,13 +128,10 @@ export default function ItemsPage() {
 
       {/* Spreadsheet Table */}
       <Suspense fallback={<SpreadsheetTableSkeleton />}>
-        <SpreadsheetTable 
-          searchQuery={searchQuery}
-          typeFilter={selectedType}
-        />
+        <SpreadsheetTable searchQuery={searchQuery} typeFilter={selectedType} />
       </Suspense>
     </div>
-  )
+  );
 }
 
 function SpreadsheetTableSkeleton() {
@@ -149,5 +148,5 @@ function SpreadsheetTableSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

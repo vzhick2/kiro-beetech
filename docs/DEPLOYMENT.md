@@ -3,24 +3,28 @@
 ## Pre-deployment Checklist
 
 ### Code Quality
+
 - [ ] All TypeScript errors resolved (`npm run type-check`)
 - [ ] ESLint passes without errors (`npm run lint`)
 - [ ] All tests passing (when implemented)
 - [ ] Build succeeds locally (`npm run build`)
 
 ### Environment Setup
+
 - [ ] Environment variables configured in Vercel dashboard
 - [ ] Database connections tested
 - [ ] API endpoints validated
 - [ ] Third-party integrations verified
 
 ### Performance & Security
+
 - [ ] Images optimized (Next.js Image component used)
 - [ ] Bundle size analyzed (`npm run build:analyze`)
 - [ ] Security headers configured
 - [ ] CSP (Content Security Policy) reviewed
 
 ### Deployment
+
 - [ ] Git repository clean (no uncommitted changes)
 - [ ] Production branch merged
 - [ ] Version tagged (if applicable)
@@ -29,6 +33,7 @@
 ## Deployment Commands
 
 ### Quick Commands
+
 ```bash
 # Preview deployment
 npm run deploy
@@ -44,6 +49,7 @@ npm run deploy:vercel
 ```
 
 ### Advanced Commands
+
 ```bash
 # Deploy with tests skipped
 node scripts/deploy.js --skip-tests
@@ -55,6 +61,7 @@ node scripts/deploy.js --prod --skip-tests
 ## Post-deployment Verification
 
 ### Functional Testing
+
 - [ ] Homepage loads correctly
 - [ ] Navigation works across all pages
 - [ ] Forms submit successfully
@@ -62,12 +69,14 @@ node scripts/deploy.js --prod --skip-tests
 - [ ] Database operations function properly
 
 ### Performance Testing
+
 - [ ] Page load times acceptable
 - [ ] Core Web Vitals metrics good
 - [ ] Mobile responsiveness verified
 - [ ] SEO meta tags present
 
 ### Monitoring
+
 - [ ] Error tracking configured
 - [ ] Performance monitoring active
 - [ ] Uptime monitoring enabled
@@ -76,6 +85,7 @@ node scripts/deploy.js --prod --skip-tests
 ## Rollback Plan
 
 If deployment fails:
+
 1. Check Vercel dashboard for error details
 2. Review deployment logs
 3. Test locally with `npm run preview`
@@ -85,16 +95,19 @@ If deployment fails:
 ## Common Issues & Solutions
 
 ### Build Failures
+
 - Check TypeScript errors: `npm run type-check`
 - Verify all imports are correct
 - Ensure environment variables are available
 
 ### Runtime Errors
+
 - Check Vercel function logs
 - Verify API endpoints are accessible
 - Confirm database connections
 
 ### Performance Issues
+
 - Run bundle analysis: `npm run build:analyze`
 - Optimize images and assets
 - Review code splitting strategy

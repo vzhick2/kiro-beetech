@@ -13,11 +13,13 @@ This folder contains VS Code-specific settings and configurations for the KIRO-B
 This project uses **modern multi-IDE AI rules** following 2025 best practices:
 
 ### **Primary Sources (Hierarchical)**:
+
 1. **`.cursor/rules/*.mdc`** - Modern Cursor 0.46+ rules (primary)
 2. **`.cursorrules`** - Universal fallback for all IDEs
 3. **`.vscode/copilot-instructions.md`** - VS Code specific guidance
 
 ### **Rule Files Structure**:
+
 - **`001_workspace.mdc`** - Core project architecture & constraints
 - **`002_cursor_rules.mdc`** - How .mdc files work (meta)
 - **`100_typescript.mdc`** - TypeScript coding standards
@@ -26,6 +28,7 @@ This project uses **modern multi-IDE AI rules** following 2025 best practices:
 ## Usage
 
 When working in VS Code:
+
 1. Refer to `.cursor/rules/` for modern standards
 2. Use `.cursorrules` as fallback reference
 3. Use VS Code's built-in features (ESLint, Prettier, TypeScript checking)
@@ -34,9 +37,10 @@ When working in VS Code:
 ## Multi-IDE Strategy (2025)
 
 This setup ensures consistent AI behavior across:
+
 - **Cursor 0.46+** - Reads `.cursor/rules/*.mdc` natively
 - **VS Code** - References through `copilot-instructions.md` + `.cursorrules`
 - **Windsurf** - Uses `.cursorrules` as context
 - **Other IDEs** - Manual reference to `.cursorrules`
 
-**Benefits**: Modern, maintainable, IDE-agnostic, future-proof 
+**Benefits**: Modern, maintainable, IDE-agnostic, future-proof

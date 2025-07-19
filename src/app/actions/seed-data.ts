@@ -1,10 +1,10 @@
-'use server'
+'use server';
 
-import { supabase } from '@/lib/supabase'
-import type { Database } from '@/types/database'
+import { supabase } from '@/lib/supabase';
+import type { Database } from '@/types/database';
 
-type InventoryUnit = Database['public']['Enums']['inventory_unit']
-type ItemType = Database['public']['Enums']['item_type']
+type InventoryUnit = Database['public']['Enums']['inventory_unit'];
+type ItemType = Database['public']['Enums']['item_type'];
 
 const sampleItems = [
   // Ingredients
@@ -17,7 +17,7 @@ const sampleItems = [
     weightedaveragecost: 8.75,
     reorderpoint: 15,
     leadtimedays: 7,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Vanilla Bean Extract',
@@ -25,10 +25,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'oz' as InventoryUnit,
     currentquantity: 32,
-    weightedaveragecost: 15.50,
+    weightedaveragecost: 15.5,
     reorderpoint: 10,
     leadtimedays: 14,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Cinnamon Powder',
@@ -39,7 +39,7 @@ const sampleItems = [
     weightedaveragecost: 3.25,
     reorderpoint: 8,
     leadtimedays: 5,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Lemon Essential Oil',
@@ -47,10 +47,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'oz' as InventoryUnit,
     currentquantity: 16,
-    weightedaveragecost: 12.00,
+    weightedaveragecost: 12.0,
     reorderpoint: 5,
     leadtimedays: 10,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Propolis Extract',
@@ -58,10 +58,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'oz' as InventoryUnit,
     currentquantity: 8,
-    weightedaveragecost: 25.00,
+    weightedaveragecost: 25.0,
     reorderpoint: 3,
     leadtimedays: 21,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Beeswax Pellets',
@@ -69,10 +69,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'lb' as InventoryUnit,
     currentquantity: 12.5,
-    weightedaveragecost: 18.50,
+    weightedaveragecost: 18.5,
     reorderpoint: 5,
     leadtimedays: 14,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Royal Jelly',
@@ -80,10 +80,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'oz' as InventoryUnit,
     currentquantity: 4,
-    weightedaveragecost: 45.00,
+    weightedaveragecost: 45.0,
     reorderpoint: 2,
     leadtimedays: 30,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Bee Pollen',
@@ -91,10 +91,10 @@ const sampleItems = [
     type: 'ingredient' as ItemType,
     inventoryunit: 'lb' as InventoryUnit,
     currentquantity: 6.5,
-    weightedaveragecost: 22.00,
+    weightedaveragecost: 22.0,
     reorderpoint: 3,
     leadtimedays: 14,
-    isarchived: false
+    isarchived: false,
   },
 
   // Packaging
@@ -107,7 +107,7 @@ const sampleItems = [
     weightedaveragecost: 0.85,
     reorderpoint: 50,
     leadtimedays: 5,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Glass Jars 16oz',
@@ -118,7 +118,7 @@ const sampleItems = [
     weightedaveragecost: 1.25,
     reorderpoint: 40,
     leadtimedays: 5,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Plastic Lids 8oz',
@@ -129,7 +129,7 @@ const sampleItems = [
     weightedaveragecost: 0.15,
     reorderpoint: 75,
     leadtimedays: 3,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Plastic Lids 16oz',
@@ -137,10 +137,10 @@ const sampleItems = [
     type: 'packaging' as ItemType,
     inventoryunit: 'each' as InventoryUnit,
     currentquantity: 180,
-    weightedaveragecost: 0.20,
+    weightedaveragecost: 0.2,
     reorderpoint: 60,
     leadtimedays: 3,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Product Labels',
@@ -151,7 +151,7 @@ const sampleItems = [
     weightedaveragecost: 0.08,
     reorderpoint: 100,
     leadtimedays: 7,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Shipping Boxes Small',
@@ -162,7 +162,7 @@ const sampleItems = [
     weightedaveragecost: 0.45,
     reorderpoint: 25,
     leadtimedays: 3,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Shipping Boxes Medium',
@@ -173,7 +173,7 @@ const sampleItems = [
     weightedaveragecost: 0.65,
     reorderpoint: 20,
     leadtimedays: 3,
-    isarchived: false
+    isarchived: false,
   },
   {
     name: 'Bubble Wrap Rolls',
@@ -181,38 +181,35 @@ const sampleItems = [
     type: 'packaging' as ItemType,
     inventoryunit: 'each' as InventoryUnit,
     currentquantity: 12,
-    weightedaveragecost: 8.50,
+    weightedaveragecost: 8.5,
     reorderpoint: 4,
     leadtimedays: 5,
-    isarchived: false
-  }
-]
+    isarchived: false,
+  },
+];
 
 export async function seedSampleData() {
   try {
-    console.log('Adding sample data to remote database...')
-    
-    const results = []
-    let successCount = 0
-    let errorCount = 0
-    
+    console.log('Adding sample data to remote database...');
+
+    const results = [];
+    let successCount = 0;
+    let errorCount = 0;
+
     for (const item of sampleItems) {
-      const { error } = await supabase
-        .from('items')
-        .insert([item])
-        .select()
-      
+      const { error } = await supabase.from('items').insert([item]).select();
+
       if (error) {
-        console.error(`Error inserting ${item.name}:`, error.message)
-        results.push({ item: item.name, success: false, error: error.message })
-        errorCount++
+        console.error(`Error inserting ${item.name}:`, error.message);
+        results.push({ item: item.name, success: false, error: error.message });
+        errorCount++;
       } else {
-        console.log(`Added: ${item.name}`)
-        results.push({ item: item.name, success: true })
-        successCount++
+        console.log(`Added: ${item.name}`);
+        results.push({ item: item.name, success: true });
+        successCount++;
       }
     }
-    
+
     return {
       success: true,
       message: `Added ${successCount} items successfully. ${errorCount} errors.`,
@@ -222,15 +219,14 @@ export async function seedSampleData() {
         success: successCount,
         errors: errorCount,
         ingredients: sampleItems.filter(i => i.type === 'ingredient').length,
-        packaging: sampleItems.filter(i => i.type === 'packaging').length
-      }
-    }
-    
+        packaging: sampleItems.filter(i => i.type === 'packaging').length,
+      },
+    };
   } catch (error) {
-    console.error('Failed to seed sample data:', error)
+    console.error('Failed to seed sample data:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
-} 
+}

@@ -1,10 +1,10 @@
 ---
-title: "API Documentation"
-description: "API endpoints, Supabase RPCs, and server actions for internal inventory management"
-purpose: "Reference for API integration and backend functionality"
-last_updated: "July 18, 2025"
-doc_type: "api-reference"
-related: ["data-model.md", "technical-design.md", "requirements.md"]
+title: 'API Documentation'
+description: 'API endpoints, Supabase RPCs, and server actions for internal inventory management'
+purpose: 'Reference for API integration and backend functionality'
+last_updated: 'July 18, 2025'
+doc_type: 'api-reference'
+related: ['data-model.md', 'technical-design.md', 'requirements.md']
 ---
 
 # API Documentation
@@ -18,11 +18,13 @@ Comprehensive API documentation for the internal KIRO inventory management syste
 ### Core Business Logic Functions
 
 #### `calculate_wac(item_id UUID)`
+
 **Purpose**: Calculate weighted average cost for an inventory item
-**Parameters**: 
+**Parameters**:
+
 - `item_id`: UUID of the item to calculate WAC for
-**Returns**: `DECIMAL` - The calculated weighted average cost
-**Logic**: Uses all non-draft purchase history to calculate WAC
+  **Returns**: `DECIMAL` - The calculated weighted average cost
+  **Logic**: Uses all non-draft purchase history to calculate WAC
 
 ```sql
 CREATE OR REPLACE FUNCTION calculate_wac(item_id UUID)
@@ -33,7 +35,7 @@ DECLARE
     wac DECIMAL := 0;
 BEGIN
     -- Calculate total cost and quantity from purchase history
-    SELECT 
+    SELECT
         COALESCE(SUM(pli.total_cost), 0),
         COALESCE(SUM(pli.quantity), 0)
     INTO total_cost, total_quantity
@@ -41,23 +43,25 @@ BEGIN
     JOIN purchases p ON pli.purchase_id = p.purchase_id
     WHERE pli.item_id = calculate_wac.item_id
     AND p.is_draft = false;
-    
+
     -- Calculate WAC
     IF total_quantity > 0 THEN
         wac := total_cost / total_quantity;
     END IF;
-    
+
     RETURN wac;
 END;
 $$ LANGUAGE plpgsql;
 ```
 
 #### `get_cycle_count_alerts(threshold INTEGER DEFAULT 5)`
+
 **Purpose**: Get items that need cycle count attention
 **Parameters**:
+
 - `threshold`: Maximum number of alerts to return (default: 5)
-**Returns**: `TABLE` with alert information
-**Logic**: Priority algorithm based on time since last count and current quantity
+  **Returns**: `TABLE` with alert information
+  **Logic**: Priority algorithm based on time since last count and current quantity
 
 ```sql
 CREATE OR REPLACE FUNCTION get_cycle_count_alerts(threshold INTEGER DEFAULT 5)
@@ -73,7 +77,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         i.item_id,
         i.sku,
         i.name,
@@ -81,15 +85,15 @@ BEGIN
         i.reorder_point,
         -- Priority algorithm: (days since last count / 30) + (1 - current qty / reorder point)
         COALESCE(
-            (CURRENT_DATE - i.last_counted_date)::DECIMAL / 30, 
+            (CURRENT_DATE - i.last_counted_date)::DECIMAL / 30,
             1
         ) + (1 - i.current_quantity::DECIMAL / GREATEST(i.reorder_point, 1)) as priority_score,
-        CASE 
+        CASE
             WHEN i.current_quantity < 0 THEN 'NEGATIVE_INVENTORY'
             WHEN i.current_quantity < i.reorder_point THEN 'LOW_STOCK'
             ELSE 'OVERDUE_COUNT'
         END as alert_type,
-        CASE 
+        CASE
             WHEN i.current_quantity < 0 THEN ABS(i.current_quantity)
             WHEN i.current_quantity < i.reorder_point THEN i.reorder_point - i.current_quantity
             ELSE 0
@@ -97,8 +101,8 @@ BEGIN
     FROM items i
     WHERE i.is_archived = false
     AND (
-        i.current_quantity < 0 OR 
-        i.current_quantity < i.reorder_point OR 
+        i.current_quantity < 0 OR
+        i.current_quantity < i.reorder_point OR
         i.last_counted_date IS NULL OR
         i.last_counted_date < CURRENT_DATE - INTERVAL '30 days'
     )
@@ -109,11 +113,13 @@ $$ LANGUAGE plpgsql;
 ```
 
 #### `calculate_forecasting(item_id UUID)`
+
 **Purpose**: Calculate forecasting data for an item
 **Parameters**:
+
 - `item_id`: UUID of the item to forecast
-**Returns**: `TABLE` with forecasting information
-**Logic**: 3-month moving average with seasonal adjustments
+  **Returns**: `TABLE` with forecasting information
+  **Logic**: 3-month moving average with seasonal adjustments
 
 ```sql
 CREATE OR REPLACE FUNCTION calculate_forecasting(item_id UUID)
@@ -133,19 +139,19 @@ BEGIN
     FROM sales_periods
     WHERE item_id = calculate_forecasting.item_id
     AND period_end >= CURRENT_DATE - INTERVAL '3 months';
-    
+
     -- Get item lead time
     SELECT COALESCE(lead_time_days, 7)
     INTO lead_time
     FROM items
     WHERE item_id = calculate_forecasting.item_id;
-    
+
     -- Calculate seasonal index (simplified)
     -- In production, this would use more sophisticated seasonal analysis
     seasonal_factor := 1.0 + (EXTRACT(MONTH FROM CURRENT_DATE) - 6) * 0.1;
-    
+
     RETURN QUERY
-    SELECT 
+    SELECT
         (avg_demand * seasonal_factor)::INTEGER as predicted_demand,
         seasonal_factor as seasonal_index,
         (avg_demand * seasonal_factor * lead_time / 30 * 1.2)::INTEGER as recommended_reorder_point;
@@ -154,16 +160,18 @@ $$ LANGUAGE plpgsql;
 ```
 
 #### `update_item_quantity_atomic(item_id UUID, quantity_change INTEGER)`
+
 **Purpose**: Atomically update item quantity and log transaction
 **Parameters**:
+
 - `item_id`: UUID of the item to update
 - `quantity_change`: Amount to change quantity by (positive or negative)
-**Returns**: `TABLE` with updated quantity and transaction ID
-**Logic**: Prevents race conditions by using atomic database operations
+  **Returns**: `TABLE` with updated quantity and transaction ID
+  **Logic**: Prevents race conditions by using atomic database operations
 
 ```sql
 CREATE OR REPLACE FUNCTION update_item_quantity_atomic(
-    item_id UUID, 
+    item_id UUID,
     quantity_change INTEGER
 )
 RETURNS TABLE (
@@ -174,20 +182,20 @@ DECLARE
     new_transaction_id UUID;
 BEGIN
     -- Atomically update item quantity
-    UPDATE items 
+    UPDATE items
     SET current_quantity = current_quantity + quantity_change,
         updated_at = NOW()
     WHERE itemId = item_id;
-    
+
     -- Log the transaction
     INSERT INTO transactions (item_id, transaction_type, quantity_change, created_at)
     VALUES (item_id, 'adjustment', quantity_change, NOW())
     RETURNING transactionId INTO new_transaction_id;
-    
+
     -- Return updated quantity and transaction ID
     RETURN QUERY
     SELECT current_quantity, new_transaction_id
-    FROM items 
+    FROM items
     WHERE itemId = item_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -196,12 +204,14 @@ $$ LANGUAGE plpgsql;
 ### Transaction Management Functions
 
 #### `create_purchase_with_line_items(purchase_data JSONB, line_items_data JSONB[])`
+
 **Purpose**: Create a purchase with line items atomically
 **Parameters**:
+
 - `purchase_data`: JSON object with purchase details
 - `line_items_data`: Array of JSON objects with line item details
-**Returns**: `UUID` - The created purchase ID
-**Logic**: Atomic transaction ensuring data consistency
+  **Returns**: `UUID` - The created purchase ID
+  **Logic**: Atomic transaction ensuring data consistency
 
 ```sql
 CREATE OR REPLACE FUNCTION create_purchase_with_line_items(
@@ -226,7 +236,7 @@ BEGIN
         notes,
         is_draft
     )
-    SELECT 
+    SELECT
         (purchase_data->>'supplier_id')::UUID,
         (purchase_data->>'purchase_date')::DATE,
         (purchase_data->>'effective_date')::DATE,
@@ -237,7 +247,7 @@ BEGIN
         purchase_data->>'notes',
         (purchase_data->>'is_draft')::BOOLEAN
     RETURNING purchase_id INTO new_purchase_id;
-    
+
     -- Insert line items and update inventory (only if not draft)
     FOR line_item IN SELECT * FROM jsonb_array_elements(line_items_data)
     LOOP
@@ -258,7 +268,7 @@ BEGIN
             (line_item->>'total_cost')::DECIMAL,
             line_item->>'notes'
         );
-        
+
         -- Update inventory and log transaction (only if purchase is not draft)
         IF NOT (purchase_data->>'is_draft')::BOOLEAN THEN
             -- Use atomic update to prevent race conditions
@@ -266,7 +276,7 @@ BEGIN
                 (line_item->>'item_id')::UUID,
                 (line_item->>'quantity')::INTEGER
             );
-            
+
             -- Log the purchase transaction
             INSERT INTO transactions (
                 item_id,
@@ -286,23 +296,25 @@ BEGIN
                 (line_item->>'unit_cost')::DECIMAL,
                 NOW()
             );
-            
+
             -- Recalculate WAC for the item
             PERFORM calculate_wac((line_item->>'item_id')::UUID);
         END IF;
     END LOOP;
-    
+
     RETURN new_purchase_id;
 END;
 $$ LANGUAGE plpgsql;
 ```
 
 #### `finalize_draft_purchase(purchase_id UUID)`
+
 **Purpose**: Convert a draft purchase to final and update inventory
 **Parameters**:
+
 - `purchase_id`: UUID of the draft purchase to finalize
-**Returns**: `BOOLEAN` - Success status
-**Logic**: Updates inventory, logs transactions, and recalculates WAC
+  **Returns**: `BOOLEAN` - Success status
+  **Logic**: Updates inventory, logs transactions, and recalculates WAC
 
 ```sql
 CREATE OR REPLACE FUNCTION finalize_draft_purchase(purchase_id UUID)
@@ -312,17 +324,17 @@ DECLARE
 BEGIN
     -- Verify purchase exists and is draft
     IF NOT EXISTS (
-        SELECT 1 FROM purchases 
-        WHERE purchase_id = finalize_draft_purchase.purchase_id 
+        SELECT 1 FROM purchases
+        WHERE purchase_id = finalize_draft_purchase.purchase_id
         AND is_draft = true
     ) THEN
         RAISE EXCEPTION 'Purchase not found or not a draft';
     END IF;
-    
+
     -- Process each line item
-    FOR line_item IN 
+    FOR line_item IN
         SELECT item_id, quantity, unit_cost, total_cost
-        FROM purchase_line_items 
+        FROM purchase_line_items
         WHERE purchase_id = finalize_draft_purchase.purchase_id
     LOOP
         -- Use atomic update to prevent race conditions
@@ -330,7 +342,7 @@ BEGIN
             line_item.item_id,
             line_item.quantity
         );
-        
+
         -- Log the purchase transaction
         INSERT INTO transactions (
             item_id,
@@ -350,21 +362,19 @@ BEGIN
             line_item.unit_cost,
             NOW()
         );
-        
+
         -- Recalculate WAC for the item
         PERFORM calculate_wac(line_item.item_id);
     END LOOP;
-    
+
     -- Mark purchase as finalized
-    UPDATE purchases 
+    UPDATE purchases
     SET is_draft = false, updated_at = NOW()
     WHERE purchase_id = finalize_draft_purchase.purchase_id;
-    
+
     RETURN true;
 END;
 $$ LANGUAGE plpgsql;
-```
-
 ```
 
 #### `create_batch_with_consumption(batch_data JSONB, consumption_data JSONB[])`
@@ -396,7 +406,7 @@ BEGIN
         actual_cost,
         notes
     )
-    SELECT 
+    SELECT
         (batch_data->>'recipe_id')::UUID,
         CURRENT_DATE,
         (batch_data->>'effective_date')::DATE,
@@ -406,7 +416,7 @@ BEGIN
         (batch_data->>'actual_cost')::DECIMAL,
         batch_data->>'notes'
     RETURNING batch_id INTO new_batch_id;
-    
+
     -- Process ingredient consumption
     FOREACH consumption IN ARRAY consumption_data
     LOOP
@@ -415,7 +425,7 @@ BEGIN
             (consumption->>'item_id')::UUID,
             -(consumption->>'quantity')::INTEGER
         );
-        
+
         -- Create transaction log entry
         INSERT INTO transactions (
             item_id,
@@ -436,7 +446,7 @@ BEGIN
             consumption->>'notes'
         );
     END LOOP;
-    
+
     RETURN new_batch_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -447,13 +457,14 @@ $$ LANGUAGE plpgsql;
 ### Items Management
 
 #### `createItem(formData: FormData)`
+
 **Purpose**: Create a new inventory item
 **Location**: `src/app/actions/items.ts`
 **Parameters**: FormData with item details
 **Returns**: Promise with success/error response
 
 ```typescript
-'use server'
+'use server';
 
 export async function createItem(formData: FormData) {
   try {
@@ -465,7 +476,7 @@ export async function createItem(formData: FormData) {
       currentQuantity: parseInt(formData.get('currentQuantity') as string),
       reorderPoint: parseInt(formData.get('reorderPoint') as string),
       leadTimeDays: parseInt(formData.get('leadTimeDays') as string),
-      primarySupplierId: formData.get('primarySupplierId') as string || null
+      primarySupplierId: (formData.get('primarySupplierId') as string) || null,
     };
 
     const { data, error } = await supabase
@@ -483,6 +494,7 @@ export async function createItem(formData: FormData) {
 ```
 
 #### `updateItemQuantity(itemId: string, quantityChange: number)`
+
 **Purpose**: Update item quantity atomically with transaction logging
 **Location**: `src/app/actions/items.ts`
 **Parameters**: itemId, quantityChange (positive for increase, negative for decrease)
@@ -490,16 +502,21 @@ export async function createItem(formData: FormData) {
 **Note**: Uses atomic database operations to prevent race conditions
 
 ```typescript
-'use server'
+'use server';
 
-export async function updateItemQuantity(itemId: string, quantityChange: number) {
+export async function updateItemQuantity(
+  itemId: string,
+  quantityChange: number
+) {
   try {
     // Use atomic update to prevent race conditions
-    const { data: updatedItem, error: updateError } = await supabase
-      .rpc('update_item_quantity_atomic', {
+    const { data: updatedItem, error: updateError } = await supabase.rpc(
+      'update_item_quantity_atomic',
+      {
         item_id: itemId,
-        quantity_change: quantityChange
-      });
+        quantity_change: quantityChange,
+      }
+    );
 
     if (updateError) throw updateError;
 
@@ -513,7 +530,7 @@ export async function updateItemQuantity(itemId: string, quantityChange: number)
         transaction_type: 'adjustment',
         quantity: quantityChange,
         effective_date: new Date().toISOString(),
-        notes: 'Manual quantity adjustment'
+        notes: 'Manual quantity adjustment',
       });
 
     if (transactionError) throw transactionError;
@@ -528,33 +545,144 @@ export async function updateItemQuantity(itemId: string, quantityChange: number)
 ### Purchase Management
 
 #### `createPurchase(purchaseData: PurchaseFormData)`
+
 **Purpose**: Create a new purchase with line items
 **Location**: `src/app/actions/purchases.ts`
 **Parameters**: PurchaseFormData object
 **Returns**: Promise with success/error response
 
 ```typescript
-'use server'
+'use server';
 
 export async function createPurchase(purchaseData: PurchaseFormData) {
   try {
-    const { data, error } = await supabase.rpc('create_purchase_with_line_items', {
-      purchase_data: {
-        supplier_id: purchaseData.supplierId,
-        purchase_date: purchaseData.purchaseDate,
-        effective_date: purchaseData.effectiveDate,
-        grand_total: purchaseData.grandTotal,
-        shipping: purchaseData.shipping,
-        taxes: purchaseData.taxes,
-        other_costs: purchaseData.otherCosts,
-        notes: purchaseData.notes,
-        is_draft: purchaseData.isDraft
-      },
-      line_items_data: purchaseData.lineItems
-    });
+    const { data, error } = await supabase.rpc(
+      'create_purchase_with_line_items',
+      {
+        purchase_data: {
+          supplier_id: purchaseData.supplierId,
+          purchase_date: purchaseData.purchaseDate,
+          effective_date: purchaseData.effectiveDate,
+          grand_total: purchaseData.grandTotal,
+          shipping: purchaseData.shipping,
+          taxes: purchaseData.taxes,
+          other_costs: purchaseData.otherCosts,
+          notes: purchaseData.notes,
+          is_draft: purchaseData.isDraft,
+        },
+        line_items_data: purchaseData.lineItems,
+      }
+    );
 
     if (error) throw error;
     return { success: true, data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+```
+
+#### `finalizeDraftPurchase(purchaseId: string)`
+
+**Purpose**: Convert a draft purchase to final and update inventory
+**Location**: `src/app/actions/purchases.ts`
+**Parameters**: purchaseId - UUID of the draft purchase
+**Returns**: Promise with success/error response
+**Logic**: Updates inventory, logs transactions, and recalculates WAC
+
+```typescript
+'use server';
+
+export async function finalizeDraftPurchase(purchaseId: string) {
+  try {
+    // Update purchase status
+    const { error: updateError } = await supabase
+      .from('purchases')
+      .update({ isDraft: false, updated_at: new Date().toISOString() })
+      .eq('purchaseId', purchaseId)
+      .eq('isDraft', true);
+
+    if (updateError) throw updateError;
+
+    // Get line items to update inventory
+    const { data: lineItems, error: lineItemsError } = await supabase
+      .from('purchase_line_items')
+      .select('itemid, quantity, unitcost')
+      .eq('purchaseid', purchaseId);
+
+    if (lineItemsError) throw lineItemsError;
+
+    // Update inventory for each line item
+    for (const lineItem of lineItems || []) {
+      const { error: inventoryError } = await supabase.rpc(
+        'update_item_quantity_atomic',
+        {
+          item_id: lineItem.itemid,
+          quantity_change: lineItem.quantity,
+        }
+      );
+
+      if (inventoryError) throw inventoryError;
+
+      // Log transaction
+      const { error: transactionError } = await supabase
+        .from('transactions')
+        .insert({
+          itemid: lineItem.itemid,
+          transactiontype: 'purchase',
+          quantity: lineItem.quantity,
+          referenceid: purchaseId,
+          referencetype: 'purchase',
+          unitcost: lineItem.unitcost,
+          effectivedate: new Date().toISOString().split('T')[0] || '',
+        });
+
+      if (transactionError) throw transactionError;
+    }
+
+    revalidatePath('/purchases');
+    revalidatePath('/items');
+    revalidatePath('/');
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+```
+
+#### `deleteDraftPurchase(purchaseId: string)`
+
+**Purpose**: Delete a draft purchase and its line items
+**Location**: `src/app/actions/purchases.ts`
+**Parameters**: purchaseId - UUID of the draft purchase
+**Returns**: Promise with success/error response
+**Safety**: Only deletes draft purchases
+
+```typescript
+'use server';
+
+export async function deleteDraftPurchase(purchaseId: string) {
+  try {
+    // Delete line items first (cascade should handle this, but being explicit)
+    const { error: lineItemsError } = await supabase
+      .from('purchase_line_items')
+      .delete()
+      .eq('purchase_id', purchaseId);
+
+    if (lineItemsError) throw lineItemsError;
+
+    // Delete purchase
+    const { error: purchaseError } = await supabase
+      .from('purchases')
+      .delete()
+      .eq('purchase_id', purchaseId)
+      .eq('is_draft', true); // Safety check - only delete drafts
+
+    if (purchaseError) throw purchaseError;
+
+    revalidatePath('/purchases');
+    return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -564,28 +692,32 @@ export async function createPurchase(purchaseData: PurchaseFormData) {
 ### Batch Management
 
 #### `createBatch(batchData: BatchFormData)`
+
 **Purpose**: Create a new batch with ingredient consumption
 **Location**: `src/app/actions/batches.ts`
 **Parameters**: BatchFormData object
 **Returns**: Promise with success/error response
 
 ```typescript
-'use server'
+'use server';
 
 export async function createBatch(batchData: BatchFormData) {
   try {
-    const { data, error } = await supabase.rpc('create_batch_with_consumption', {
-      batch_data: {
-        recipe_id: batchData.recipeId,
-        effective_date: batchData.effectiveDate,
-        qty_made: batchData.qtyMade,
-        material_cost: batchData.materialCost,
-        labor_cost: batchData.laborCost,
-        actual_cost: batchData.actualCost,
-        notes: batchData.notes
-      },
-      consumption_data: batchData.consumption
-    });
+    const { data, error } = await supabase.rpc(
+      'create_batch_with_consumption',
+      {
+        batch_data: {
+          recipe_id: batchData.recipeId,
+          effective_date: batchData.effectiveDate,
+          qty_made: batchData.qtyMade,
+          material_cost: batchData.materialCost,
+          labor_cost: batchData.laborCost,
+          actual_cost: batchData.actualCost,
+          notes: batchData.notes,
+        },
+        consumption_data: batchData.consumption,
+      }
+    );
 
     if (error) throw error;
     return { success: true, data };
@@ -595,25 +727,304 @@ export async function createBatch(batchData: BatchFormData) {
 }
 ```
 
+### CSV Import System
+
+#### `previewQBOImport(formData: FormData)`
+
+**Purpose**: Preview QBO sales CSV data without importing
+**Location**: `src/app/actions/csv-import.ts`
+**Parameters**: FormData with CSV content
+**Returns**: Promise with preview data and validation results
+
+```typescript
+'use server';
+
+export async function previewQBOImport(formData: FormData) {
+  try {
+    const csvContent = formData.get('csvContent') as string;
+
+    // Validate input
+    const validated = ImportPreviewSchema.parse({ csvContent });
+
+    // Validate QBO format
+    const formatValidation = validateQBOFormat(validated.csvContent);
+    if (!formatValidation.isValid) {
+      return createErrorResponse('Invalid QBO format', formatValidation.errors);
+    }
+
+    // Parse CSV data
+    const parsingResult = parseQBOSalesCSV(validated.csvContent);
+
+    if (!parsingResult.success) {
+      return createErrorResponse('CSV parsing failed', parsingResult.errors);
+    }
+
+    // Group by item for summary
+    const itemSummary = new Map<string, {
+      itemName: string;
+      totalQuantity: number;
+      totalRevenue: number;
+      saleCount: number;
+      dateRange: { start: Date; end: Date };
+    }>();
+
+    parsingResult.data?.forEach(sale => {
+      if (!itemSummary.has(sale.itemName)) {
+        itemSummary.set(sale.itemName, {
+          itemName: sale.itemName,
+          totalQuantity: 0,
+          totalRevenue: 0,
+          saleCount: 0,
+          dateRange: { start: sale.date, end: sale.date },
+        });
+      }
+
+      const summary = itemSummary.get(sale.itemName)!;
+      summary.totalQuantity += sale.quantity;
+      summary.totalRevenue += sale.revenue || 0;
+      summary.saleCount += 1;
+
+      if (sale.date < summary.dateRange.start) {
+        summary.dateRange.start = sale.date;
+      }
+      if (sale.date > summary.dateRange.end) {
+        summary.dateRange.end = sale.date;
+      }
+    });
+
+    return createSuccessResponse({
+      message: 'CSV preview generated successfully',
+      summary: {
+        totalRows: parsingResult.totalRows,
+        validRows: parsingResult.validRows,
+        items: Array.from(itemSummary.values()),
+        dateRange: {
+          start: Math.min(...Array.from(itemSummary.values()).map(s => s.dateRange.start.getTime())),
+          end: Math.max(...Array.from(itemSummary.values()).map(s => s.dateRange.end.getTime())),
+        },
+      },
+      rawData: parsingResult.data?.slice(0, 10), // First 10 rows for preview
+    });
+  } catch (error) {
+    return createErrorResponse('Failed to preview CSV data', error);
+  }
+}
+```
+
+#### `processQBOImport(formData: FormData)`
+
+**Purpose**: Process and import QBO sales data
+**Location**: `src/app/actions/csv-import.ts`
+**Parameters**: FormData with CSV content and import options
+**Returns**: Promise with import results and statistics
+
+```typescript
+'use server';
+
+export async function processQBOImport(formData: FormData) {
+  const supabase = createClient();
+
+  try {
+    const csvContent = formData.get('csvContent') as string;
+    const effectiveDate = formData.get('effectiveDate') as string;
+    const createMissingItems = formData.get('createMissingItems') === 'true';
+
+    // Validate input
+    const validated = ProcessImportSchema.parse({
+      csvContent,
+      effectiveDate,
+      createMissingItems,
+    });
+
+    // Parse CSV data
+    const parsingResult = parseQBOSalesCSV(validated.csvContent);
+
+    if (!parsingResult.success || !parsingResult.data) {
+      return createErrorResponse('CSV parsing failed', parsingResult.errors);
+    }
+
+    const salesData = parsingResult.data;
+    const results = {
+      itemsCreated: 0,
+      itemsUpdated: 0,
+      salesLogged: 0,
+      errors: [] as string[],
+    };
+
+    // Process each sale
+    for (const sale of salesData) {
+      try {
+        // Check if item exists
+        const { data: existingItem } = await supabase
+          .from('items')
+          .select('itemid, currentquantity, name')
+          .eq('name', sale.itemName)
+          .eq('isarchived', false)
+          .single();
+
+        let itemId: string;
+
+        if (existingItem) {
+          // Update existing item quantity
+          const newQuantity = (existingItem.currentquantity || 0) - sale.quantity;
+
+          const { error: updateError } = await supabase
+            .from('items')
+            .update({ currentquantity: newQuantity })
+            .eq('itemid', existingItem.itemid);
+
+          if (updateError) {
+            results.errors.push(`Failed to update ${sale.itemName}: ${updateError.message}`);
+            continue;
+          }
+
+          itemId = existingItem.itemid;
+          results.itemsUpdated++;
+        } else if (createMissingItems) {
+          // Create new item
+          const { data: newItem, error: createError } = await supabase
+            .from('items')
+            .insert({
+              name: sale.itemName,
+              sku: `QBO-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              type: 'product',
+              inventoryunit: 'each',
+              currentquantity: -sale.quantity, // Negative since it was sold
+              weightedaveragecost: 0,
+              reorderpoint: 0,
+              isarchived: false,
+            })
+            .select('itemid')
+            .single();
+
+          if (createError) {
+            results.errors.push(`Failed to create ${sale.itemName}: ${createError.message}`);
+            continue;
+          }
+
+          itemId = newItem.itemid;
+          results.itemsCreated++;
+        } else {
+          results.errors.push(`Item not found: ${sale.itemName} (create missing items is disabled)`);
+          continue;
+        }
+
+        // Log the sale transaction
+        const { error: transactionError } = await supabase
+          .from('transactions')
+          .insert({
+            itemid: itemId,
+            transactiontype: 'sale',
+            quantity: -sale.quantity,
+            referenceid: `QBO-${sale.date.toISOString().split('T')[0]}`,
+            effectivedate: (validated.effectiveDate 
+              ? new Date(validated.effectiveDate).toISOString().split('T')[0]
+              : sale.date.toISOString().split('T')[0]) || new Date().toISOString().split('T')[0] || '',
+            notes: `QBO import: ${sale.customer || 'Unknown customer'} - ${sale.channel || 'qbo'}`,
+          });
+
+        if (transactionError) {
+          results.errors.push(`Failed to log transaction for ${sale.itemName}: ${transactionError.message}`);
+          continue;
+        }
+
+        results.salesLogged++;
+      } catch (error) {
+        results.errors.push(`Error processing ${sale.itemName}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    }
+
+    // Revalidate relevant pages
+    revalidatePath('/items');
+    revalidatePath('/reports');
+
+    return createSuccessResponse({
+      message: 'QBO import completed',
+      results: {
+        ...results,
+        totalProcessed: salesData.length,
+        successRate: (((salesData.length - results.errors.length) / salesData.length) * 100).toFixed(1) + '%',
+      },
+    });
+  } catch (error) {
+    return createErrorResponse('Failed to process QBO import', error);
+  }
+}
+```
+
+### Seed Data Management
+
+#### `seedSampleData()`
+
+**Purpose**: Add sample inventory items for testing and demonstration
+**Location**: `src/app/actions/seed-data.ts`
+**Parameters**: None
+**Returns**: Promise with seeding results and statistics
+
+```typescript
+'use server';
+
+export async function seedSampleData() {
+  try {
+    console.log('Adding sample data to remote database...');
+
+    const results = [];
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const item of sampleItems) {
+      const { error } = await supabase.from('items').insert([item]).select();
+
+      if (error) {
+        console.error(`Error inserting ${item.name}:`, error.message);
+        results.push({ item: item.name, success: false, error: error.message });
+        errorCount++;
+      } else {
+        console.log(`Added: ${item.name}`);
+        results.push({ item: item.name, success: true });
+        successCount++;
+      }
+    }
+
+    return {
+      success: true,
+      message: `Added ${successCount} items successfully. ${errorCount} errors.`,
+      results,
+      summary: {
+        total: sampleItems.length,
+        success: successCount,
+        errors: errorCount,
+        ingredients: sampleItems.filter(i => i.type === 'ingredient').length,
+        packaging: sampleItems.filter(i => i.type === 'packaging').length,
+      },
+    };
+  } catch (error) {
+    console.error('Failed to seed sample data:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+```
+
 ## 📊 **Data Fetching (TanStack Query)**
 
 ### Items Queries
 
 #### `useItems()`
+
 **Purpose**: Fetch all items with filtering and search
 **Location**: `src/hooks/use-items.ts`
 **Parameters**: Optional filters and search terms
 **Returns**: Query result with items data
 
 ```typescript
-export function useItems(filters?: ItemFilters) {
+export function useItems(searchQuery = '', typeFilter = 'all') {
   return useQuery({
     queryKey: ['items', filters],
     queryFn: async () => {
-      let query = supabase
-        .from('items')
-        .select('*')
-        .eq('is_archived', false);
+      let query = supabase.from('items').select('*').eq('is_archived', false);
 
       if (filters?.type) {
         query = query.eq('type', filters.type);
@@ -626,12 +1037,13 @@ export function useItems(filters?: ItemFilters) {
       const { data, error } = await query;
       if (error) throw error;
       return data;
-    }
+    },
   });
 }
 ```
 
 #### `useCycleCountAlerts(limit?: number)`
+
 **Purpose**: Fetch cycle count alerts
 **Location**: `src/hooks/use-alerts.ts`
 **Parameters**: Optional limit (default: 5)
@@ -643,11 +1055,11 @@ export function useCycleCountAlerts(limit: number = 5) {
     queryKey: ['cycle-count-alerts', limit],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_cycle_count_alerts', {
-        threshold: limit
+        threshold: limit,
       });
       if (error) throw error;
       return data;
-    }
+    },
   });
 }
 ```
@@ -657,6 +1069,7 @@ export function useCycleCountAlerts(limit: number = 5) {
 ### Row Level Security (RLS) Policies
 
 #### Items Table Policy
+
 ```sql
 CREATE POLICY "Users can view their own items" ON items
 FOR SELECT USING (auth.uid() = user_id);
@@ -669,6 +1082,7 @@ FOR UPDATE USING (auth.uid() = user_id);
 ```
 
 #### Purchases Table Policy
+
 ```sql
 CREATE POLICY "Users can view their own purchases" ON purchases
 FOR SELECT USING (auth.uid() = user_id);
@@ -680,6 +1094,7 @@ FOR INSERT WITH CHECK (auth.uid() = user_id);
 ## 📝 **Error Handling**
 
 ### Standard Error Response Format
+
 ```typescript
 interface ApiResponse<T> {
   success: boolean;
@@ -689,17 +1104,88 @@ interface ApiResponse<T> {
 }
 ```
 
+### Error Handling Utilities
+
+#### `handleError(error: unknown, context: string): AppError`
+
+**Purpose**: Standardize error handling across the application
+**Location**: `src/lib/error-handling.ts`
+
+```typescript
+export function handleError(error: unknown, context: string): AppError {
+  console.error(`Error in ${context}:`, error);
+
+  if (error instanceof Error) {
+    return {
+      success: false,
+      error: error.message,
+      code: error.name,
+    };
+  }
+
+  if (typeof error === 'string') {
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  return {
+    success: false,
+    error: 'An unexpected error occurred',
+  };
+}
+```
+
+#### `createErrorResponse(message: string, details?: unknown): AppError`
+
+**Purpose**: Create standardized error responses
+**Location**: `src/lib/error-handling.ts`
+
+```typescript
+export function createErrorResponse(
+  message: string,
+  details?: unknown
+): AppError {
+  console.error('Error Response:', { message, details });
+  
+  return {
+    success: false,
+    error: message,
+    code: details ? 'VALIDATION_ERROR' : 'UNKNOWN_ERROR',
+  };
+}
+```
+
+#### `createSuccessResponse<T>(data: T): AppSuccess<T>`
+
+**Purpose**: Create standardized success responses
+**Location**: `src/lib/error-handling.ts`
+
+```typescript
+export function createSuccessResponse<T>(data: T): AppSuccess<T> {
+  return {
+    success: true,
+    data,
+  };
+}
+```
+
 ### Common Error Codes
+
 - `VALIDATION_ERROR`: Input validation failed
 - `NOT_FOUND`: Resource not found
 - `UNAUTHORIZED`: Authentication required
 - `FORBIDDEN`: Insufficient permissions
 - `DATABASE_ERROR`: Database operation failed
 - `NETWORK_ERROR`: Network connectivity issue
+- `CSV_PARSING_ERROR`: CSV format or parsing issues
+- `IMPORT_ERROR`: Data import processing failed
 
 ## 🚀 **Performance Considerations**
 
 ### Database Indexes
+
 ```sql
 -- Items table indexes
 CREATE INDEX idx_items_sku ON items(sku);
@@ -718,10 +1204,44 @@ CREATE INDEX idx_purchases_draft ON purchases(is_draft);
 ```
 
 ### Caching Strategy
+
 - **TanStack Query**: Automatic caching with 5-minute stale time
 - **Server Components**: Static generation where possible
 - **Database**: Query result caching for frequently accessed data
 
+## 📋 **CSV Import Specifications**
+
+### QBO Sales CSV Format
+
+**Required Headers:**
+- `Date` - Transaction date
+- `Transaction Type` - Must be "Sale" or "Invoice"
+- `Product/Service` - Item name
+- `Qty` - Quantity sold
+- `Amount` - Revenue amount
+
+**Optional Headers:**
+- `Description` - Alternative item name
+- `Rate` - Unit price
+- `Customer` - Customer name
+- `Channel` - Sales channel
+
+**Validation Rules:**
+- CSV must have at least header row and one data row
+- All required headers must be present
+- Quantity must be positive number
+- Date must be valid format
+- Non-sales transactions are automatically filtered out
+
+### Import Process Flow
+
+1. **File Upload**: User selects QBO CSV file
+2. **Format Validation**: System validates CSV structure
+3. **Data Preview**: Shows summary of items and quantities
+4. **Import Options**: Configure effective date and missing item creation
+5. **Processing**: Updates inventory and logs transactions
+6. **Results**: Shows success/error statistics
+
 ---
 
-*For detailed database schema, see [data-model.md](./data-model.md). For technical specifications, see [technical-design.md](./technical-design.md).* 
+_For detailed database schema, see [data-model.md](./data-model.md). For technical specifications, see [technical-design.md](./technical-design.md)._

@@ -1,10 +1,11 @@
 ---
-title: "Data Model and Architecture"
-description: "Database schema, architecture principles, and security design for internal business use"
-purpose: "Reference for data foundation, integrity patterns, and system architecture"
-last_updated: "July 18, 2025"
-doc_type: "technical-reference"
-related: ["README.md", "ui-blueprint.md", "development-guide.md", "requirements.md"]
+title: 'Data Model and Architecture'
+description: 'Database schema, architecture principles, and security design for internal business use'
+purpose: 'Reference for data foundation, integrity patterns, and system architecture'
+last_updated: 'July 18, 2025'
+doc_type: 'technical-reference'
+related:
+  ['README.md', 'ui-blueprint.md', 'development-guide.md', 'requirements.md']
 ---
 
 # Data Model and Architecture
@@ -16,18 +17,21 @@ Database schema and architectural foundation for internal inventory management w
 ## Part 1: Core Design Principles
 
 ### Data Integrity
+
 - **Mutable Transaction Logs**: Editable transactions with timestamps for flexible corrections.
 - **Negative Inventory Alerts**: Support real-world workflows by allowing negative inventory with robust alert system for user resolution
 - **Cycle Count Alerts**: Algorithm-based inventory checks to reduce manual monitoring.
 - **Cost Allocation**: Exclude non-inventory items from shipping/tax allocation to maintain COGS accuracy.
 
 ### Technical Foundation
+
 - **Authentication**: Supabase Auth with Row Level Security (RLS).
 - **Performance**: Next.js SSR with optimized PostgreSQL queries.
 - **Atomic Operations**: PostgreSQL RPCs for critical multi-step operations.
 - **On-Demand Costing with Caching**: Critical calculations like Weighted Average Cost (WAC) are performed on-demand by pure functions and cached in the `items` table. This decouples complex calculations from critical operations like saving purchases, reducing risk and simplifying logic.
 
 ### Design Patterns
+
 - **Display ID Pattern**: Separate user-facing identifiers (displayId) from database primary keys (UUID) for optimal UX and performance. Applied to batches, purchases, sales periods, and recipes.
 - **Optional Field Strategy**: Capture data fields for future analysis (laborCost, expiryDate) without implementing complex behaviors in MVP.
 - **Deferred Logic Approach**: Store data now, add complex system behaviors in Phase 2 to protect MVP timeline.
@@ -136,7 +140,12 @@ interface SalesPeriod {
 interface Transaction {
   transactionId: string;
   itemId: string;
-  transactionType: 'purchase' | 'sale' | 'adjustment' | 'batch_consumption' | 'batch_production';
+  transactionType:
+    | 'purchase'
+    | 'sale'
+    | 'adjustment'
+    | 'batch_consumption'
+    | 'batch_production';
   quantity: number;
   unitCost?: number;
   referenceId?: string;
@@ -223,7 +232,7 @@ enum ErrorType {
   DUPLICATE_DISPLAY_ID = 'DUPLICATE_DISPLAY_ID',
   ARCHIVED_REFERENCE = 'ARCHIVED_REFERENCE',
   INVALID_ALLOCATION = 'INVALID_ALLOCATION',
-  NO_PURCHASE_HISTORY = 'NO_PURCHASE_HISTORY'
+  NO_PURCHASE_HISTORY = 'NO_PURCHASE_HISTORY',
 }
 
 interface BusinessError {
@@ -234,9 +243,26 @@ interface BusinessError {
 }
 
 // Type definitions for inventory units and other enums
-type InventoryUnit = 'each' | 'lb' | 'oz' | 'kg' | 'g' | 'gal' | 'qt' | 'pt' | 'cup' | 'fl_oz' | 'ml' | 'l';
+type InventoryUnit =
+  | 'each'
+  | 'lb'
+  | 'oz'
+  | 'kg'
+  | 'g'
+  | 'gal'
+  | 'qt'
+  | 'pt'
+  | 'cup'
+  | 'fl_oz'
+  | 'ml'
+  | 'l';
 type ItemType = 'ingredient' | 'packaging' | 'product';
-type TransactionType = 'purchase' | 'sale' | 'adjustment' | 'batch_consumption' | 'batch_production';
+type TransactionType =
+  | 'purchase'
+  | 'sale'
+  | 'adjustment'
+  | 'batch_consumption'
+  | 'batch_production';
 ```
 
 ## Part 3: Database Schema
@@ -408,31 +434,33 @@ CREATE TYPE data_source AS ENUM ('manual', 'imported');
 ### Core Business Functions
 
 #### Weighted Average Cost Calculation
+
 ```sql
 CREATE OR REPLACE FUNCTION calculate_wac(item_id UUID)
 RETURNS NUMERIC AS $$
 DECLARE
   result NUMERIC;
 BEGIN
-  SELECT 
+  SELECT
     SUM(quantity * unitCost) / SUM(quantity)
   INTO result
   FROM purchase_line_items pli
   JOIN purchases p ON pli.purchaseId = p.purchaseId
   WHERE pli.itemId = item_id
     AND p.isDraft = false;
-    
+
   IF result IS NULL THEN
     RAISE WARNING 'NO_HISTORY: No purchase history found for item %', item_id;
     RETURN 0;
   END IF;
-  
+
   RETURN result;
 END;
 $$ LANGUAGE plpgsql;
 ```
 
 #### Cycle Count Alert Algorithm
+
 ```sql
 CREATE OR REPLACE FUNCTION get_cycle_count_alerts(limit_count INTEGER DEFAULT 5)
 RETURNS TABLE(
@@ -446,15 +474,15 @@ RETURNS TABLE(
 ) AS $$
 BEGIN
   RETURN QUERY
-  SELECT 
+  SELECT
     i.itemId,
     i.SKU,
     i.name,
     i.currentQuantity,
     i.reorderPoint,
-    ((CURRENT_DATE - COALESCE(i.lastCountedDate, CURRENT_DATE - INTERVAL '365 days')) / 30.0) + 
+    ((CURRENT_DATE - COALESCE(i.lastCountedDate, CURRENT_DATE - INTERVAL '365 days')) / 30.0) +
     (1 - i.currentQuantity / GREATEST(COALESCE(i.reorderPoint, 1), 1)) as priorityScore,
-    CASE 
+    CASE
       WHEN i.currentQuantity < 0 THEN 'NEGATIVE_INVENTORY'
       WHEN i.currentQuantity <= COALESCE(i.reorderPoint, 0) THEN 'LOW_STOCK'
     END as alertType
@@ -467,6 +495,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 #### Inventory Forecasting Logic
+
 ```sql
 CREATE OR REPLACE FUNCTION calculate_forecasting(item_id UUID)
 RETURNS VOID AS $$
@@ -477,7 +506,7 @@ DECLARE
   recommended_reorder NUMERIC;
 BEGIN
   -- Calculate 3-month moving average
-  SELECT 
+  SELECT
     AVG(quantitySold) / 30.0, -- Daily average
     COALESCE(i.leadTimeDays, 7)
   INTO avg_monthly_sales, lead_time_days
@@ -485,38 +514,38 @@ BEGIN
   JOIN items i ON sp.itemId = i.itemId
   WHERE sp.itemId = item_id
     AND sp.periodEnd >= CURRENT_DATE - INTERVAL '3 months';
-  
+
   -- Simple seasonality: compare current month to average
-  SELECT 
+  SELECT
     COALESCE(
-      (SELECT AVG(quantitySold) FROM sales_periods 
-       WHERE itemId = item_id 
+      (SELECT AVG(quantitySold) FROM sales_periods
+       WHERE itemId = item_id
          AND EXTRACT(MONTH FROM periodStart) = EXTRACT(MONTH FROM CURRENT_DATE)
-         AND periodEnd >= CURRENT_DATE - INTERVAL '12 months') / 
-      NULLIF(avg_monthly_sales * 30, 0), 
+         AND periodEnd >= CURRENT_DATE - INTERVAL '12 months') /
+      NULLIF(avg_monthly_sales * 30, 0),
       1.0
     )
   INTO seasonal_index;
-  
+
   -- Calculate recommended reorder point
   recommended_reorder := (avg_monthly_sales * lead_time_days * seasonal_index) * 1.2; -- 20% buffer
-  
+
   -- Upsert forecasting data for trending
   INSERT INTO forecasting_data (itemId, predictedDemand, seasonalIndex, recommendedReorderPoint, isAutomatic, calculatedAt)
   VALUES (item_id, avg_monthly_sales * 30, seasonal_index, recommended_reorder, TRUE, NOW())
-  ON CONFLICT (itemId) 
-  DO UPDATE SET 
+  ON CONFLICT (itemId)
+  DO UPDATE SET
     predictedDemand = EXCLUDED.predictedDemand,
     seasonalIndex = EXCLUDED.seasonalIndex,
     recommendedReorderPoint = EXCLUDED.recommendedReorderPoint,
     calculatedAt = EXCLUDED.calculatedAt;
-  
+
   -- Only update item's reorder point if in automatic mode
-  UPDATE items 
+  UPDATE items
   SET reorderPoint = recommended_reorder
   WHERE itemId = item_id
     AND EXISTS (
-      SELECT 1 FROM forecasting_data 
+      SELECT 1 FROM forecasting_data
       WHERE itemId = item_id AND isAutomatic = TRUE
     );
 END;
@@ -526,6 +555,7 @@ $$ LANGUAGE plpgsql;
 ## Part 5: Error Handling Standards
 
 ### Standardized Error Types
+
 - **NEGATIVE_INVENTORY_WARNING**: "[SKU] will go to [qty] (short by [amount]). This transaction will be logged but requires attention."
 - **INSUFFICIENT_STOCK**: "Insufficient [SKU] for batch (available: [qty], needed: [qty])"
 - **DUPLICATE_DISPLAY_ID**: "[type] reference [displayId] already exists"
@@ -533,11 +563,13 @@ $$ LANGUAGE plpgsql;
 - **INVALID_ALLOCATION**: "Cannot allocate shipping/taxes to non-inventory items"
 
 ### Alert Types for UI
+
 - **NEGATIVE_INVENTORY**: Critical alert for items with currentQuantity < 0
 - **LOW_STOCK**: Warning alert for items below reorder point
 - **SHORTAGE_AMOUNT**: Calculated field showing how much inventory is short (ABS of negative quantity)
 
 ### RPC Error Handling Pattern
+
 ```sql
 -- Standard error raising in RPCs
 IF condition_failed THEN

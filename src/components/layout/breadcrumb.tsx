@@ -1,32 +1,37 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { ChevronRight, Home } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ChevronRight, Home } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface BreadcrumbItem {
-  label: string
-  href?: string
+  label: string;
+  href?: string;
 }
 
 interface BreadcrumbProps {
-  items?: BreadcrumbItem[]
-  className?: string
+  items?: BreadcrumbItem[];
+  className?: string;
 }
 
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
-  const pathname = usePathname()
-  
+  const pathname = usePathname();
+
   // Auto-generate breadcrumbs from pathname if items not provided
-  const breadcrumbItems = items || generateBreadcrumbs(pathname)
+  const breadcrumbItems = items || generateBreadcrumbs(pathname);
 
   if (breadcrumbItems.length <= 1) {
-    return null
+    return null;
   }
 
   return (
-    <nav className={cn('flex items-center space-x-1 text-sm text-gray-600', className)}>
+    <nav
+      className={cn(
+        'flex items-center space-x-1 text-sm text-gray-600',
+        className
+      )}
+    >
       <Link
         href="/"
         className="flex items-center hover:text-gray-900 transition-colors"
@@ -49,22 +54,22 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
         </div>
       ))}
     </nav>
-  )
+  );
 }
 
 function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
-  const segments = pathname.split('/').filter(Boolean)
-  const breadcrumbs: BreadcrumbItem[] = []
+  const segments = pathname.split('/').filter(Boolean);
+  const breadcrumbs: BreadcrumbItem[] = [];
 
   segments.forEach((segment, index) => {
-    const href = '/' + segments.slice(0, index + 1).join('/')
-    const label = segment.charAt(0).toUpperCase() + segment.slice(1)
-    
+    const href = '/' + segments.slice(0, index + 1).join('/');
+    const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+
     breadcrumbs.push({
       label: label.replace(/-/g, ' '),
-      ...(index < segments.length - 1 ? { href } : {})
-    })
-  })
+      ...(index < segments.length - 1 ? { href } : {}),
+    });
+  });
 
-  return breadcrumbs
+  return breadcrumbs;
 }

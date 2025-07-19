@@ -11,7 +11,7 @@ export default function ItemsLoading() {
             <div className="h-10 bg-gray-200 rounded w-32"></div>
           </div>
         </div>
-        
+
         {/* Search bar skeleton */}
         <div className="flex items-center space-x-4">
           <div className="flex-1 animate-pulse">
@@ -58,5 +58,5 @@ export default function ItemsLoading() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

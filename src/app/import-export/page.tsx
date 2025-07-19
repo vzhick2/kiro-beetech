@@ -1,21 +1,23 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Upload, Download, FileText } from 'lucide-react'
-import { CSVImportModal } from '@/components/import-export/csv-import-modal'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Upload, Download, FileText } from 'lucide-react';
+import { CSVImportModal } from '@/components/import-export/csv-import-modal';
 
 export default function ImportExportPage() {
-  const [showQBOImport, setShowQBOImport] = useState(false)
+  const [showQBOImport, setShowQBOImport] = useState(false);
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Import / Export</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Import / Export
+        </h1>
         <p className="text-gray-600">
           Import and export your data, and download templates.
         </p>
       </div>
-      
+
       <div className="grid gap-6 md:grid-cols-2">
         {/* Import Data Section */}
         <div className="rounded-lg border border-gray-200 bg-white p-6">
@@ -36,8 +38,8 @@ export default function ImportExportPage() {
               <Upload className="mr-2 h-4 w-4" />
               Import Sales (CSV)
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full justify-start bg-green-50 border-green-200 hover:bg-green-100"
               onClick={() => setShowQBOImport(true)}
             >
@@ -96,11 +98,11 @@ export default function ImportExportPage() {
       <CSVImportModal
         isOpen={showQBOImport}
         onClose={() => setShowQBOImport(false)}
-        onImportComplete={(result) => {
-          console.log('QBO Import completed:', result)
+        onImportComplete={result => {
+          console.log('QBO Import completed:', result);
           // Could refresh data or show success message
         }}
       />
     </div>
-  )
+  );
 }
