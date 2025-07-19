@@ -66,8 +66,12 @@ export function InlineQuantityEditor({
   }
 
   const getQuantityColor = (qty: number) => {
-    if (qty < 0) return 'text-red-600'
-    if (qty < 20) return 'text-amber-600'
+    if (qty < 0) {
+      return 'text-red-600'
+    }
+    if (qty < 20) {
+      return 'text-amber-600'
+    }
     return 'text-green-600'
   }
 

@@ -56,7 +56,9 @@ export function useUpdateSupplier() {
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },
         (oldData: Supplier[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.map(supplier => 
             supplier.supplierId === supplierId ? { ...supplier, ...updatedSupplier } : supplier
           )
@@ -86,7 +88,9 @@ export function useDeleteSupplier() {
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },
         (oldData: Supplier[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.filter(supplier => supplier.supplierId !== supplierId)
         }
       )
@@ -114,7 +118,9 @@ export function useBulkDeleteSuppliers() {
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },
         (oldData: Supplier[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.filter(supplier => !supplierIds.includes(supplier.supplierId))
         }
       )
@@ -142,7 +148,9 @@ export function useBulkArchiveSuppliers() {
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },
         (oldData: Supplier[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.map(supplier => 
             supplierIds.includes(supplier.supplierId) 
               ? { ...supplier, isArchived: true }

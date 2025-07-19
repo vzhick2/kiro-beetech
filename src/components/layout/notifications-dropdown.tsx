@@ -95,12 +95,18 @@ export function NotificationsDropdown({ isOpen, onClose, notifications = [] }: N
     const now = new Date()
     const diffMinutes = Math.floor((now.getTime() - date.getTime()) / 60000)
     
-    if (diffMinutes < 60) return `${diffMinutes}m ago`
-    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`
+    if (diffMinutes < 60) {
+      return `${diffMinutes}m ago`
+    }
+    if (diffMinutes < 1440) {
+      return `${Math.floor(diffMinutes / 60)}h ago`
+    }
     return `${Math.floor(diffMinutes / 1440)}d ago`
   }
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    return null
+  }
 
   return (
     <div className="absolute top-12 right-0 w-80 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-xl z-50">

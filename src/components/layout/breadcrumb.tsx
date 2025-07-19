@@ -21,7 +21,9 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
   // Auto-generate breadcrumbs from pathname if items not provided
   const breadcrumbItems = items || generateBreadcrumbs(pathname)
 
-  if (breadcrumbItems.length <= 1) return null
+  if (breadcrumbItems.length <= 1) {
+    return null
+  }
 
   return (
     <nav className={cn('flex items-center space-x-1 text-sm text-gray-600', className)}>

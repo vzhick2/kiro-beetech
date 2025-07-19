@@ -95,7 +95,9 @@ export function useUpdateItem() {
       queryClient.setQueriesData(
         { queryKey: itemsKeys.lists() },
         (oldData: Item[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.map(item => 
             item.itemId === itemId ? { ...item, ...updatedItem } : item
           )
@@ -106,7 +108,9 @@ export function useUpdateItem() {
       queryClient.setQueryData(
         itemsKeys.detail(itemId),
         (oldData: { item: Item; transactions: unknown[] } | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return { ...oldData, item: { ...oldData.item, ...updatedItem } }
         }
       )
@@ -134,7 +138,9 @@ export function useDeleteItem() {
       queryClient.setQueriesData(
         { queryKey: itemsKeys.lists() },
         (oldData: Item[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.filter(item => item.itemId !== itemId)
         }
       )
@@ -165,7 +171,9 @@ export function useBulkDeleteItems() {
       queryClient.setQueriesData(
         { queryKey: itemsKeys.lists() },
         (oldData: Item[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.filter(item => !itemIds.includes(item.itemId))
         }
       )
@@ -198,7 +206,9 @@ export function useBulkArchiveItems() {
       queryClient.setQueriesData(
         { queryKey: itemsKeys.lists() },
         (oldData: Item[] | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData) {
+            return oldData
+          }
           return oldData.map(item => 
             itemIds.includes(item.itemId) 
               ? { ...item, isArchived: true }
@@ -212,7 +222,9 @@ export function useBulkArchiveItems() {
         queryClient.setQueryData(
           itemsKeys.detail(itemId),
           (oldData: { item: Item; transactions: unknown[] } | undefined) => {
-            if (!oldData) return oldData
+            if (!oldData) {
+              return oldData
+            }
             return { 
               ...oldData, 
               item: { ...oldData.item, isarchived: true } 

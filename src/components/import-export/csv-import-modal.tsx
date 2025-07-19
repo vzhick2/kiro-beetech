@@ -48,7 +48,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      return
+    }
 
     if (!file.name.toLowerCase().endsWith('.csv')) {
       setErrors(['Please select a CSV file'])
@@ -81,7 +83,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
   }
 
   const handlePreview = async () => {
-    if (!csvContent) return
+    if (!csvContent) {
+      return
+    }
 
     setIsLoading(true)
     setErrors([])
@@ -106,7 +110,9 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
   }
 
   const handleImport = async () => {
-    if (!csvContent) return
+    if (!csvContent) {
+      return
+    }
 
     setIsLoading(true)
     setStep('importing')

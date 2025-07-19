@@ -120,7 +120,9 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
   }, [items])
 
   const handleBulkDelete = useCallback(async () => {
-    if (selectedRows.size === 0) return
+    if (selectedRows.size === 0) {
+      return
+    }
     
     try {
       const itemIds = Array.from(selectedRows)
@@ -132,7 +134,9 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
   }, [selectedRows, bulkDeleteMutation])
 
   const handleBulkArchive = useCallback(async () => {
-    if (selectedRows.size === 0) return
+    if (selectedRows.size === 0) {
+      return
+    }
     
     try {
       const itemIds = Array.from(selectedRows)

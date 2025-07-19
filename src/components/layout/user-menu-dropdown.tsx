@@ -41,7 +41,9 @@ export function UserMenuDropdown({
     onClose()
   }
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    return null
+  }
 
   return (
     <div className="absolute top-12 right-0 w-72 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-xl z-50">

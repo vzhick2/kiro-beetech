@@ -91,7 +91,9 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
   }, [suppliers])
 
   const handleBulkDelete = useCallback(async () => {
-    if (selectedRows.size === 0) return
+    if (selectedRows.size === 0) {
+      return
+    }
     
     try {
       const supplierIds = Array.from(selectedRows)
@@ -103,7 +105,9 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
   }, [selectedRows, bulkDeleteMutation])
 
   const handleBulkArchive = useCallback(async () => {
-    if (selectedRows.size === 0) return
+    if (selectedRows.size === 0) {
+      return
+    }
     
     try {
       const supplierIds = Array.from(selectedRows)
