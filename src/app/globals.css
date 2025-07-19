@@ -12,14 +12,6 @@
     /* 2025 Mobile UX: Prevent zoom on input focus */
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    /* Enhanced viewport control for all pages */
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
   
   /* Prevent zoom on all input elements across the entire app */
@@ -27,12 +19,10 @@
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     font-size: 16px; /* Prevents iOS zoom on focus */
-    touch-action: manipulation;
   }
   
   /* Prevent zoom on all interactive elements */
   button, a, [role="button"] {
-    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
   
@@ -48,12 +38,6 @@
 @layer components {
   .no-flash {
     /* Remove onclick Background Color Change */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     -webkit-tap-highlight-color: transparent;
     /* 2025 Mobile UX: Better touch targets */
     min-height: 44px;
@@ -111,10 +95,6 @@
   /* 2025 Mobile UX: Prevent overscroll bounce on iOS */
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
-  /* Enhanced viewport control */
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 .main-layout {
@@ -131,10 +111,6 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  /* Enhanced viewport control for all content */
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
   /* Prevent zoom on content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -171,9 +147,6 @@
 
 /* Enhanced viewport control for tables and complex layouts */
 table, .table-container {
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
   /* Prevent zoom on table content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -181,16 +154,12 @@ table, .table-container {
 
 /* Prevent zoom on all interactive elements in tables */
 table button, table input, table select, table a {
-  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   font-size: 16px; /* Prevents iOS zoom on focus */
 }
 
 /* Ensure consistent viewport behavior across all pages */
 .page-container {
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
   /* Prevent zoom on page content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;

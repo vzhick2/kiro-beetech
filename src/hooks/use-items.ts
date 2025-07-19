@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getItems, updateItem, deleteItem, bulkDeleteItems, bulkArchiveItems, getItemDetails } from '@/app/actions/items'
 import { Item } from '@/types'
+import type { Tables } from '@/types/database'
+
+// Type for the database response from getItems
+type ItemFromDB = Tables<'items'> & {
+  lastUsedSupplier: string | null
+  primary_supplier: { name: string } | null
+}
 
 // Query keys for consistent caching
 export const itemsKeys = {
@@ -23,8 +30,7 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
         }
         
         // Transform database fields to match TypeScript interface
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const transformedItems: Item[] = (result.data || []).map((dbItem: any) => ({
+        const transformedItems: Item[] = (result.data || []).map((dbItem: ItemFromDB) => ({
           itemId: dbItem.itemid,
           name: dbItem.name,
           SKU: dbItem.sku,
@@ -32,12 +38,12 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
           inventoryUnit: dbItem.inventoryunit,
           currentQuantity: dbItem.currentquantity || 0,
           weightedAverageCost: dbItem.weightedaveragecost || 0,
-          reorderPoint: dbItem.reorderpoint,
+          reorderPoint: dbItem.reorderpoint || undefined,
           lastCountedDate: dbItem.lastcounteddate ? new Date(dbItem.lastcounteddate) : undefined,
-          primarySupplierId: dbItem.primarysupplierid,
+          primarySupplierId: dbItem.primarysupplierid || undefined,
           leadTimeDays: dbItem.leadtimedays || 7,
           isArchived: dbItem.isarchived || false,
-          created_at: new Date(dbItem.created_at),
+          created_at: new Date(dbItem.created_at || new Date()),
           updated_at: dbItem.updated_at ? new Date(dbItem.updated_at) : undefined,
           lastUsedSupplier: dbItem.lastUsedSupplier || undefined,
           primarySupplierName: dbItem.primary_supplier?.name || undefined

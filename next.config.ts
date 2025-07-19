@@ -1,17 +1,18 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Development optimizations
-  experimental: {
-    // Faster development builds
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  // Turbopack configuration (now stable)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
+  },
+
+  // Development optimizations
+  experimental: {
     // Optimize for development speed
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
@@ -75,13 +76,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
-  // Development server optimizations
-  devIndicators: {
-    buildActivity: false, // Disable build activity indicator for speed
-  },
-
-  // Experimental features for better performance
-  swcMinify: true,
+  // Performance optimizations
+  poweredByHeader: false,
+  compress: true,
 }
 
 export default nextConfig

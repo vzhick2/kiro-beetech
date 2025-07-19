@@ -10,6 +10,8 @@
     "type-check": "tsc --noEmit",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel",
+    "deploy:auto": "git add . && git commit -m \"Auto deployment\" && git push origin main",
+    "deploy:msg": "echo 'Usage: npm run deploy:msg -- \"Your commit message\"' && git add . && git commit -m",
     "supabase:types": "npx supabase gen types typescript --project-id jjpklpivpvywagmjjwpu > src/types/database.ts",
     "supabase:link": "echo 'Use: npx supabase link --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'",
     "supabase:status": "npx supabase status",

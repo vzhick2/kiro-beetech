@@ -60,28 +60,31 @@ You are a Senior Full-Stack Developer for a private internal inventory managemen
 - **Display ID pattern** for user-facing references
 
 ## Development Commands
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm lint` - Run ESLint
-- `pnpm type-check` - TypeScript checking
+- `pnpm dev` - Start development server (optional, for local testing)
+- `pnpm lint` - Run ESLint (optional, for pre-push validation)
+- `pnpm type-check` - TypeScript checking (optional, for pre-push validation)
 
-## Post-Fix Routine (MANDATORY)
-After completing any code changes, ALWAYS run this sequence to prevent internal server errors:
+## Simplified Workflow (Vercel Auto-Deployment)
+Since Vercel handles all build processes automatically, the recommended workflow is:
 
-1. **Clear Build Cache**: `Remove-Item -Recurse -Force .next` (Windows) or `rm -rf .next` (Unix)
-2. **Kill Node Processes**: `taskkill /f /im node.exe` (Windows) or `pkill -f node` (Unix)
-3. **Type Check**: `pnpm type-check` - Verify no TypeScript errors
-4. **Lint Check**: `pnpm lint` - Verify no ESLint errors
-5. **Build Test**: `pnpm build` - Ensure production build succeeds
-6. **Start Dev Server**: `pnpm dev` - Verify development server starts without errors
+1. **Make code changes**
+2. **Commit and push**: `git add . && git commit -m "description" && git push origin main`
+3. **Let Vercel handle the rest** - automatic type checking, linting, and deployment
 
-**If any step fails, fix the issue before proceeding to the next step.**
+## Optional Pre-Push Validation
+If you want to catch errors before pushing (recommended for complex changes):
+```bash
+pnpm type-check && pnpm lint
+git add .
+git commit -m "description"
+git push origin main
+```
 
 ## Error Prevention Rules
-- **Never skip the post-fix routine** - it prevents 90% of internal server errors
-- **Always clear cache** after structural changes (layout, routing, etc.)
-- **Check for port conflicts** if dev server fails to start
-- **Verify environment variables** are properly set in `.env.local`
+- **Vercel handles all build validation** automatically
+- **Check Vercel deployment logs** if builds fail
+- **Use local dev server** only when actively testing changes
+- **Verify environment variables** are properly set in Vercel dashboard
 - **Test on multiple pages** after making changes to shared components
 
 ## Documentation Auto-Update Rules
