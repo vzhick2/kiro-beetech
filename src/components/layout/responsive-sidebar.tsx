@@ -94,7 +94,7 @@ export function ResponsiveSidebar({
     }
 
     return (
-      <div className="w-48 flex-shrink-0 bg-slate-900/95 backdrop-blur-sm border-r border-slate-700/50 transition-all duration-200 ease-out">
+      <div className="w-48 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
         <NavigationContent />
       </div>
     );
@@ -107,7 +107,7 @@ export function ResponsiveSidebar({
       <div
         className={`fixed inset-0 z-30 transition-all duration-200 ease-out ${
           isOpen
-            ? 'bg-black/50 backdrop-blur-sm'
+            ? 'bg-black/50'
             : 'bg-transparent pointer-events-none'
         }`}
         onClick={onClose}
@@ -116,7 +116,7 @@ export function ResponsiveSidebar({
 
       {/* Sidebar overlay with slide + fade animation */}
       <div
-        className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900/95 backdrop-blur-md border-r border-slate-700/50 transition-all duration-200 ease-out ${
+        className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
       >

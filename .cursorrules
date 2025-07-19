@@ -109,3 +109,8 @@
 - Focus on real-world workflows and forgiving data entry
 - Implement business logic that matches actual workshop operations
 - Prioritize user experience over technical perfection 
+
+## Commit Message Standards
+- Use descriptive, present-tense messages
+- Include what was changed and why
+- Avoid generic messages like "fix bug" or "update code"

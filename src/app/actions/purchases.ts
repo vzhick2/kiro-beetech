@@ -81,7 +81,7 @@ export async function createDraftPurchase(purchaseData: {
 }) {
   try {
     const displayId = generateDisplayId();
-    
+
     const { data, error } = await supabase
       .from('purchases')
       .insert({
@@ -130,14 +130,30 @@ export async function updateDraftPurchase(
       updated_at: new Date().toISOString(),
     };
 
-    if (purchaseData.supplierId) { updateData.supplierid = purchaseData.supplierId; }
-    if (purchaseData.purchaseDate) { updateData.purchasedate = purchaseData.purchaseDate; }
-    if (purchaseData.effectiveDate) { updateData.effectivedate = purchaseData.effectiveDate; }
-    if (purchaseData.grandTotal !== undefined) { updateData.grandtotal = purchaseData.grandTotal; }
-    if (purchaseData.shipping !== undefined) { updateData.shipping = purchaseData.shipping; }
-    if (purchaseData.taxes !== undefined) { updateData.taxes = purchaseData.taxes; }
-    if (purchaseData.otherCosts !== undefined) { updateData.othercosts = purchaseData.otherCosts; }
-    if (purchaseData.notes !== undefined) { updateData.notes = purchaseData.notes || null; }
+    if (purchaseData.supplierId) {
+      updateData.supplierid = purchaseData.supplierId;
+    }
+    if (purchaseData.purchaseDate) {
+      updateData.purchasedate = purchaseData.purchaseDate;
+    }
+    if (purchaseData.effectiveDate) {
+      updateData.effectivedate = purchaseData.effectiveDate;
+    }
+    if (purchaseData.grandTotal !== undefined) {
+      updateData.grandtotal = purchaseData.grandTotal;
+    }
+    if (purchaseData.shipping !== undefined) {
+      updateData.shipping = purchaseData.shipping;
+    }
+    if (purchaseData.taxes !== undefined) {
+      updateData.taxes = purchaseData.taxes;
+    }
+    if (purchaseData.otherCosts !== undefined) {
+      updateData.othercosts = purchaseData.otherCosts;
+    }
+    if (purchaseData.notes !== undefined) {
+      updateData.notes = purchaseData.notes || null;
+    }
 
     const { data, error } = await supabase
       .from('purchases')
@@ -221,10 +237,18 @@ export async function updateLineItem(
 
     const updateData: Record<string, any> = {};
 
-    if (lineItemData.itemId) { updateData.itemid = lineItemData.itemId; }
-    if (lineItemData.quantity !== undefined) { updateData.quantity = lineItemData.quantity; }
-    if (lineItemData.unitCost !== undefined) { updateData.unitcost = lineItemData.unitCost; }
-    if (lineItemData.notes !== undefined) { updateData.notes = lineItemData.notes || null; }
+    if (lineItemData.itemId) {
+      updateData.itemid = lineItemData.itemId;
+    }
+    if (lineItemData.quantity !== undefined) {
+      updateData.quantity = lineItemData.quantity;
+    }
+    if (lineItemData.unitCost !== undefined) {
+      updateData.unitcost = lineItemData.unitCost;
+    }
+    if (lineItemData.notes !== undefined) {
+      updateData.notes = lineItemData.notes || null;
+    }
 
     // Calculate new total cost
     const finalQuantity = lineItemData.quantity ?? currentLineItem.quantity;

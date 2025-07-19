@@ -105,12 +105,23 @@ export function InteractiveHeader({
                 onChange={e => setSearchValue(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
-                className={`w-full pl-9 sm:pl-11 pr-4 py-2 sm:py-3 bg-slate-800/50 border rounded-lg transition-all duration-300 placeholder-slate-400 text-slate-100 text-sm sm:text-base ${
+                className={`w-full pl-9 sm:pl-11 pr-10 py-2 sm:py-3 bg-slate-800/50 border rounded-lg transition-all duration-300 placeholder-slate-400 text-slate-100 text-sm sm:text-base ${
                   isSearchFocused
                     ? 'border-blue-500/50 bg-slate-800/80 shadow-lg shadow-blue-500/10'
                     : 'border-slate-600/30 hover:border-slate-500/50'
                 }`}
               />
+              {/* Clear button - only show when there's text */}
+              {searchValue && (
+                <button
+                  onClick={() => setSearchValue('')}
+                  className="absolute right-3 sm:right-4 w-4 h-4 text-slate-400 hover:text-slate-200 transition-colors"
+                  aria-label="Clear search"
+                  type="button"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>

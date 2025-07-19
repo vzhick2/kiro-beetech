@@ -41,14 +41,18 @@ export function usePurchases(draftsOnly = false) {
   return useQuery({
     queryKey: purchasesKeys.list({ draftsOnly }),
     queryFn: async () => {
-      const result = draftsOnly ? await getDraftPurchases() : await getAllPurchases();
+      const result = draftsOnly
+        ? await getDraftPurchases()
+        : await getAllPurchases();
       if (!result.success) {
         throw new Error(result.error);
       }
 
       // Transform database fields to match TypeScript interface
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const transformedPurchases: PurchaseWithRelations[] = (result.data || []).map((dbPurchase: any) => ({
+      const transformedPurchases: PurchaseWithRelations[] = (
+        result.data || []
+      ).map((dbPurchase: any) => ({
         purchaseId: dbPurchase.purchaseid,
         displayId: dbPurchase.displayid,
         supplierId: dbPurchase.supplierid,
@@ -61,7 +65,9 @@ export function usePurchases(draftsOnly = false) {
         notes: dbPurchase.notes,
         isDraft: dbPurchase.isdraft,
         created_at: new Date(dbPurchase.created_at),
-        updated_at: dbPurchase.updated_at ? new Date(dbPurchase.updated_at) : new Date(),
+        updated_at: dbPurchase.updated_at
+          ? new Date(dbPurchase.updated_at)
+          : new Date(),
         supplier: dbPurchase.supplier,
         lineItems: (dbPurchase.line_items || []).map((dbLineItem: any) => ({
           lineItemId: dbLineItem.lineitemid,

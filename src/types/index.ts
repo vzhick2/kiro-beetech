@@ -150,7 +150,7 @@ export interface CycleCountAlert {
   currentQuantity: number;
   reorderPoint?: number;
   priorityScore: number;
-  alertType: 'NEGATIVE_INVENTORY' | 'LOW_STOCK';
+  alertType: 'NEGATIVE_INVENTORY' | 'LOW_STOCK' | 'OVERDUE_COUNT';
   shortageAmount?: number;
 }
 

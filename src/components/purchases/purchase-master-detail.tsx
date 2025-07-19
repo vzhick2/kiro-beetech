@@ -8,13 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export function PurchaseMasterDetail() {
-  const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(null);
+  const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(
+    null
+  );
   const [isCreatingNew, setIsCreatingNew] = useState(false);
 
   // Get purchases data to find the selected purchase
   const { data: purchases = [] } = usePurchases(true); // drafts only
-  const selectedPurchase = selectedPurchaseId 
-    ? purchases.find(p => p.purchaseId === selectedPurchaseId) 
+  const selectedPurchase = selectedPurchaseId
+    ? purchases.find(p => p.purchaseId === selectedPurchaseId)
     : null;
 
   const handleSelectPurchase = (purchaseId: string) => {
@@ -43,7 +45,9 @@ export function PurchaseMasterDetail() {
       {/* Left Panel - Purchases List (Mobile: full width, Desktop: 40%) */}
       <div className="lg:w-2/5 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Draft Purchases</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            Draft Purchases
+          </h2>
           <Button
             onClick={handleCreateNew}
             size="sm"
@@ -53,7 +57,7 @@ export function PurchaseMasterDetail() {
             New Purchase
           </Button>
         </div>
-        
+
         <PurchasesList
           selectedPurchaseId={selectedPurchaseId}
           onSelectPurchase={handleSelectPurchase}
@@ -62,9 +66,9 @@ export function PurchaseMasterDetail() {
 
       {/* Right Panel - Purchase Form (Mobile: full width, Desktop: 60%) */}
       <div className="lg:w-3/5">
-        {(selectedPurchase || isCreatingNew) ? (
+        {selectedPurchase || isCreatingNew ? (
           <PurchaseForm
-            selectedPurchase={isCreatingNew ? null : (selectedPurchase || null)}
+            selectedPurchase={isCreatingNew ? null : selectedPurchase || null}
           />
         ) : (
           <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
@@ -74,9 +78,13 @@ export function PurchaseMasterDetail() {
                 No Purchase Selected
               </h3>
               <p className="text-sm text-gray-500 mb-4">
-                Select a draft purchase from the list or create a new one to get started
+                Select a draft purchase from the list or create a new one to get
+                started
               </p>
-              <Button onClick={handleCreateNew} className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                onClick={handleCreateNew}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create New Purchase
               </Button>

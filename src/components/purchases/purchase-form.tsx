@@ -11,7 +11,12 @@ interface PurchaseFormProps {
   onSave: () => void;
 }
 
-export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: PurchaseFormProps) {
+export function PurchaseForm({
+  purchaseId,
+  isCreatingNew,
+  onClose,
+  onSave,
+}: PurchaseFormProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -34,7 +39,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-        
+
         <div className="flex items-center gap-2">
           <Button
             onClick={handleSave}
@@ -45,12 +50,8 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
             <Save className="w-4 h-4 mr-2" />
             {isSaving ? 'Saving...' : 'Save'}
           </Button>
-          
-          <Button
-            onClick={onClose}
-            variant="outline"
-            size="sm"
-          >
+
+          <Button onClick={onClose} variant="outline" size="sm">
             <X className="w-4 h-4 mr-2" />
             Close
           </Button>
@@ -62,7 +63,9 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
         <div className="space-y-6">
           {/* Purchase Details Section */}
           <div>
-            <h3 className="text-base font-medium text-gray-800 mb-4">Purchase Details</h3>
+            <h3 className="text-base font-medium text-gray-800 mb-4">
+              Purchase Details
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -74,7 +77,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                   <option value="supplier2">Supplier 2</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Purchase Date *
@@ -85,7 +88,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                   defaultValue={new Date().toISOString().split('T')[0]}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Effective Date *
@@ -96,7 +99,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                   defaultValue={new Date().toISOString().split('T')[0]}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Grand Total *
@@ -113,7 +116,9 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
 
           {/* Additional Costs Section */}
           <div>
-            <h3 className="text-base font-medium text-gray-800 mb-4">Additional Costs</h3>
+            <h3 className="text-base font-medium text-gray-800 mb-4">
+              Additional Costs
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -126,7 +131,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Taxes
@@ -138,7 +143,7 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Other Costs
@@ -168,7 +173,9 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
           {/* Line Items Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-medium text-gray-800">Line Items</h3>
+              <h3 className="text-base font-medium text-gray-800">
+                Line Items
+              </h3>
               <Button
                 size="sm"
                 variant="outline"
@@ -177,14 +184,11 @@ export function PurchaseForm({ purchaseId, isCreatingNew, onClose, onSave }: Pur
                 Add Item
               </Button>
             </div>
-            
+
             {/* Placeholder for line items table */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
               <p className="text-gray-500 text-sm">No line items added yet</p>
-              <Button
-                size="sm"
-                className="mt-2 bg-blue-600 hover:bg-blue-700"
-              >
+              <Button size="sm" className="mt-2 bg-blue-600 hover:bg-blue-700">
                 Add First Item
               </Button>
             </div>
