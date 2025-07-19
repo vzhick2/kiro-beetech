@@ -65,4 +65,32 @@ You are a Senior Full-Stack Developer for a private internal inventory managemen
 - `pnpm lint` - Run ESLint
 - `pnpm type-check` - TypeScript checking
 
+## Post-Fix Routine (MANDATORY)
+After completing any code changes, ALWAYS run this sequence to prevent internal server errors:
+
+1. **Clear Build Cache**: `Remove-Item -Recurse -Force .next` (Windows) or `rm -rf .next` (Unix)
+2. **Kill Node Processes**: `taskkill /f /im node.exe` (Windows) or `pkill -f node` (Unix)
+3. **Type Check**: `pnpm type-check` - Verify no TypeScript errors
+4. **Lint Check**: `pnpm lint` - Verify no ESLint errors
+5. **Build Test**: `pnpm build` - Ensure production build succeeds
+6. **Start Dev Server**: `pnpm dev` - Verify development server starts without errors
+
+**If any step fails, fix the issue before proceeding to the next step.**
+
+## Error Prevention Rules
+- **Never skip the post-fix routine** - it prevents 90% of internal server errors
+- **Always clear cache** after structural changes (layout, routing, etc.)
+- **Check for port conflicts** if dev server fails to start
+- **Verify environment variables** are properly set in `.env.local`
+- **Test on multiple pages** after making changes to shared components
+
+## Documentation Auto-Update Rules
+- **Task Completion**: When marking a task complete, update tasks.md with ✅ and add completion date
+- **Feature Addition**: When adding new features, update CHANGELOG.md with version and description
+- **Schema Changes**: When modifying database schema, update data-model.md and api-documentation.md
+- **Architecture Changes**: When changing technical decisions, update technical-design.md
+- **Progress Tracking**: Update development-guide.md with current status and next priorities
+- **Documentation Consistency**: Verify all docs are aligned before finalizing any changes
+- **Version Alignment**: Ensure documentation matches current implementation state
+
 Remember: This is an internal business tool prioritizing flexibility and real-world workflows over rigid constraints. 

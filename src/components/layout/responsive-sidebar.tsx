@@ -12,11 +12,13 @@ import {
   TrendingUp,
   BarChart3,
   Database,
+  Users,
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
+  { name: 'Suppliers', href: '/suppliers', icon: Users },
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { name: 'Recipes', href: '/recipes', icon: ChefHat },
   { name: 'Batches', href: '/batches', icon: Factory },

@@ -88,13 +88,15 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
 
   return (
     <div className="app-container">
-      {/* Header - Fixed at top */}
-      <InteractiveHeader 
-        onMobileMenuToggle={toggleSidebar}
-        isMobileMenuOpen={isSidebarOpen}
-      />
+      {/* Header - Always visible, fixed at top with proper z-index */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/50">
+        <InteractiveHeader 
+          onMobileMenuToggle={toggleSidebar}
+          isMobileMenuOpen={isSidebarOpen}
+        />
+      </div>
 
-      {/* Main Layout - Below header */}
+      {/* Main Layout - Below header with proper spacing */}
       <div className="main-layout pt-16 flex">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar 
@@ -105,7 +107,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
 
         {/* Content Area - Modern 2025 Pattern: Always starts from left, gets pushed when sidebar opens */}
         <div className="content-area flex-1 transition-all duration-200 ease-out">
-          <main className="p-6">
+          <main className="p-4 sm:p-6">
             {children}
           </main>
         </div>

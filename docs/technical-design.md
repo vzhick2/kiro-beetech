@@ -297,10 +297,8 @@ CREATE TABLE items (
 CREATE TABLE suppliers (
   supplierId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  contactEmail TEXT,
-  contactPhone TEXT,
-  address TEXT,
-  notes TEXT,
+  storeUrl TEXT,
+  phone TEXT,
   isArchived BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

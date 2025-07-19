@@ -9,6 +9,9 @@
     /* Simple responsive base font - good for inventory data readability */
     font-size: clamp(14px, 1.1vw, 16px);
     line-height: 1.5;
+    /* 2025 Mobile UX: Prevent zoom on input focus */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
   
   /* Headers for inventory sections - subtle scaling */
@@ -30,6 +33,9 @@
     -ms-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    /* 2025 Mobile UX: Better touch targets */
+    min-height: 44px;
+    min-width: 44px;
   }
   
   .no-flash:focus {
@@ -80,6 +86,9 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* 2025 Mobile UX: Prevent overscroll bounce on iOS */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .main-layout {
@@ -92,6 +101,10 @@
   flex: 1;
   overflow-y: auto; /* Scrollbar appears here - below header, right of sidebar */
   overflow-x: hidden;
+  /* 2025 Mobile UX: Smooth scrolling and prevent horizontal scroll */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 /* Custom Scrollbar Styling - Dark Theme, Wider for Better Usability */

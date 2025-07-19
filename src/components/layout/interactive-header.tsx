@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Search, Bell, User, Menu, X } from 'lucide-react'
-// DynamicPageTitle component removed - using inline title instead
+import { usePageTitle } from '@/hooks/use-page-title'
 import { NotificationsDropdown } from './notifications-dropdown'
 import { UserMenuDropdown } from './user-menu-dropdown'
 
@@ -12,6 +12,7 @@ interface InteractiveHeaderProps {
 }
 
 export function InteractiveHeader({ onMobileMenuToggle, isMobileMenuOpen }: InteractiveHeaderProps) {
+  const pageTitle = usePageTitle()
   const [searchValue, setSearchValue] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
@@ -70,7 +71,7 @@ export function InteractiveHeader({ onMobileMenuToggle, isMobileMenuOpen }: Inte
 
           {/* Dynamic Page Title */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-white truncate">Dashboard</h1>
+            <h1 className="text-lg font-semibold text-white truncate">{pageTitle}</h1>
           </div>
         </div>
 

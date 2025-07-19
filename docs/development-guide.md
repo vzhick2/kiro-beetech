@@ -142,10 +142,16 @@ Balance speed and stability for both human and AI developers:
 
 ### 📋 **Next Development Priorities**
 
-1. **Database Schema Setup** (Task 2.1-2.2)
-   - Create Supabase schema following data-model.md
-   - Implement business logic functions (WAC calculation, alerts)
-   - Set up Row Level Security
+1. **✅ Database Schema Setup** (Task 2.1-2.2) - **COMPLETED**
+   - ✅ Supabase schema created and deployed
+   - ✅ Business logic functions implemented and tested
+   - ✅ Row Level Security configured
+   - ✅ Sample data seeded for development
+
+2. **Items Management Enhancement** (Task 3.1)
+   - Implement inline quantity editing with +/- buttons
+   - Add row actions dropdown and item detail modals
+   - Create "Add Item" modal with form validation
 
 2. **Purchase Management** (Task 4.1-4.3)
    - Build Purchase Inbox component
@@ -219,6 +225,15 @@ pnpm build  # Build for production
 pnpm lint  # Run ESLint
 pnpm type-check  # TypeScript checking
 ```
+
+### **Supabase Development**
+```bash
+# Remote Development
+pnpm supabase:types     # Generate types from remote database
+```
+
+### **Environment Setup**
+- **Remote Development**: Uses cloud Supabase project `cursor-kiro-beetech`
 
 ### **Access URLs**
 - **Local**: http://localhost:3000

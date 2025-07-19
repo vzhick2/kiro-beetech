@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbo --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "deploy": "vercel --prod",
-    "deploy:preview": "vercel"
+    "deploy:preview": "vercel",
+    "supabase:types": "npx supabase gen types typescript --project-id jjpklpivpvywagmjjwpu > src/types/database.ts",
+    "supabase:link": "echo 'Use: npx supabase link --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'",
+    "supabase:status": "npx supabase status",
+    "supabase:api-keys": "npx supabase projects api-keys --project-ref jjpklpivpvywagmjjwpu",
+    "supabase:db-pull": "echo 'Use: npx supabase db pull --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'",
+    "supabase:db-push": "echo 'Use: npx supabase db push --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

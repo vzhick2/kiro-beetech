@@ -19,6 +19,9 @@ export interface Item {
   isArchived: boolean
   created_at: Date
   updated_at?: Date
+  // Virtual fields for enhanced display
+  lastUsedSupplier?: string
+  primarySupplierName?: string
 }
 
 export interface Supplier {

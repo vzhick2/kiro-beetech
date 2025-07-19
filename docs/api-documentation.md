@@ -153,6 +153,46 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
+#### `update_item_quantity_atomic(item_id UUID, quantity_change INTEGER)`
+**Purpose**: Atomically update item quantity and log transaction
+**Parameters**:
+- `item_id`: UUID of the item to update
+- `quantity_change`: Amount to change quantity by (positive or negative)
+**Returns**: `TABLE` with updated quantity and transaction ID
+**Logic**: Prevents race conditions by using atomic database operations
+
+```sql
+CREATE OR REPLACE FUNCTION update_item_quantity_atomic(
+    item_id UUID, 
+    quantity_change INTEGER
+)
+RETURNS TABLE (
+    new_quantity INTEGER,
+    transaction_id UUID
+) AS $$
+DECLARE
+    new_transaction_id UUID;
+BEGIN
+    -- Atomically update item quantity
+    UPDATE items 
+    SET current_quantity = current_quantity + quantity_change,
+        updated_at = NOW()
+    WHERE itemId = item_id;
+    
+    -- Log the transaction
+    INSERT INTO transactions (item_id, transaction_type, quantity_change, created_at)
+    VALUES (item_id, 'adjustment', quantity_change, NOW())
+    RETURNING transactionId INTO new_transaction_id;
+    
+    -- Return updated quantity and transaction ID
+    RETURN QUERY
+    SELECT current_quantity, new_transaction_id
+    FROM items 
+    WHERE itemId = item_id;
+END;
+$$ LANGUAGE plpgsql;
+```
+
 ### Transaction Management Functions
 
 #### `create_purchase_with_line_items(purchase_data JSONB, line_items_data JSONB[])`
@@ -337,31 +377,26 @@ export async function createItem(formData: FormData) {
 }
 ```
 
-#### `updateItemQuantity(itemId: string, newQuantity: number)`
-**Purpose**: Update item quantity with transaction logging
+#### `updateItemQuantity(itemId: string, quantityChange: number)`
+**Purpose**: Update item quantity atomically with transaction logging
 **Location**: `src/app/actions/items.ts`
-**Parameters**: itemId, newQuantity
+**Parameters**: itemId, quantityChange (positive for increase, negative for decrease)
 **Returns**: Promise with success/error response
+**Note**: Uses atomic database operations to prevent race conditions
 
 ```typescript
 'use server'
 
-export async function updateItemQuantity(itemId: string, newQuantity: number) {
+export async function updateItemQuantity(itemId: string, quantityChange: number) {
   try {
-    // Get current quantity
-    const { data: currentItem } = await supabase
-      .from('items')
-      .select('current_quantity')
-      .eq('item_id', itemId)
-      .single();
+    // Use atomic update to prevent race conditions
+    const { data: updatedItem, error: updateError } = await supabase
+      .rpc('update_item_quantity_atomic', {
+        item_id: itemId,
+        quantity_change: quantityChange
+      });
 
-    const quantityChange = newQuantity - currentItem.current_quantity;
-
-    // Update item quantity
-    const { error: updateError } = await supabase
-      .from('items')
-      .update({ current_quantity: newQuantity })
-      .eq('item_id', itemId);
+    if (updateError) throw updateError;
 
     if (updateError) throw updateError;
 

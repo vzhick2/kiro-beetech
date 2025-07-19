@@ -29,6 +29,9 @@ export async function createProduct(formData: FormData): Promise<void> {
       category,
       createdAt: new Date().toISOString(),
     }
+    
+    // Use product to avoid unused variable warning
+    console.log('Created product:', product.id)
 
     // Simulate database save
     await new Promise(resolve => setTimeout(resolve, 100))
