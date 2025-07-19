@@ -316,7 +316,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
       {/* Suppliers Table */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] md:min-w-[800px]">
+          <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="w-12 p-3">
@@ -330,19 +330,19 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
                     className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                   />
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[200px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[150px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Email
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
                   Phone
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[150px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Address
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Status
                 </th>
                 <th className="w-12 p-3">

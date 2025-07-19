@@ -420,7 +420,7 @@ export function SpreadsheetTable({
       {/* Spreadsheet Table */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] md:min-w-[900px]">
+          <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="w-12 p-3">
@@ -435,31 +435,31 @@ export function SpreadsheetTable({
                     />
                   </div>
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[200px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   SKU
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Type
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[140px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
                   Quantity
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Unit Cost
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Reorder Point
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[150px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Last Used Supplier
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[90px]">
                   Last Counted
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[70px]">
                   Status
                 </th>
                 <th className="w-12 p-3">
