@@ -282,6 +282,10 @@ header > div {
     text-size-adjust: 100%;
     touch-action: manipulation;
     overflow-x: hidden;
+    /* Prevent all zoom gestures */
+    -webkit-user-zoom: normal;
+    -moz-user-zoom: normal;
+    user-zoom: normal;
   }
 
   body {
@@ -291,6 +295,10 @@ header > div {
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    /* Prevent zoom on body */
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    text-size-adjust: none;
   }
 
   /* Make navigation absolutely immune to zoom */
@@ -301,5 +309,60 @@ header > div {
     will-change: transform;
     position: fixed !important;
     z-index: 9999;
+  }
+
+  /* Force minimum font sizes to prevent iOS zoom on small text */
+  * {
+    -webkit-text-size-adjust: none !important;
+    -ms-text-size-adjust: none !important;
+    text-size-adjust: none !important;
+    /* Prevent zoom on tap */
+    -webkit-tap-highlight-color: transparent !important;
+    /* Prevent selection that can trigger zoom */
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    /* Prevent zoom gestures */
+    touch-action: manipulation !important;
+  }
+
+  /* Specific table and form element zoom prevention */
+  table,
+  th,
+  td,
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px !important; /* iOS prevents zoom on 16px+ elements */
+    -webkit-text-size-adjust: none !important;
+    -ms-text-size-adjust: none !important;
+    text-size-adjust: none !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Force specific behavior on table containers */
+  .table-container,
+  .overflow-x-auto {
+    /* Prevent zoom in scrollable table areas */
+    touch-action: pan-x pan-y !important;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  /* Prevent zoom on any interactive elements in tables */
+  table button,
+  table input,
+  table select,
+  table textarea,
+  table a,
+  [role='gridcell'] button,
+  [role='gridcell'] input {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: none !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 }
