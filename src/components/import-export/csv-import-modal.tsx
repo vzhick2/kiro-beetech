@@ -9,7 +9,7 @@ import { previewQBOImport, processQBOImport } from '@/app/actions/csv-import'
 interface CSVImportModalProps {
   isOpen: boolean
   onClose: () => void
-  onImportComplete?: (result: any) => void
+  onImportComplete?: (result: unknown) => void
 }
 
 interface PreviewData {
@@ -73,7 +73,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
       } else {
         setErrors(previewResult.errors || ['Failed to preview CSV file'])
       }
-    } catch (error) {
+    } catch {
       setErrors(['Failed to read file'])
     } finally {
       setIsLoading(false)
@@ -98,7 +98,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
       } else {
         setErrors(result.errors || ['Failed to preview CSV data'])
       }
-    } catch (error) {
+    } catch {
       setErrors(['Failed to preview CSV data'])
     } finally {
       setIsLoading(false)
@@ -130,7 +130,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         setErrors(result.errors || ['Failed to import CSV data'])
         setStep('preview')
       }
-    } catch (error) {
+    } catch {
       setErrors(['Failed to import CSV data'])
       setStep('preview')
     } finally {

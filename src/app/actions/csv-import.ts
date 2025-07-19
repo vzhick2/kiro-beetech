@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { parseQBOSalesCSV, validateQBOFormat, type ProcessedSalesData } from '@/lib/utils/csv-parser'
+import { parseQBOSalesCSV, validateQBOFormat } from '@/lib/utils/csv-parser'
 import { createErrorResponse, createSuccessResponse } from '@/lib/error-handling'
 import { z } from 'zod'
 

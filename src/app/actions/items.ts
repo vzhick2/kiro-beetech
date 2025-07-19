@@ -3,7 +3,7 @@
 import { supabase } from '@/lib/supabase'
 import { handleError, handleSuccess, validationError } from '@/lib/error-handling'
 import { CreateItemSchema, UpdateItemSchema, BulkItemIdsSchema } from '@/lib/validations/items'
-import type { CreateItemRequest, UpdateItemRequest, BulkItemIdsRequest } from '@/lib/validations/items'
+// Removed unused type imports
 
 export async function getItems() {
   try {
@@ -48,7 +48,7 @@ export async function getItems() {
     }
 
     // Merge the data
-    const itemsWithLastSupplier = data.map((item: any) => {
+    const itemsWithLastSupplier = data.map((item: unknown) => {
       return {
         ...item,
         lastUsedSupplier: lastUsedSupplierMap.get(item.itemid) || null

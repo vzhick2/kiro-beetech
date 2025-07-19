@@ -5,15 +5,15 @@ export interface AppError {
   code?: string
 }
 
-export interface AppSuccess<T = any> {
+export interface AppSuccess<T = unknown> {
   success: true
   data: T
 }
 
-export type AppResult<T = any> = AppSuccess<T> | AppError
+export type AppResult<T = unknown> = AppSuccess<T> | AppError
 
 // Simple error handler - no complex classes needed
-export function handleError(error: any, context: string): AppError {
+export function handleError(error: unknown, context: string): AppError {
   console.error(`Error in ${context}:`, error)
   
   // Handle different error types
@@ -67,7 +67,7 @@ export function validationError(message: string): AppError {
 }
 
 // Create error response for server actions
-export function createErrorResponse(message: string, details?: any): AppError {
+export function createErrorResponse(message: string, details?: unknown): AppError {
   console.error('Error:', message, details)
   
   return {
