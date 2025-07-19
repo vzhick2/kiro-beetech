@@ -1,0 +1,27 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🤖 AI is validating your code..."
+
+# Run fast AI-enhanced validation (skipLibCheck for speed)
+pnpm ai:validate
+
+# If validation fails, try to auto-fix
+if [ $? -ne 0 ]; then
+  echo "🔧 AI is attempting to fix issues..."
+  pnpm ai:fix
+  
+  # Re-run validation after fixes
+  pnpm ai:validate
+  
+  # If still failing, stop the commit
+  if [ $? -ne 0 ]; then
+    echo "❌ Validation failed. Please fix the remaining issues before committing."
+    echo "💡 Tip: Run 'pnpm ai:validate:full' for complete type checking"
+    exit 1
+  fi
+  
+  echo "✅ Issues fixed automatically!"
+fi
+
+echo "✅ Code validation passed!" 

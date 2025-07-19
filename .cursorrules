@@ -1,31 +1,70 @@
-# KIRO Internal Business App - AI Instructions
-
-You are a Senior Full-Stack Developer for a private internal inventory management system.
+# AI Development Rules for KIRO-BEETECH Inventory System
 
 ## Project Context
-- **Internal business application only** - not public/commercial
-- **Next.js 15.4.1** with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
-- **Supabase** for database and authentication
-- **Small business workflows** with irregular patterns and forgiving data entry
+- Internal business inventory management system (not public/commercial)
+- Next.js 15.4.1 with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- Supabase for database and authentication
+- Small business workflows with flexible data entry patterns
 
-## Code Standards
-- **TypeScript strict mode** with explicit return types
-- **Interfaces over types** for object shapes
-- **Functional components** with TypeScript interfaces (no React.FC)
-- **Server components by default**, 'use client' only when necessary
-- **Tailwind CSS for ALL styling** (no CSS-in-JS)
-- **Early returns** for better readability
-- **Descriptive variable names** with auxiliary verbs (isLoading, hasError)
+## AI Workflow Rules
+- ALWAYS ask "Should I implement this?" before making file changes
+- Provide options first, then wait for explicit approval
+- Follow docs/requirements.md for feature specifications
+- Use docs/data-model.md for database schema
+- Reference docs/technical-design.md for architecture decisions
+- Use docs/development-guide.md for development standards
+
+## Autonomous Processing Rules
+### Autonomous Actions (No Permission Needed)
+- Fix linting and TypeScript errors
+- Format code with Prettier
+- Update documentation for completed tasks
+- Use existing utility functions from src/lib/utils
+- Follow established naming conventions
+- Update tasks.md with ✅ and completion date when marking tasks complete
+- Update CHANGELOG.md with version and description when adding features
+
+### Permission Required Actions
+- Add new features or components
+- Modify database schema
+- Change business logic
+- Update dependencies
+- Create new utility functions
+- Update data-model.md and api-documentation.md when modifying database schema
+- Update technical-design.md when changing architecture decisions
+
+## Error Prevention Rules
+- Check existing implementations before creating new ones
+- Use existing utility functions from src/lib/utils
+- Follow established naming conventions
+- Verify imports and dependencies before adding
+- Check for duplicate functionality
+- Ensure all documentation is aligned before finalizing changes
+
+## Code Standards (AI Must Follow)
+- Use TypeScript strict mode with explicit return types
+- Prefer interfaces over types for object shapes
+- Write functional components with TypeScript interfaces (avoid React.FC)
+- Use server components by default, 'use client' only when necessary
+- Use Tailwind CSS for ALL styling (no CSS-in-JS)
+- Implement early returns for better readability
+- Use descriptive variable names with auxiliary verbs (isLoading, hasError)
+
+## AI Code Quality Standards
+- Use Zod validation for runtime type safety
+- Implement exhaustive branch checking with ensureExhaustive patterns
+- Use efficient TypeScript checking with --skipLibCheck for development
+- Prioritize type safety over convenience
 
 ## Business Logic Requirements
-- **Support negative inventory** with warnings (real-world flexibility)
-- **Mutable transaction logs** for editable records with timestamps
-- **Cycle count alerts** for proactive inventory management
-- **Mobile-first design** for workshop operations
-- **Direct-edit workflows** for quick updates
-- **Back-dating support** for corrections
+- Support negative inventory with warnings (real-world flexibility)
+- Implement mutable transaction logs with editable records and timestamps
+- Add cycle count alerts for proactive inventory management
+- Design mobile-first for workshop operations
+- Create direct-edit workflows for quick updates
+- Support back-dating for corrections
 
-## File Structure
+## File Structure Patterns
 - `src/app/` - Next.js 15 App Router pages
 - `src/components/` - Reusable UI components
 - `src/lib/` - Utilities, Supabase client, business logic
@@ -33,71 +72,34 @@ You are a Senior Full-Stack Developer for a private internal inventory managemen
 - `src/types/` - TypeScript definitions
 - `docs/` - Project specifications
 
-## Critical Workflow
-- **ALWAYS ASK "Should I implement this?"** before making file changes
-- **Provide options first**, then wait for explicit approval
-- **Follow docs/requirements.md** for feature specifications
-- **Use docs/data-model.md** for database schema
-- **Reference docs/technical-design.md** for architecture decisions
-- **Use docs/development-guide.md** for development standards and workflow
+## Error Handling Patterns
+- Prioritize error handling at function beginnings
+- Use guard clauses for preconditions
+- Implement Zod validation for runtime type checking
+- Create user-friendly error messages with clear actions
 
-## Error Handling
-- **Prioritize error handling** at function beginnings
-- **Use guard clauses** for preconditions
-- **Zod validation** for runtime type checking
-- **User-friendly error messages** with clear actions
-
-## State Management
-- **TanStack Query** for server state and caching
-- **Zustand** for global UI state only
-- **URL params** for view state
-- **Server actions** for mutations
+## State Management Patterns
+- Use TanStack Query for server state and caching
+- Use Zustand for global UI state only
+- Use URL params for view state
+- Use server actions for mutations
 
 ## Database Patterns
-- **Supabase client** for database operations
-- **Row-level security** policies
-- **PostgreSQL RPCs** for atomic operations
-- **Display ID pattern** for user-facing references
+- Use Supabase client for database operations
+- Implement row-level security policies
+- Use PostgreSQL RPCs for atomic operations
+- Use display ID pattern for user-facing references
 
-## Pure Vercel Workflow (Recommended)
-**No local development needed!** Vercel handles everything automatically.
+## AI Development Commands
+- Use `pnpm ai:validate` for fast validation (type-check, lint, format)
+- Use `pnpm ai:validate:full` for full type-check for production builds
+- Use `pnpm ai:fix` for auto-fixing common issues
+- Use `pnpm ai:type-check` for fast type-check only
+- Use `pnpm build` for production build
+- Use `pnpm supabase:types` for updating database types
 
-### Your Workflow:
-1. **Make code changes** in Cursor
-2. **You handle git operations**: `git add . && git commit -m "description" && git push origin main`
-3. **Vercel auto-deploys** in ~30 seconds with full validation
-
-### Optional Pre-Push Validation
-Only run this if you want to catch errors before pushing:
-```bash
-pnpm validate
-# Then you handle git operations yourself
-```
-
-### Important Notes:
-- **I will NOT commit or push for you** - you handle all git operations
-- **I will only make code changes** and suggest improvements
-- **You control when to deploy** by committing and pushing yourself
-
-### Available Commands
-- `pnpm validate` - Run type-check and lint (optional)
-- `pnpm build` - Production build (Vercel handles this)
-- `pnpm supabase:types` - Update database types
-
-## Error Prevention Rules
-- **Vercel handles all build validation** automatically
-- **Check Vercel deployment logs** if builds fail
-- **Use local dev server** only when actively testing changes
-- **Verify environment variables** are properly set in Vercel dashboard
-- **Test on multiple pages** after making changes to shared components
-
-## Documentation Auto-Update Rules
-- **Task Completion**: When marking a task complete, update tasks.md with ✅ and add completion date
-- **Feature Addition**: When adding new features, update CHANGELOG.md with version and description
-- **Schema Changes**: When modifying database schema, update data-model.md and api-documentation.md
-- **Architecture Changes**: When changing technical decisions, update technical-design.md
-- **Progress Tracking**: Update development-guide.md with current status and next priorities
-- **Documentation Consistency**: Verify all docs are aligned before finalizing any changes
-- **Version Alignment**: Ensure documentation matches current implementation state
-
-Remember: This is an internal business tool prioritizing flexibility and real-world workflows over rigid constraints. 
+## AI Behavior Rules
+- This is an internal business tool prioritizing flexibility over rigid constraints
+- Focus on real-world workflows and forgiving data entry
+- Implement business logic that matches actual workshop operations
+- Prioritize user experience over technical perfection 

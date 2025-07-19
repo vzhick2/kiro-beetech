@@ -37,9 +37,9 @@ export function ItemDetailModal({ isOpen, onClose, itemId }: ItemDetailModalProp
             inventoryUnit: result.data.item.inventoryunit,
             currentQuantity: result.data.item.currentquantity || 0,
             weightedAverageCost: result.data.item.weightedaveragecost || 0,
-            reorderPoint: result.data.item.reorderpoint || undefined,
-            lastCountedDate: result.data.item.lastcounteddate ? new Date(result.data.item.lastcounteddate) : undefined,
-            primarySupplierId: result.data.item.primarysupplierid || undefined,
+            reorderPoint: result.data.item.reorderpoint || 0,
+            lastCountedDate: result.data.item.lastcounteddate ? new Date(result.data.item.lastcounteddate) : new Date(),
+            primarySupplierId: result.data.item.primarysupplierid || '',
             leadTimeDays: result.data.item.leadtimedays || 7,
             isArchived: result.data.item.isarchived || false,
             created_at: new Date(result.data.item.created_at || Date.now()),
@@ -51,10 +51,10 @@ export function ItemDetailModal({ isOpen, onClose, itemId }: ItemDetailModalProp
             transactionType: tx.transactiontype,
             quantity: tx.quantity,
             unitCost: tx.unitcost || 0,
-            referenceId: tx.referenceid || undefined,
-            referenceType: tx.referencetype || undefined,
+            referenceId: tx.referenceid || '',
+            referenceType: tx.referencetype || '',
             effectiveDate: new Date(tx.effectivedate),
-            notes: tx.notes || undefined,
+            notes: tx.notes || '',
             created_at: new Date(tx.created_at || Date.now())
           }))
         }

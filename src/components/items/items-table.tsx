@@ -24,7 +24,7 @@ export function ItemsTable({ onItemAdded }: ItemsTableProps) {
       
       if (result.success && result.data) {
         // Transform database response to match TypeScript interfaces
-        const transformedItems: Item[] = result.data.map(item => ({
+        const transformedItems: Item[] = result.data.map((item: any) => ({
           itemId: item.itemid,
           name: item.name,
           SKU: item.sku,
@@ -33,12 +33,13 @@ export function ItemsTable({ onItemAdded }: ItemsTableProps) {
           currentQuantity: item.currentquantity || 0,
           weightedAverageCost: item.weightedaveragecost || 0,
           reorderPoint: item.reorderpoint || undefined,
-          lastCountedDate: item.lastcounteddate ? new Date(item.lastcounteddate) : undefined,
+          lastCountedDate: item.lastcounteddate ? new Date(item.lastcounteddate) : new Date(),
           primarySupplierId: item.primarysupplierid || undefined,
           leadTimeDays: item.leadtimedays || 7,
           isArchived: item.isarchived || false,
           created_at: new Date(item.created_at || Date.now()),
-          updated_at: new Date(item.updated_at || Date.now())
+          updated_at: new Date(item.updated_at || Date.now()),
+          lastUsedSupplier: item.lastUsedSupplier
         }))
         setItems(transformedItems)
       }

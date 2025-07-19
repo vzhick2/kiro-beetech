@@ -18,7 +18,7 @@ export async function getDraftPurchases() {
       .eq('is_draft', true)
       .order('created_at', { ascending: false })
 
-    if (error) throw error
+    if (error) { throw error }
 
     return { success: true, data }
   } catch (error) {
@@ -37,7 +37,7 @@ export async function finalizeDraftPurchase(purchaseId: string) {
       .eq('purchaseId', purchaseId)
       .eq('isDraft', true)
 
-    if (updateError) throw updateError
+    if (updateError) { throw updateError }
 
     // Get line items to update inventory
     const { data: lineItems, error: lineItemsError } = await supabase
@@ -45,7 +45,7 @@ export async function finalizeDraftPurchase(purchaseId: string) {
       .select('itemid, quantity, unitcost')
       .eq('purchaseid', purchaseId)
 
-    if (lineItemsError) throw lineItemsError
+    if (lineItemsError) { throw lineItemsError }
 
     // Update inventory for each line item
     for (const lineItem of lineItems || []) {
@@ -55,7 +55,7 @@ export async function finalizeDraftPurchase(purchaseId: string) {
           quantity_change: lineItem.quantity
         })
 
-      if (inventoryError) throw inventoryError
+      if (inventoryError) { throw inventoryError }
 
       // Log transaction
       const { error: transactionError } = await supabase
@@ -67,10 +67,10 @@ export async function finalizeDraftPurchase(purchaseId: string) {
           referenceid: purchaseId,
           referencetype: 'purchase',
           unitcost: lineItem.unitcost,
-          effectivedate: new Date().toISOString().split('T')[0]
+          effectivedate: new Date().toISOString().split('T')[0] || ''
         })
 
-      if (transactionError) throw transactionError
+      if (transactionError) { throw transactionError }
     }
 
     revalidatePath('/purchases')
@@ -92,7 +92,7 @@ export async function deleteDraftPurchase(purchaseId: string) {
       .delete()
       .eq('purchase_id', purchaseId)
 
-    if (lineItemsError) throw lineItemsError
+    if (lineItemsError) { throw lineItemsError }
 
     // Delete purchase
     const { error: purchaseError } = await supabase
@@ -101,7 +101,7 @@ export async function deleteDraftPurchase(purchaseId: string) {
       .eq('purchase_id', purchaseId)
       .eq('is_draft', true) // Safety check - only delete drafts
 
-    if (purchaseError) throw purchaseError
+    if (purchaseError) { throw purchaseError }
 
     revalidatePath('/purchases')
 

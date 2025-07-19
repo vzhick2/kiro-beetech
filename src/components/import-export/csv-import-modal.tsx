@@ -71,7 +71,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         setPreviewData(previewResult.data.summary)
         setStep('preview')
       } else {
-        setErrors(previewResult.errors || ['Failed to preview CSV file'])
+        setErrors([(previewResult as any).error || 'Failed to preview CSV file'])
       }
     } catch {
       setErrors(['Failed to read file'])
@@ -96,7 +96,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         setPreviewData(result.data.summary)
         setStep('preview')
       } else {
-        setErrors(result.errors || ['Failed to preview CSV data'])
+        setErrors([(result as any).error || 'Failed to preview CSV data'])
       }
     } catch {
       setErrors(['Failed to preview CSV data'])
@@ -127,7 +127,7 @@ export function CSVImportModal({ isOpen, onClose, onImportComplete }: CSVImportM
         setStep('complete')
         onImportComplete?.(result.data)
       } else {
-        setErrors(result.errors || ['Failed to import CSV data'])
+        setErrors([(result as any).error || 'Failed to import CSV data'])
         setStep('preview')
       }
     } catch {

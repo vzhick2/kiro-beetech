@@ -45,10 +45,10 @@ export function generateCycleCountAlerts(items: Item[], limit: number = 5): Cycl
         SKU: item.SKU,
         name: item.name,
         currentQuantity: item.currentQuantity,
-        reorderPoint: item.reorderPoint,
+        reorderPoint: item.reorderPoint ?? 0,
         priorityScore,
         alertType,
-        shortageAmount
+        shortageAmount: shortageAmount || 0
       }
     })
     .sort((a, b) => b.priorityScore - a.priorityScore)
@@ -61,12 +61,13 @@ export function generateCycleCountAlerts(items: Item[], limit: number = 5): Cycl
  * Calculate weighted average cost from purchase line items
  */
 export function calculateWeightedAverageCost(lineItems: PurchaseLineItem[]): number {
-  if (lineItems.length === 0) return 0
+  if (lineItems.length === 0) { return 0 }
 
   const totalCost = lineItems.reduce((sum, item) => sum + item.totalCost, 0)
   const totalQuantity = lineItems.reduce((sum, item) => sum + item.quantity, 0)
 
-  return totalQuantity > 0 ? totalCost / totalQuantity : 0
+  if (totalQuantity > 0) { return totalCost / totalQuantity }
+  return 0
 }
 
 /**
@@ -76,12 +77,14 @@ export function scaleRecipe(recipe: Recipe, scaleFactor: number): Recipe {
   return {
     ...recipe,
     expectedYield: recipe.expectedYield * scaleFactor,
-    laborMinutes: recipe.laborMinutes ? Math.round(recipe.laborMinutes * scaleFactor) : undefined,
-    projectedMaterialCost: recipe.projectedMaterialCost ? recipe.projectedMaterialCost * scaleFactor : undefined,
+    laborMinutes: recipe.laborMinutes ? Math.round(recipe.laborMinutes * scaleFactor) : 0,
+    projectedMaterialCost: recipe.projectedMaterialCost ? recipe.projectedMaterialCost * scaleFactor : 0,
     ingredients: recipe.ingredients.map(ingredient => ({
       ...ingredient,
       quantity: ingredient.quantity * scaleFactor
-    }))
+    })),
+    created_at: recipe.created_at,
+    updated_at: recipe.updated_at || recipe.created_at
   }
 }
 
@@ -89,7 +92,7 @@ export function scaleRecipe(recipe: Recipe, scaleFactor: number): Recipe {
  * Calculate maximum possible batches based on available inventory
  */
 export function calculateMaxBatches(recipe: Recipe, availableInventory: Record<string, number>): number {
-  if (recipe.ingredients.length === 0) return 0
+  if (recipe.ingredients.length === 0) { return 0 }
 
   const maxBatches = recipe.ingredients.map(ingredient => {
     const available = availableInventory[ingredient.itemId] || 0
@@ -103,7 +106,7 @@ export function calculateMaxBatches(recipe: Recipe, availableInventory: Record<s
  * Calculate batch yield percentage
  */
 export function calculateYieldPercentage(actualOutput: number, expectedOutput: number): number {
-  if (expectedOutput === 0) return 0
+  if (expectedOutput === 0) { return 0 }
   return actualOutput / expectedOutput
 }
 
@@ -118,7 +121,7 @@ export function calculateCostVariance(actualCost: number, projectedCost: number)
  * Check if item needs reordering
  */
 export function needsReorder(item: Item): boolean {
-  if (!item.reorderPoint) return false
+  if (!item.reorderPoint) { return false }
   return item.currentQuantity <= item.reorderPoint
 }
 

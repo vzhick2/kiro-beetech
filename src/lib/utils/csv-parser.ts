@@ -20,16 +20,16 @@ export interface ProcessedSalesData {
   date: Date
   itemName: string
   quantity: number
-  revenue?: number
-  customer?: string
-  channel?: string
+  revenue: number
+  customer: string
+  channel: string
 }
 
 // CSV parsing result
 export interface CSVParsingResult {
   success: boolean
-  data?: ProcessedSalesData[]
-  errors?: string[]
+  data: ProcessedSalesData[]
+  errors: string[]
   totalRows: number
   validRows: number
 }
@@ -51,7 +51,7 @@ export function parseQBOSalesCSV(csvContent: string): CSVParsingResult {
     
     try {
       // Parse CSV line (handle quoted values)
-      const columns = parseCSVLine(line)
+      const columns = parseCSVLine(line || '')
       
       // Map to expected schema
       const rowData: Record<string, string> = {}
@@ -62,7 +62,7 @@ export function parseQBOSalesCSV(csvContent: string): CSVParsingResult {
       })
       
       // Validate row
-      const validatedRow = QBOSalesRowSchema.parse(rowData)
+      const validatedRow = QBOSalesRowSchema.parse(rowData as Record<string, string>)
       
       // Skip non-sales transactions
       if (validatedRow['Transaction Type'] !== 'Sale' && validatedRow['Transaction Type'] !== 'Invoice') {
@@ -100,8 +100,8 @@ export function parseQBOSalesCSV(csvContent: string): CSVParsingResult {
         date,
         itemName: itemName.trim(),
         quantity,
-        revenue: isNaN(amount) ? undefined : amount,
-        customer: validatedRow['Customer']?.trim(),
+        revenue: isNaN(amount) ? 0 : amount,
+        customer: validatedRow['Customer']?.trim() || '',
         channel: validatedRow['Channel']?.trim() || 'qbo'
       })
       
@@ -113,7 +113,7 @@ export function parseQBOSalesCSV(csvContent: string): CSVParsingResult {
   return {
     success: errors.length === 0,
     data: processedData,
-    errors: errors.length > 0 ? errors : undefined,
+    errors: errors.length > 0 ? errors : [],
     totalRows: dataRows.length,
     validRows: processedData.length
   }
@@ -156,7 +156,7 @@ export function validateQBOFormat(csvContent: string): { isValid: boolean; error
     return { isValid: false, errors }
   }
   
-  const headerLine = lines[0].toLowerCase()
+  const headerLine = lines[0]?.toLowerCase() || ''
   const requiredHeaders = ['date', 'transaction type', 'product/service', 'qty', 'amount']
   
   for (const header of requiredHeaders) {

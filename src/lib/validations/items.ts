@@ -1,11 +1,12 @@
 import { z } from 'zod'
+import { InventoryUnit, ItemType } from '@/types'
 
 // Base item validation schema
 export const ItemSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   sku: z.string().min(1, 'SKU is required').max(50, 'SKU must be less than 50 characters'),
-  type: z.string().min(1, 'Type is required'),
-  inventoryunit: z.string().min(1, 'Inventory unit is required'),
+  type: z.enum(['ingredient', 'packaging', 'product'] as const).refine((val): val is ItemType => true),
+  inventoryunit: z.enum(['each', 'lb', 'oz', 'kg', 'g', 'gal', 'qt', 'pt', 'cup', 'fl_oz', 'ml', 'l'] as const).refine((val): val is InventoryUnit => true),
   currentquantity: z.number().min(0, 'Quantity cannot be negative').default(0),
   weightedaveragecost: z.number().min(0, 'Cost cannot be negative').default(0),
   reorderpoint: z.number().min(0, 'Reorder point cannot be negative').optional(),

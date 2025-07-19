@@ -37,6 +37,7 @@ export function SeedDataButton({ onDataAdded }: SeedDataButtonProps) {
       }, 5000)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [result])
 
   const handleSeedData = async () => {

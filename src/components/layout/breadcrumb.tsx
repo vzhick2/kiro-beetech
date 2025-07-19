@@ -60,7 +60,7 @@ function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
     
     breadcrumbs.push({
       label: label.replace(/-/g, ' '),
-      href: index < segments.length - 1 ? href : undefined
+      ...(index < segments.length - 1 ? { href } : {})
     })
   })
 

@@ -24,7 +24,8 @@ export function formatDateTime(date: Date | string): string {
 
 export function formatDateForInput(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date
-  return d.toISOString().split('T')[0]
+  const split = d.toISOString().split('T')
+  return split[0] || ''
 }
 
 export function isToday(date: Date | string): boolean {

@@ -89,14 +89,14 @@ export function convertUnit(
   fromUnit: InventoryUnit, 
   toUnit: InventoryUnit
 ): number | null {
-  if (fromUnit === toUnit) return quantity
+  if (fromUnit === toUnit) { return quantity }
   
   const conversionKey = `${fromUnit}_to_${toUnit}`
   const weightConversion = WEIGHT_CONVERSIONS[conversionKey]
   const volumeConversion = VOLUME_CONVERSIONS[conversionKey]
   
-  if (weightConversion) return quantity * weightConversion
-  if (volumeConversion) return quantity * volumeConversion
+  if (weightConversion) { return quantity * weightConversion }
+  if (volumeConversion) { return quantity * volumeConversion }
   
   return null // Conversion not supported
 }

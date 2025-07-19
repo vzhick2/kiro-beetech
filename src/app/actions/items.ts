@@ -48,10 +48,10 @@ export async function getItems() {
     }
 
     // Merge the data
-    const itemsWithLastSupplier = data.map((item: unknown) => {
+    const itemsWithLastSupplier = data.map((item: Record<string, unknown>) => {
       return {
         ...item,
-        lastUsedSupplier: lastUsedSupplierMap.get(item.itemid) || null
+        lastUsedSupplier: lastUsedSupplierMap.get(item.itemid as string) || null
       }
     })
 
@@ -66,9 +66,23 @@ export async function createItem(itemData: unknown) {
     // Validate input data
     const validatedData = CreateItemSchema.parse(itemData)
     
+    // Convert to database format (snake_case)
+    const dbData = {
+      name: validatedData.name,
+      sku: validatedData.sku,
+      type: validatedData.type,
+      inventoryunit: validatedData.inventoryunit,
+      currentquantity: 0, // Default for new items
+      weightedaveragecost: 0,
+      reorderpoint: validatedData.reorderpoint ?? null,
+      primarysupplierid: validatedData.primarysupplierid ?? null,
+      leadtimedays: validatedData.leadtimedays,
+      isarchived: false
+    }
+    
     const { data, error } = await supabase
       .from('items')
-      .insert([validatedData])
+      .insert([dbData])
       .select()
       .single()
 
@@ -90,9 +104,22 @@ export async function updateItem(itemId: string, updates: unknown) {
     // Validate input data
     const validatedUpdates = UpdateItemSchema.parse(updates)
     
+    // Convert to database format (snake_case)
+    const dbUpdates: Record<string, unknown> = {}
+    if (validatedUpdates.name !== undefined) { dbUpdates.name = validatedUpdates.name }
+    if (validatedUpdates.sku !== undefined) { dbUpdates.sku = validatedUpdates.sku }
+    if (validatedUpdates.type !== undefined) { dbUpdates.type = validatedUpdates.type }
+    if (validatedUpdates.inventoryunit !== undefined) { dbUpdates.inventoryunit = validatedUpdates.inventoryunit }
+    if (validatedUpdates.currentquantity !== undefined) { dbUpdates.currentquantity = validatedUpdates.currentquantity }
+    if (validatedUpdates.weightedaveragecost !== undefined) { dbUpdates.weightedaveragecost = validatedUpdates.weightedaveragecost }
+    if (validatedUpdates.reorderpoint !== undefined) { dbUpdates.reorderpoint = validatedUpdates.reorderpoint }
+    if (validatedUpdates.primarysupplierid !== undefined) { dbUpdates.primarysupplierid = validatedUpdates.primarysupplierid }
+    if (validatedUpdates.leadtimedays !== undefined) { dbUpdates.leadtimedays = validatedUpdates.leadtimedays }
+    if (validatedUpdates.isarchived !== undefined) { dbUpdates.isarchived = validatedUpdates.isarchived }
+    
     const { data, error } = await supabase
       .from('items')
-      .update(validatedUpdates)
+      .update(dbUpdates)
       .eq('itemid', itemId)
       .select()
       .single()

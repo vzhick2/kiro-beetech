@@ -30,7 +30,7 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
         }
         
         // Transform database fields to match TypeScript interface
-        const transformedItems: Item[] = (result.data || []).map((dbItem: ItemFromDB) => ({
+        const transformedItems: Item[] = (result.data || []).map((dbItem: any) => ({
           itemId: dbItem.itemid,
           name: dbItem.name,
           SKU: dbItem.sku,
@@ -38,13 +38,13 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
           inventoryUnit: dbItem.inventoryunit,
           currentQuantity: dbItem.currentquantity || 0,
           weightedAverageCost: dbItem.weightedaveragecost || 0,
-          reorderPoint: dbItem.reorderpoint || undefined,
-          lastCountedDate: dbItem.lastcounteddate ? new Date(dbItem.lastcounteddate) : undefined,
+          reorderPoint: dbItem.reorderpoint || 0,
+          lastCountedDate: dbItem.lastcounteddate ? new Date(dbItem.lastcounteddate) : new Date(),
           primarySupplierId: dbItem.primarysupplierid || undefined,
           leadTimeDays: dbItem.leadtimedays || 7,
           isArchived: dbItem.isarchived || false,
           created_at: new Date(dbItem.created_at || new Date()),
-          updated_at: dbItem.updated_at ? new Date(dbItem.updated_at) : undefined,
+          updated_at: dbItem.updated_at ? new Date(dbItem.updated_at) : new Date(),
           lastUsedSupplier: dbItem.lastUsedSupplier || undefined,
           primarySupplierName: dbItem.primary_supplier?.name || undefined
         }))

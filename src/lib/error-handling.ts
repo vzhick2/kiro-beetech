@@ -14,7 +14,6 @@ export type AppResult<T = unknown> = AppSuccess<T> | AppError
 
 // Simple error handler - no complex classes needed
 export function handleError(error: unknown, context: string): AppError {
-  console.error(`Error in ${context}:`, error)
   
   // Handle different error types
   if (error instanceof Error) {
@@ -34,10 +33,10 @@ export function handleError(error: unknown, context: string): AppError {
   }
   
   // Handle Supabase errors
-  if (error?.message) {
+  if (error && typeof error === 'object' && 'message' in error) {
     return {
       success: false,
-      error: error.message,
+      error: (error as { message: string }).message,
       code: 'DATABASE_ERROR'
     }
   }
@@ -68,7 +67,6 @@ export function validationError(message: string): AppError {
 
 // Create error response for server actions
 export function createErrorResponse(message: string, details?: unknown): AppError {
-  console.error('Error:', message, details)
   
   return {
     success: false,

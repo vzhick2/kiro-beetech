@@ -127,28 +127,28 @@ export async function processQBOImport(formData: FormData) {
         // Check if item exists
         const { data: existingItem } = await supabase
           .from('items')
-          .select('id, currentQuantity, name')
+          .select('itemid, currentquantity, name')
           .eq('name', sale.itemName)
-          .eq('isArchived', false)
+          .eq('isarchived', false)
           .single()
         
         let itemId: string
         
         if (existingItem) {
           // Update existing item quantity
-          const newQuantity = existingItem.currentQuantity - sale.quantity
+          const newQuantity = (existingItem.currentquantity || 0) - sale.quantity
           
           const { error: updateError } = await supabase
             .from('items')
-            .update({ currentQuantity: newQuantity })
-            .eq('id', existingItem.id)
+            .update({ currentquantity: newQuantity })
+            .eq('itemid', existingItem.itemid)
           
           if (updateError) {
             results.errors.push(`Failed to update ${sale.itemName}: ${updateError.message}`)
             continue
           }
           
-          itemId = existingItem.id
+          itemId = existingItem.itemid
           results.itemsUpdated++
           
         } else if (createMissingItems) {
@@ -159,13 +159,13 @@ export async function processQBOImport(formData: FormData) {
               name: sale.itemName,
               sku: `QBO-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               type: 'product',
-              inventoryUnit: 'each',
-              currentQuantity: -sale.quantity, // Negative since it was sold
-              weightedAverageCost: 0,
-              reorderPoint: 0,
-              isArchived: false
+              inventoryunit: 'each',
+              currentquantity: -sale.quantity, // Negative since it was sold
+              weightedaveragecost: 0,
+              reorderpoint: 0,
+              isarchived: false
             })
-            .select('id')
+            .select('itemid')
             .single()
           
           if (createError) {
@@ -173,7 +173,7 @@ export async function processQBOImport(formData: FormData) {
             continue
           }
           
-          itemId = newItem.id
+          itemId = newItem.itemid
           results.itemsCreated++
           
         } else {
@@ -183,13 +183,13 @@ export async function processQBOImport(formData: FormData) {
         
         // Log the sale transaction
         const { error: transactionError } = await supabase
-          .from('transactionLog')
+          .from('transactions')
           .insert({
-            itemId,
-            type: 'sale',
-            quantityChange: -sale.quantity,
-            sourceReference: `QBO-${sale.date.toISOString().split('T')[0]}`,
-            effectiveDate: validated.effectiveDate ? new Date(validated.effectiveDate) : sale.date,
+            itemid: itemId,
+            transactiontype: 'sale',
+            quantity: -sale.quantity,
+            referenceid: `QBO-${sale.date.toISOString().split('T')[0]}`,
+            effectivedate: (validated.effectiveDate ? new Date(validated.effectiveDate).toISOString().split('T')[0] : sale.date.toISOString().split('T')[0]) || new Date().toISOString().split('T')[0] || '',
             notes: `QBO import: ${sale.customer || 'Unknown customer'} - ${sale.channel || 'qbo'}`
           })
         
@@ -230,8 +230,8 @@ export async function getExistingItems() {
   try {
     const { data: items, error } = await supabase
       .from('items')
-      .select('id, name, sku, currentQuantity')
-      .eq('isArchived', false)
+      .select('itemid, name, sku, currentquantity')
+      .eq('isarchived', false)
       .order('name')
     
     if (error) {
