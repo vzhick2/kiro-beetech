@@ -35,7 +35,8 @@ export const dashboardKeys = {
   all: ['dashboard'] as const,
   stats: () => [...dashboardKeys.all, 'stats'] as const,
   alerts: (limit: number) => [...dashboardKeys.all, 'alerts', limit] as const,
-  activity: (limit: number) => [...dashboardKeys.all, 'activity', limit] as const,
+  activity: (limit: number) =>
+    [...dashboardKeys.all, 'activity', limit] as const,
 };
 
 // Hook for fetching cycle count alerts
@@ -46,12 +47,12 @@ export function useCycleCountAlerts(limit: number = 5) {
       const { data, error } = await supabase.rpc('get_cycle_count_alerts', {
         limit_count: limit,
       });
-      
+
       if (error) {
         console.error('Error fetching cycle count alerts:', error);
         throw new Error(error.message);
       }
-      
+
       return (data || []) as CycleCountAlert[];
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -66,28 +67,32 @@ export function useDashboardStats() {
     queryKey: dashboardKeys.stats(),
     queryFn: async () => {
       // Fetch multiple stats in parallel
-      const [itemsResult, alertsResult, purchasesResult, transactionsResult] = await Promise.all([
-        // Total active items
-        supabase
-          .from('items')
-          .select('itemid', { count: 'exact' })
-          .eq('isarchived', false),
-        
-        // Low stock items (alerts)
-        supabase.rpc('get_cycle_count_alerts', { limit_count: 100 }),
-        
-        // Draft purchases count
-        supabase
-          .from('purchases')
-          .select('purchaseid', { count: 'exact' })
-          .eq('isdraft', true),
-        
-        // Recent transactions (last 7 days)
-        supabase
-          .from('transactions')
-          .select('transactionid', { count: 'exact' })
-          .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
-      ]);
+      const [itemsResult, alertsResult, purchasesResult, transactionsResult] =
+        await Promise.all([
+          // Total active items
+          supabase
+            .from('items')
+            .select('itemid', { count: 'exact' })
+            .eq('isarchived', false),
+
+          // Low stock items (alerts)
+          supabase.rpc('get_cycle_count_alerts', { limit_count: 100 }),
+
+          // Draft purchases count
+          supabase
+            .from('purchases')
+            .select('purchaseid', { count: 'exact' })
+            .eq('isdraft', true),
+
+          // Recent transactions (last 7 days)
+          supabase
+            .from('transactions')
+            .select('transactionid', { count: 'exact' })
+            .gte(
+              'created_at',
+              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+            ),
+        ]);
 
       if (itemsResult.error) {
         throw new Error(itemsResult.error.message);
@@ -124,7 +129,8 @@ export function useRecentActivity(limit: number = 10) {
         // Recent purchases (last 30 days)
         supabase
           .from('purchases')
-          .select(`
+          .select(
+            `
             purchaseid,
             displayid,
             isdraft,
@@ -132,23 +138,32 @@ export function useRecentActivity(limit: number = 10) {
             total,
             created_at,
             suppliers(name)
-          `)
-          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+          `
+          )
+          .gte(
+            'created_at',
+            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          )
           .order('created_at', { ascending: false })
           .limit(5),
-        
+
         // Recent inventory transactions (last 7 days)
         supabase
           .from('transactions')
-          .select(`
+          .select(
+            `
             transactionid,
             transactiontype,
             quantity,
             effectivedate,
             created_at,
             items(name, sku)
-          `)
-          .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+          `
+          )
+          .gte(
+            'created_at',
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          )
           .order('created_at', { ascending: false })
           .limit(5),
       ]);
@@ -167,7 +182,9 @@ export function useRecentActivity(limit: number = 10) {
         activities.push({
           id: purchase.purchaseid,
           type: 'purchase',
-          title: purchase.isdraft ? 'Draft purchase created' : 'Purchase completed',
+          title: purchase.isdraft
+            ? 'Draft purchase created'
+            : 'Purchase completed',
           description: `${purchase.displayid}${purchase.suppliers?.name ? ` from ${purchase.suppliers.name}` : ''}${purchase.total ? ` - $${purchase.total.toFixed(2)}` : ''}`,
           timestamp: new Date(purchase.created_at),
           icon: purchase.isdraft ? 'D' : 'P',

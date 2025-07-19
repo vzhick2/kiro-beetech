@@ -119,7 +119,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Recent activity feed** - July 19, 2025
 - ✅ **Action center notifications** - July 19, 2025
 
-##  **Planned Tasks**
+## **Planned Tasks**
 
 ### **Phase 3: Business Workflows** 📋 **0% Complete**
 

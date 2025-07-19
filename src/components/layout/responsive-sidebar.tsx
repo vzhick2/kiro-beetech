@@ -106,9 +106,7 @@ export function ResponsiveSidebar({
       {/* Backdrop with fade animation */}
       <div
         className={`fixed inset-0 z-30 transition-all duration-200 ease-out ${
-          isOpen
-            ? 'bg-black/50'
-            : 'bg-transparent pointer-events-none'
+          isOpen ? 'bg-black/50' : 'bg-transparent pointer-events-none'
         }`}
         onClick={onClose}
         aria-hidden="true"

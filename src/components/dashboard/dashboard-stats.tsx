@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useDashboardStats } from '@/hooks/use-dashboard';
 import Link from 'next/link';
@@ -9,7 +11,10 @@ export function DashboardStats() {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-gray-100 rounded-lg p-6 shadow-sm animate-pulse">
+          <div
+            key={i}
+            className="bg-gray-100 rounded-lg p-6 shadow-sm animate-pulse"
+          >
             <div className="h-4 bg-gray-200 rounded mb-3"></div>
             <div className="h-8 bg-gray-200 rounded mb-2"></div>
             <div className="h-3 bg-gray-200 rounded"></div>
@@ -23,8 +28,12 @@ export function DashboardStats() {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 shadow-sm col-span-full">
-          <p className="text-red-700 text-center">Unable to load dashboard statistics</p>
-          <p className="text-red-600 text-sm text-center mt-1">{error.message}</p>
+          <p className="text-red-700 text-center">
+            Unable to load dashboard statistics
+          </p>
+          <p className="text-red-600 text-sm text-center mt-1">
+            {error.message}
+          </p>
         </div>
       </div>
     );
@@ -79,9 +88,11 @@ export function DashboardStats() {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-      {statCards.map((card) => (
+      {statCards.map(card => (
         <Link key={card.title} href={card.href}>
-          <div className={`bg-gradient-to-br ${card.color} rounded-lg border ${card.borderColor} p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}>
+          <div
+            className={`bg-gradient-to-br ${card.color} rounded-lg border ${card.borderColor} p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+          >
             <h3 className={`text-sm font-medium ${card.textColor} mb-2`}>
               {card.title}
             </h3>

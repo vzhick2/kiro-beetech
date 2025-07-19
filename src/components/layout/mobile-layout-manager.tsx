@@ -20,10 +20,13 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
       // 1. Check if it's actually a mobile device (touch-first)
       // 2. For very narrow screens (< 480px), force mobile behavior even on desktop
       // 3. For desktop browsers, prefer push behavior unless extremely narrow
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
       const isVeryNarrow = window.innerWidth < 480; // Extremely narrow
       const isNarrow = window.innerWidth < 640; // sm breakpoint
-      
+
       // Desktop behavior: desktop browser on reasonable width
       // Mobile behavior: actual mobile device OR extremely narrow desktop
       const isDesktopSize = !isMobileDevice && !isVeryNarrow;

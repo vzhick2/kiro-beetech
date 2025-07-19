@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useCycleCountAlerts, useDashboardStats } from '@/hooks/use-dashboard';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +12,8 @@ export function ActionCenter() {
   const notifications = [];
 
   // Critical alerts
-  const criticalAlerts = alerts?.filter(alert => alert.alerttype === 'NEGATIVE_INVENTORY') || [];
+  const criticalAlerts =
+    alerts?.filter(alert => alert.alerttype === 'NEGATIVE_INVENTORY') || [];
   if (criticalAlerts.length > 0) {
     notifications.push({
       id: 'negative-inventory',
@@ -25,7 +28,8 @@ export function ActionCenter() {
   }
 
   // Low stock alerts
-  const lowStockAlerts = alerts?.filter(alert => alert.alerttype === 'LOW_STOCK') || [];
+  const lowStockAlerts =
+    alerts?.filter(alert => alert.alerttype === 'LOW_STOCK') || [];
   if (lowStockAlerts.length > 0) {
     notifications.push({
       id: 'low-stock',
@@ -54,7 +58,8 @@ export function ActionCenter() {
   }
 
   // Overdue counts
-  const overdueAlerts = alerts?.filter(alert => alert.alerttype === 'OVERDUE_COUNT') || [];
+  const overdueAlerts =
+    alerts?.filter(alert => alert.alerttype === 'OVERDUE_COUNT') || [];
   if (overdueAlerts.length > 0) {
     notifications.push({
       id: 'overdue-counts',
@@ -80,7 +85,9 @@ export function ActionCenter() {
               <span className="text-green-600 text-xl">✓</span>
             </div>
             <p className="font-medium">All caught up!</p>
-            <p className="text-sm text-gray-400 mt-1">No action items at this time</p>
+            <p className="text-sm text-gray-400 mt-1">
+              No action items at this time
+            </p>
           </div>
         </div>
       </div>
@@ -129,15 +136,19 @@ export function ActionCenter() {
 
   const getPriorityOrder = (type: string) => {
     switch (type) {
-      case 'critical': return 1;
-      case 'warning': return 2;
-      case 'info': return 3;
-      default: return 4;
+      case 'critical':
+        return 1;
+      case 'warning':
+        return 2;
+      case 'info':
+        return 3;
+      default:
+        return 4;
     }
   };
 
-  const sortedNotifications = notifications.sort((a, b) => 
-    getPriorityOrder(a.type) - getPriorityOrder(b.type)
+  const sortedNotifications = notifications.sort(
+    (a, b) => getPriorityOrder(a.type) - getPriorityOrder(b.type)
   );
 
   return (
@@ -152,7 +163,7 @@ export function ActionCenter() {
       </div>
       <div className="p-6">
         <div className="space-y-4">
-          {sortedNotifications.map((notification) => {
+          {sortedNotifications.map(notification => {
             const colors = getNotificationColor(notification.color);
             return (
               <div

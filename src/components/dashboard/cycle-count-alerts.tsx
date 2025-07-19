@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useCycleCountAlerts } from '@/hooks/use-dashboard';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +16,9 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Cycle Count Alerts</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Cycle Count Alerts
+          </h2>
         </div>
         <div className="p-6">
           <div className="animate-pulse space-y-3">
@@ -31,7 +35,9 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Cycle Count Alerts</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Cycle Count Alerts
+          </h2>
         </div>
         <div className="p-6">
           <div className="text-center text-gray-500">
@@ -47,7 +53,9 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Cycle Count Alerts</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Cycle Count Alerts
+          </h2>
         </div>
         <div className="p-6">
           <div className="text-center text-gray-500">
@@ -55,7 +63,9 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
               <span className="text-green-600 text-xl">✓</span>
             </div>
             <p className="font-medium">All good!</p>
-            <p className="text-sm text-gray-400 mt-1">No inventory alerts at this time</p>
+            <p className="text-sm text-gray-400 mt-1">
+              No inventory alerts at this time
+            </p>
           </div>
         </div>
       </div>
@@ -105,7 +115,9 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Cycle Count Alerts</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Cycle Count Alerts
+          </h2>
           <Link
             href="/items"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -116,7 +128,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
       </div>
       <div className="p-6">
         <div className="space-y-4">
-          {alerts.map((alert) => (
+          {alerts.map(alert => (
             <div
               key={alert.itemid}
               className={`rounded-lg border p-4 ${getAlertColor(alert.alerttype)}`}
@@ -144,7 +156,10 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
                       {alert.shortageamount > 0 && (
                         <>
                           {' '}
-                          | Short by: <strong className="text-red-600">{alert.shortageamount}</strong>
+                          | Short by:{' '}
+                          <strong className="text-red-600">
+                            {alert.shortageamount}
+                          </strong>
                         </>
                       )}
                     </p>

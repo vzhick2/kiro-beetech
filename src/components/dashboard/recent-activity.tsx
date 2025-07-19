@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useRecentActivity } from '@/hooks/use-dashboard';
 import { formatDistanceToNow } from 'date-fns';
@@ -14,7 +16,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Activity
+          </h2>
         </div>
         <div className="p-6">
           <div className="animate-pulse space-y-4">
@@ -38,7 +42,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Activity
+          </h2>
         </div>
         <div className="p-6">
           <div className="text-center text-gray-500">
@@ -54,7 +60,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Activity
+          </h2>
         </div>
         <div className="p-6">
           <div className="text-center text-gray-500">
@@ -62,7 +70,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
               <span className="text-gray-400 text-xl">📊</span>
             </div>
             <p className="font-medium">No recent activity</p>
-            <p className="text-sm text-gray-400 mt-1">Activity will appear here as you use the system</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Activity will appear here as you use the system
+            </p>
           </div>
         </div>
       </div>
@@ -107,7 +117,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Recent Activity
+          </h2>
           <select className="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white text-gray-600">
             <option>Recent</option>
             <option>Today</option>
@@ -117,9 +129,11 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
       </div>
       <div className="p-6">
         <div className="space-y-4">
-          {activities.map((activity) => (
+          {activities.map(activity => (
             <div key={activity.id} className="flex items-start space-x-3 group">
-              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getIconBgColor(activity.iconColor)}`}>
+              <div
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getIconBgColor(activity.iconColor)}`}
+              >
                 <span className="font-semibold text-sm">{activity.icon}</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -132,7 +146,9 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
                       {activity.description}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
+                      {formatDistanceToNow(activity.timestamp, {
+                        addSuffix: true,
+                      })}
                     </p>
                   </div>
                   <Link
@@ -146,7 +162,7 @@ export function RecentActivity({ limit = 10 }: RecentActivityProps) {
             </div>
           ))}
         </div>
-        
+
         {activities.length >= limit && (
           <div className="mt-6 pt-4 border-t border-gray-200">
             <Link
