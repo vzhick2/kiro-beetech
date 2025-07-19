@@ -1,16 +1,18 @@
 # KIRO Inventory Management System
 
-> **A modern, full-stack inventory management solution built with Next.js 15, React 19, and TypeScript**
+> **A private, internal inventory management solution for small business operations**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.4.1-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.17-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.11-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-2.52.0-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
 
 ## 📋 **Overview**
 
-KIRO is a comprehensive inventory management system designed for small to medium-sized businesses. Built with modern web technologies, it provides real-time inventory tracking, purchase management, recipe systems, and detailed reporting capabilities.
+KIRO is a **private, internal inventory management system** designed specifically for small business operations. Built with modern web technologies, it provides real-time inventory tracking, purchase management, recipe systems, and detailed reporting capabilities for internal business use only.
+
+**This is not a public application or open-source project.**
 
 ## ✨ **Key Features**
 
@@ -32,7 +34,7 @@ KIRO is a comprehensive inventory management system designed for small to medium
 - Ingredient consumption tracking
 - Cost per unit calculations
 
-### � **Analytics & Reporting**
+### 📊 **Analytics & Reporting**
 - Real-time dashboard with KPIs
 - Cycle count alerts for proactive management
 - Financial reporting and cost analysis
@@ -50,14 +52,14 @@ KIRO is a comprehensive inventory management system designed for small to medium
 - **Next.js 15.4.1** with App Router and Turbopack
 - **React 19.1.0** with Server Components
 - **TypeScript 5.8.3** for type safety
-- **Tailwind CSS 3.4.17** for styling
+- **Tailwind CSS 4.1.11** for styling
 - **Radix UI** for accessible components
 
 ### **Backend & Database**
 - **Supabase** for database and authentication
 - **Server Actions** for form handling
 - **TanStack Query** for data fetching
-- **Zod** for validation
+- **Zod 4.0.5** for validation
 
 ### **Developer Experience**
 - **ESLint 9** with Next.js config
@@ -69,20 +71,20 @@ KIRO is a comprehensive inventory management system designed for small to medium
 
 ### **Prerequisites**
 - Node.js 18.18+ (recommended: 20+)
-- npm, yarn, or pnpm
+- pnpm (recommended) or npm
 - Git
 
 ### **Setup**
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/kiro-inventory-management.git
+   git clone <private-repository-url>
    cd kiro-inventory-management
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Environment setup**
@@ -98,12 +100,12 @@ KIRO is a comprehensive inventory management system designed for small to medium
 
 4. **Run development server**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 5. **Open in browser**
    ```
-   http://localhost:3001
+   http://localhost:3000
    ```
 
 ## 🏗️ **Design Philosophy**
@@ -143,16 +145,55 @@ This app prioritizes simplicity and flexibility for small businesses with irregu
 - ✅ Instrumentation for monitoring
 - ✅ Hot Module Replacement
 
+## 🗺️ **Development Roadmap**
+
+### **Phase 1: Foundation ✅ (100% Complete)**
+- ✅ Next.js 15.4.1 + React 19.1.0 setup
+- ✅ Application layout and navigation
+- ✅ Core TypeScript interfaces and utilities
+- ✅ Performance optimizations
+
+### **Phase 2: Core Features 🚧 (15% Complete)**
+- 📋 Database schema implementation
+- 📋 Core business logic functions (WAC, cycle count alerts)
+- 🚧 Items management completion
+- 📋 Suppliers management
+
+### **Phase 3: Business Workflows 📋 (0% Complete)**
+- 📋 Purchase management workflow
+- 📋 CSV import and draft purchase system
+- 📋 Recipe and batch management
+- 📋 Sales tracking and reporting
+
+### **Phase 4: Advanced Features 📋 (0% Complete)**
+- 📋 Forecasting and reorder point management
+- 📋 Transaction logging and audit trail
+- 📋 Error handling and validation system
+- 📋 Real-time updates and notifications
+
+### **Phase 5: Polish & Optimization 📋 (0% Complete)**
+- 📋 Mobile-first responsive design
+- 📋 Data import/export functionality
+- 📋 Authentication and security
+- 📋 Comprehensive testing suite
+
+**Current Progress: ~25% Complete**
+
 ## 🔧 **Development**
 
 ### **Available Scripts**
 
 ```bash
 # Development
-npm run dev          # Start development server with Turbopack
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
+pnpm dev             # Start development server with Turbo
+pnpm build           # Build for production
+pnpm start           # Start production server
+pnpm lint            # Run ESLint
+pnpm type-check      # TypeScript checking
+
+# Deployment (Vercel CLI)
+pnpm run deploy:preview  # Deploy preview
+pnpm run deploy          # Deploy production
 ```
 
 ### **Code Quality**
@@ -163,13 +204,16 @@ npm run lint         # Run ESLint
 
 ## 📚 **Documentation**
 
-- [Dependency Audit](./DEPENDENCY_AUDIT.md) - Complete technology stack analysis
-- [Development Workflow](./DEVELOPMENT_WORKFLOW.md) - VS Code workflow system
-- [Project Progress](./PROJECT_PROGRESS.md) - Development progress tracking
-- [Data Model](./data-model.md) - Database schema and architecture
-- [UI Blueprint](./ui-blueprint.md) - UI design and user workflows
-- [Development Standards](./dev-standards.md) - Technical standards and guidelines
-- [AI Guidelines](./ai-guidelines.md) - AI assistant guidelines
+- [Data Model](./docs/data-model.md) - Database schema and architecture
+- [Technical Design](./docs/technical-design.md) - System design and architecture
+- [Requirements](./docs/requirements.md) - User stories and acceptance criteria
+- [Implementation Tasks](./docs/tasks.md) - Development tasks and progress
+- [UI Blueprint](./docs/ui-blueprint.md) - UI design and user workflows
+- [Development Guide](./docs/development-guide.md) - Development standards, workflow, and progress
+- [AI Guidelines](./docs/ai-guidelines.md) - AI assistant guidelines
+- [Deployment Guide](./docs/deployment.md) - Production deployment
+- [Dependency Audit](./docs/dependency-audit.md) - Technology stack analysis
+- [API Documentation](./docs/api-documentation.md) - Backend functions and endpoints
 
 ## 🔐 **Security**
 
@@ -179,24 +223,14 @@ npm run lint         # Run ESLint
 - ✅ **Authentication**: Supabase Auth integration
 - ✅ **Authorization**: Row-level security policies
 
-## 🔄 **Changelog**
+## 📞 **Internal Support**
 
-### **v0.1.0** (July 18, 2025)
-- ✅ Initial release with Next.js 15.4.1
-- ✅ React 19.1.0 upgrade complete
-- ✅ Modern UI with Tailwind CSS
-- ✅ Comprehensive dependency audit
-- ✅ Performance optimizations with Turbopack
-- ✅ React Compiler integration
-- ✅ Enhanced search functionality
-- ✅ Server Actions with background tasks
-
-## 📞 **Support**
-
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/kiro-inventory-management/issues)
-- 📧 **Email**: support@kiro-inventory.com
-- 📖 **Documentation**: [Full docs](https://docs.kiro-inventory.com)
+- 📖 **Documentation**: [Full docs](./docs/)
+- 🔧 **Development**: Internal development team
+- 🐛 **Issues**: Internal issue tracking system
 
 ---
 
-**Built with ❤️ using Next.js 15, React 19, and modern web technologies**
+**Built with ❤️ for internal business operations using Next.js 15, React 19, and modern web technologies**
+
+*For detailed changelog, see [CHANGELOG.md](./CHANGELOG.md)*

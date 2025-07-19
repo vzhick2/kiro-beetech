@@ -3,20 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -H 0.0.0.0 -p 3001",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:clean": "rm -rf .next && npm run dev",
-    "build:analyze": "cross-env ANALYZE=true next build",
-    "preview": "next build && next start",
     "type-check": "tsc --noEmit",
-    "pre-deploy": "npm run type-check && npm run lint && npm run build",
-    "deploy:vercel": "vercel --prod",
-    "deploy:preview": "vercel",
-    "deploy": "node scripts/deploy.js",
-    "deploy:prod": "node scripts/deploy.js --prod",
-    "cleanup:logs": "node scripts/cleanup-logs.js"
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
@@ -44,12 +37,12 @@
     "@types/react-dom": "19.1.6",
     "autoprefixer": "^10.4.21",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "cross-env": "^7.0.3",
     "eslint": "^9.31.0",
     "eslint-config-next": "15.4.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vercel": "^44.5.0"
   },
   "overrides": {
     "@types/react": "19.1.8",

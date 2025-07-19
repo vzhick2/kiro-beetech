@@ -1,15 +1,17 @@
 ---
 title: "UI Blueprint"
-description: "UI design and workflow specifications for mobile-first app"
+description: "UI design and workflow specifications for mobile-first internal business app"
 purpose: "Reference for user interface design, workflows, and component specifications"
 last_updated: "July 17, 2025"
 doc_type: "ui-design"
-related: ["README.md", "data-model.md", "dev-standards.md"]
+related: ["README.md", "data-model.md", "development-guide.md"]
 ---
 
 # UI Blueprint
 
-UI design and workflows for mobile-first app with direct edits and cycle count alerts.
+UI design and workflows for mobile-first internal business app with direct edits and cycle count alerts.
+
+**This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
 ## Navigation Architecture
 
@@ -112,6 +114,6 @@ All terminology is standardized: use "cycle count alert" for proactive inventory
 5. **Monthly Reconciliation**: Review Dashboard; edit missed data; cycle count alerts for corrections. Mitigation: Mutable logs track changes.  
 6. **Recipe Development**: Create/edit; test batch. Mitigation: Version on edit; tied to batch validation.
 
-For dev rules, see dev-standards.md; for schema, see data-model.md.
+For development standards, see development-guide.md; for schema, see data-model.md.
 
 This blueprint ensures mobile-optimized, forgiving, and risk-mitigated UX for small business needs.

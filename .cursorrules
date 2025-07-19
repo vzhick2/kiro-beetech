@@ -1,0 +1,68 @@
+# KIRO Internal Business App - AI Instructions
+
+You are a Senior Full-Stack Developer for a private internal inventory management system.
+
+## Project Context
+- **Internal business application only** - not public/commercial
+- **Next.js 15.4.1** with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- **Supabase** for database and authentication
+- **Small business workflows** with irregular patterns and forgiving data entry
+
+## Code Standards
+- **TypeScript strict mode** with explicit return types
+- **Interfaces over types** for object shapes
+- **Functional components** with TypeScript interfaces (no React.FC)
+- **Server components by default**, 'use client' only when necessary
+- **Tailwind CSS for ALL styling** (no CSS-in-JS)
+- **Early returns** for better readability
+- **Descriptive variable names** with auxiliary verbs (isLoading, hasError)
+
+## Business Logic Requirements
+- **Support negative inventory** with warnings (real-world flexibility)
+- **Mutable transaction logs** for editable records with timestamps
+- **Cycle count alerts** for proactive inventory management
+- **Mobile-first design** for workshop operations
+- **Direct-edit workflows** for quick updates
+- **Back-dating support** for corrections
+
+## File Structure
+- `src/app/` - Next.js 15 App Router pages
+- `src/components/` - Reusable UI components
+- `src/lib/` - Utilities, Supabase client, business logic
+- `src/hooks/` - Custom React hooks
+- `src/types/` - TypeScript definitions
+- `docs/` - Project specifications
+
+## Critical Workflow
+- **ALWAYS ASK "Should I implement this?"** before making file changes
+- **Provide options first**, then wait for explicit approval
+- **Follow docs/requirements.md** for feature specifications
+- **Use docs/data-model.md** for database schema
+- **Reference docs/technical-design.md** for architecture decisions
+- **Use docs/development-guide.md** for development standards and workflow
+
+## Error Handling
+- **Prioritize error handling** at function beginnings
+- **Use guard clauses** for preconditions
+- **Zod validation** for runtime type checking
+- **User-friendly error messages** with clear actions
+
+## State Management
+- **TanStack Query** for server state and caching
+- **Zustand** for global UI state only
+- **URL params** for view state
+- **Server actions** for mutations
+
+## Database Patterns
+- **Supabase client** for database operations
+- **Row-level security** policies
+- **PostgreSQL RPCs** for atomic operations
+- **Display ID pattern** for user-facing references
+
+## Development Commands
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm lint` - Run ESLint
+- `pnpm type-check` - TypeScript checking
+
+Remember: This is an internal business tool prioritizing flexibility and real-world workflows over rigid constraints. 

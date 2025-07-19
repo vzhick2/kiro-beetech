@@ -1,8 +1,19 @@
+---
+title: "Requirements"
+description: "User stories and acceptance criteria for internal inventory management system"
+purpose: "Reference for feature specifications and business requirements"
+last_updated: "July 18, 2025"
+doc_type: "requirements-specification"
+related: ["README.md", "technical-design.md", "data-model.md", "ui-blueprint.md"]
+---
+
 # Requirements Document
 
 ## Introduction
 
-This document outlines the requirements for a small business inventory management application designed to handle the complete inventory lifecycle from procurement to sales. The system prioritizes flexibility and real-world workflows through mutable transaction logs, proactive cycle count alerts, and mobile-first design for workshop operations with desktop optimization for administrative tasks.
+This document outlines the requirements for a **private, internal inventory management application** designed to handle the complete inventory lifecycle from procurement to sales for small business operations. The system prioritizes flexibility and real-world workflows through mutable transaction logs, proactive cycle count alerts, and mobile-first design for workshop operations with desktop optimization for administrative tasks.
+
+**This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
 The application supports small businesses with irregular workflows by allowing editable records, back-dating transactions, and providing intelligent alerts rather than rigid constraints. Key features include automated bank CSV import for purchases, recipe-based production tracking, and comprehensive inventory monitoring with negative inventory support.
 

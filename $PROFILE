@@ -1,0 +1,41 @@
+# Minimal PowerShell Profile for Fast Performance
+# Optimized for development work without delays
+
+# Disable progress bar for faster operations
+$ProgressPreference = 'SilentlyContinue'
+
+# Disable pnpm progress bars
+$env:PNPM_PROGRESS = "false"
+$env:PNPM_COLOR = "false"
+
+# Fix PSReadLine issues (prevents crashes)
+Set-PSReadLineOption -PredictionSource None
+Set-PSReadLineOption -BellStyle None
+
+# Disable complex buffer operations that can cause hangs
+# $Host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(120, 1000)
+
+# Disable VS Code shell integration issues
+$env:VSCODE_NONCE = $null
+$env:VSCODE_STABLE = $null
+$env:VSCODE_ENV_REPLACE = $null
+
+# Disable telemetry
+$env:POWERSHELL_TELEMETRY_OPTOUT = 1
+
+# Simple prompt
+function prompt {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = [Security.Principal.WindowsPrincipal] $identity
+    $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
+    
+    $prefix = if ($principal.IsInRole($adminRole)) { "[ADMIN] " } else { "" }
+    $location = (Get-Location).Path.Replace($env:USERPROFILE, "~")
+    
+    return "${prefix}PS $location> "
+}
+
+# Essential aliases only
+Set-Alias -Name ll -Value Get-ChildItem -ErrorAction SilentlyContinue
+
+Write-Host "PowerShell ready" -ForegroundColor Green 

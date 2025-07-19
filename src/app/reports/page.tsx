@@ -1,20 +1,16 @@
-import { AppLayout } from '@/components/layout/app-layout'
-
 export default function ReportsPage() {
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Reports</h1>
-          <p className="text-gray-600">
-            View analytics and export data
-          </p>
-        </div>
-        
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-gray-600">Reporting features will be implemented here.</p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-800">Reports</h1>
+        <p className="text-gray-600">
+          View analytics and export data
+        </p>
       </div>
-    </AppLayout>
+      
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <p className="text-gray-600">Reporting features will be implemented here.</p>
+      </div>
+    </div>
   )
 }

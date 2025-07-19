@@ -1,25 +1,87 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Enable React Compiler for automatic optimizations (experimental)
+  // Development optimizations
   experimental: {
-    reactCompiler: true,
-    // Enable enhanced security for Server Actions
-    serverActions: {
-      allowedOrigins: ['localhost:3001', '0.0.0.0:3001'],
+    // Faster development builds
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
     },
-    // Note: unstable_after might not be available in all TypeScript definitions yet
-    // We'll use our fallback implementation for now
+    // Optimize for development speed
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
-  // Enable TypeScript support
+
+  // Reduce verbose logging in development
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
+
+  // Webpack optimizations for development
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Faster source maps in development
+      config.devtool = 'eval-cheap-module-source-map'
+      
+      // Optimize bundle splitting for development
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      }
+    }
+    return config
+  },
+
+  // TypeScript optimization
   typescript: {
-    // Enable type checking during build
-    ignoreBuildErrors: false,
+    // Don't run type checking during development for speed
+    ignoreBuildErrors: process.env.NODE_ENV === 'development',
   },
-  // Enable ESLint checking during build
+
+  // ESLint optimization
   eslint: {
-    ignoreDuringBuilds: false,
+    // Don't run ESLint during development for speed
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
   },
+
+  // Image optimization
+  images: {
+    // Disable image optimization in development for speed
+    unoptimized: process.env.NODE_ENV === 'development',
+  },
+
+  // Compiler optimization
+  compiler: {
+    // Remove console logs in production
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // Performance optimizations
+  poweredByHeader: false,
+  compress: true,
+
+  // Development server optimizations
+  devIndicators: {
+    buildActivity: false, // Disable build activity indicator for speed
+  },
+
+  // Experimental features for better performance
+  swcMinify: true,
 }
 
 export default nextConfig

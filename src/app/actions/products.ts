@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-// import { redirect } from 'next/navigation'
 
 // Note: unstable_after is available but might need to be enabled in next.config.ts
 // For now, we'll use a fallback pattern
@@ -11,15 +10,14 @@ const after = (callback: () => Promise<void>) => {
   setTimeout(callback, 0)
 }
 
-export async function createProduct(formData: FormData) {
+export async function createProduct(formData: FormData): Promise<void> {
   const name = formData.get('name') as string
   const price = formData.get('price') as string
   const category = formData.get('category') as string
   
   // Validate input
   if (!name || !price || !category) {
-    console.error('❌ Validation failed: All fields are required')
-    return
+    throw new Error('All fields are required')
   }
 
   try {
@@ -37,24 +35,22 @@ export async function createProduct(formData: FormData) {
 
     // Use background task simulation
     after(async () => {
-      console.log('📦 Product created:', product)
+      // Background processing would happen here
     })
 
     // Revalidate the products page
     revalidatePath('/products')
-    
   } catch (error) {
-    console.error('Error creating product:', error)
+    throw new Error(`Failed to create product: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
-export async function updateInventoryAction(formData: FormData) {
+export async function updateInventoryAction(formData: FormData): Promise<void> {
   const productId = formData.get('productId') as string
   const quantity = parseInt(formData.get('quantity') as string)
   
   if (!productId || isNaN(quantity)) {
-    console.error('❌ Invalid inventory update data')
-    return
+    throw new Error('Invalid inventory update data')
   }
 
   try {
@@ -63,24 +59,22 @@ export async function updateInventoryAction(formData: FormData) {
 
     // Background logging
     after(async () => {
-      console.log('📊 Inventory updated:', { productId, quantity, timestamp: new Date() })
+      // Background processing would happen here
     })
 
     // Revalidate related pages
     revalidatePath('/products')
     revalidatePath('/inventory')
-    
   } catch (error) {
-    console.error('Error updating inventory:', error)
+    throw new Error(`Failed to update inventory: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
-export async function deleteProductAction(formData: FormData) {
+export async function deleteProductAction(formData: FormData): Promise<void> {
   const productId = formData.get('productId') as string
   
   if (!productId) {
-    console.error('❌ No product ID provided')
-    return
+    throw new Error('No product ID provided')
   }
 
   try {
@@ -89,13 +83,12 @@ export async function deleteProductAction(formData: FormData) {
 
     // Background cleanup
     after(async () => {
-      console.log('🗑️ Product deleted:', { productId, timestamp: new Date() })
+      // Background processing would happen here
     })
 
     // Revalidate
     revalidatePath('/products')
-    
   } catch (error) {
-    console.error('Error deleting product:', error)
+    throw new Error(`Failed to delete product: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }

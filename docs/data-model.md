@@ -1,160 +1,40 @@
-# Design Document
+---
+title: "Data Model and Architecture"
+description: "Database schema, architecture principles, and security design for internal business use"
+purpose: "Reference for data foundation, integrity patterns, and system architecture"
+last_updated: "July 18, 2025"
+doc_type: "technical-reference"
+related: ["README.md", "ui-blueprint.md", "development-guide.md", "requirements.md"]
+---
 
-## Overview
+# Data Model and Architecture
 
-This document outlines the technical design for a small business inventory management application that prioritizes flexibility, real-world workflows, and mobile-first user experience. The system supports the complete inventory lifecycle from procurement to sales with mutable transaction logs, intelligent forecasting, and proactive cycle count alerts.
+Database schema and architectural foundation for internal inventory management with mutable logs and validation mitigations.
 
-The design emphasizes pragmatic solutions for small businesses with irregular workflows, allowing editable records, back-dating transactions, and providing intelligent alerts rather than rigid constraints. The architecture leverages modern web technologies with Supabase for backend services and Next.js for the frontend.
+**This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
-## Architecture
+## Part 1: Core Design Principles
 
-### System Architecture Overview
+### Data Integrity
+- **Mutable Transaction Logs**: Editable transactions with timestamps for flexible corrections.
+- **Negative Inventory Alerts**: Support real-world workflows by allowing negative inventory with robust alert system for user resolution
+- **Cycle Count Alerts**: Algorithm-based inventory checks to reduce manual monitoring.
+- **Cost Allocation**: Exclude non-inventory items from shipping/tax allocation to maintain COGS accuracy.
 
-```mermaid
-graph TB
-    subgraph "Frontend Layer"
-        A[Next.js App Router]
-        B[React Components]
-        C[TanStack Query]
-        D[Zustand Store]
-    end
-    
-    subgraph "Backend Layer"
-        E[Supabase Auth]
-        F[PostgreSQL Database]
-        G[Database RPCs]
-        H[Row Level Security]
-    end
-    
-    subgraph "External Services"
-        I[Vercel Deployment]
-        J[Email Notifications]
-        K[CSV Import/Export]
-    end
-    
-    A --> B
-    B --> C
-    C --> G
-    G --> F
-    E --> H
-    H --> F
-    A --> I
-    G --> J
-    B --> K
-```
-
-### Technology Stack
-
-- **Frontend**: Next.js 14+ with App Router, React 18+, TypeScript
-- **UI Library**: shadcn/ui components with Tailwind CSS
-- **State Management**: TanStack Query for server state, URL params for view state, Zustand for global UI state
-- **Backend**: Supabase (PostgreSQL + Auth + Real-time)
-- **Database**: PostgreSQL with custom RPCs for business logic
-- **Deployment**: Vercel for frontend, Supabase for backend services
-- **Data Tables**: TanStack Table for performant, customizable grids
+### Technical Foundation
+- **Authentication**: Supabase Auth with Row Level Security (RLS).
+- **Performance**: Next.js SSR with optimized PostgreSQL queries.
+- **Atomic Operations**: PostgreSQL RPCs for critical multi-step operations.
+- **On-Demand Costing with Caching**: Critical calculations like Weighted Average Cost (WAC) are performed on-demand by pure functions and cached in the `items` table. This decouples complex calculations from critical operations like saving purchases, reducing risk and simplifying logic.
 
 ### Design Patterns
+- **Display ID Pattern**: Separate user-facing identifiers (displayId) from database primary keys (UUID) for optimal UX and performance. Applied to batches, purchases, sales periods, and recipes.
+- **Optional Field Strategy**: Capture data fields for future analysis (laborCost, expiryDate) without implementing complex behaviors in MVP.
+- **Deferred Logic Approach**: Store data now, add complex system behaviors in Phase 2 to protect MVP timeline.
 
-- **Display ID Pattern**: User-facing identifiers (SKU, displayId) separate from database UUIDs
-- **Mutable Transaction Logs**: Editable records with audit trails for flexibility
-- **On-Demand Calculations**: WAC and forecasting computed when needed with caching
-- **Mobile-First Responsive**: Touch-friendly interfaces with desktop optimization
-- **Direct Edit Workflows**: In-place editing for quick updates
+## Part 2: TypeScript Interfaces
 
-## Components and Interfaces
-
-### Core Components Architecture
-
-```mermaid
-graph TD
-    subgraph "Layout Components"
-        A[AppLayout]
-        B[Sidebar]
-        C[MobileNav]
-        D[CommandPalette]
-    end
-    
-    subgraph "Feature Components"
-        E[Dashboard]
-        F[ItemsTable]
-        G[PurchaseInbox]
-        H[RecipeManager]
-        I[BatchLogger]
-        J[SalesImporter]
-    end
-    
-    subgraph "Shared Components"
-        K[DataTable]
-        L[FormComponents]
-        M[AlertSystem]
-        N[ExportButton]
-    end
-    
-    A --> B
-    A --> C
-    A --> D
-    A --> E
-    E --> F
-    E --> G
-    F --> K
-    G --> L
-    M --> E
-    N --> K
-```
-
-### Component Specifications
-
-#### Dashboard Component
-- **Purpose**: 30-second business health check with Action Center
-- **Features**: 
-  - Top 5 cycle count alerts using priority algorithm
-  - Basic margin calculator (revenue - COGS)
-  - Export buttons for data and recent changes
-  - Mobile-optimized touch targets (≥44px)
-- **Data Sources**: Items, sales_periods, transactions tables
-- **State Management**: TanStack Query for real-time data
-
-#### ItemsTable Component
-- **Purpose**: Manage inventory items with direct editing
-- **Features**:
-  - Search/filter by SKU, name, type
-  - Direct-edit quantity with +/- buttons
-  - Quick Reorder buttons for low-stock items
-  - Auto/Manual badges for reorder points
-  - Cycle count alert sorting mode
-- **Interactions**: Inline editing, modal details, quick actions
-- **Mobile Optimization**: Expandable rows, swipe actions
-
-#### PurchaseInbox Component
-- **Purpose**: Streamlined purchase logging with bank CSV import
-- **Features**:
-  - Master-detail layout (desktop) / single-column (mobile)
-  - Smart CSV import with supplier matching
-  - Draft purchase review workflow
-  - Proportional cost allocation with non-inventory exclusion
-- **Data Flow**: CSV → supplier matching → draft creation → line item completion
-
-#### RecipeManager Component
-- **Purpose**: Define recipes with scaling and batch templates
-- **Features**:
-  - Recipe CRUD with ingredient management
-  - Recipe scaling with proportional calculations
-  - Batch template creation and reuse
-  - Max batches calculation based on inventory
-- **Business Logic**: Version increment on edits, yield calculations
-
-#### BatchLogger Component
-- **Purpose**: Log production batches with yield analysis
-- **Features**:
-  - Recipe-based batch creation
-  - Ingredient consumption with negative inventory warnings
-  - Yield percentage and cost variance calculations
-  - Template-based batch configurations
-- **Validation**: Stock sufficiency checks with proceed-on-negative logic
-
-### Interface Definitions
-
-#### Core Data Interfaces
+### Core Data Interfaces
 
 ```typescript
 interface Item {
@@ -187,6 +67,16 @@ interface Purchase {
   lineItems: PurchaseLineItem[];
 }
 
+interface PurchaseLineItem {
+  lineItemId: string;
+  purchaseId: string;
+  itemId: string;
+  quantity: number;
+  unitCost: number;
+  totalCost: number;
+  notes?: string;
+}
+
 interface Recipe {
   recipeId: string;
   name: string;
@@ -197,6 +87,14 @@ interface Recipe {
   laborMinutes?: number;
   projectedMaterialCost?: number;
   ingredients: RecipeIngredient[];
+}
+
+interface RecipeIngredient {
+  ingredientId: string;
+  recipeId: string;
+  itemId: string;
+  quantity: number;
+  notes?: string;
 }
 
 interface Batch {
@@ -214,9 +112,42 @@ interface Batch {
   expiryDate?: Date;
   notes?: string;
 }
+
+interface Supplier {
+  supplierId: string;
+  name: string;
+  storeUrl?: string;
+  phone?: string;
+  isArchived: boolean;
+}
+
+interface SalesPeriod {
+  salesPeriodId: string;
+  displayId: string;
+  itemId: string;
+  channel: 'qbo' | 'bigcommerce';
+  periodStart: Date;
+  periodEnd: Date;
+  quantitySold: number;
+  revenue?: number;
+  dataSource: 'manual' | 'imported';
+}
+
+interface Transaction {
+  transactionId: string;
+  itemId: string;
+  transactionType: 'purchase' | 'sale' | 'adjustment' | 'batch_consumption' | 'batch_production';
+  quantity: number;
+  unitCost?: number;
+  referenceId?: string;
+  referenceType?: string;
+  effectiveDate: Date;
+  notes?: string;
+  created_at: Date;
+}
 ```
 
-#### Business Logic Interfaces
+### Business Logic Interfaces
 
 ```typescript
 interface CycleCountAlert {
@@ -255,13 +186,62 @@ interface QuickReorderRequest {
   quantity: number;
   estimatedCost: number;
 }
+
+// Notification and Alert System
+interface AlertConfig {
+  type: 'NEGATIVE_INVENTORY' | 'LOW_STOCK' | 'CYCLE_COUNT' | 'BATCH_COMPLETE';
+  threshold?: number;
+  enabled: boolean;
+  deliveryMethods: ('email' | 'in_app')[];
+  recipients?: string[];
+}
+
+interface NotificationRule {
+  id: string;
+  name: string;
+  condition: string; // SQL-like condition
+  enabled: boolean;
+  deliveryMethods: ('email' | 'in_app')[];
+  recipients?: string[];
+}
+
+interface AlertTrigger {
+  ruleId: string;
+  triggeredAt: Date;
+  data: Record<string, any>;
+  delivered: boolean;
+  deliveryAttempts: number;
+}
 ```
 
-## Data Models
+### Error Handling Interfaces
 
-### Complete Database Schema
+```typescript
+enum ErrorType {
+  NEGATIVE_INVENTORY_WARNING = 'NEGATIVE_INVENTORY_WARNING',
+  INSUFFICIENT_STOCK = 'INSUFFICIENT_STOCK',
+  DUPLICATE_DISPLAY_ID = 'DUPLICATE_DISPLAY_ID',
+  ARCHIVED_REFERENCE = 'ARCHIVED_REFERENCE',
+  INVALID_ALLOCATION = 'INVALID_ALLOCATION',
+  NO_PURCHASE_HISTORY = 'NO_PURCHASE_HISTORY'
+}
 
-#### Core Tables
+interface BusinessError {
+  type: ErrorType;
+  message: string;
+  details?: Record<string, any>;
+  canProceed: boolean;
+}
+
+// Type definitions for inventory units and other enums
+type InventoryUnit = 'each' | 'lb' | 'oz' | 'kg' | 'g' | 'gal' | 'qt' | 'pt' | 'cup' | 'fl_oz' | 'ml' | 'l';
+type ItemType = 'ingredient' | 'packaging' | 'product';
+type TransactionType = 'purchase' | 'sale' | 'adjustment' | 'batch_consumption' | 'batch_production';
+```
+
+## Part 3: Database Schema
+
+### Core Tables
 
 ```sql
 -- Items table with inventory tracking
@@ -286,10 +266,8 @@ CREATE TABLE items (
 CREATE TABLE suppliers (
   supplierId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  contactEmail TEXT,
-  contactPhone TEXT,
-  address TEXT,
-  notes TEXT,
+  storeUrl TEXT,
+  phone TEXT,
   isArchived BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -367,11 +345,14 @@ CREATE TABLE batches (
 -- Sales periods for forecasting
 CREATE TABLE sales_periods (
   salesPeriodId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  displayId TEXT UNIQUE NOT NULL,
   itemId UUID REFERENCES items(itemId) NOT NULL,
+  channel sales_channel NOT NULL,
   periodStart DATE NOT NULL,
   periodEnd DATE NOT NULL,
   quantitySold NUMERIC NOT NULL,
-  revenue NUMERIC NOT NULL,
+  revenue NUMERIC,
+  dataSource data_source DEFAULT 'manual',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -412,37 +393,19 @@ CREATE TABLE batch_templates (
 );
 ```
 
-#### Enums and Types
+### Enums and Types
 
 ```sql
 CREATE TYPE item_type AS ENUM ('ingredient', 'packaging', 'product');
 CREATE TYPE inventory_unit AS ENUM ('each', 'lb', 'oz', 'kg', 'g', 'gal', 'qt', 'pt', 'cup', 'fl_oz', 'ml', 'l');
 CREATE TYPE transaction_type AS ENUM ('purchase', 'sale', 'adjustment', 'batch_consumption', 'batch_production');
+CREATE TYPE sales_channel AS ENUM ('qbo', 'bigcommerce');
+CREATE TYPE data_source AS ENUM ('manual', 'imported');
 ```
 
-### Data Relationships
+## Part 4: Business Logic Functions
 
-```mermaid
-erDiagram
-    SUPPLIERS ||--o{ PURCHASES : "supplies"
-    SUPPLIERS ||--o{ ITEMS : "primary_supplier"
-    ITEMS ||--o{ PURCHASE_LINE_ITEMS : "contains"
-    ITEMS ||--o{ RECIPE_INGREDIENTS : "used_in"
-    ITEMS ||--o{ SALES_PERIODS : "sold_as"
-    ITEMS ||--o{ TRANSACTIONS : "affects"
-    ITEMS ||--o{ FORECASTING_DATA : "forecasts"
-    PURCHASES ||--o{ PURCHASE_LINE_ITEMS : "includes"
-    RECIPES ||--o{ RECIPE_INGREDIENTS : "requires"
-    RECIPES ||--o{ BATCHES : "produces"
-    RECIPES ||--o{ BATCH_TEMPLATES : "templates"
-    BATCHES ||--o{ TRANSACTIONS : "creates"
-```
-
-### Business Logic Implementation
-
-#### Core Business Functions
-
-The following SQL functions implement the core business logic for inventory management. All functions are designed to handle edge cases gracefully and support the flexible workflows required by small businesses.
+### Core Business Functions
 
 #### Weighted Average Cost Calculation
 ```sql
@@ -560,96 +523,29 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
-## Error Handling
+## Part 5: Error Handling Standards
 
 ### Standardized Error Types
+- **NEGATIVE_INVENTORY_WARNING**: "[SKU] will go to [qty] (short by [amount]). This transaction will be logged but requires attention."
+- **INSUFFICIENT_STOCK**: "Insufficient [SKU] for batch (available: [qty], needed: [qty])"
+- **DUPLICATE_DISPLAY_ID**: "[type] reference [displayId] already exists"
+- **ARCHIVED_REFERENCE**: "Cannot reference archived [type]: [name]"
+- **INVALID_ALLOCATION**: "Cannot allocate shipping/taxes to non-inventory items"
 
-The system implements consistent error handling across all components:
+### Alert Types for UI
+- **NEGATIVE_INVENTORY**: Critical alert for items with currentQuantity < 0
+- **LOW_STOCK**: Warning alert for items below reorder point
+- **SHORTAGE_AMOUNT**: Calculated field showing how much inventory is short (ABS of negative quantity)
 
-#### Client-Side Error Handling
-```typescript
-enum ErrorType {
-  NEGATIVE_INVENTORY_WARNING = 'NEGATIVE_INVENTORY_WARNING',
-  INSUFFICIENT_STOCK = 'INSUFFICIENT_STOCK',
-  DUPLICATE_DISPLAY_ID = 'DUPLICATE_DISPLAY_ID',
-  ARCHIVED_REFERENCE = 'ARCHIVED_REFERENCE',
-  INVALID_ALLOCATION = 'INVALID_ALLOCATION',
-  NO_PURCHASE_HISTORY = 'NO_PURCHASE_HISTORY'
-}
-
-interface BusinessError {
-  type: ErrorType;
-  message: string;
-  details?: Record<string, any>;
-  canProceed: boolean;
-}
+### RPC Error Handling Pattern
+```sql
+-- Standard error raising in RPCs
+IF condition_failed THEN
+  RAISE EXCEPTION '[ERROR_TYPE]: %', detailed_message
+  USING HINT = 'User-friendly suggestion for resolution';
+END IF;
 ```
-
-#### Error Handling Patterns
-- **Negative Inventory**: Show warnings but allow transactions to proceed (all database functions allow negatives with NEGATIVE_INVENTORY_WARNING but proceed, supporting small-business flexibility). All errors support forgiving workflows—system warns but doesn't block irregular operations like logging sales before stock arrives.
-- **Validation Errors**: Inline feedback with clear resolution steps
-- **Import Errors**: Detailed validation with correction suggestions
-- **Network Errors**: Retry mechanisms with user feedback
-- **Data Conflicts**: Clear conflict resolution options
-
-### Alert System Design
-
-The system provides customizable notification rules with multiple delivery methods. Implementation uses Supabase Edge Functions for email delivery and real-time subscriptions for in-app notifications.
-
-```typescript
-interface AlertConfig {
-  type: 'NEGATIVE_INVENTORY' | 'LOW_STOCK' | 'CYCLE_COUNT' | 'BATCH_COMPLETE';
-  threshold?: number;
-  enabled: boolean;
-  deliveryMethods: ('email' | 'in_app')[];
-  recipients?: string[];
-}
-
-interface NotificationRule {
-  id: string;
-  name: string;
-  condition: string; // SQL-like condition
-  alertConfig: AlertConfig;
-  isActive: boolean;
-}
-
-interface AlertTrigger {
-  ruleId: string;
-  triggeredAt: Date;
-  data: Record<string, any>;
-  delivered: boolean;
-  deliveryAttempts: number;
-}
-```
-
-## Testing Strategy
-
-### Testing Approach
-
-#### Unit Testing
-- **Business Logic**: WAC calculations, forecasting algorithms, cycle count scoring
-- **Utility Functions**: Display ID generation, date formatting, validation helpers
-- **Data Transformations**: CSV parsing, export formatting, API response mapping
-
-#### Integration Testing
-- **Database RPCs**: Purchase logging, batch creation, inventory adjustments
-- **API Endpoints**: CRUD operations, bulk imports, data exports
-- **Authentication**: User permissions, row-level security
-
-#### End-to-End Testing
-- **Core Workflows**: Purchase → inventory update → WAC recalculation
-- **Production Flow**: Recipe → batch → ingredient consumption → product creation
-- **Mobile Experience**: Touch interactions, responsive layouts, offline behavior
-
-#### Performance Testing
-- **Large Datasets**: 10,000+ items, 100,000+ transactions
-- **Concurrent Users**: Multiple users editing simultaneously
-- **Mobile Performance**: Load times, touch responsiveness
-
-### Test Data Strategy
-
-Use factories like createTestItem and createTestPurchase for consistent test data. AI builders can expand these into full Vitest suites, simulating scenarios like negative inventory (expected: warning shown, transaction proceeds) and edge cases such as WAC calculation with no purchase history (expected: default to 0 with warning).
 
 ---
 
-This design document provides a comprehensive technical foundation for implementing the inventory management system. The architecture emphasizes flexibility, performance, and user experience while maintaining data integrity and business logic consistency. The modular component design enables incremental development and testing, supporting the spec-driven development approach outlined in the requirements.
+This data model and architecture ensures flexible data supporting business workflows—editable, validated, and cycle count alert-assisted. For UI workflows, see ui-blueprint.md.

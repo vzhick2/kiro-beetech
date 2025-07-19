@@ -5,5 +5,120 @@
     background-color: #f8fafc;
     color: #1f2937;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow: hidden; /* Prevent body scroll - scrollbar will be in content area only */
+    /* Simple responsive base font - good for inventory data readability */
+    font-size: clamp(14px, 1.1vw, 16px);
+    line-height: 1.5;
   }
+  
+  /* Headers for inventory sections - subtle scaling */
+  h1, h2, h3 {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+}
+
+/* Comprehensive button flash prevention */
+@layer components {
+  .no-flash {
+    /* Remove onclick Background Color Change */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .no-flash:focus {
+    /* Remove onclick Border Color Change */
+    outline: none !important;
+  }
+  
+  .no-flash:active {
+    outline: none !important;
+  }
+  
+  .no-flash::-moz-focus-inner {
+    border: 0;
+  }
+}
+
+/* Global focus outline prevention for sidebar links */
+@layer utilities {
+  /* Prevent all focus outlines on sidebar navigation */
+  a[href]:focus,
+  a[href]:active,
+  a[href]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  /* Prevent WebKit tap highlighting */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Remove focus rings from all interactive elements in sidebar */
+  nav a:focus,
+  nav a:active,
+  nav a:focus-visible,
+  nav button:focus,
+  nav button:active,
+  nav button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Layout structure for proper scrollbar positioning */
+.app-container {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto; /* Scrollbar appears here - below header, right of sidebar */
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar Styling - Dark Theme, Wider for Better Usability */
+::-webkit-scrollbar {
+  width: 8px; /* Wider scrollbar for easier grabbing (was 6px) */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151; /* Dark gray thumb */
+  border-radius: 4px; /* Slightly larger radius to match width */
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563; /* Slightly lighter on hover */
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #6b7280; /* Lighter when active */
+}
+
+/* Firefox scrollbar styling - dark theme */
+* {
+  scrollbar-width: auto; /* Changed from 'thin' to 'auto' for wider scrollbar */
+  scrollbar-color: #374151 transparent;
 }
