@@ -117,6 +117,7 @@ export function ResponsiveSidebar({
         className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
+        style={{ touchAction: 'manipulation', WebkitUserSelect: 'none', userSelect: 'none' }}
       >
         <NavigationContent />
       </div>

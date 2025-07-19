@@ -42,6 +42,18 @@
   }
 }
 
+/* Search overlay animation */
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Comprehensive button flash prevention */
 @layer components {
   .no-flash {
@@ -175,4 +187,68 @@ table a {
   /* Prevent zoom on page content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+}
+
+/* Enhanced zoom prevention for navigation elements */
+header,
+nav,
+.sidebar,
+.navbar,
+.fixed {
+  /* Make navigation elements immune to zoom */
+  position: fixed !important;
+  -webkit-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+  touch-action: manipulation;
+  /* Prevent touch zoom gestures */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent zoom on overflow containers */
+.overflow-x-auto,
+.overflow-auto {
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent zoom in scrollable areas */
+}
+
+/* Force zoom restrictions on all touch targets */
+* {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Specific fixes for mobile browsers that ignore user-scalable=no */
+@media screen and (max-width: 768px) {
+  html {
+    /* Double-ensure no zoom on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+    overflow-x: hidden;
+  }
+  
+  body {
+    /* Prevent horizontal scroll that can trigger zoom */
+    overflow-x: hidden;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  
+  /* Make navigation absolutely immune to zoom */
+  header[class*="fixed"],
+  .fixed {
+    transform: translateZ(0); /* Force hardware acceleration */
+    backface-visibility: hidden;
+    will-change: transform;
+    position: fixed !important;
+    z-index: 9999;
+  }
 }
