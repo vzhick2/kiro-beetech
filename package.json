@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbo --port 3000",
     "build": "next build",
+    "build:time": "echo 'Build started at %time%' && next build && echo 'Build completed at %time%'",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -35,6 +36,7 @@
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.525.0",
     "next": "15.4.1",
     "react": "19.1.0",

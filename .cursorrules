@@ -98,6 +98,12 @@
 - Use `pnpm build` for production build
 - Use `pnpm supabase:types` for updating database types
 
+## Development Server Rules
+- NEVER suggest or ask to run `pnpm dev` or start development servers
+- User manages development server independently
+- Focus on code implementation and testing via build validation
+- Use `pnpm build` to verify functionality instead of running servers
+
 ## AI Behavior Rules
 - This is an internal business tool prioritizing flexibility over rigid constraints
 - Focus on real-world workflows and forgiving data entry

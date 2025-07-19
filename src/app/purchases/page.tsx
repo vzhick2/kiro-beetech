@@ -1,3 +1,5 @@
+import { PurchaseMasterDetail } from '@/components/purchases/purchase-master-detail';
+
 export default function PurchasesPage() {
   return (
     <div className="space-y-6">
@@ -8,11 +10,7 @@ export default function PurchasesPage() {
         </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <p className="text-gray-600">
-          Purchase management will be implemented here.
-        </p>
-      </div>
+      <PurchaseMasterDetail />
     </div>
   );
 }

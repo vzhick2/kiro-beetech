@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - July 19, 2025
+
+- **Complete Purchase Management UI**: Full master-detail interface for purchase operations
+  - Master-detail layout with responsive design (desktop 2/5 + 3/5 split, mobile stack)
+  - Purchase list with draft management, delete/finalize operations, and date formatting
+  - Purchase form with supplier selection, cost breakdown, and line item placeholders
+  - React Query integration with mutation hooks for all CRUD operations
+  - TypeScript strict mode compatibility with proper type transformations
+  - Date-fns integration for relative date formatting (e.g., "2 hours ago")
+
 ### Fixed - July 19, 2025
 
 - **Critical Database Field Naming**: Fixed database field naming inconsistency in purchase management
