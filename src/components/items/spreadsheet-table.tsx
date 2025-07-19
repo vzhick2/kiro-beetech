@@ -176,10 +176,10 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
                 const newValue = Math.max(0, Number(value) - 1)
                 handleCellSave(item.itemId, field, newValue)
               }}
-              className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
               title="Decrease by 1"
             >
-              <Minus className="w-3 h-3" />
+              <Minus className="w-4 h-4 md:w-3 md:h-3" />
             </button>
             <input
               type="number"
@@ -200,25 +200,25 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
                 const newValue = Number(value) + 1
                 handleCellSave(item.itemId, field, newValue)
               }}
-              className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
               title="Increase by 1"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-4 h-4 md:w-3 md:h-3" />
             </button>
             <div className="flex space-x-1 ml-1">
               <button
                 onClick={() => handleCellSave(item.itemId, field, value)}
-                className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
+                className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors flex items-center justify-center"
                 title="Save"
               >
-                <Check className="w-3 h-3" />
+                <Check className="w-4 h-4 md:w-3 md:h-3" />
               </button>
               <button
                 onClick={handleCellCancel}
-                className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors flex items-center justify-center"
                 title="Cancel"
               >
-                <X className="w-3 h-3" />
+                <X className="w-4 h-4 md:w-3 md:h-3" />
               </button>
             </div>
           </div>
@@ -229,10 +229,10 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
             <span className="font-medium">{String(value)}</span>
             <button
               onClick={() => handleCellEdit(item.itemId, field, value)}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100"
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
               title="Edit quantity"
             >
-              <Edit3 className="w-3 h-3" />
+              <Edit3 className="w-4 h-4 md:w-3 md:h-3" />
             </button>
           </div>
         )
@@ -260,17 +260,17 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
           <div className="flex space-x-1">
             <button
               onClick={() => handleCellSave(item.itemId, field, value || '')}
-              className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors flex items-center justify-center"
               title="Save"
             >
-              <Check className="w-3 h-3" />
+              <Check className="w-4 h-4 md:w-3 md:h-3" />
             </button>
             <button
               onClick={handleCellCancel}
-              className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors flex items-center justify-center"
               title="Cancel"
             >
-              <X className="w-3 h-3" />
+              <X className="w-4 h-4 md:w-3 md:h-3" />
             </button>
           </div>
         </div>
@@ -358,12 +358,14 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="w-12 p-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.size === items.length && items.length > 0}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.size === items.length && items.length > 0}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="w-5 h-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </th>
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[200px]">Name</th>
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">SKU</th>
@@ -383,8 +385,8 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
               {/* New Item Row - Hidden on mobile for better UX */}
               <tr className="border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 hidden md:table-row">
                 <td className="p-3">
-                  <button className="p-2 text-green-600 hover:text-green-800 transition-colors rounded-full hover:bg-green-100">
-                    <Plus className="w-4 h-4" />
+                  <button className="min-w-[44px] min-h-[44px] p-2 text-green-600 hover:text-green-800 transition-colors rounded-full hover:bg-green-100 flex items-center justify-center">
+                    <Plus className="w-5 h-5" />
                   </button>
                 </td>
                 <td className="p-3">
@@ -464,7 +466,7 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
                         type="checkbox"
                         checked={selectedRows.has(item.itemId)}
                         onChange={(e) => handleRowSelect(item.itemId, e.target.checked)}
-                        className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                        className="w-5 h-5 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </td>
@@ -494,8 +496,8 @@ export function SpreadsheetTable({ searchQuery = '', typeFilter = 'all' }: Sprea
                   <td className="p-3">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors">
-                          <MoreHorizontal className="w-4 h-4" />
+                        <button className="min-w-[44px] min-h-[44px] p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors flex items-center justify-center">
+                          <MoreHorizontal className="w-5 h-5" />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">

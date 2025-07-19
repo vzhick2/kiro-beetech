@@ -43,8 +43,8 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Dashboard
 
 - **Goal**: 30-second business health check.  
-- **Features**: Action Center lists top 5 low-stock items (algorithm: sort by ((CURRENT_DATE - lastCountedDate) / 30) + (1 - currentQuantity / GREATEST(reorderPoint, 1)) for cycle count alerts). "View All" links to Items (pre-filtered). Export All Data button (CSV for items/purchases) in header with download icon, plus one-click "Export Recent Changes" (last 30 days via mutable logs), optimized for mobile touch targets (44x44px). **Basic Margin Calculator**: On-demand query showing estimated margins (revenue - COGS from sales_periods and WAC), displayed as a simple stat for quick profitability insights.
-- **Mitigations**: Cycle count alerts reduce cycle count over-reliance; links to direct-edit modals. Export uses Supabase queries for real-time data accuracy. Margin calculation uses existing data without new schema requirements.
+- **Features**: Action Center lists top 5 low-stock items (algorithm: sort by ((CURRENT_DATE - lastCountedDate) / 30) + (1 - currentQuantity / GREATEST(reorderPoint, 1)) for cycle count alerts). "View All" links to Items (pre-filtered). Export All Data button (CSV for items/purchases) in header with download icon, plus one-click "Export Recent Changes" (last 30 days via mutable logs), optimized for mobile touch targets (44x44px). **Basic Margin Calculator**: On-demand query showing estimated margins (revenue - COGS from sales_periods and WAC), displayed as a simple stat for quick profitability insights. **Draft Purchases Alert**: Show count of pending draft purchases with direct link to review/finalize.
+- **Mitigations**: Cycle count alerts reduce cycle count over-reliance; links to direct-edit modals. Export uses Supabase queries for real-time data accuracy. Margin calculation uses existing data without new schema requirements. Draft alerts prevent stale imports from being forgotten.
 
 ### Items
 

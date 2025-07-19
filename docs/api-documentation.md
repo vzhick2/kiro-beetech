@@ -212,6 +212,7 @@ RETURNS UUID AS $$
 DECLARE
     new_purchase_id UUID;
     line_item JSONB;
+    item_update_result RECORD;
 BEGIN
     -- Insert purchase
     INSERT INTO purchases (
@@ -237,9 +238,10 @@ BEGIN
         (purchase_data->>'is_draft')::BOOLEAN
     RETURNING purchase_id INTO new_purchase_id;
     
-    -- Insert line items
-    FOREACH line_item IN ARRAY line_items_data
+    -- Insert line items and update inventory (only if not draft)
+    FOR line_item IN SELECT * FROM jsonb_array_elements(line_items_data)
     LOOP
+        -- Insert line item
         INSERT INTO purchase_line_items (
             purchase_id,
             item_id,
@@ -256,11 +258,113 @@ BEGIN
             (line_item->>'total_cost')::DECIMAL,
             line_item->>'notes'
         );
+        
+        -- Update inventory and log transaction (only if purchase is not draft)
+        IF NOT (purchase_data->>'is_draft')::BOOLEAN THEN
+            -- Use atomic update to prevent race conditions
+            PERFORM update_item_quantity_atomic(
+                (line_item->>'item_id')::UUID,
+                (line_item->>'quantity')::INTEGER
+            );
+            
+            -- Log the purchase transaction
+            INSERT INTO transactions (
+                item_id,
+                transaction_type,
+                quantity,
+                reference_id,
+                reference_type,
+                unit_cost,
+                created_at
+            )
+            VALUES (
+                (line_item->>'item_id')::UUID,
+                'purchase',
+                (line_item->>'quantity')::INTEGER,
+                new_purchase_id,
+                'purchase',
+                (line_item->>'unit_cost')::DECIMAL,
+                NOW()
+            );
+            
+            -- Recalculate WAC for the item
+            PERFORM calculate_wac((line_item->>'item_id')::UUID);
+        END IF;
     END LOOP;
     
     RETURN new_purchase_id;
 END;
 $$ LANGUAGE plpgsql;
+```
+
+#### `finalize_draft_purchase(purchase_id UUID)`
+**Purpose**: Convert a draft purchase to final and update inventory
+**Parameters**:
+- `purchase_id`: UUID of the draft purchase to finalize
+**Returns**: `BOOLEAN` - Success status
+**Logic**: Updates inventory, logs transactions, and recalculates WAC
+
+```sql
+CREATE OR REPLACE FUNCTION finalize_draft_purchase(purchase_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    line_item RECORD;
+BEGIN
+    -- Verify purchase exists and is draft
+    IF NOT EXISTS (
+        SELECT 1 FROM purchases 
+        WHERE purchase_id = finalize_draft_purchase.purchase_id 
+        AND is_draft = true
+    ) THEN
+        RAISE EXCEPTION 'Purchase not found or not a draft';
+    END IF;
+    
+    -- Process each line item
+    FOR line_item IN 
+        SELECT item_id, quantity, unit_cost, total_cost
+        FROM purchase_line_items 
+        WHERE purchase_id = finalize_draft_purchase.purchase_id
+    LOOP
+        -- Use atomic update to prevent race conditions
+        PERFORM update_item_quantity_atomic(
+            line_item.item_id,
+            line_item.quantity
+        );
+        
+        -- Log the purchase transaction
+        INSERT INTO transactions (
+            item_id,
+            transaction_type,
+            quantity,
+            reference_id,
+            reference_type,
+            unit_cost,
+            created_at
+        )
+        VALUES (
+            line_item.item_id,
+            'purchase',
+            line_item.quantity,
+            finalize_draft_purchase.purchase_id,
+            'purchase',
+            line_item.unit_cost,
+            NOW()
+        );
+        
+        -- Recalculate WAC for the item
+        PERFORM calculate_wac(line_item.item_id);
+    END LOOP;
+    
+    -- Mark purchase as finalized
+    UPDATE purchases 
+    SET is_draft = false, updated_at = NOW()
+    WHERE purchase_id = finalize_draft_purchase.purchase_id;
+    
+    RETURN true;
+END;
+$$ LANGUAGE plpgsql;
+```
+
 ```
 
 #### `create_batch_with_consumption(batch_data JSONB, consumption_data JSONB[])`
@@ -306,10 +410,11 @@ BEGIN
     -- Process ingredient consumption
     FOREACH consumption IN ARRAY consumption_data
     LOOP
-        -- Update item quantity
-        UPDATE items 
-        SET current_quantity = current_quantity - (consumption->>'quantity')::INTEGER
-        WHERE item_id = (consumption->>'item_id')::UUID;
+        -- Use atomic update to prevent race conditions
+        PERFORM update_item_quantity_atomic(
+            (consumption->>'item_id')::UUID,
+            -(consumption->>'quantity')::INTEGER
+        );
         
         -- Create transaction log entry
         INSERT INTO transactions (

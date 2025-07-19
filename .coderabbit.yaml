@@ -1,0 +1,131 @@
+# CodeRabbit Configuration for KIRO Internal Business App
+# This file configures how CodeRabbit analyzes your code and provides suggestions
+
+# Project context for better suggestions
+context:
+  project_name: "KIRO Internal Business App"
+  description: "Private internal inventory management system for small business workflows"
+  tech_stack:
+    - "Next.js 15.4.1"
+    - "React 19.1.0"
+    - "TypeScript 5.8.3"
+    - "Tailwind CSS 4.1.11"
+    - "Supabase"
+    - "TanStack Query"
+    - "Zustand"
+
+# Analysis settings
+analysis:
+  # Enable comprehensive code analysis
+  enabled: true
+  
+  # Focus areas for suggestions
+  focus_areas:
+    - "code_quality"
+    - "performance"
+    - "security"
+    - "best_practices"
+    - "type_safety"
+    - "error_handling"
+    - "accessibility"
+    - "mobile_responsiveness"
+
+# File patterns to analyze
+patterns:
+  include:
+    - "src/**/*.{ts,tsx,js,jsx}"
+    - "*.{ts,tsx,js,jsx}"
+    - "*.{json,yaml,yml}"
+    - "*.{md,txt}"
+  
+  exclude:
+    - "node_modules/**"
+    - ".next/**"
+    - "dist/**"
+    - "build/**"
+    - "*.log"
+    - "tailwindcss-*.log"
+
+# Custom rules for your business requirements
+custom_rules:
+  - name: "business_logic_validation"
+    description: "Ensure business logic supports negative inventory and flexible workflows"
+    severity: "info"
+  
+  - name: "mobile_first_design"
+    description: "Verify mobile-first responsive design patterns"
+    severity: "warning"
+  
+  - name: "error_handling_priority"
+    description: "Check for proper error handling with guard clauses"
+    severity: "warning"
+  
+  - name: "type_safety_strict"
+    description: "Ensure TypeScript strict mode compliance"
+    severity: "error"
+
+# Suggestion categories
+suggestions:
+  # Code quality improvements
+  code_quality:
+    enabled: true
+    max_suggestions: 10
+  
+  # Performance optimizations
+  performance:
+    enabled: true
+    max_suggestions: 5
+  
+  # Security considerations
+  security:
+    enabled: true
+    max_suggestions: 5
+  
+  # Best practices
+  best_practices:
+    enabled: true
+    max_suggestions: 8
+  
+  # TypeScript improvements
+  typescript:
+    enabled: true
+    max_suggestions: 6
+  
+  # React/Next.js patterns
+  react_patterns:
+    enabled: true
+    max_suggestions: 5
+
+# Integration settings
+integration:
+  # Enable VS Code integration
+  vscode:
+    enabled: true
+    auto_suggest: true
+    inline_suggestions: true
+  
+  # Enable command palette integration
+  command_palette:
+    enabled: true
+    commands:
+      - "coderabbit.analyzeFile"
+      - "coderabbit.analyzeProject"
+      - "coderabbit.showSuggestions"
+      - "coderabbit.applySuggestion"
+
+# Output settings
+output:
+  # Where to show suggestions
+  display:
+    - "problems_panel"
+    - "inline_comments"
+    - "status_bar"
+  
+  # Format for suggestions
+  format: "detailed"
+  
+  # Include code examples
+  include_examples: true
+  
+  # Include explanations
+  include_explanations: true 
