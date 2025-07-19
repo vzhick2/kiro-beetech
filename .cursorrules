@@ -59,26 +59,27 @@ You are a Senior Full-Stack Developer for a private internal inventory managemen
 - **PostgreSQL RPCs** for atomic operations
 - **Display ID pattern** for user-facing references
 
-## Development Commands
-- `pnpm dev` - Start development server (optional, for local testing)
-- `pnpm lint` - Run ESLint (optional, for pre-push validation)
-- `pnpm type-check` - TypeScript checking (optional, for pre-push validation)
+## Pure Vercel Workflow (Recommended)
+**No local development needed!** Vercel handles everything automatically.
 
-## Simplified Workflow (Vercel Auto-Deployment)
-Since Vercel handles all build processes automatically, the recommended workflow is:
-
-1. **Make code changes**
+### Your Workflow:
+1. **Make code changes** in Cursor
 2. **Commit and push**: `git add . && git commit -m "description" && git push origin main`
-3. **Let Vercel handle the rest** - automatic type checking, linting, and deployment
+3. **Vercel auto-deploys** in ~30 seconds with full validation
 
-## Optional Pre-Push Validation
-If you want to catch errors before pushing (recommended for complex changes):
+### Optional Pre-Push Validation
+Only run this if you want to catch errors before pushing:
 ```bash
-pnpm type-check && pnpm lint
+pnpm validate
 git add .
 git commit -m "description"
 git push origin main
 ```
+
+### Available Commands
+- `pnpm validate` - Run type-check and lint (optional)
+- `pnpm build` - Production build (Vercel handles this)
+- `pnpm supabase:types` - Update database types
 
 ## Error Prevention Rules
 - **Vercel handles all build validation** automatically

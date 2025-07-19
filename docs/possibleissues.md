@@ -1,79 +1,332 @@
-### 1. Code Efficiency and Performance
+Let me analyze the code structure and suggest some improvements. I'll need to check a few key files to provide comprehensive recommendations.Based on my analysis of the codebase, here are several areas for improvement:
 
-This is the most significant area for improvement. The primary issue is a pattern of fetching data in multiple steps on the server and then processing it in JavaScript, rather than letting the database do the heavy lifting.
+1. Error Handling and Logging:
+- Currently, error handling is inconsistent across functions, with some errors being logged and returned while others are silently handled
+- The error messages could be more specific and include error codes for better debugging
+- Consider implementing a centralized error handling system instead of repeating try-catch blocks in each function
 
-*   **Issue: Inefficient Data Fetching in Server Actions**
-    *   **Location**: `src/app/actions/items.ts` (lines 8-58)
-    *   **Analysis**: The `getItems` function makes two separate `await` calls to Supabase. First, it fetches all items. Second, it fetches all purchase line items to determine the last used supplier. It then manually loops through the results in JavaScript to map them together. This is a classic "N+1" query problem that will degrade in performance as the dataset grows.
-    *   **Recommendation**: Combine these into a single, more efficient database query. You have already created the SQL function `get_last_used_suppliers` in your migration (`supabase/migrations/20250118_optimize_last_used_suppliers.sql`). The best approach would be to create a database **VIEW** or a single RPC function that joins `items`, `purchases`, `purchase_line_items`, and `suppliers` to return all required data in one call. This offloads the data merging from the Node.js server to the more powerful PostgreSQL database.
+2. Database Query Optimization:
+- In the `getItems` function, there are two separate database queries that could potentially be combined using a more optimized join operation
+- The second query for `lastUsedSuppliers` could benefit from pagination since it's currently fetching all purchase line items
 
-    ```typescript
-    // In src/app/actions/items.ts
+3. Type Safety:
+- While TypeScript is being used, some type definitions could be more specific
+- Consider creating dedicated types for the response objects instead of using inline types
+- Add stricter type checking for function parameters and return values
+
+4. Code Structure:
+- The file contains both data access and business logic
+- Consider separating concerns by:
+  - Moving database queries to a dedicated data access layer
+  - Creating a service layer for business logic
+  - Implementing a repository pattern for better maintainability
+
+5. Performance Improvements:
+- The bulk operations (`bulkDeleteItems` and `bulkArchiveItems`) could benefit from batch processing for large datasets
+- Consider implementing caching for frequently accessed items
+- Add query result limiting to prevent potential memory issues with large datasets
+
+6. Security:
+- Consider adding input validation for all functions that accept parameters
+- Implement rate limiting for database operations
+- Add permission checks before performing sensitive operations like delete and update
+
+7. Testing:
+- No test files are visible in the codebase
+- Add unit tests for individual functions
+- Implement integration tests for database operations
+- Add error scenario testing
+
+8. Documentation:
+- While there is some inline documentation, it could be more comprehensive
+- Add JSDoc comments for all functions explaining parameters, return values, and possible errors
+- Document the expected shape of response objects
+
+9. Maintainability:
+- Consider implementing constants for magic numbers and strings
+- Add versioning for database operations
+- Implement proper transaction handling for operations that modify multiple records
+
+10. Feature Enhancements:
+- Add soft delete functionality instead of hard deletes
+- Implement audit logging for important operations
+- Add pagination support for large result sets
+- Consider adding search and filtering capabilities
+
+Let me fetch some additional files to provide more specific recommendations with code examples.Based on the code I've reviewed, let me provide specific recommendations with code examples for improving the codebase:
+
+1. **Centralized Error Handling**
+Current scattered approach:
+```typescript
+try {
+  // ... operation
+  if (error) {
+    console.error('Error fetching items:', error)
+    return { success: false, error: error.message }
+  }
+} catch (error) {
+  console.error('Failed to fetch items:', error)
+  return { success: false, error: 'Failed to fetch items' }
+}
+```
+
+Improved approach:
+```typescript
+// src/lib/error-handling.ts
+export class AppError extends Error {
+  constructor(
+    public code: string,
+    message: string,
+    public statusCode: number = 500,
+    public originalError?: any
+  ) {
+    super(message);
+  }
+}
+
+export function handleDatabaseError(error: any, operation: string): AppError {
+  console.error(`Database error during ${operation}:`, error);
+  return new AppError(
+    'DB_ERROR',
+    `Database operation failed: ${operation}`,
+    500,
+    error
+  );
+}
+
+// Usage in items.ts
+try {
+  const { data, error } = await supabase.from('items').select('*');
+  if (error) throw new AppError('QUERY_ERROR', error.message, 400, error);
+  return { success: true, data };
+} catch (error) {
+  throw handleDatabaseError(error, 'fetch_items');
+}
+```
+
+2. **Query Optimization**
+Current approach with multiple queries:
+```typescript
+// Separate queries for items and suppliers
+const { data: items } = await supabase.from('items').select('*');
+const { data: suppliers } = await supabase.from('suppliers').select('*');
+```
+
+Optimized approach:
+```typescript
+export async function getItemsWithSuppliers() {
+  const { data, error } = await supabase
+    .from('items')
+    .select(`
+      *,
+      primary_supplier:suppliers!inner(id, name),
+      purchase_line_items!inner(
+        purchase:purchases!inner(
+          purchasedate,
+          supplier:suppliers!inner(name)
+        )
+      )
+    `)
+    .order('name')
+    .limit(1000);
+}
+```
+
+3. **Type Safety Improvements**
+Current approach:
+```typescript
+type CreateItemRequest = Database['public']['Tables']['items']['Insert']
+```
+
+Enhanced type safety:
+```typescript
+// src/types/items.ts
+export interface ItemBase {
+  itemid: string;
+  name: string;
+  description?: string;
+  quantity: number;
+  unit: string;
+}
+
+export interface ItemWithSupplier extends ItemBase {
+  primary_supplier: {
+    id: string;
+    name: string;
+  };
+  lastUsedSupplier?: string;
+}
+
+export interface ItemResponse {
+  success: boolean;
+  data?: ItemWithSupplier[];
+  error?: string;
+  metadata?: {
+    total: number;
+    page: number;
+  };
+}
+```
+
+4. **Repository Pattern Implementation**
+```typescript
+// src/repositories/item.repository.ts
+export class ItemRepository {
+  constructor(private readonly db: SupabaseClient) {}
+
+  async findAll(): Promise<ItemWithSupplier[]> {
+    const { data, error } = await this.db
+      .from('items')
+      .select(`
+        *,
+        primary_supplier:suppliers!inner(*)
+      `);
+    if (error) throw handleDatabaseError(error, 'findAll');
+    return data;
+  }
+
+  async create(item: CreateItemRequest): Promise<ItemWithSupplier> {
+    const { data, error } = await this.db
+      .from('items')
+      .insert(item)
+      .select()
+      .single();
+    if (error) throw handleDatabaseError(error, 'create');
+    return data;
+  }
+}
+```
+
+5. **Pagination and Filtering**
+```typescript
+// src/lib/types/query.ts
+export interface QueryOptions {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, any>;
+  sort?: {
+    field: string;
+    direction: 'asc' | 'desc';
+  };
+}
+
+// Implementation
+async function getItemsPaginated(options: QueryOptions) {
+  const { page = 1, limit = 20, filters, sort } = options;
+  let query = supabase
+    .from('items')
+    .select('*', { count: 'exact' });
+  
+  if (filters?.name) {
+    query = query.ilike('name', `%${filters.name}%`);
+  }
+  
+  if (sort) {
+    query = query.order(sort.field, { ascending: sort.direction === 'asc' });
+  }
+  
+  query = query
+    .range((page - 1) * limit, page * limit - 1);
     
-    // INSTEAD OF THIS:
-    const { data: items, error } = await supabase.from('items').select(...);
-    const { data: lastUsedSuppliers, error: supplierError } = await supabase.from('purchase_line_items').select(...);
-    // ... manual mapping in JavaScript ...
+  const { data, error, count } = await query;
+  
+  return {
+    data,
+    metadata: {
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit)
+    }
+  };
+}
+```
 
-    // CONSIDER THIS (using a hypothetical RPC):
-    const { data, error } = await supabase.rpc('get_items_with_details');
-    // The RPC would handle the JOINs and return the complete data structure.
-    ```
+6. **Caching Implementation**
+```typescript
+// src/lib/cache.ts
+import NodeCache from 'node-cache';
 
-### 2. Code Quality and Maintainability
+export const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes
 
-These are points related to code clarity, type safety, and component structure that would make the project easier to maintain.
+export async function getCachedItems() {
+  const cacheKey = 'items_list';
+  let items = cache.get(cacheKey);
+  
+  if (!items) {
+    const { data } = await supabase.from('items').select('*');
+    cache.set(cacheKey, data);
+    items = data;
+  }
+  
+  return items;
+}
+```
 
-*   **Issue: Manual Data Transformation and `any` Type Usage**
-    *   **Location**: `src/hooks/use-items.ts` (lines 26-44) and `src/app/actions/items.ts`.
-    *   **Analysis**: In the `useItems` hook, the database response is mapped to the frontend `Item` type using `(dbItem: any)`. This bypasses TypeScript's type safety. If a database column name changes, the error will only appear at runtime.
-    *   **Recommendation**: Leverage the auto-generated types from `src/types/database.ts`. Instead of `any`, strongly type the database response. This allows TypeScript to catch mismatches between your frontend types and the database schema during development.
+7. **Soft Delete Implementation**
+```typescript
+// Migration
+export async function softDeleteItem(itemId: string) {
+  const { error } = await supabase
+    .from('items')
+    .update({
+      deleted_at: new Date().toISOString(),
+      is_deleted: true
+    })
+    .eq('itemid', itemId);
 
-    ```typescript
-    // In src/hooks/use-items.ts
+  if (error) throw handleDatabaseError(error, 'softDelete');
+  return { success: true };
+}
 
-    // INSTEAD OF:
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const transformedItems: Item[] = (result.data || []).map((dbItem: any) => ({...}));
+// Query modification
+const { data } = await supabase
+  .from('items')
+  .select('*')
+  .is('deleted_at', null);
+```
 
-    // CONSIDER THIS:
-    import { Tables } from '@/types/database';
-    type ItemFromDB = Tables<'items'> & { /*... additional joined fields ...*/ };
+8. **Input Validation**
+```typescript
+// src/lib/validations/items.ts
+import { z } from 'zod';
 
-    const transformedItems: Item[] = (result.data || []).map((dbItem: ItemFromDB) => ({
-      itemId: dbItem.itemid, // TypeScript will now enforce correct naming
-      // ... other fields
-    }));
-    ```
+export const ItemSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().optional(),
+  quantity: z.number().min(0),
+  unit: z.string().min(1),
+  primarySupplierId: z.string().uuid().optional()
+});
 
-*   **Issue: Overly Complex Render Logic in `SpreadsheetTable`**
-    *   **Location**: `src/components/items/spreadsheet-table.tsx`
-    *   **Analysis**: The `renderCell` function is long and contains complex conditional logic for different field types and editing states. Additionally, the component for adding a "New Item Row" is hardcoded directly into the `tbody` and hidden on mobile. This adds clutter and mixes display logic with creation logic.
-    *   **Recommendation**:
-        1.  **Break down `renderCell`**: Decompose the cell rendering logic into smaller, specialized components (e.g., `<QuantityCell>`, `<TextEditCell>`, `<DateCell>`). This improves readability and reusability.
-        2.  **Remove the "New Item Row"**: The hardcoded new item row is non-functional and confusing. The existing "Add Item" modal (`AddItemModal`) is a much cleaner and more standard UX pattern. Removing the inline row will simplify the table component significantly.
+// Usage in createItem
+export async function createItem(itemData: unknown) {
+  const validatedData = ItemSchema.parse(itemData);
+  return await itemRepository.create(validatedData);
+}
+```
 
-*   **Issue: Redundant Mobile Zoom Prevention**
-    *   **Location**: `src/app/layout.tsx` (line 20), `src/app/globals.css` (multiple), and `src/components/viewport-enforcer.tsx`.
-    *   **Analysis**: The application attempts to prevent mobile viewport zooming in three different places:
-        1.  The `<meta name="viewport" ... user-scalable=false>` tag in `layout.tsx`.
-        2.  Aggressive CSS rules in `globals.css` (e.g., `touch-action: manipulation`, disabling `user-select`).
-        3.  A JavaScript-based `ViewportEnforcer` component.
-    *   **Recommendation**: This is redundant and the CSS is overly aggressive (disabling user-select can harm accessibility). The most effective and standard way to handle this is with the meta tag in the root layout. **Remove the `ViewportEnforcer` component and the zoom/selection prevention styles from `globals.css`**. The meta tag alone is sufficient and the standard practice.
+9. **Audit Logging**
+```typescript
+// src/lib/audit-logger.ts
+export async function logAuditEvent(event: {
+  action: string;
+  entityType: string;
+  entityId: string;
+  userId: string;
+  changes?: Record<string, any>;
+}) {
+  await supabase.from('audit_logs').insert({
+    ...event,
+    timestamp: new Date().toISOString()
+  });
+}
 
-### 3. Unnecessary Files and Project Structure
-
-This section addresses files that appear to be leftovers from experimentation or boilerplate and do not align with the project's primary architecture.
-
-*   **Unnecessary File: `src/app/products/page.tsx`**
-    *   **Analysis**: This file and its corresponding action file (`src/app/actions/products.ts`) seem to be from a different project or an early boilerplate. They use mock data, simulate API calls with `setTimeout`, and use `revalidatePath`, which is a different data mutation pattern from the TanStack Query approach used in the rest of the application (e.g., `use-items.ts`). The "Items" page (`src/app/items/page.tsx`) is the true implementation.
-    *   **Recommendation**: **Delete** `src/app/products/page.tsx` and `src/app/actions/products.ts`. They are not integrated with the core business logic and add confusion to the codebase.
-
-*   **Unnecessary File: `src/components/viewport-enforcer.tsx`**
-    *   **Analysis**: As mentioned above, this component's functionality is a duplication of what the root layout's viewport meta tag already handles.
-    *   **Recommendation**: **Delete** this file. It adds unnecessary client-side JavaScript for a task best handled by a static HTML tag.
-
-*   **Cleanup Opportunity: Script Files**
-    *   **Location**: `scripts/` directory.
-    *   **Analysis**: The `.bat` and `.ps1` scripts are helpful for developers on Windows but are not cross-platform. The `package.json` already contains a comprehensive and cross-platform set of `supabase:*` scripts.
-    *   **Recommendation**: This is a minor point, but for consistency, you could encourage developers to use the `pnpm run supabase:*` commands and eventually deprecate the OS-specific scripts to streamline the development workflow.
+// Usage
+await logAuditEvent({
+  action: 'UPDATE',
+  entityType: 'item',
+  entityId: itemId,
+  userId: currentUser.id,
+  changes: { quantity: newQuantity }
+});
+```
