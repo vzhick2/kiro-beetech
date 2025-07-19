@@ -246,4 +246,3 @@ export async function getExistingItems() {
     return createErrorResponse('Failed to fetch items', error)
   }
 } 
-} 
