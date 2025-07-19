@@ -98,6 +98,13 @@
 - Use `pnpm build` for production build
 - Use `pnpm supabase:types` for updating database types
 
+## Git Workflow Rules
+- ALWAYS use combined git commands to minimize user interactions
+- Use single command: `git add . && git commit -m "descriptive message" && git push origin main`
+- Write descriptive, present-tense commit messages that explain what was changed and why
+- Include technical details and business impact in commit messages
+- Never require multiple separate git commands for simple commits
+
 ## Development Server Rules
 - NEVER suggest or ask to run `pnpm dev` or start development servers
 - User manages development server independently

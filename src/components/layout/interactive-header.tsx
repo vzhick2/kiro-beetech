@@ -112,7 +112,14 @@ export function InteractiveHeader({
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-lg" style={{ touchAction: 'manipulation', WebkitUserSelect: 'none', userSelect: 'none' }}>
+      <header
+        className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-lg"
+        style={{
+          touchAction: 'manipulation',
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+        }}
+      >
         <div className="flex items-center justify-between h-16 px-4 gap-4">
           {/* Left Section - Mobile Menu + Dynamic Page Title */}
           <div className="flex items-center gap-4 min-w-0 relative">
@@ -231,46 +238,49 @@ export function InteractiveHeader({
 
       {/* Search Overlay - Mobile Only */}
       {isSearchOverlayOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" />
-
-          {/* Search Overlay */}
+        <div className="fixed top-0 left-0 right-0 h-16 z-[60] md:hidden">
+          {/* Simple Search Overlay */}
           <div
             ref={searchOverlayRef}
-            className="relative bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-xl transform transition-all duration-300 ease-out"
-            style={{
-              animation: 'slideInFromTop 0.3s ease-out',
-            }}
+            className="flex items-center h-full bg-slate-900 border-b border-slate-700/50"
           >
-            <div className="px-4 py-4">
+            {/* Keep Hamburger Menu */}
+            <button
+              onClick={onMobileMenuToggle}
+              className="flex items-center justify-center w-10 h-10 ml-4 mr-4 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/30 transition-all duration-200"
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5 text-slate-300" />
+              ) : (
+                <Menu className="w-5 h-5 text-slate-300" />
+              )}
+            </button>
+
+            {/* Search Input */}
+            <div className="flex-1 mr-4">
               <form onSubmit={handleSearchSubmit} className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   placeholder="Search items, purchases, suppliers..."
                   value={searchValue}
                   onChange={e => setSearchValue(e.target.value)}
-                  className="w-full pl-12 pr-12 py-4 bg-slate-800/50 border border-slate-600/30 rounded-lg text-slate-100 placeholder-slate-400 text-lg focus:border-blue-500/50 focus:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                  className="w-full pl-10 pr-10 py-2 bg-slate-800/50 border border-slate-600/30 rounded-lg text-slate-100 placeholder-slate-400 focus:border-blue-500/50 focus:outline-none transition-all duration-200"
                 />
                 {/* Clear button */}
                 {searchValue && (
                   <button
                     type="button"
                     onClick={() => setSearchValue('')}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 hover:text-slate-200 transition-colors"
                     aria-label="Clear search"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </form>
-
-              {/* Quick Actions or Recent Searches could go here */}
-              <div className="mt-4 text-sm text-slate-400">
-                <p>Press Enter to search or tap outside to close</p>
-              </div>
             </div>
           </div>
         </div>
