@@ -1,7 +1,12 @@
+'use client'
+
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Upload, Download, FileText } from 'lucide-react'
+import { CSVImportModal } from '@/components/import-export/csv-import-modal'
 
-export default function DataPage() {
+export default function ImportExportPage() {
+  const [showQBOImport, setShowQBOImport] = useState(false)
   return (
     <div className="space-y-6">
       <div>
@@ -30,6 +35,14 @@ export default function DataPage() {
             <Button variant="outline" className="w-full justify-start">
               <Upload className="mr-2 h-4 w-4" />
               Import Sales (CSV)
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start bg-green-50 border-green-200 hover:bg-green-100"
+              onClick={() => setShowQBOImport(true)}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Import QBO Sales Data
             </Button>
           </div>
         </div>
@@ -78,6 +91,16 @@ export default function DataPage() {
           </Button>
         </div>
       </div>
+
+      {/* QBO Import Modal */}
+      <CSVImportModal
+        isOpen={showQBOImport}
+        onClose={() => setShowQBOImport(false)}
+        onImportComplete={(result) => {
+          console.log('QBO Import completed:', result)
+          // Could refresh data or show success message
+        }}
+      />
     </div>
   )
 }

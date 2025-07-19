@@ -88,13 +88,11 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
 
   return (
     <div className="app-container">
-      {/* Header - Always visible, fixed at top with proper z-index */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/50">
-        <InteractiveHeader 
-          onMobileMenuToggle={toggleSidebar}
-          isMobileMenuOpen={isSidebarOpen}
-        />
-      </div>
+      {/* Header - Fixed positioning handled by InteractiveHeader itself */}
+      <InteractiveHeader 
+        onMobileMenuToggle={toggleSidebar}
+        isMobileMenuOpen={isSidebarOpen}
+      />
 
       {/* Main Layout - Below header with proper spacing */}
       <div className="main-layout pt-16 flex">

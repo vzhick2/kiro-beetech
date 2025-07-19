@@ -64,4 +64,23 @@ export function validationError(message: string): AppError {
     error: message,
     code: 'VALIDATION_ERROR'
   }
+}
+
+// Create error response for server actions
+export function createErrorResponse(message: string, details?: any): AppError {
+  console.error('Error:', message, details)
+  
+  return {
+    success: false,
+    error: message,
+    code: details ? 'DETAILED_ERROR' : 'GENERAL_ERROR'
+  }
+}
+
+// Create success response for server actions
+export function createSuccessResponse<T>(data: T): AppSuccess<T> {
+  return {
+    success: true,
+    data
+  }
 } 
