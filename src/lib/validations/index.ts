@@ -192,3 +192,6 @@ export type RecipeFormData = z.infer<typeof CreateRecipeSchema>
 export type BatchFormData = z.infer<typeof CreateBatchSchema>
 export type ItemFilter = z.infer<typeof ItemFilterSchema>
 export type PurchaseFilter = z.infer<typeof PurchaseFilterSchema>
+
+// Re-export error handling types
+export type { AppResult, AppError, AppSuccess } from '../error-handling'

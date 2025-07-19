@@ -1,9 +1,9 @@
 'use server'
 
 import { supabase } from '@/lib/supabase'
-import type { Database } from '@/types/database'
-
-type CreateItemRequest = Database['public']['Tables']['items']['Insert']
+import { handleError, handleSuccess, validationError } from '@/lib/error-handling'
+import { CreateItemSchema, UpdateItemSchema, BulkItemIdsSchema } from '@/lib/validations/items'
+import type { CreateItemRequest, UpdateItemRequest, BulkItemIdsRequest } from '@/lib/validations/items'
 
 export async function getItems() {
   try {
@@ -17,8 +17,7 @@ export async function getItems() {
       .order('name')
 
     if (error) {
-      console.error('Error fetching items:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'getItems')
     }
 
     // Get last used supplier for all items in a single optimized query
@@ -49,58 +48,65 @@ export async function getItems() {
     }
 
     // Merge the data
-    const itemsWithLastSupplier = data.map((item) => {
+    const itemsWithLastSupplier = data.map((item: any) => {
       return {
         ...item,
         lastUsedSupplier: lastUsedSupplierMap.get(item.itemid) || null
       }
     })
 
-    return { success: true, data: itemsWithLastSupplier }
+    return handleSuccess(itemsWithLastSupplier)
   } catch (error) {
-    console.error('Failed to fetch items:', error)
-    return { success: false, error: 'Failed to fetch items' }
+    return handleError(error, 'getItems')
   }
 }
 
-export async function createItem(itemData: CreateItemRequest) {
+export async function createItem(itemData: unknown) {
   try {
+    // Validate input data
+    const validatedData = CreateItemSchema.parse(itemData)
+    
     const { data, error } = await supabase
       .from('items')
-      .insert([itemData])
+      .insert([validatedData])
       .select()
       .single()
 
     if (error) {
-      console.error('Error creating item:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'createItem')
     }
 
-    return { success: true, data }
+    return handleSuccess(data)
   } catch (error) {
-    console.error('Failed to create item:', error)
-    return { success: false, error: 'Failed to create item' }
+    if (error instanceof Error && error.name === 'ZodError') {
+      return validationError('Invalid item data provided')
+    }
+    return handleError(error, 'createItem')
   }
 }
 
-export async function updateItem(itemId: string, updates: Partial<CreateItemRequest>) {
+export async function updateItem(itemId: string, updates: unknown) {
   try {
+    // Validate input data
+    const validatedUpdates = UpdateItemSchema.parse(updates)
+    
     const { data, error } = await supabase
       .from('items')
-      .update(updates)
+      .update(validatedUpdates)
       .eq('itemid', itemId)
       .select()
       .single()
 
     if (error) {
-      console.error('Error updating item:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'updateItem')
     }
 
-    return { success: true, data }
+    return handleSuccess(data)
   } catch (error) {
-    console.error('Failed to update item:', error)
-    return { success: false, error: 'Failed to update item' }
+    if (error instanceof Error && error.name === 'ZodError') {
+      return validationError('Invalid update data provided')
+    }
+    return handleError(error, 'updateItem')
   }
 }
 
@@ -112,14 +118,12 @@ export async function deleteItem(itemId: string) {
       .eq('itemid', itemId)
 
     if (error) {
-      console.error('Error deleting item:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'deleteItem')
     }
 
-    return { success: true }
+    return handleSuccess({ deleted: true })
   } catch (error) {
-    console.error('Failed to delete item:', error)
-    return { success: false, error: 'Failed to delete item' }
+    return handleError(error, 'deleteItem')
   }
 }
 
@@ -133,8 +137,7 @@ export async function getItemDetails(itemId: string) {
       .single()
 
     if (itemError) {
-      console.error('Error fetching item:', itemError)
-      return { success: false, error: itemError.message }
+      return handleError(itemError, 'getItemDetails')
     }
 
     // Get recent transactions for this item
@@ -150,61 +153,65 @@ export async function getItemDetails(itemId: string) {
       // Continue without transactions rather than failing
     }
 
-    return { 
-      success: true, 
-      data: { 
-        item, 
-        transactions: transactions || [] 
-      } 
-    }
+    return handleSuccess({ 
+      item, 
+      transactions: transactions || [] 
+    })
   } catch (error) {
-    console.error('Failed to fetch item details:', error)
-    return { success: false, error: 'Failed to fetch item details' }
+    return handleError(error, 'getItemDetails')
   }
 }
 
-export async function bulkDeleteItems(itemIds: string[]) {
+export async function bulkDeleteItems(itemIds: unknown) {
   try {
-    if (itemIds.length === 0) {
-      return { success: true, deletedCount: 0 }
+    // Validate input data
+    const { itemIds: validatedIds } = BulkItemIdsSchema.parse({ itemIds })
+    
+    if (validatedIds.length === 0) {
+      return handleSuccess({ deletedCount: 0 })
     }
 
     const { error } = await supabase
       .from('items')
       .delete()
-      .in('itemid', itemIds)
+      .in('itemid', validatedIds)
 
     if (error) {
-      console.error('Error bulk deleting items:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'bulkDeleteItems')
     }
 
-    return { success: true, deletedCount: itemIds.length }
+    return handleSuccess({ deletedCount: validatedIds.length })
   } catch (error) {
-    console.error('Failed to bulk delete items:', error)
-    return { success: false, error: 'Failed to bulk delete items' }
+    if (error instanceof Error && error.name === 'ZodError') {
+      return validationError('Invalid item IDs provided')
+    }
+    return handleError(error, 'bulkDeleteItems')
   }
 }
 
-export async function bulkArchiveItems(itemIds: string[]) {
+export async function bulkArchiveItems(itemIds: unknown) {
   try {
-    if (itemIds.length === 0) {
-      return { success: true, archivedCount: 0 }
+    // Validate input data
+    const { itemIds: validatedIds } = BulkItemIdsSchema.parse({ itemIds })
+    
+    if (validatedIds.length === 0) {
+      return handleSuccess({ archivedCount: 0 })
     }
 
     const { error } = await supabase
       .from('items')
       .update({ isarchived: true })
-      .in('itemid', itemIds)
+      .in('itemid', validatedIds)
 
     if (error) {
-      console.error('Error bulk archiving items:', error)
-      return { success: false, error: error.message }
+      return handleError(error, 'bulkArchiveItems')
     }
 
-    return { success: true, archivedCount: itemIds.length }
+    return handleSuccess({ archivedCount: validatedIds.length })
   } catch (error) {
-    console.error('Failed to bulk archive items:', error)
-    return { success: false, error: 'Failed to bulk archive items' }
+    if (error instanceof Error && error.name === 'ZodError') {
+      return validationError('Invalid item IDs provided')
+    }
+    return handleError(error, 'bulkArchiveItems')
   }
 } 
