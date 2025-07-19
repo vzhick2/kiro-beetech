@@ -3,8 +3,7 @@
 import { Suspense, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
-import { AddSupplierModal } from '@/components/suppliers/add-supplier-modal';
-import { SuppliersTable } from '@/components/suppliers/suppliers-table';
+import { SuppliersSpreadsheetTable } from '@/components/suppliers/suppliers-spreadsheet-table';
 
 export default function SuppliersPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,8 +21,8 @@ export default function SuppliersPage() {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-3 sm:space-y-0">
           <h1 className="text-2xl font-semibold text-gray-800">Suppliers</h1>
-          <div className="flex items-center space-x-3">
-            <AddSupplierModal />
+          <div className="text-sm text-gray-500">
+            Click the "+" row to add a new supplier
           </div>
         </div>
 
@@ -36,7 +35,7 @@ export default function SuppliersPage() {
                 type="text"
                 value={searchQuery}
                 onChange={e => handleSearch(e.target.value)}
-                placeholder="Search suppliers by name, email, or phone..."
+                placeholder="Search suppliers by name, website, or phone..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {searchQuery && (
@@ -74,7 +73,7 @@ export default function SuppliersPage() {
 
       {/* Suppliers Table */}
       <Suspense fallback={<SuppliersTableSkeleton />}>
-        <SuppliersTable searchQuery={searchQuery} />
+        <SuppliersSpreadsheetTable searchQuery={searchQuery} />
       </Suspense>
     </div>
   );

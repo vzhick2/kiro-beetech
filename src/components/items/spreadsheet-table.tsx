@@ -277,9 +277,30 @@ export function SpreadsheetTable({
             </div>
           );
         } else {
+          const quantity = Number(value);
+          const reorderPoint = item.reorderPoint || 0;
+          const isLowStock = quantity <= reorderPoint;
+          const isNegative = quantity < 0;
+          
           return (
             <div className="flex items-center space-x-1">
-              <span className="font-medium">{String(value)}</span>
+              <span className={`font-medium ${
+                isNegative ? 'text-red-600' : 
+                isLowStock ? 'text-orange-600' : 
+                'text-gray-900'
+              }`}>
+                {String(value)}
+              </span>
+              {isNegative && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                  Negative
+                </span>
+              )}
+              {isLowStock && !isNegative && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                  Low
+                </span>
+              )}
               <button
                 onClick={() => handleCellEdit(item.itemId, field, value)}
                 className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
@@ -359,7 +380,46 @@ export function SpreadsheetTable({
 
       // Handle Date objects
       if (value instanceof Date) {
-        return <span>{value.toLocaleDateString()}</span>;
+        return (
+          <div className="group flex items-center space-x-1">
+            <span>{value.toLocaleDateString()}</span>
+            <button
+              onClick={() => handleCellEdit(item.itemId, field, value)}
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
+              title={`Edit ${field}`}
+            >
+              <Edit3 className="w-4 h-4 md:w-3 md:h-3" />
+            </button>
+          </div>
+        );
+      }
+
+      // Make key fields clickable for editing
+      const editableFields = ['name', 'SKU', 'reorderPoint', 'type'];
+      if (editableFields.includes(field)) {
+        return (
+          <div className="group flex items-center space-x-1">
+            {field === 'type' ? (
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                value === 'ingredient' ? 'bg-blue-100 text-blue-800' :
+                value === 'packaging' ? 'bg-purple-100 text-purple-800' :
+                value === 'product' ? 'bg-green-100 text-green-800' :
+                'bg-gray-100 text-gray-800'
+              }`}>
+                {String(value || '')}
+              </span>
+            ) : (
+              <span>{String(value || '')}</span>
+            )}
+            <button
+              onClick={() => handleCellEdit(item.itemId, field, value)}
+              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
+              title={`Edit ${field}`}
+            >
+              <Edit3 className="w-4 h-4 md:w-3 md:h-3" />
+            </button>
+          </div>
+        );
       }
 
       return <span>{String(value || '')}</span>;
@@ -600,15 +660,7 @@ export function SpreadsheetTable({
                           <MoreHorizontal className="w-5 h-5" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleCellEdit(item.itemId, 'name', item.name)
-                          }
-                        >
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
+                      <DropdownMenuContent align="end" className="w-56">
                         <DropdownMenuItem
                           onClick={() => handleQuickReorder(item.itemId)}
                         >
@@ -620,6 +672,18 @@ export function SpreadsheetTable({
                         >
                           <Check className="w-4 h-4 mr-2" />
                           Manual Count
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => console.log('View purchase history for:', item.itemId)}
+                        >
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          View Purchase History
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => console.log('Duplicate item:', item.itemId)}
+                        >
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          Duplicate Item
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() =>
@@ -647,6 +711,25 @@ export function SpreadsheetTable({
           <span className="text-xs text-gray-500">
             💡 Scroll horizontally to see all columns
           </span>
+        </div>
+        
+        {/* Legend for visual indicators */}
+        <div className="hidden md:block p-2 bg-gray-50 border-t border-gray-200">
+          <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+            <span className="flex items-center space-x-1">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                Negative
+              </span>
+              <span>= Below zero</span>
+            </span>
+            <span className="flex items-center space-x-1">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                Low
+              </span>
+              <span>= Below reorder point</span>
+            </span>
+            <span>💡 Click any field to edit inline</span>
+          </div>
         </div>
       </div>
 

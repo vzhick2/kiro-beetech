@@ -44,7 +44,7 @@ export interface Item {
 export interface Supplier {
   supplierId: string;
   name: string;
-  contactEmail?: string;
+  website?: string;
   contactPhone?: string;
   address?: string;
   notes?: string;
@@ -211,7 +211,7 @@ export interface CreateItemRequest {
 
 export interface CreateSupplierRequest {
   name: string;
-  contactEmail?: string;
+  website?: string;
   contactPhone?: string;
   address?: string;
   notes?: string;

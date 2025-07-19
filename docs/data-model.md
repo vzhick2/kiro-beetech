@@ -120,7 +120,7 @@ interface Batch {
 interface Supplier {
   supplierId: string;
   name: string;
-  storeUrl?: string;
+  website?: string;
   phone?: string;
   isArchived: boolean;
 }
@@ -292,8 +292,10 @@ CREATE TABLE items (
 CREATE TABLE suppliers (
   supplierId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  storeUrl TEXT,
-  phone TEXT,
+  website TEXT,
+  contactphone TEXT,
+  address TEXT,
+  notes TEXT,
   isArchived BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

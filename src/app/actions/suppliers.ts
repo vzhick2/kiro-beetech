@@ -24,18 +24,22 @@ export async function getSuppliers() {
 
 export async function createSupplier(supplierData: CreateSupplierRequest) {
   try {
+    const insertData: any = {
+      name: supplierData.name,
+      isarchived: false,
+    };
+
+    if (supplierData.website) {
+      insertData.storeurl = supplierData.website;
+    }
+
+    if (supplierData.contactPhone) {
+      insertData.phone = supplierData.contactPhone;
+    }
+
     const { data, error } = await supabase
       .from('suppliers')
-      .insert([
-        {
-          name: supplierData.name,
-          contactemail: supplierData.contactEmail,
-          contactphone: supplierData.contactPhone,
-          address: supplierData.address,
-          notes: supplierData.notes,
-          isarchived: false,
-        },
-      ])
+      .insert([insertData])
       .select()
       .single();
 

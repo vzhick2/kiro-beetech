@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getSuppliers,
+  createSupplier,
   updateSupplier,
   deleteSupplier,
   bulkDeleteSuppliers,
   bulkArchiveSuppliers,
 } from '@/app/actions/suppliers';
-import { Supplier } from '@/types';
+import { Supplier, CreateSupplierRequest } from '@/types';
 
 // Query keys for consistent caching
 export const suppliersKeys = {
@@ -32,10 +33,8 @@ export function useSuppliers(searchQuery = '') {
         (dbSupplier: any) => ({
           supplierId: dbSupplier.supplierid,
           name: dbSupplier.name,
-          contactEmail: dbSupplier.contactemail,
-          contactPhone: dbSupplier.contactphone,
-          address: dbSupplier.address,
-          notes: dbSupplier.notes,
+          website: dbSupplier.storeurl,
+          contactPhone: dbSupplier.phone,
           isArchived: dbSupplier.isarchived || false,
           created_at: new Date(dbSupplier.created_at),
         })
@@ -45,6 +44,36 @@ export function useSuppliers(searchQuery = '') {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+  });
+}
+
+// Hook for creating a supplier
+export function useCreateSupplier() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (supplierData: CreateSupplierRequest) => {
+      const result = await createSupplier(supplierData);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    },
+    onSuccess: (newSupplier) => {
+      // Add to suppliers list cache
+      queryClient.setQueriesData(
+        { queryKey: suppliersKeys.lists() },
+        (oldData: Supplier[] | undefined) => {
+          if (!oldData) {
+            return [newSupplier];
+          }
+          return [newSupplier, ...oldData];
+        }
+      );
+
+      // Invalidate related queries to ensure consistency
+      queryClient.invalidateQueries({ queryKey: suppliersKeys.lists() });
+    },
   });
 }
 
