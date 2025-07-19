@@ -4,6 +4,7 @@ import './globals.css'
 import { QueryProvider } from '@/providers/query-provider'
 import ErrorBoundary from '@/components/error-boundary'
 import { AppLayoutServer } from '@/components/layout/app-layout-server'
+import ViewportEnforcer from '@/components/viewport-enforcer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             <AppLayoutServer>
               {children}
             </AppLayoutServer>
+            <ViewportEnforcer />
           </QueryProvider>
         </ErrorBoundary>
       </body>

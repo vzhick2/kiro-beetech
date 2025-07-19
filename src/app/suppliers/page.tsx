@@ -19,7 +19,7 @@ export default function SuppliersPage() {
   const hasActiveFilters = searchQuery
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-container">
       {/* Header */}
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-3 sm:space-y-0">
