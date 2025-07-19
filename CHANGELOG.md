@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - July 19, 2025
+
+- **Critical Database Field Naming**: Fixed database field naming inconsistency in purchase management
+  - Corrected `isDraft` → `isdraft` and `purchaseId` → `purchaseid` to match database schema
+  - Ensures proper runtime functionality for purchase operations
+  - Updated all purchase server actions for consistency
+
+### Changed - July 19, 2025
+
+- **Simplified User Experience**: Removed command palette system for streamlined navigation
+  - Eliminated CMDK dependency to reduce complexity
+  - Simplified navigation to focus on core business workflows
+  - Improved mobile search bar visibility across all screen sizes
+  - Enhanced mobile-first responsive design
+
 ### Added
 
 - **Complete Supabase Development Environment Setup**

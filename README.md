@@ -140,7 +140,7 @@ This app prioritizes simplicity and flexibility for small businesses with irregu
 - ✅ Static hamburger menu button
 - ✅ BigCommerce-inspired design system
 - ✅ Breadcrumb navigation
-- ✅ Command palette for quick actions
+- ✅ Simplified navigation without command palette
 
 ### **Search & Discovery**
 

@@ -378,12 +378,14 @@ $$ LANGUAGE plpgsql;
 ```
 
 #### `create_batch_with_consumption(batch_data JSONB, consumption_data JSONB[])`
+
 **Purpose**: Create a batch and consume ingredients atomically
 **Parameters**:
+
 - `batch_data`: JSON object with batch details
 - `consumption_data`: Array of JSON objects with ingredient consumption
-**Returns**: `UUID` - The created batch ID
-**Logic**: Atomic transaction for batch creation and inventory updates
+  **Returns**: `UUID` - The created batch ID
+  **Logic**: Atomic transaction for batch creation and inventory updates
 
 ```sql
 CREATE OR REPLACE FUNCTION create_batch_with_consumption(
@@ -760,13 +762,16 @@ export async function previewQBOImport(formData: FormData) {
     }
 
     // Group by item for summary
-    const itemSummary = new Map<string, {
-      itemName: string;
-      totalQuantity: number;
-      totalRevenue: number;
-      saleCount: number;
-      dateRange: { start: Date; end: Date };
-    }>();
+    const itemSummary = new Map<
+      string,
+      {
+        itemName: string;
+        totalQuantity: number;
+        totalRevenue: number;
+        saleCount: number;
+        dateRange: { start: Date; end: Date };
+      }
+    >();
 
     parsingResult.data?.forEach(sale => {
       if (!itemSummary.has(sale.itemName)) {
@@ -799,8 +804,16 @@ export async function previewQBOImport(formData: FormData) {
         validRows: parsingResult.validRows,
         items: Array.from(itemSummary.values()),
         dateRange: {
-          start: Math.min(...Array.from(itemSummary.values()).map(s => s.dateRange.start.getTime())),
-          end: Math.max(...Array.from(itemSummary.values()).map(s => s.dateRange.end.getTime())),
+          start: Math.min(
+            ...Array.from(itemSummary.values()).map(s =>
+              s.dateRange.start.getTime()
+            )
+          ),
+          end: Math.max(
+            ...Array.from(itemSummary.values()).map(s =>
+              s.dateRange.end.getTime()
+            )
+          ),
         },
       },
       rawData: parsingResult.data?.slice(0, 10), // First 10 rows for preview
@@ -866,7 +879,8 @@ export async function processQBOImport(formData: FormData) {
 
         if (existingItem) {
           // Update existing item quantity
-          const newQuantity = (existingItem.currentquantity || 0) - sale.quantity;
+          const newQuantity =
+            (existingItem.currentquantity || 0) - sale.quantity;
 
           const { error: updateError } = await supabase
             .from('items')
@@ -874,7 +888,9 @@ export async function processQBOImport(formData: FormData) {
             .eq('itemid', existingItem.itemid);
 
           if (updateError) {
-            results.errors.push(`Failed to update ${sale.itemName}: ${updateError.message}`);
+            results.errors.push(
+              `Failed to update ${sale.itemName}: ${updateError.message}`
+            );
             continue;
           }
 
@@ -898,14 +914,18 @@ export async function processQBOImport(formData: FormData) {
             .single();
 
           if (createError) {
-            results.errors.push(`Failed to create ${sale.itemName}: ${createError.message}`);
+            results.errors.push(
+              `Failed to create ${sale.itemName}: ${createError.message}`
+            );
             continue;
           }
 
           itemId = newItem.itemid;
           results.itemsCreated++;
         } else {
-          results.errors.push(`Item not found: ${sale.itemName} (create missing items is disabled)`);
+          results.errors.push(
+            `Item not found: ${sale.itemName} (create missing items is disabled)`
+          );
           continue;
         }
 
@@ -917,20 +937,27 @@ export async function processQBOImport(formData: FormData) {
             transactiontype: 'sale',
             quantity: -sale.quantity,
             referenceid: `QBO-${sale.date.toISOString().split('T')[0]}`,
-            effectivedate: (validated.effectiveDate 
-              ? new Date(validated.effectiveDate).toISOString().split('T')[0]
-              : sale.date.toISOString().split('T')[0]) || new Date().toISOString().split('T')[0] || '',
+            effectivedate:
+              (validated.effectiveDate
+                ? new Date(validated.effectiveDate).toISOString().split('T')[0]
+                : sale.date.toISOString().split('T')[0]) ||
+              new Date().toISOString().split('T')[0] ||
+              '',
             notes: `QBO import: ${sale.customer || 'Unknown customer'} - ${sale.channel || 'qbo'}`,
           });
 
         if (transactionError) {
-          results.errors.push(`Failed to log transaction for ${sale.itemName}: ${transactionError.message}`);
+          results.errors.push(
+            `Failed to log transaction for ${sale.itemName}: ${transactionError.message}`
+          );
           continue;
         }
 
         results.salesLogged++;
       } catch (error) {
-        results.errors.push(`Error processing ${sale.itemName}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        results.errors.push(
+          `Error processing ${sale.itemName}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -943,7 +970,11 @@ export async function processQBOImport(formData: FormData) {
       results: {
         ...results,
         totalProcessed: salesData.length,
-        successRate: (((salesData.length - results.errors.length) / salesData.length) * 100).toFixed(1) + '%',
+        successRate:
+          (
+            ((salesData.length - results.errors.length) / salesData.length) *
+            100
+          ).toFixed(1) + '%',
       },
     });
   } catch (error) {
@@ -1031,7 +1062,9 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
       }
 
       if (filters?.search) {
-        query = query.or(`name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%`);
+        query = query.or(
+          `name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%`
+        );
       }
 
       const { data, error } = await query;
@@ -1148,7 +1181,7 @@ export function createErrorResponse(
   details?: unknown
 ): AppError {
   console.error('Error Response:', { message, details });
-  
+
   return {
     success: false,
     error: message,
@@ -1214,6 +1247,7 @@ CREATE INDEX idx_purchases_draft ON purchases(is_draft);
 ### QBO Sales CSV Format
 
 **Required Headers:**
+
 - `Date` - Transaction date
 - `Transaction Type` - Must be "Sale" or "Invoice"
 - `Product/Service` - Item name
@@ -1221,12 +1255,14 @@ CREATE INDEX idx_purchases_draft ON purchases(is_draft);
 - `Amount` - Revenue amount
 
 **Optional Headers:**
+
 - `Description` - Alternative item name
 - `Rate` - Unit price
 - `Customer` - Customer name
 - `Channel` - Sales channel
 
 **Validation Rules:**
+
 - CSV must have at least header row and one data row
 - All required headers must be present
 - Quantity must be positive number

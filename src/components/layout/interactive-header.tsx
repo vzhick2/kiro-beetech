@@ -111,8 +111,6 @@ export function InteractiveHeader({
                     : 'border-slate-600/30 hover:border-slate-500/50'
                 }`}
               />
-
-
             </div>
           </div>
         </div>

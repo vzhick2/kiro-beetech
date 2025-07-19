@@ -33,6 +33,7 @@ Comprehensive technical design documentation for the internal KIRO inventory man
 ### **Technology Stack**
 
 #### **Frontend Layer**
+
 - **Next.js 15.4.1** with App Router and Turbopack
 - **React 19.1.0** with Server Components
 - **TypeScript 5.8.3** for type safety
@@ -40,12 +41,14 @@ Comprehensive technical design documentation for the internal KIRO inventory man
 - **Radix UI** for accessible components
 
 #### **Backend Layer**
+
 - **Supabase** for database and authentication
 - **Server Actions** for form handling and mutations
 - **PostgreSQL** for data persistence
 - **Row Level Security (RLS)** for data protection
 
 #### **Data Layer**
+
 - **TanStack Query** for server state management
 - **Zod** for runtime validation
 - **Atomic database operations** for data consistency
@@ -85,10 +88,10 @@ export async function actionName(formData: FormData) {
   try {
     // 1. Validate input
     const validated = Schema.parse(data);
-    
+
     // 2. Perform business logic
     const result = await performOperation(validated);
-    
+
     // 3. Handle success
     revalidatePath('/relevant-path');
     return createSuccessResponse(result);
@@ -111,7 +114,7 @@ export function useResource(filters?: Filters) {
         .from('table')
         .select('*')
         .match(filters);
-      
+
       if (error) throw error;
       return data;
     },
@@ -142,6 +145,7 @@ AppLayout
 ### **Component Patterns**
 
 #### **Spreadsheet-Style Table**
+
 - **Purpose**: Excel-like interface for data management
 - **Features**: Inline editing, bulk operations, filtering
 - **Implementation**: `src/components/items/spreadsheet-table.tsx`
@@ -162,6 +166,7 @@ interface SpreadsheetTableProps {
 ```
 
 #### **Modal Workflow Pattern**
+
 - **Purpose**: Multi-step processes with validation
 - **Features**: Step-by-step progression, error handling
 - **Implementation**: `src/components/import-export/csv-import-modal.tsx`
@@ -181,6 +186,7 @@ type ImportStep = 'upload' | 'preview' | 'importing' | 'complete';
 ### **CSV Import System**
 
 #### **Architecture Overview**
+
 ```
 CSV File → Validation → Parsing → Preview → Processing → Database
     │           │          │         │          │           │
@@ -238,6 +244,7 @@ for (const sale of salesData) {
 ### **Seed Data System**
 
 #### **Architecture**
+
 ```
 Seed Button → Sample Data → Database Insertion → Success/Error Reporting
      │              │              │                    │
@@ -248,6 +255,7 @@ Seed Button → Sample Data → Database Insertion → Success/Error Reporting
 ```
 
 #### **Implementation**
+
 - **Sample Data**: 16 realistic items (ingredients + packaging)
 - **Batch Processing**: Individual item insertion with error handling
 - **User Feedback**: Real-time progress and results display
@@ -257,18 +265,19 @@ Seed Button → Sample Data → Database Insertion → Success/Error Reporting
 ### **Database Optimizations**
 
 #### **Query Optimization**
+
 ```sql
 -- Optimized items query with supplier information
-SELECT 
+SELECT
   i.*,
   s.name as last_used_supplier,
   ps.name as primary_supplier_name
 FROM items i
 LEFT JOIN suppliers s ON s.supplierid = (
-  SELECT supplierid FROM purchases p 
-  JOIN purchase_line_items pli ON p.purchaseid = pli.purchaseid 
-  WHERE pli.itemid = i.itemid 
-  ORDER BY p.purchasedate DESC 
+  SELECT supplierid FROM purchases p
+  JOIN purchase_line_items pli ON p.purchaseid = pli.purchaseid
+  WHERE pli.itemid = i.itemid
+  ORDER BY p.purchasedate DESC
   LIMIT 1
 )
 LEFT JOIN suppliers ps ON ps.supplierid = i.primarysupplierid
@@ -276,6 +285,7 @@ WHERE i.isarchived = false;
 ```
 
 #### **Indexing Strategy**
+
 ```sql
 -- Performance indexes
 CREATE INDEX idx_items_sku ON items(sku);
@@ -290,19 +300,21 @@ CREATE INDEX idx_purchases_draft ON purchases(is_draft);
 ### **Frontend Optimizations**
 
 #### **React Optimizations**
+
 - **Server Components**: Default for static content
 - **Client Components**: Only for interactive elements
 - **React Compiler**: Automatic memoization
 - **Code Splitting**: Route-based and component-based
 
 #### **Caching Strategy**
+
 ```typescript
 // TanStack Query configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000,   // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
       retry: 2,
     },
   },
@@ -314,6 +326,7 @@ const queryClient = new QueryClient({
 ### **Error Handling Patterns**
 
 #### **Standardized Error Responses**
+
 ```typescript
 interface AppError {
   success: false;
@@ -330,11 +343,12 @@ type AppResult<T> = AppSuccess<T> | AppError;
 ```
 
 #### **Error Handling Utilities**
+
 ```typescript
 // Centralized error handling
 export function handleError(error: unknown, context: string): AppError {
   console.error(`Error in ${context}:`, error);
-  
+
   if (error instanceof Error) {
     return {
       success: false,
@@ -342,7 +356,7 @@ export function handleError(error: unknown, context: string): AppError {
       code: error.name,
     };
   }
-  
+
   return {
     success: false,
     error: 'An unexpected error occurred',
@@ -351,6 +365,7 @@ export function handleError(error: unknown, context: string): AppError {
 ```
 
 #### **Validation Patterns**
+
 ```typescript
 // Zod validation with error handling
 const ImportSchema = z.object({
@@ -375,6 +390,7 @@ try {
 ### **Row Level Security (RLS)**
 
 #### **Items Table Policies**
+
 ```sql
 -- Users can only access their own data
 CREATE POLICY "Users can view their own items" ON items
@@ -388,13 +404,14 @@ FOR UPDATE USING (auth.uid() = user_id);
 ```
 
 #### **Transaction Table Policies**
+
 ```sql
 -- Secure transaction access
 CREATE POLICY "Users can view their own transactions" ON transactions
 FOR SELECT USING (
   EXISTS (
-    SELECT 1 FROM items 
-    WHERE items.itemid = transactions.itemid 
+    SELECT 1 FROM items
+    WHERE items.itemid = transactions.itemid
     AND items.user_id = auth.uid()
   )
 );
@@ -403,6 +420,7 @@ FOR SELECT USING (
 ### **Input Validation**
 
 #### **Server-Side Validation**
+
 - **Zod Schemas**: Runtime type checking
 - **SQL Injection Prevention**: Parameterized queries
 - **XSS Prevention**: Content Security Policy
@@ -413,6 +431,7 @@ FOR SELECT USING (
 ### **Mobile-First Approach**
 
 #### **Breakpoint Strategy**
+
 ```css
 /* Mobile-first responsive design */
 .container {
@@ -433,6 +452,7 @@ FOR SELECT USING (
 ```
 
 #### **Touch-Friendly Interface**
+
 - **Minimum Touch Targets**: 44px × 44px
 - **Gesture Support**: Swipe navigation
 - **Keyboard Navigation**: Full accessibility
@@ -441,13 +461,14 @@ FOR SELECT USING (
 ### **Layout Patterns**
 
 #### **Responsive Sidebar**
+
 ```typescript
 // Adaptive sidebar behavior
 const ResponsiveSidebar = ({ isOpen, onClose, isDesktop }) => {
   if (isDesktop) {
     return <DesktopSidebar />;
   }
-  
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left">
@@ -463,6 +484,7 @@ const ResponsiveSidebar = ({ isOpen, onClose, isDesktop }) => {
 ### **Code Quality Standards**
 
 #### **TypeScript Configuration**
+
 ```json
 {
   "compilerOptions": {
@@ -475,6 +497,7 @@ const ResponsiveSidebar = ({ isOpen, onClose, isDesktop }) => {
 ```
 
 #### **ESLint Configuration**
+
 ```json
 {
   "extends": ["next/core-web-vitals"],
@@ -490,11 +513,13 @@ const ResponsiveSidebar = ({ isOpen, onClose, isDesktop }) => {
 ### **Testing Strategy**
 
 #### **Component Testing**
+
 - **Unit Tests**: Individual component testing
 - **Integration Tests**: Component interaction testing
 - **E2E Tests**: Critical user journey testing
 
 #### **Database Testing**
+
 - **Migration Testing**: Schema change validation
 - **RPC Testing**: Function behavior verification
 - **Performance Testing**: Query optimization validation
@@ -502,6 +527,7 @@ const ResponsiveSidebar = ({ isOpen, onClose, isDesktop }) => {
 ## 📈 **Monitoring and Observability**
 
 ### **Error Tracking**
+
 ```typescript
 // Instrumentation for error tracking
 export async function onRequestError(
@@ -523,6 +549,7 @@ export async function onRequestError(
 ```
 
 ### **Performance Monitoring**
+
 - **Core Web Vitals**: LCP, FID, CLS tracking
 - **Database Performance**: Query execution time monitoring
 - **User Experience**: Interaction time tracking
@@ -530,6 +557,7 @@ export async function onRequestError(
 ## 🔄 **Deployment Architecture**
 
 ### **Environment Configuration**
+
 ```env
 # Production environment variables
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -538,6 +566,7 @@ NODE_ENV=production
 ```
 
 ### **Build Optimization**
+
 ```json
 {
   "scripts": {
