@@ -79,7 +79,7 @@ export function SuppliersSpreadsheetTable({
       },
       isEditing: true,
     });
-    
+
     // Focus the first input after state update
     setTimeout(() => {
       const firstInput = inputRefs.current[`${supplier.supplierId}-name`];
@@ -98,8 +98,10 @@ export function SuppliersSpreadsheetTable({
     try {
       // Only send changed fields
       const updates: any = {};
-      const supplier = suppliers.find(s => s.supplierId === editingRow.supplierId);
-      
+      const supplier = suppliers.find(
+        s => s.supplierId === editingRow.supplierId
+      );
+
       if (supplier) {
         if (editingRow.fields.name !== supplier.name) {
           updates.name = editingRow.fields.name;
@@ -118,7 +120,7 @@ export function SuppliersSpreadsheetTable({
           updates,
         });
       }
-      
+
       setEditingRow(null);
     } catch (error) {
       console.error('Failed to save row:', error);
@@ -129,51 +131,65 @@ export function SuppliersSpreadsheetTable({
     setEditingRow(null);
   }, []);
 
-  const handleFieldChange = useCallback((field: keyof EditableRow['fields'], value: string) => {
-    setEditingRow(prev => 
-      prev ? {
-        ...prev,
-        fields: { ...prev.fields, [field]: value }
-      } : null
-    );
-  }, []);
+  const handleFieldChange = useCallback(
+    (field: keyof EditableRow['fields'], value: string) => {
+      setEditingRow(prev =>
+        prev
+          ? {
+              ...prev,
+              fields: { ...prev.fields, [field]: value },
+            }
+          : null
+      );
+    },
+    []
+  );
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, field: keyof EditableRow['fields']) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleRowSave();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleRowCancel();
-    } else if (e.key === 'Tab') {
-      const fieldOrder: (keyof EditableRow['fields'])[] = ['name', 'website', 'contactPhone'];
-      const currentIndex = fieldOrder.indexOf(field);
-      
-      if (!e.shiftKey && currentIndex < fieldOrder.length - 1) {
-        // Move to next field
-        e.preventDefault();
-        const nextField = fieldOrder[currentIndex + 1];
-        const nextInput = inputRefs.current[`${editingRow?.supplierId}-${nextField}`];
-        if (nextInput) {
-          nextInput.focus();
-          nextInput.select();
-        }
-      } else if (e.shiftKey && currentIndex > 0) {
-        // Move to previous field
-        e.preventDefault();
-        const prevField = fieldOrder[currentIndex - 1];
-        const prevInput = inputRefs.current[`${editingRow?.supplierId}-${prevField}`];
-        if (prevInput) {
-          prevInput.focus();
-          prevInput.select();
-        }
-      } else if (!e.shiftKey && currentIndex === fieldOrder.length - 1) {
-        // Save when tabbing out of last field
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, field: keyof EditableRow['fields']) => {
+      if (e.key === 'Enter') {
         e.preventDefault();
         handleRowSave();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        handleRowCancel();
+      } else if (e.key === 'Tab') {
+        const fieldOrder: (keyof EditableRow['fields'])[] = [
+          'name',
+          'website',
+          'contactPhone',
+        ];
+        const currentIndex = fieldOrder.indexOf(field);
+
+        if (!e.shiftKey && currentIndex < fieldOrder.length - 1) {
+          // Move to next field
+          e.preventDefault();
+          const nextField = fieldOrder[currentIndex + 1];
+          const nextInput =
+            inputRefs.current[`${editingRow?.supplierId}-${nextField}`];
+          if (nextInput) {
+            nextInput.focus();
+            nextInput.select();
+          }
+        } else if (e.shiftKey && currentIndex > 0) {
+          // Move to previous field
+          e.preventDefault();
+          const prevField = fieldOrder[currentIndex - 1];
+          const prevInput =
+            inputRefs.current[`${editingRow?.supplierId}-${prevField}`];
+          if (prevInput) {
+            prevInput.focus();
+            prevInput.select();
+          }
+        } else if (!e.shiftKey && currentIndex === fieldOrder.length - 1) {
+          // Save when tabbing out of last field
+          e.preventDefault();
+          handleRowSave();
+        }
       }
-    }
-  }, [editingRow, handleRowSave, handleRowCancel]);
+    },
+    [editingRow, handleRowSave, handleRowCancel]
+  );
 
   const handleAddNewRow = useCallback(() => {
     setNewRow({
@@ -271,26 +287,35 @@ export function SuppliersSpreadsheetTable({
 
   const renderCell = useCallback(
     (supplier: Supplier, field: keyof EditableRow['fields']) => {
-      const isCurrentRowEditing = editingRow?.supplierId === supplier.supplierId;
-      
+      const isCurrentRowEditing =
+        editingRow?.supplierId === supplier.supplierId;
+
       if (isCurrentRowEditing) {
         const inputKey = `${supplier.supplierId}-${field}`;
         return (
           <input
-            ref={el => { inputRefs.current[inputKey] = el; }}
+            ref={el => {
+              inputRefs.current[inputKey] = el;
+            }}
             type="text"
             value={editingRow.fields[field]}
             onChange={e => handleFieldChange(field, e.target.value)}
             onKeyDown={e => handleKeyDown(e, field)}
             onBlur={handleRowSave}
             className="w-full px-2 py-1 text-sm border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white rounded"
-            placeholder={field === 'name' ? 'Supplier name' : field === 'website' ? 'Website URL' : 'Phone number'}
+            placeholder={
+              field === 'name'
+                ? 'Supplier name'
+                : field === 'website'
+                  ? 'Website URL'
+                  : 'Phone number'
+            }
           />
         );
       }
 
       const value = supplier[field] || '';
-      
+
       if (field === 'website' && value) {
         return (
           <a
@@ -354,7 +379,9 @@ export function SuppliersSpreadsheetTable({
               if (isLastField) {
                 handleSaveNewRow();
               } else {
-                const nextInput = e.currentTarget.closest('td')?.nextElementSibling?.querySelector('input');
+                const nextInput = e.currentTarget
+                  .closest('td')
+                  ?.nextElementSibling?.querySelector('input');
                 if (nextInput) {
                   (nextInput as HTMLInputElement).focus();
                 }
@@ -483,7 +510,9 @@ export function SuppliersSpreadsheetTable({
                   </td>
                   <td className="p-3">{renderNewRowCell('name')}</td>
                   <td className="p-3">{renderNewRowCell('website')}</td>
-                  <td className="p-3">{renderNewRowCell('contactPhone', true)}</td>
+                  <td className="p-3">
+                    {renderNewRowCell('contactPhone', true)}
+                  </td>
                   <td className="p-3">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       New
@@ -514,20 +543,25 @@ export function SuppliersSpreadsheetTable({
 
               {/* Existing Suppliers */}
               {filteredSuppliers.map(supplier => {
-                const isEditing = editingRow?.supplierId === supplier.supplierId;
-                
+                const isEditing =
+                  editingRow?.supplierId === supplier.supplierId;
+
                 return (
                   <tr
                     key={supplier.supplierId}
                     className={`border-b border-gray-100 transition-colors ${
-                      isEditing 
-                        ? 'bg-blue-50 ring-2 ring-blue-200' 
+                      isEditing
+                        ? 'bg-blue-50 ring-2 ring-blue-200'
                         : 'hover:bg-gray-50 cursor-pointer'
                     }`}
                     onClick={e => {
                       // Don't trigger row edit if clicking on links or the dropdown
                       const target = e.target as HTMLElement;
-                      if (target.tagName === 'A' || target.closest('[role="button"]') || target.closest('button')) {
+                      if (
+                        target.tagName === 'A' ||
+                        target.closest('[role="button"]') ||
+                        target.closest('button')
+                      ) {
                         return;
                       }
                       if (!isEditing) {
@@ -605,11 +639,23 @@ export function SuppliersSpreadsheetTable({
         <div className="text-sm text-blue-700">
           <p className="font-medium mb-1">💡 How to edit suppliers:</p>
           <ul className="space-y-1 text-blue-600">
-            <li>• <strong>Click anywhere on a row</strong> (except links) to start editing</li>
-            <li>• <strong>Tab/Shift+Tab</strong> to move between fields</li>
-            <li>• <strong>Enter</strong> to save changes</li>
-            <li>• <strong>Escape</strong> to cancel editing</li>
-            <li>• <strong>Click website/phone links</strong> to open them (won't trigger editing)</li>
+            <li>
+              • <strong>Click anywhere on a row</strong> (except links) to start
+              editing
+            </li>
+            <li>
+              • <strong>Tab/Shift+Tab</strong> to move between fields
+            </li>
+            <li>
+              • <strong>Enter</strong> to save changes
+            </li>
+            <li>
+              • <strong>Escape</strong> to cancel editing
+            </li>
+            <li>
+              • <strong>Click website/phone links</strong> to open them (won't
+              trigger editing)
+            </li>
           </ul>
         </div>
       </div>

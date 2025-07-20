@@ -136,16 +136,24 @@ export const CreateItemSchema = z.object({
 
 export const CreateSupplierSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
-  website: z.string().optional().refine((val) => {
-    if (!val || val === '') {
-      return true; // Allow empty strings
-    }
-    // Allow URLs with or without protocol
-    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    return urlPattern.test(val);
-  }, {
-    message: 'Please enter a valid website URL (e.g., www.example.com or https://example.com)'
-  }),
+  website: z
+    .string()
+    .optional()
+    .refine(
+      val => {
+        if (!val || val === '') {
+          return true; // Allow empty strings
+        }
+        // Allow URLs with or without protocol
+        const urlPattern =
+          /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        return urlPattern.test(val);
+      },
+      {
+        message:
+          'Please enter a valid website URL (e.g., www.example.com or https://example.com)',
+      }
+    ),
   contactPhone: z.string().max(50).optional(),
   address: z.string().max(500).optional(),
   notes: z.string().max(1000).optional(),

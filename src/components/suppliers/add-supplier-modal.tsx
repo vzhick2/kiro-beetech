@@ -37,10 +37,10 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
     try {
       // Validate form data with Zod schema
       const validationResult = CreateSupplierSchema.safeParse(formData);
-      
+
       if (!validationResult.success) {
         const fieldErrors: Record<string, string> = {};
-        validationResult.error.issues.forEach((issue) => {
+        validationResult.error.issues.forEach(issue => {
           if (issue.path[0]) {
             fieldErrors[issue.path[0] as string] = issue.message;
           }
@@ -53,10 +53,22 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
       // Create supplier data object, filtering out empty strings
       const supplierData = {
         name: validationResult.data.name,
-        ...(validationResult.data.website && validationResult.data.website.trim() && { website: validationResult.data.website.trim() }),
-        ...(validationResult.data.contactPhone && validationResult.data.contactPhone.trim() && { contactPhone: validationResult.data.contactPhone.trim() }),
-        ...(validationResult.data.address && validationResult.data.address.trim() && { address: validationResult.data.address.trim() }),
-        ...(validationResult.data.notes && validationResult.data.notes.trim() && { notes: validationResult.data.notes.trim() }),
+        ...(validationResult.data.website &&
+          validationResult.data.website.trim() && {
+            website: validationResult.data.website.trim(),
+          }),
+        ...(validationResult.data.contactPhone &&
+          validationResult.data.contactPhone.trim() && {
+            contactPhone: validationResult.data.contactPhone.trim(),
+          }),
+        ...(validationResult.data.address &&
+          validationResult.data.address.trim() && {
+            address: validationResult.data.address.trim(),
+          }),
+        ...(validationResult.data.notes &&
+          validationResult.data.notes.trim() && {
+            notes: validationResult.data.notes.trim(),
+          }),
       };
 
       const result = await createSupplier(supplierData);
@@ -140,9 +152,7 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
                 type="text"
                 id="website"
                 value={formData.website}
-                onChange={e =>
-                  handleInputChange('website', e.target.value)
-                }
+                onChange={e => handleInputChange('website', e.target.value)}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.website ? 'border-red-500' : 'border-gray-300'
                 }`}

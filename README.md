@@ -242,13 +242,13 @@ The following MCP servers are configured in `.vscode/mcp.json`:
 To use the MCP servers, you must have the **Kilo Code** VS Code extension installed.
 
 1.  **Generate Access Tokens**:
-    *   **Supabase**: Create a personal access token from your Supabase account dashboard.
-    *   **GitHub**: Create a personal access token with `repo`, `workflow`, `read:org`, and `user` scopes.
+    - **Supabase**: Create a personal access token from your Supabase account dashboard.
+    - **GitHub**: Create a personal access token with `repo`, `workflow`, `read:org`, and `user` scopes.
 
 2.  **Connect to Servers**:
-    *   Open the VS Code Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
-    *   Run the command `MCP: Connect to Servers`.
-    *   Enter your access tokens when prompted. The extension will securely store them.
+    - Open the VS Code Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
+    - Run the command `MCP: Connect to Servers`.
+    - Enter your access tokens when prompted. The extension will securely store them.
 
 ### **Example Usage**
 
@@ -290,6 +290,7 @@ To retrieve information about the repository:
   }
 }
 ```
+
 ## 📚 **Documentation**
 
 - [Data Model](./docs/data-model.md) - Database schema and architecture
