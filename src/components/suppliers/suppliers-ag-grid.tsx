@@ -54,6 +54,8 @@ export function SuppliersAgGrid() {
         flex: 2,
         minWidth: 150,
         cellStyle: { fontWeight: '500' },
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
       },
       {
         field: 'website',
@@ -216,13 +218,8 @@ export function SuppliersAgGrid() {
   // Grid options with responsive features - FIXED deprecated properties
   const gridOptions = useMemo(
     () => ({
-      // Row selection - FIXED: Use new v34 syntax
-      rowSelection: {
-        mode: 'multiRow' as const,
-        checkboxes: true,
-        headerCheckbox: true,
-        enableClickSelection: false, // This replaces suppressRowClickSelection
-      },
+      // Row selection - FIXED: Use correct v34 syntax
+      rowSelection: 'multiple' as const,
       // Editing
       editType: 'fullRow' as const,
       stopEditingWhenCellsLoseFocus: true,
@@ -231,7 +228,7 @@ export function SuppliersAgGrid() {
       theme: 'legacy' as const,
       // Responsive row height
       rowHeight: isMobile ? 60 : 48, // Taller rows on mobile
-      // Performance - REMOVED deprecated properties
+      // Performance
       suppressCellFocus: true,
       // Mobile optimizations
       suppressColumnVirtualisation: isMobile, // Better mobile performance
