@@ -33,6 +33,9 @@
 - Change business logic
 - Update dependencies
 - Create new utility functions
+- Create scripts (.ps1, .sh, .bat files)
+- Create documentation files (.md files)
+- Create test components or example code
 - Update data-model.md and api-documentation.md when modifying database schema
 - Update technical-design.md when changing architecture decisions
 

@@ -243,7 +243,66 @@ For each new feature:
 - [ ] Test on both desktop and mobile
 - [ ] Update progress documentation
 
-## 🔧 **Development Commands**
+## � **Dependency Management**
+
+### **Critical Workflow Rules**
+
+⚠️ **NEVER commit package.json changes without updating pnpm-lock.yaml**
+
+#### **Adding New Dependencies**
+
+```bash
+# Add runtime dependency
+pnpm add package-name
+
+# Add dev dependency  
+pnpm add -D package-name
+
+# Always commit BOTH files together
+git add package.json pnpm-lock.yaml
+git commit -m "Add package-name dependency"
+```
+
+#### **Dependency Updates**
+
+```bash
+# Update specific package
+pnpm update package-name
+
+# Update all dependencies
+pnpm update
+
+# Verify lockfile is synchronized
+pnpm install --frozen-lockfile
+```
+
+#### **CI/CD Verification**
+
+```bash
+# Use in CI pipelines to ensure lockfile sync
+pnpm install --frozen-lockfile
+
+# For local verification before committing
+pnpm install --frozen-lockfile && pnpm build
+```
+
+#### **Troubleshooting Lockfile Issues**
+
+```bash
+# If lockfile gets out of sync, regenerate it
+rm pnpm-lock.yaml
+pnpm install
+
+# Verify everything works
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+### **Historical Note**
+
+AG Grid lockfile issues (July 2025) were caused by manual package.json edits without corresponding lockfile updates. This created deployment failures when Vercel's `--frozen-lockfile` validation detected the mismatch.
+
+## �🔧 **Development Commands**
 
 ### **Quick Commands**
 
@@ -280,12 +339,11 @@ pnpm supabase:types     # Generate types from remote database
 
 ## 📋 **VS Code Extensions Recommended**
 
-- **ES7+ React/Redux/React-Native snippets**
-- **Tailwind CSS IntelliSense**
-- **TypeScript Importer**
-- **Auto Rename Tag**
-- **Bracket Pair Colorizer**
-- **GitLens**
+- **Tailwind CSS IntelliSense** - Essential for Tailwind development
+- **GitLens** - Enhanced Git integration and history
+- **Supabase Extension** - Database management and schema tools
+
+**Note**: Auto Rename Tag, Bracket Pair Colorizer, and TypeScript Importer are now built into VS Code (2025).
 
 ## 🏗️ **Schema & Evolution**
 

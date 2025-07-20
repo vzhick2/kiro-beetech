@@ -40,6 +40,7 @@ const navigation: NavigationElement[] = [
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
+  { name: 'Suppliers (Modern)', href: '/suppliers/suppliers2', icon: Users },
   // Separator after business
   { separator: true },
   // Analysis & Reporting Group

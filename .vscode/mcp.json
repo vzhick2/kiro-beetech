@@ -13,7 +13,7 @@
       "password": true
     }
   ],
-  "mcpServers": {
+  "servers": {
     "supabase": {
       "command": "npx",
       "args": [
@@ -24,34 +24,14 @@
       ],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "${input:supabase-access-token}"
-      },
-      "autoApprove": [
-        "supabase_db_query",
-        "supabase_db_execute",
-        "supabase_list_tables",
-        "supabase_describe_table",
-        "supabase_db_list_tables",
-        "supabase_db_describe_table",
-        "supabase_db_query_sql",
-        "supabase_db_execute_sql"
-      ]
+      }
     },
     "github": {
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "ghcr.io/github/github-mcp-server:latest"],
-      "env": {
-        "GITHUB_TOKEN": "${input:github-token}"
-      },
-      "autoApprove": [
-        "push_files",
-        "update_file",
-        "create_issue",
-        "get_file",
-        "list_files",
-        "search_code",
-        "list_commits",
-        "get_commit"
-      ]
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${input:github-token}"
+      }
     }
   }
 }
