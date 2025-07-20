@@ -1,19 +1,5 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "supabase-access-token",
-      "description": "Supabase personal access token",
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "id": "github-personal-access-token",
-      "description": "GitHub personal access token (repo, workflow, read:org, user scopes recommended)",
-      "password": true
-    }
-  ],
-  "servers": {
+  "mcpServers": {
     "supabase": {
       "command": "npx",
       "args": [
@@ -52,5 +38,19 @@
         "github_get_commit"
       ]
     }
-  }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "supabase-access-token",
+      "description": "Supabase personal access token",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "github-personal-access-token",
+      "description": "GitHub personal access token (repo, workflow, read:org, user scopes recommended)",
+      "password": true
+    }
+  ]
 }
