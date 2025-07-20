@@ -9,9 +9,9 @@ import {
   ModuleRegistry,
   AllCommunityModule,
 } from 'ag-grid-community';
-// Use legacy CSS approach for Alpine theme
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+// Remove CSS imports to use Theming API instead
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -256,12 +256,15 @@ export function SuppliersAgGrid() {
   }
 
   return (
-    <div className="ag-theme-alpine w-full h-full min-h-[400px]">
+    <div className="w-full h-full min-h-[400px]">
       <AgGridReact
         ref={gridRef}
         columnDefs={columnDefs}
         rowData={suppliers}
-        rowSelection="multiple"
+        rowSelection={{
+          mode: 'multiRow',
+        }}
+        theme="legacy"
         editType="fullRow"
         stopEditingWhenCellsLoseFocus={true}
         animateRows={true}
