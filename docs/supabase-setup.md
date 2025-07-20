@@ -9,7 +9,7 @@ This project is configured for **remote Supabase development** using the cloud-h
 ### Remote Project
 
 - **Project ID**: `jjpklpivpvywagmjjwpu`
-- **Project Name**: `cursor-kiro-beetech`
+- **Project Name**: `kiro-beetech`
 - **Region**: `us-east-2`
 - **Status**: ✅ Linked and configured
 
