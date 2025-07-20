@@ -4,6 +4,7 @@ import { Suspense, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
 import { SuppliersSpreadsheetTable } from '@/components/suppliers/suppliers-spreadsheet-table';
+import { AddSupplierModal } from '@/components/suppliers/add-supplier-modal';
 
 export default function SuppliersPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,8 +22,11 @@ export default function SuppliersPage() {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-3 sm:space-y-0">
           <h1 className="text-2xl font-semibold text-gray-800">Suppliers</h1>
-          <div className="text-sm text-gray-500">
-            Click the "+" row to add a new supplier
+          <div className="flex items-center space-x-3">
+            <AddSupplierModal />
+            <div className="text-sm text-gray-500">
+              or click the "+" row below to add inline
+            </div>
           </div>
         </div>
 

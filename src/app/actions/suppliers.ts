@@ -8,6 +8,7 @@ export async function getSuppliers() {
     const { data, error } = await supabase
       .from('suppliers')
       .select('*')
+      .eq('isarchived', false)
       .order('name');
 
     if (error) {
@@ -29,12 +30,21 @@ export async function createSupplier(supplierData: CreateSupplierRequest) {
       isarchived: false,
     };
 
+    // Map fields to correct database column names
     if (supplierData.website) {
-      insertData.storeurl = supplierData.website;
+      insertData.website = supplierData.website; // Fixed: website -> website (not storeurl)
     }
 
     if (supplierData.contactPhone) {
-      insertData.phone = supplierData.contactPhone;
+      insertData.contactphone = supplierData.contactPhone; // Fixed: contactPhone -> contactphone (not phone)
+    }
+
+    if (supplierData.address) {
+      insertData.address = supplierData.address;
+    }
+
+    if (supplierData.notes) {
+      insertData.notes = supplierData.notes;
     }
 
     const { data, error } = await supabase
@@ -100,10 +110,6 @@ export async function deleteSupplier(supplierId: string) {
 
 export async function bulkDeleteSuppliers(supplierIds: string[]) {
   try {
-    if (supplierIds.length === 0) {
-      return { success: true, deletedCount: 0 };
-    }
-
     const { error } = await supabase
       .from('suppliers')
       .delete()
@@ -114,19 +120,15 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, deletedCount: supplierIds.length };
+    return { success: true };
   } catch (error) {
-    console.error('Failed to bulk delete suppliers:', error);
+    console.error('Error in bulkDeleteSuppliers:', error);
     return { success: false, error: 'Failed to bulk delete suppliers' };
   }
 }
 
 export async function bulkArchiveSuppliers(supplierIds: string[]) {
   try {
-    if (supplierIds.length === 0) {
-      return { success: true, archivedCount: 0 };
-    }
-
     const { error } = await supabase
       .from('suppliers')
       .update({ isarchived: true })
@@ -137,9 +139,9 @@ export async function bulkArchiveSuppliers(supplierIds: string[]) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, archivedCount: supplierIds.length };
+    return { success: true };
   } catch (error) {
-    console.error('Failed to bulk archive suppliers:', error);
+    console.error('Error in bulkArchiveSuppliers:', error);
     return { success: false, error: 'Failed to bulk archive suppliers' };
   }
 }

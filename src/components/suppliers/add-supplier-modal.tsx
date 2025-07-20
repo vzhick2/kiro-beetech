@@ -21,7 +21,7 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    contactEmail: '',
+    website: '', // Changed from contactEmail to website
     contactPhone: '',
     address: '',
     notes: '',
@@ -37,7 +37,7 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
         setIsOpen(false);
         setFormData({
           name: '',
-          contactEmail: '',
+          website: '', // Changed from contactEmail to website
           contactPhone: '',
           address: '',
           notes: '',
@@ -98,20 +98,20 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
-                htmlFor="contactEmail"
+                htmlFor="website"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Email
+                Website
               </label>
               <input
-                type="email"
-                id="contactEmail"
-                value={formData.contactEmail}
+                type="url"
+                id="website"
+                value={formData.website}
                 onChange={e =>
-                  handleInputChange('contactEmail', e.target.value)
+                  handleInputChange('website', e.target.value)
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="contact@supplier.com"
+                placeholder="https://supplier-website.com"
               />
             </div>
 
