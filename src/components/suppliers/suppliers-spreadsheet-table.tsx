@@ -86,8 +86,8 @@ export function SuppliersSpreadsheetTable({
         // Map frontend field names to database column names
         const dbFieldMap: Record<string, string> = {
           name: 'name',
-          website: 'storeurl',
-          contactPhone: 'phone',
+          website: 'website', // Fixed: website -> website (not storeurl)
+          contactPhone: 'contactphone', // Fixed: contactPhone -> contactphone (not phone)
         };
 
         const dbField = dbFieldMap[field];
@@ -231,6 +231,13 @@ export function SuppliersSpreadsheetTable({
                   );
                 } else if (e.key === 'Escape') {
                   handleCellCancel();
+                } else if (e.key === 'Tab') {
+                  // Save on Tab out
+                  handleCellSave(
+                    supplier.supplierId,
+                    field,
+                    e.currentTarget.value
+                  );
                 }
               }}
               onBlur={e =>
@@ -321,7 +328,7 @@ export function SuppliersSpreadsheetTable({
   );
 
   const renderNewRowCell = useCallback(
-    (field: keyof NewRowData) => {
+    (field: keyof NewRowData, isLastField = false) => {
       if (field === 'isEditing') {
         return null;
       }
@@ -345,9 +352,22 @@ export function SuppliersSpreadsheetTable({
           className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              handleSaveNewRow();
+              if (isLastField) {
+                // Save when Enter is pressed on the last field
+                handleSaveNewRow();
+              } else {
+                // Move to next field
+                const nextInput = e.currentTarget.closest('td')?.nextElementSibling?.querySelector('input');
+                if (nextInput) {
+                  (nextInput as HTMLInputElement).focus();
+                }
+              }
             } else if (e.key === 'Escape') {
               handleCancelNewRow();
+            } else if (e.key === 'Tab' && isLastField && !e.shiftKey) {
+              // Save when Tab out of last field
+              e.preventDefault();
+              handleSaveNewRow();
             }
           }}
         />
@@ -465,7 +485,7 @@ export function SuppliersSpreadsheetTable({
                   </td>
                   <td className="p-3">{renderNewRowCell('name')}</td>
                   <td className="p-3">{renderNewRowCell('website')}</td>
-                  <td className="p-3">{renderNewRowCell('contactPhone')}</td>
+                  <td className="p-3">{renderNewRowCell('contactPhone', true)}</td>
                   <td className="p-3">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       New
