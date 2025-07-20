@@ -188,6 +188,33 @@ const sampleItems = [
   },
 ];
 
+const sampleSuppliers = [
+  {
+    name: 'BeeTech Supplies Co.',
+    website: 'https://beetechsupplies.com',
+    contactphone: '555-123-4567',
+    address: '123 Honey Lane, Beekeeping City, BC 12345',
+    notes: 'Primary supplier for beekeeping equipment and raw materials',
+    isarchived: false,
+  },
+  {
+    name: 'Organic Honey Farms',
+    website: 'https://organichoneyfarms.com',
+    contactphone: '555-987-6543',
+    address: '456 Organic Way, Natural Valley, NV 54321',
+    notes: 'Supplier for organic honey and bee products',
+    isarchived: false,
+  },
+  {
+    name: 'Packaging Plus',
+    website: 'https://packagingplus.com',
+    contactphone: '555-456-7890',
+    address: '789 Container Blvd, Packaging Town, PT 67890',
+    notes: 'Supplier for glass jars, lids, and packaging materials',
+    isarchived: false,
+  },
+];
+
 export async function seedSampleData() {
   try {
     console.log('Adding sample data to remote database...');
@@ -196,6 +223,34 @@ export async function seedSampleData() {
     let successCount = 0;
     let errorCount = 0;
 
+    // Seed suppliers first
+    console.log('Seeding suppliers...');
+    for (const supplier of sampleSuppliers) {
+      const { error } = await supabaseAdmin
+        .from('suppliers')
+        .insert([supplier])
+        .select();
+
+      if (error) {
+        console.error(
+          `Error inserting supplier ${supplier.name}:`,
+          error.message
+        );
+        results.push({
+          item: `Supplier: ${supplier.name}`,
+          success: false,
+          error: error.message,
+        });
+        errorCount++;
+      } else {
+        console.log(`Added supplier: ${supplier.name}`);
+        results.push({ item: `Supplier: ${supplier.name}`, success: true });
+        successCount++;
+      }
+    }
+
+    // Seed items
+    console.log('Seeding items...');
     for (const item of sampleItems) {
       const { error } = await supabaseAdmin
         .from('items')
@@ -218,15 +273,67 @@ export async function seedSampleData() {
       message: `Added ${successCount} items successfully. ${errorCount} errors.`,
       results,
       summary: {
-        total: sampleItems.length,
+        total: sampleItems.length + sampleSuppliers.length,
         success: successCount,
         errors: errorCount,
+        suppliers: sampleSuppliers.length,
         ingredients: sampleItems.filter(i => i.type === 'ingredient').length,
         packaging: sampleItems.filter(i => i.type === 'packaging').length,
       },
     };
   } catch (error) {
     console.error('Failed to seed sample data:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function seedSuppliersOnly() {
+  try {
+    console.log('Adding sample suppliers to database...');
+
+    const results = [];
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const supplier of sampleSuppliers) {
+      const { error } = await supabaseAdmin
+        .from('suppliers')
+        .insert([supplier])
+        .select();
+
+      if (error) {
+        console.error(
+          `Error inserting supplier ${supplier.name}:`,
+          error.message
+        );
+        results.push({
+          supplier: supplier.name,
+          success: false,
+          error: error.message,
+        });
+        errorCount++;
+      } else {
+        console.log(`Added supplier: ${supplier.name}`);
+        results.push({ supplier: supplier.name, success: true });
+        successCount++;
+      }
+    }
+
+    return {
+      success: true,
+      message: `Added ${successCount} suppliers successfully. ${errorCount} errors.`,
+      results,
+      summary: {
+        total: sampleSuppliers.length,
+        success: successCount,
+        errors: errorCount,
+      },
+    };
+  } catch (error) {
+    console.error('Failed to seed suppliers:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
