@@ -633,14 +633,20 @@ export function SpreadsheetTable({
                   </td>
                   {/* Essential columns - always visible */}
                   <td className="p-3">{renderCell(item, 'name')}</td>
-                  <td className="p-3 sm:table-cell hidden">{renderCell(item, 'SKU')}</td>
+                  <td className="p-3 sm:table-cell hidden">
+                    {renderCell(item, 'SKU')}
+                  </td>
                   <td className="p-3">{renderCell(item, 'currentQuantity')}</td>
                   <td className="p-3">
                     {renderCell(item, 'weightedAverageCost')}
                   </td>
                   {/* Desktop-priority columns */}
-                  <td className="p-3 md:table-cell hidden">{renderCell(item, 'type')}</td>
-                  <td className="p-3 lg:table-cell hidden">{renderCell(item, 'reorderPoint')}</td>
+                  <td className="p-3 md:table-cell hidden">
+                    {renderCell(item, 'type')}
+                  </td>
+                  <td className="p-3 lg:table-cell hidden">
+                    {renderCell(item, 'reorderPoint')}
+                  </td>
                   <td className="p-3 xl:table-cell hidden">
                     <div className="text-sm">
                       {item.lastUsedSupplier ? (
@@ -654,7 +660,9 @@ export function SpreadsheetTable({
                       )}
                     </div>
                   </td>
-                  <td className="p-3 xl:table-cell hidden">{renderCell(item, 'lastCountedDate')}</td>
+                  <td className="p-3 xl:table-cell hidden">
+                    {renderCell(item, 'lastCountedDate')}
+                  </td>
                   <td className="p-3 lg:table-cell hidden">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -729,7 +737,8 @@ export function SpreadsheetTable({
         {/* Mobile UX Enhancement - Desktop-First Approach */}
         <div className="lg:hidden p-2 bg-blue-50 border-t border-blue-200 text-center">
           <span className="text-xs text-blue-700">
-            💡 More details available on desktop view • Scroll horizontally for additional columns
+            💡 More details available on desktop view • Scroll horizontally for
+            additional columns
           </span>
         </div>
 

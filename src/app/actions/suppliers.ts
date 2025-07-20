@@ -29,12 +29,21 @@ export async function createSupplier(supplierData: CreateSupplierRequest) {
       isarchived: false,
     };
 
+    // Map fields to correct database column names
     if (supplierData.website) {
-      insertData.storeurl = supplierData.website;
+      insertData.website = supplierData.website; // Fixed: website -> website (not storeurl)
     }
 
     if (supplierData.contactPhone) {
-      insertData.phone = supplierData.contactPhone;
+      insertData.contactphone = supplierData.contactPhone; // Fixed: contactPhone -> contactphone (not phone)
+    }
+
+    if (supplierData.address) {
+      insertData.address = supplierData.address;
+    }
+
+    if (supplierData.notes) {
+      insertData.notes = supplierData.notes;
     }
 
     const { data, error } = await supabase

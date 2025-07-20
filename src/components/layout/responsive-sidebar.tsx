@@ -36,7 +36,7 @@ const navigation: NavigationElement[] = [
   { name: 'Recipes', href: '/recipes', icon: ChefHat },
   // Separator after operations
   { separator: true },
-  // Business Management Group  
+  // Business Management Group
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
@@ -101,7 +101,7 @@ export function ResponsiveSidebar({
         const navItem = item as NavigationItem;
         const isActive = pathname === navItem.href;
         const IconComponent = navItem.icon;
-        
+
         return (
           <Link
             key={navItem.name}

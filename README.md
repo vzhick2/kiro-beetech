@@ -226,6 +226,70 @@ pnpm run deploy          # Deploy production
 - **Prettier**: Code formatting (recommended)
 - **Husky**: Git hooks for pre-commit checks
 
+## 🤖 **MCP Integration**
+
+This project is configured to use the **Model Context Protocol (MCP)** to provide AI assistants with secure access to development tools. This allows for powerful, context-aware assistance directly within the IDE.
+
+### **Available Servers**
+
+The following MCP servers are configured in `.vscode/mcp.json`:
+
+1.  **`supabase`**: Provides tools for interacting with the Supabase database, including an `execute_sql` command for running queries.
+2.  **`github`**: Offers tools for interacting with the project's GitHub repository.
+
+### **Setup and Connection**
+
+To use the MCP servers, you must have the **Kilo Code** VS Code extension installed.
+
+1.  **Generate Access Tokens**:
+    *   **Supabase**: Create a personal access token from your Supabase account dashboard.
+    *   **GitHub**: Create a personal access token with `repo`, `workflow`, `read:org`, and `user` scopes.
+
+2.  **Connect to Servers**:
+    *   Open the VS Code Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
+    *   Run the command `MCP: Connect to Servers`.
+    *   Enter your access tokens when prompted. The extension will securely store them.
+
+### **Example Usage**
+
+Once the servers are connected, you can use them to perform various tasks.
+
+#### Supabase Example
+
+To query the database for a list of suppliers:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "execute_sql",
+    "arguments": {
+      "query": "SELECT * FROM suppliers LIMIT 10;"
+    }
+  }
+}
+```
+
+#### GitHub Example
+
+To retrieve information about the repository:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_repo_info",
+    "arguments": {
+      "owner": "your-github-username",
+      "repo": "kiro-inventory-management"
+    }
+  }
+}
+```
 ## 📚 **Documentation**
 
 - [Data Model](./docs/data-model.md) - Database schema and architecture

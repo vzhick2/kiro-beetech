@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { createSupplier } from '@/app/actions/suppliers';
+import { CreateSupplierSchema } from '@/lib/validations';
 
 interface AddSupplierModalProps {
   onSupplierAdded?: () => void;
@@ -19,9 +20,10 @@ interface AddSupplierModalProps {
 export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
-    contactEmail: '',
+    website: '', // Changed from contactEmail to website
     contactPhone: '',
     address: '',
     notes: '',
@@ -30,24 +32,50 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrors({});
 
     try {
-      const result = await createSupplier(formData);
+      // Validate form data with Zod schema
+      const validationResult = CreateSupplierSchema.safeParse(formData);
+      
+      if (!validationResult.success) {
+        const fieldErrors: Record<string, string> = {};
+        validationResult.error.issues.forEach((issue) => {
+          if (issue.path[0]) {
+            fieldErrors[issue.path[0] as string] = issue.message;
+          }
+        });
+        setErrors(fieldErrors);
+        setIsLoading(false);
+        return;
+      }
+
+      // Create supplier data object, filtering out empty strings
+      const supplierData = {
+        name: validationResult.data.name,
+        ...(validationResult.data.website && validationResult.data.website.trim() && { website: validationResult.data.website.trim() }),
+        ...(validationResult.data.contactPhone && validationResult.data.contactPhone.trim() && { contactPhone: validationResult.data.contactPhone.trim() }),
+        ...(validationResult.data.address && validationResult.data.address.trim() && { address: validationResult.data.address.trim() }),
+        ...(validationResult.data.notes && validationResult.data.notes.trim() && { notes: validationResult.data.notes.trim() }),
+      };
+
+      const result = await createSupplier(supplierData);
       if (result.success) {
         setIsOpen(false);
         setFormData({
           name: '',
-          contactEmail: '',
+          website: '', // Changed from contactEmail to website
           contactPhone: '',
           address: '',
           notes: '',
         });
+        setErrors({});
         onSupplierAdded?.();
       } else {
-        console.error('Failed to create supplier:', result.error);
+        setErrors({ submit: result.error || 'Failed to create supplier' });
       }
     } catch (error) {
-      console.error('Error creating supplier:', error);
+      setErrors({ submit: 'An unexpected error occurred' });
     } finally {
       setIsLoading(false);
     }
@@ -90,29 +118,39 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
               required
               value={formData.name}
               onChange={e => handleInputChange('name', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
               placeholder="Enter supplier name"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
-                htmlFor="contactEmail"
+                htmlFor="website"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Email
+                Website
               </label>
               <input
-                type="email"
-                id="contactEmail"
-                value={formData.contactEmail}
+                type="text"
+                id="website"
+                value={formData.website}
                 onChange={e =>
-                  handleInputChange('contactEmail', e.target.value)
+                  handleInputChange('website', e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="contact@supplier.com"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.website ? 'border-red-500' : 'border-gray-300'
+                }`}
+                placeholder="www.supplier-website.com"
               />
+              {errors.website && (
+                <p className="text-red-500 text-sm mt-1">{errors.website}</p>
+              )}
             </div>
 
             <div>
@@ -168,6 +206,12 @@ export function AddSupplierModal({ onSupplierAdded }: AddSupplierModalProps) {
               placeholder="Additional notes about this supplier"
             />
           </div>
+
+          {errors.submit && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-3">
+              <p className="text-red-600 text-sm">{errors.submit}</p>
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button

@@ -7,10 +7,13 @@
 - Small business workflows with flexible data entry patterns
 
 ## AI Workflow Rules
+- **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
+- **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
+- **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
 - ALWAYS ask "Should I implement this?" before making file changes
 - Provide options first, then wait for explicit approval
 - Follow docs/requirements.md for feature specifications
-- Use docs/data-model.md for database schema
+- Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
 - Reference docs/technical-design.md for architecture decisions
 - Use docs/development-guide.md for development standards
 
@@ -72,7 +75,12 @@
 - `src/types/` - TypeScript definitions
 - `docs/` - Project specifications
 
-## Error Handling Patterns
+## Debugging and Analysis Patterns
+- **MCP-Powered Debugging**: Use Supabase MCP for real-time database analysis and GitHub MCP for codebase search
+- **Database Issues**: Query database directly via MCP to understand data state and validate business logic
+- **Code Analysis**: Use GitHub MCP to search for similar implementations, usage patterns, and related functionality
+- **Performance Investigation**: Use Supabase MCP to analyze query performance, check indexes, review security advisors
+- **Integration Testing**: Use MCP tools to create test data, validate workflows, and verify end-to-end functionality
 - Prioritize error handling at function beginnings
 - Use guard clauses for preconditions
 - Implement Zod validation for runtime type checking
@@ -90,14 +98,34 @@
 - Use PostgreSQL RPCs for atomic operations
 - Use display ID pattern for user-facing references
 
-## MCP (Model Context Protocol) Access
-- Supabase MCP server is configured and operational for this project
-- Project ref: `jjpklpivpvywagmjjwpu` (read/write access, project-scoped)
-- Available via VS Code/Copilot for natural language database queries and modifications
-- Can use MCP to explore database structure, query data, modify data, and run migrations
-- Write operations: INSERT, UPDATE, DELETE, migrations, Edge Function deployment
-- Useful for debugging, data analysis, database modifications, and real-time development
-- Examples: "Show me all tables", "Add a new supplier", "Update inventory quantities", "Run this migration"
+## MCP (Model Context Protocol) Capabilities
+The project has comprehensive MCP integration for enhanced development workflow:
+
+### Supabase MCP Server
+- **Project Access**: `jjpklpivpvywagmjjwpu` (full read/write access, project-scoped)
+- **Database Operations**: Direct SQL queries, table inspection, data modification, schema analysis
+- **Development Operations**: Run migrations, deploy Edge Functions, generate TypeScript types
+- **Real-time Development**: Live database debugging, data analysis, and instant modifications
+- **Advanced Features**: Security advisor checks, logs analysis, branch operations for development databases
+
+### GitHub MCP Server  
+- **Repository Access**: `vzhick2/kiro-beetech` (full repo, workflow, read:org, user scopes)
+- **Fast Commits**: Single API call commits with multiple files (~85% faster than traditional git)
+- **Repository Operations**: Create/update files, manage branches, handle pull requests, search code
+- **Issue Management**: Create issues, manage discussions, handle project workflows
+- **Deployment**: Direct push to main branch, atomic commits, batch file operations
+
+### MCP Development Workflow
+- **Database-First Development**: Use Supabase MCP to explore schema, test queries, validate data integrity
+- **Rapid Prototyping**: Direct database modifications for testing business logic and data flows  
+- **Fast Iteration**: GitHub MCP for instant commits, eliminating traditional git workflow delays
+- **Integrated Debugging**: Real-time database inspection and modification during development
+- **Production Safety**: Use Supabase branch operations for safe schema testing before production deployment
+
+### MCP Usage Examples
+- **Database**: "Show me all tables", "Add test supplier", "Check cycle count alerts", "Deploy this migration"
+- **GitHub**: "Commit these changes with message X", "Create branch for feature Y", "Search for function Z in codebase"
+- **Analysis**: "Analyze current inventory levels", "Show recent purchase patterns", "Validate database integrity"
 
 ## AI Development Commands
 - Use `pnpm ai:validate` for fast validation (type-check, lint, format)
@@ -108,11 +136,13 @@
 - Use `pnpm supabase:types` for updating database types
 
 ## Git Workflow Rules
-- ALWAYS use combined git commands to minimize user interactions
-- Use single command: `git add . && git commit -m "descriptive message" && git push origin main`
-- Write descriptive, present-tense commit messages that explain what was changed and why
-- Include technical details and business impact in commit messages
-- Never require multiple separate git commands for simple commits
+- **PREFER GitHub MCP** for commits when multiple files need updating (~85% faster than traditional git)
+- **Use GitHub MCP**: `mcp_github_push_files` for batch commits with descriptive messages
+- **Fallback to Traditional Git**: Only when GitHub MCP is unavailable or for single-file changes
+- **Traditional Git**: Use combined commands: `git add . && git commit -m "message" && git push origin main`
+- **Commit Messages**: Descriptive, present-tense explaining what changed and why with technical details
+- **Batch Operations**: Group related changes into single atomic commits via GitHub MCP
+- **Branch Strategy**: Direct commits to main branch for internal development (no PR overhead)
 
 ## Development Server Rules
 - NEVER suggest or ask to run `pnpm dev` or start development servers

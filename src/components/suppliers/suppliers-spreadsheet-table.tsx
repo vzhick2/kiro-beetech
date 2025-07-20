@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Check, X, Edit3, Trash2, MoreHorizontal, Plus } from 'lucide-react';
+import { useState, useCallback, useRef } from 'react';
+import { Plus, MoreHorizontal, Trash2, Edit3, Check } from 'lucide-react';
 import { Supplier, CreateSupplierRequest } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,10 +22,13 @@ interface SuppliersSpreadsheetTableProps {
   searchQuery?: string;
 }
 
-interface EditableCell {
+interface EditableRow {
   supplierId: string;
-  field: string;
-  value: string | number | boolean | Date;
+  fields: {
+    name: string;
+    website: string;
+    contactPhone: string;
+  };
   isEditing: boolean;
 }
 
@@ -39,9 +42,10 @@ interface NewRowData {
 export function SuppliersSpreadsheetTable({
   searchQuery = '',
 }: SuppliersSpreadsheetTableProps) {
-  const [editingCell, setEditingCell] = useState<EditableCell | null>(null);
+  const [editingRow, setEditingRow] = useState<EditableRow | null>(null);
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [newRow, setNewRow] = useState<NewRowData | null>(null);
+  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   // React Query hooks
   const { data: suppliers = [], isLoading } = useSuppliers(searchQuery);
@@ -65,54 +69,111 @@ export function SuppliersSpreadsheetTable({
     return matchesSearch;
   });
 
-  const handleCellEdit = useCallback(
-    (
-      supplierId: string,
-      field: string,
-      value: string | number | boolean | Date
-    ) => {
-      setEditingCell({ supplierId, field, value, isEditing: true });
-    },
-    []
-  );
-
-  const handleCellSave = useCallback(
-    async (
-      supplierId: string,
-      field: string,
-      value: string | number | boolean | Date
-    ) => {
-      try {
-        // Map frontend field names to database column names
-        const dbFieldMap: Record<string, string> = {
-          name: 'name',
-          website: 'storeurl',
-          contactPhone: 'phone',
-        };
-
-        const dbField = dbFieldMap[field];
-
-        if (!dbField) {
-          console.error('Unknown field:', field);
-          return;
-        }
-
-        // Use React Query mutation
-        await updateSupplierMutation.mutateAsync({
-          supplierId,
-          updates: { [dbField]: value },
-        });
-        setEditingCell(null);
-      } catch (error) {
-        console.error('Failed to save cell:', error);
+  const handleRowEdit = useCallback((supplier: Supplier) => {
+    setEditingRow({
+      supplierId: supplier.supplierId,
+      fields: {
+        name: supplier.name,
+        website: supplier.website || '',
+        contactPhone: supplier.contactPhone || '',
+      },
+      isEditing: true,
+    });
+    
+    // Focus the first input after state update
+    setTimeout(() => {
+      const firstInput = inputRefs.current[`${supplier.supplierId}-name`];
+      if (firstInput) {
+        firstInput.focus();
+        firstInput.select();
       }
-    },
-    [updateSupplierMutation]
-  );
-
-  const handleCellCancel = useCallback(() => {
-    setEditingCell(null);
+    }, 0);
   }, []);
+
+  const handleRowSave = useCallback(async () => {
+    if (!editingRow) {
+      return;
+    }
+
+    try {
+      // Only send changed fields
+      const updates: any = {};
+      const supplier = suppliers.find(s => s.supplierId === editingRow.supplierId);
+      
+      if (supplier) {
+        if (editingRow.fields.name !== supplier.name) {
+          updates.name = editingRow.fields.name;
+        }
+        if (editingRow.fields.website !== (supplier.website || '')) {
+          updates.website = editingRow.fields.website || null;
+        }
+        if (editingRow.fields.contactPhone !== (supplier.contactPhone || '')) {
+          updates.contactphone = editingRow.fields.contactPhone || null;
+        }
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await updateSupplierMutation.mutateAsync({
+          supplierId: editingRow.supplierId,
+          updates,
+        });
+      }
+      
+      setEditingRow(null);
+    } catch (error) {
+      console.error('Failed to save row:', error);
+    }
+  }, [editingRow, suppliers, updateSupplierMutation]);
+
+  const handleRowCancel = useCallback(() => {
+    setEditingRow(null);
+  }, []);
+
+  const handleFieldChange = useCallback((field: keyof EditableRow['fields'], value: string) => {
+    setEditingRow(prev => 
+      prev ? {
+        ...prev,
+        fields: { ...prev.fields, [field]: value }
+      } : null
+    );
+  }, []);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, field: keyof EditableRow['fields']) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleRowSave();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleRowCancel();
+    } else if (e.key === 'Tab') {
+      const fieldOrder: (keyof EditableRow['fields'])[] = ['name', 'website', 'contactPhone'];
+      const currentIndex = fieldOrder.indexOf(field);
+      
+      if (!e.shiftKey && currentIndex < fieldOrder.length - 1) {
+        // Move to next field
+        e.preventDefault();
+        const nextField = fieldOrder[currentIndex + 1];
+        const nextInput = inputRefs.current[`${editingRow?.supplierId}-${nextField}`];
+        if (nextInput) {
+          nextInput.focus();
+          nextInput.select();
+        }
+      } else if (e.shiftKey && currentIndex > 0) {
+        // Move to previous field
+        e.preventDefault();
+        const prevField = fieldOrder[currentIndex - 1];
+        const prevInput = inputRefs.current[`${editingRow?.supplierId}-${prevField}`];
+        if (prevInput) {
+          prevInput.focus();
+          prevInput.select();
+        }
+      } else if (!e.shiftKey && currentIndex === fieldOrder.length - 1) {
+        // Save when tabbing out of last field
+        e.preventDefault();
+        handleRowSave();
+      }
+    }
+  }, [editingRow, handleRowSave, handleRowCancel]);
 
   const handleAddNewRow = useCallback(() => {
     setNewRow({
@@ -209,119 +270,64 @@ export function SuppliersSpreadsheetTable({
   }, [selectedRows, bulkArchiveMutation]);
 
   const renderCell = useCallback(
-    (supplier: Supplier, field: string) => {
-      const value = (supplier as any)[field];
-      const isEditing =
-        editingCell?.supplierId === supplier.supplierId &&
-        editingCell?.field === field;
-
-      if (isEditing) {
+    (supplier: Supplier, field: keyof EditableRow['fields']) => {
+      const isCurrentRowEditing = editingRow?.supplierId === supplier.supplierId;
+      
+      if (isCurrentRowEditing) {
+        const inputKey = `${supplier.supplierId}-${field}`;
         return (
-          <div className="flex items-center space-x-1">
-            <input
-              type="text"
-              defaultValue={String(value || '')}
-              className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  handleCellSave(
-                    supplier.supplierId,
-                    field,
-                    e.currentTarget.value
-                  );
-                } else if (e.key === 'Escape') {
-                  handleCellCancel();
-                }
-              }}
-              onBlur={e =>
-                handleCellSave(supplier.supplierId, field, e.target.value)
-              }
-              autoFocus
-            />
-            <div className="flex space-x-1">
-              <button
-                onClick={() =>
-                  handleCellSave(supplier.supplierId, field, value || '')
-                }
-                className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                title="Save"
-              >
-                <Check className="w-3 h-3" />
-              </button>
-              <button
-                onClick={handleCellCancel}
-                className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                title="Cancel"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
+          <input
+            ref={el => { inputRefs.current[inputKey] = el; }}
+            type="text"
+            value={editingRow.fields[field]}
+            onChange={e => handleFieldChange(field, e.target.value)}
+            onKeyDown={e => handleKeyDown(e, field)}
+            onBlur={handleRowSave}
+            className="w-full px-2 py-1 text-sm border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white rounded"
+            placeholder={field === 'name' ? 'Supplier name' : field === 'website' ? 'Website URL' : 'Phone number'}
+          />
         );
       }
 
-      // Handle Date objects
-      if (value instanceof Date) {
+      const value = supplier[field] || '';
+      
+      if (field === 'website' && value) {
         return (
-          <div className="group flex items-center space-x-1">
-            <span>{value.toLocaleDateString()}</span>
-            <button
-              onClick={() => handleCellEdit(supplier.supplierId, field, value)}
-              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
-              title={`Edit ${field}`}
-            >
-              <Edit3 className="w-4 h-4 md:w-3 md:h-3" />
-            </button>
-          </div>
+          <a
+            href={
+              String(value).startsWith('http')
+                ? String(value)
+                : `https://${value}`
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 hover:underline"
+            onClick={e => e.stopPropagation()} // Prevent row editing when clicking link
+          >
+            {String(value)}
+          </a>
         );
       }
 
-      // Make key fields clickable for editing
-      const editableFields = ['name', 'website', 'contactPhone'];
-      if (editableFields.includes(field)) {
+      if (field === 'contactPhone' && value) {
         return (
-          <div className="group flex items-center space-x-1">
-            {field === 'website' && value ? (
-              <a
-                href={
-                  String(value).startsWith('http')
-                    ? String(value)
-                    : `https://${value}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                {String(value)}
-              </a>
-            ) : field === 'contactPhone' && value ? (
-              <a
-                href={`tel:${value}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                {String(value)}
-              </a>
-            ) : (
-              <span>{String(value || '')}</span>
-            )}
-            <button
-              onClick={() => handleCellEdit(supplier.supplierId, field, value)}
-              className="min-w-[44px] min-h-[44px] md:min-w-[32px] md:min-h-[32px] p-2 md:p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100 flex items-center justify-center"
-              title={`Edit ${field}`}
-            >
-              <Edit3 className="w-4 h-4 md:w-3 md:h-3" />
-            </button>
-          </div>
+          <a
+            href={`tel:${value}`}
+            className="text-blue-600 hover:text-blue-800 hover:underline"
+            onClick={e => e.stopPropagation()} // Prevent row editing when clicking link
+          >
+            {String(value)}
+          </a>
         );
       }
 
-      return <span>{String(value || '')}</span>;
+      return <span className="block w-full">{String(value)}</span>;
     },
-    [editingCell, handleCellEdit, handleCellSave, handleCellCancel]
+    [editingRow, handleFieldChange, handleKeyDown, handleRowSave]
   );
 
   const renderNewRowCell = useCallback(
-    (field: keyof NewRowData) => {
+    (field: keyof NewRowData, isLastField = false) => {
       if (field === 'isEditing') {
         return null;
       }
@@ -345,9 +351,19 @@ export function SuppliersSpreadsheetTable({
           className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              handleSaveNewRow();
+              if (isLastField) {
+                handleSaveNewRow();
+              } else {
+                const nextInput = e.currentTarget.closest('td')?.nextElementSibling?.querySelector('input');
+                if (nextInput) {
+                  (nextInput as HTMLInputElement).focus();
+                }
+              }
             } else if (e.key === 'Escape') {
               handleCancelNewRow();
+            } else if (e.key === 'Tab' && isLastField && !e.shiftKey) {
+              e.preventDefault();
+              handleSaveNewRow();
             }
           }}
         />
@@ -366,50 +382,52 @@ export function SuppliersSpreadsheetTable({
 
   return (
     <div className="space-y-4">
-      {/* Bulk Actions */}
-      {selectedRows.size > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-blue-900">
-                {selectedRows.size}{' '}
-                {selectedRows.size === 1 ? 'supplier' : 'suppliers'} selected
-              </span>
-            </div>
-            <div className="flex space-x-3">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleBulkArchive}
-                className="text-blue-700 border-blue-300 hover:bg-blue-100 transition-colors"
-              >
-                Archive Selected
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleBulkDelete}
-                className="text-red-700 border-red-300 hover:bg-red-100 transition-colors"
-              >
-                Delete Selected
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setSelectedRows(new Set())}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                Clear Selection
-              </Button>
+      {/* Bulk Actions - Fixed height to prevent layout shift */}
+      <div className="min-h-[60px]">
+        {selectedRows.size > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-medium text-blue-900">
+                  {selectedRows.size}{' '}
+                  {selectedRows.size === 1 ? 'supplier' : 'suppliers'} selected
+                </span>
+              </div>
+              <div className="flex space-x-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBulkArchive}
+                  className="text-blue-700 border-blue-300 hover:bg-blue-100 transition-colors"
+                >
+                  Archive Selected
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBulkDelete}
+                  className="text-red-700 border-red-300 hover:bg-red-100 transition-colors"
+                >
+                  Delete Selected
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedRows(new Set())}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  Clear Selection
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Suppliers Table */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="w-12 p-3">
@@ -423,16 +441,16 @@ export function SuppliersSpreadsheetTable({
                     className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                   />
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[150px]">
+                <th className="text-left p-3 font-semibold text-gray-700 w-1/3">
                   Supplier Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[150px]">
+                <th className="text-left p-3 font-semibold text-gray-700 w-1/3">
                   Website
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
+                <th className="text-left p-3 font-semibold text-gray-700 w-1/6">
                   Phone
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
+                <th className="text-left p-3 font-semibold text-gray-700 w-20">
                   Status
                 </th>
                 <th className="w-12 p-3">
@@ -459,13 +477,13 @@ export function SuppliersSpreadsheetTable({
                         className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
                         title="Cancel"
                       >
-                        <X className="w-4 h-4" />
+                        ×
                       </button>
                     </div>
                   </td>
                   <td className="p-3">{renderNewRowCell('name')}</td>
                   <td className="p-3">{renderNewRowCell('website')}</td>
-                  <td className="p-3">{renderNewRowCell('contactPhone')}</td>
+                  <td className="p-3">{renderNewRowCell('contactPhone', true)}</td>
                   <td className="p-3">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       New
@@ -495,110 +513,104 @@ export function SuppliersSpreadsheetTable({
               )}
 
               {/* Existing Suppliers */}
-              {filteredSuppliers.map(supplier => (
-                <tr
-                  key={supplier.supplierId}
-                  className="border-b border-gray-100 hover:bg-gray-50 group"
-                >
-                  <td className="p-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.has(supplier.supplierId)}
-                      onChange={e =>
-                        handleRowSelect(supplier.supplierId, e.target.checked)
+              {filteredSuppliers.map(supplier => {
+                const isEditing = editingRow?.supplierId === supplier.supplierId;
+                
+                return (
+                  <tr
+                    key={supplier.supplierId}
+                    className={`border-b border-gray-100 transition-colors ${
+                      isEditing 
+                        ? 'bg-blue-50 ring-2 ring-blue-200' 
+                        : 'hover:bg-gray-50 cursor-pointer'
+                    }`}
+                    onClick={e => {
+                      // Don't trigger row edit if clicking on links or the dropdown
+                      const target = e.target as HTMLElement;
+                      if (target.tagName === 'A' || target.closest('[role="button"]') || target.closest('button')) {
+                        return;
                       }
-                      className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="p-3 font-medium">
-                    {renderCell(supplier, 'name')}
-                  </td>
-                  <td className="p-3">{renderCell(supplier, 'website')}</td>
-                  <td className="p-3">
-                    {renderCell(supplier, 'contactPhone')}
-                  </td>
-                  <td className="p-3">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        supplier.isArchived
-                          ? 'bg-gray-100 text-gray-800'
-                          : 'bg-green-100 text-green-800'
-                      }`}
-                    >
-                      {supplier.isArchived ? 'Archived' : 'Active'}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="min-w-[44px] min-h-[44px] p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors flex items-center justify-center">
-                          <MoreHorizontal className="w-5 h-5" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            console.log(
-                              'View purchase history for supplier:',
-                              supplier.supplierId
-                            )
-                          }
-                        >
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          View Purchase History
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            console.log(
-                              'Create purchase order for supplier:',
-                              supplier.supplierId
-                            )
-                          }
-                        >
-                          <Plus className="w-4 h-4 mr-2" />
-                          Create Purchase Order
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            console.log(
-                              'Set as primary supplier for selected items:',
-                              supplier.supplierId
-                            )
-                          }
-                        >
-                          <Check className="w-4 h-4 mr-2" />
-                          Set as Primary for Items
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            console.log(
-                              'Duplicate supplier:',
-                              supplier.supplierId
-                            )
-                          }
-                        >
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Duplicate Supplier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            updateSupplierMutation.mutate({
-                              supplierId: supplier.supplierId,
-                              updates: { isarchived: true },
-                            })
-                          }
-                          className="text-red-600 focus:text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Archive
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
+                      if (!isEditing) {
+                        handleRowEdit(supplier);
+                      }
+                    }}
+                  >
+                    <td className="p-3" onClick={e => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.has(supplier.supplierId)}
+                        onChange={e =>
+                          handleRowSelect(supplier.supplierId, e.target.checked)
+                        }
+                        className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="p-3 font-medium">
+                      {renderCell(supplier, 'name')}
+                    </td>
+                    <td className="p-3">{renderCell(supplier, 'website')}</td>
+                    <td className="p-3">
+                      {renderCell(supplier, 'contactPhone')}
+                    </td>
+                    <td className="p-3">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          supplier.isArchived
+                            ? 'bg-gray-100 text-gray-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}
+                      >
+                        {supplier.isArchived ? 'Archived' : 'Active'}
+                      </span>
+                    </td>
+                    <td className="p-3" onClick={e => e.stopPropagation()}>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="min-w-[32px] min-h-[32px] p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors flex items-center justify-center">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuItem
+                            onClick={() => handleRowEdit(supplier)}
+                          >
+                            <Edit3 className="w-4 h-4 mr-2" />
+                            Edit Supplier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              updateSupplierMutation.mutate({
+                                supplierId: supplier.supplierId,
+                                updates: { isarchived: true },
+                              })
+                            }
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Archive
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="text-sm text-blue-700">
+          <p className="font-medium mb-1">💡 How to edit suppliers:</p>
+          <ul className="space-y-1 text-blue-600">
+            <li>• <strong>Click anywhere on a row</strong> (except links) to start editing</li>
+            <li>• <strong>Tab/Shift+Tab</strong> to move between fields</li>
+            <li>• <strong>Enter</strong> to save changes</li>
+            <li>• <strong>Escape</strong> to cancel editing</li>
+            <li>• <strong>Click website/phone links</strong> to open them (won't trigger editing)</li>
+          </ul>
         </div>
       </div>
 
