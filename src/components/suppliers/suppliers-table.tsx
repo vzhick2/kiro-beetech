@@ -73,7 +73,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
         const dbFieldMap: Record<keyof Supplier, string> = {
           supplierId: 'supplierid',
           name: 'name',
-
+          website: 'website',
           contactPhone: 'phone',
           address: 'address',
           notes: 'notes',
