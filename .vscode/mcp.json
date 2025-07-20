@@ -22,20 +22,27 @@
       ]
     },
     "github": {
-      "command": "npx",
-      "args": ["-y", "@andrebuzeli/github-mcp-v2@latest"],
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server:latest"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-personal-access-token}"
       },
       "autoApprove": [
-        "github_push_files",
-        "github_update_file",
-        "github_create_issue",
-        "github_get_file",
-        "github_list_files",
-        "github_search_code",
-        "github_list_commits",
-        "github_get_commit"
+        "push_files",
+        "update_file",
+        "create_issue",
+        "get_file",
+        "list_files",
+        "search_code",
+        "list_commits",
+        "get_commit"
       ]
     }
   },
