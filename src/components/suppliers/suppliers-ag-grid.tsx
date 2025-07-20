@@ -9,13 +9,12 @@ import {
   SelectionChangedEvent,
   ModuleRegistry,
   AllCommunityModule,
-  ContextMenuModule,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 // Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule, ContextMenuModule]);
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Archive } from 'lucide-react';
@@ -40,65 +39,77 @@ export function SuppliersAgGrid() {
   const bulkArchiveMutation = useBulkArchiveSuppliers();
 
   // Status renderer
-  const StatusRenderer = useCallback((params: any) => (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-      params.value ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
-    }`}>
-      {params.value ? 'Archived' : 'Active'}
-    </span>
-  ), []);
+  const StatusRenderer = useCallback(
+    (params: any) => (
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${
+          params.value
+            ? 'bg-gray-100 text-gray-800'
+            : 'bg-green-100 text-green-800'
+        }`}
+      >
+        {params.value ? 'Archived' : 'Active'}
+      </span>
+    ),
+    []
+  );
 
   // Column definitions
-  const columnDefs = useMemo<ColDef[]>(() => [
-    {
-      headerName: 'Supplier Name',
-      field: 'name',
-      flex: 2,
-      editable: true,
-      checkboxSelection: true,
-      headerCheckboxSelection: true,
-    },
-    {
-      headerName: 'Website',
-      field: 'website',
-      flex: 2,
-      editable: true,
-    },
-    {
-      headerName: 'Phone',
-      field: 'contactPhone',
-      flex: 1,
-      editable: true,
-    },
-    {
-      headerName: 'Status',
-      field: 'isArchived',
-      width: 100,
-      cellRenderer: StatusRenderer,
-      editable: false,
-    },
-  ], [StatusRenderer]);
+  const columnDefs = useMemo<ColDef[]>(
+    () => [
+      {
+        headerName: 'Supplier Name',
+        field: 'name',
+        flex: 2,
+        editable: true,
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+      },
+      {
+        headerName: 'Website',
+        field: 'website',
+        flex: 2,
+        editable: true,
+      },
+      {
+        headerName: 'Phone',
+        field: 'contactPhone',
+        flex: 1,
+        editable: true,
+      },
+      {
+        headerName: 'Status',
+        field: 'isArchived',
+        width: 100,
+        cellRenderer: StatusRenderer,
+        editable: false,
+      },
+    ],
+    [StatusRenderer]
+  );
 
   // Default column definitions
-  const defaultColDef = useMemo(() => ({
-    sortable: true,
-    filter: true,
-    resizable: true,
-    editable: false,
-    floatingFilter: true,
-  }), []);
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+      filter: true,
+      resizable: true,
+      editable: false,
+      floatingFilter: true,
+    }),
+    []
+  );
 
   // Grid options - simple v34 syntax
-  const gridOptions = useMemo(() => ({
-    rowSelection: {
-      type: 'multiple',
-      checkboxes: true,
-      headerCheckbox: true,
-    },
-    editType: 'fullRow',
-    stopEditingWhenCellsLoseFocus: true,
-    animateRows: true,
-  }), []);
+  const gridOptions = useMemo(
+    () => ({
+      rowSelection: 'multiple' as const,
+      editType: 'fullRow' as const,
+      stopEditingWhenCellsLoseFocus: true,
+      animateRows: true,
+    }),
+    []
+  );
 
   // Handle grid ready
   const onGridReady = useCallback((params: GridReadyEvent) => {
@@ -106,29 +117,40 @@ export function SuppliersAgGrid() {
   }, []);
 
   // Handle cell editing stopped
-  const onCellEditingStopped = useCallback(async (event: CellEditingStoppedEvent) => {
-    if (!event.valueChanged) return;
+  const onCellEditingStopped = useCallback(
+    async (event: CellEditingStoppedEvent) => {
+      if (!event.valueChanged) {
+        return;
+      }
 
-    const { data, colDef } = event;
-    const field = colDef.field;
+      const { data, colDef } = event;
+      const field = colDef.field;
 
-    if (!field || !data) return;
+      if (!field || !data) {
+        return;
+      }
 
-    try {
-      const updates: any = {};
-      if (field === 'name') updates.name = data.name;
-      else if (field === 'website') updates.website = data.website || null;
-      else if (field === 'contactPhone') updates.contactphone = data.contactPhone || null;
+      try {
+        const updates: any = {};
+        if (field === 'name') {
+          updates.name = data.name;
+        } else if (field === 'website') {
+          updates.website = data.website || null;
+        } else if (field === 'contactPhone') {
+          updates.contactphone = data.contactPhone || null;
+        }
 
-      await updateSupplierMutation.mutateAsync({
-        supplierId: data.supplierId,
-        updates,
-      });
-    } catch (error) {
-      console.error('Failed to update supplier:', error);
-      event.api.refreshCells({ rowNodes: [event.node!], force: true });
-    }
-  }, [updateSupplierMutation]);
+        await updateSupplierMutation.mutateAsync({
+          supplierId: data.supplierId,
+          updates,
+        });
+      } catch (error) {
+        // Silently handle error and refresh cells
+        event.api.refreshCells({ rowNodes: [event.node!], force: true });
+      }
+    },
+    [updateSupplierMutation]
+  );
 
   // Handle selection changes
   const onSelectionChanged = useCallback((event: SelectionChangedEvent) => {
@@ -162,41 +184,47 @@ export function SuppliersAgGrid() {
     }, 100);
 
     try {
-      const actualSupplier = await createSupplierMutation.mutateAsync({ name: tempSupplier.name });
+      const actualSupplier = await createSupplierMutation.mutateAsync({
+        name: tempSupplier.name,
+      });
       gridRef.current?.api.applyTransaction({
         remove: [tempSupplier],
         add: [actualSupplier],
         addIndex: 0,
       });
     } catch (error) {
-      console.error('Failed to create supplier:', error);
+      // Silently handle error and remove temp supplier
       gridRef.current?.api.applyTransaction({ remove: [tempSupplier] });
     }
   }, [createSupplierMutation]);
 
   // Bulk delete
   const handleBulkDelete = useCallback(async () => {
-    if (selectedRows.length === 0) return;
+    if (selectedRows.length === 0) {
+      return;
+    }
     try {
       const supplierIds = selectedRows.map(supplier => supplier.supplierId);
       await bulkDeleteMutation.mutateAsync(supplierIds);
       setSelectedRows([]);
       gridRef.current?.api.deselectAll();
     } catch (error) {
-      console.error('Failed to delete suppliers:', error);
+      // Silently handle error
     }
   }, [selectedRows, bulkDeleteMutation]);
 
   // Bulk archive
   const handleBulkArchive = useCallback(async () => {
-    if (selectedRows.length === 0) return;
+    if (selectedRows.length === 0) {
+      return;
+    }
     try {
       const supplierIds = selectedRows.map(supplier => supplier.supplierId);
       await bulkArchiveMutation.mutateAsync(supplierIds);
       setSelectedRows([]);
       gridRef.current?.api.deselectAll();
     } catch (error) {
-      console.error('Failed to archive suppliers:', error);
+      // Silently handle error
     }
   }, [selectedRows, bulkArchiveMutation]);
 
@@ -213,7 +241,10 @@ export function SuppliersAgGrid() {
       {/* Action Buttons */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Button onClick={handleAddSupplier} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button
+            onClick={handleAddSupplier}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add Supplier
           </Button>
@@ -223,7 +254,11 @@ export function SuppliersAgGrid() {
                 <Archive className="h-4 w-4 mr-2" />
                 Archive ({selectedRows.length})
               </Button>
-              <Button onClick={handleBulkDelete} variant="outline" className="text-red-600">
+              <Button
+                onClick={handleBulkDelete}
+                variant="outline"
+                className="text-red-600"
+              >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete ({selectedRows.length})
               </Button>

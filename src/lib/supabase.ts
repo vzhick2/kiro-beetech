@@ -15,15 +15,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 // Admin client for server actions (bypasses RLS)
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const supabaseAdmin = supabaseServiceKey 
-  ? createClient<Database>(
-      supabaseUrl,
-      supabaseServiceKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    )
+export const supabaseAdmin = supabaseServiceKey
+  ? createClient<Database>(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
   : supabase; // Fallback to regular client if service key is not available
