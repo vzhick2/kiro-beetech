@@ -10,6 +10,7 @@ import {
   ModuleRegistry,
   AllCommunityModule,
 } from 'ag-grid-community';
+// Use legacy CSS approach for Alpine theme
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
@@ -62,8 +63,7 @@ export function SuppliersAgGrid() {
         field: 'name',
         flex: 2,
         editable: true,
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
+        // Remove deprecated checkboxSelection and headerCheckboxSelection
       },
       {
         headerName: 'Website',
@@ -100,13 +100,20 @@ export function SuppliersAgGrid() {
     []
   );
 
-  // Grid options - simple v34 syntax
+  // Grid options - updated to use new v34 syntax and Alpine theme
   const gridOptions = useMemo(
     () => ({
-      rowSelection: 'multiple' as const,
+      // Use new rowSelection object syntax
+      rowSelection: {
+        mode: 'multiRow' as const,
+        checkboxes: true,
+        headerCheckbox: true,
+      },
       editType: 'fullRow' as const,
       stopEditingWhenCellsLoseFocus: true,
       animateRows: true,
+      // Use legacy theme to avoid conflict with CSS imports
+      theme: 'legacy' as const,
     }),
     []
   );
@@ -270,7 +277,7 @@ export function SuppliersAgGrid() {
         </div>
       </div>
 
-      {/* AG Grid - Simple and Clean */}
+      {/* AG Grid - Alpine Theme */}
       <div className="ag-theme-alpine border border-gray-200 rounded-lg overflow-hidden">
         <div style={{ height: '600px' }}>
           <AgGridReact
