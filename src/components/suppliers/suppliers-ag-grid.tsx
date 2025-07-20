@@ -54,8 +54,6 @@ export function SuppliersAgGrid() {
         flex: 2,
         minWidth: 150,
         cellStyle: { fontWeight: '500' },
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
       },
       {
         field: 'website',
@@ -218,8 +216,12 @@ export function SuppliersAgGrid() {
   // Grid options with responsive features - FIXED deprecated properties
   const gridOptions = useMemo(
     () => ({
-      // Row selection - FIXED: Use correct v34 syntax
-      rowSelection: 'multiple' as const,
+      // Row selection - FIXED: Use correct v34 object syntax
+      rowSelection: {
+        mode: 'multiRow' as const,
+        checkboxes: true,
+        headerCheckbox: true,
+      },
       // Editing
       editType: 'fullRow' as const,
       stopEditingWhenCellsLoseFocus: true,
