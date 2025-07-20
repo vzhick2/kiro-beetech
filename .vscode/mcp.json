@@ -1,10 +1,25 @@
 {
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "supabase-access-token",
+      "description": "Supabase personal access token for MCP server",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "github-token",
+      "description": "GitHub personal access token for MCP server",
+      "password": true
+    }
+  ],
   "mcpServers": {
     "supabase": {
       "command": "npx",
       "args": [
         "-y",
         "@supabase/mcp-server-supabase@latest",
+        "--read-only",
         "--project-ref=jjpklpivpvywagmjjwpu"
       ],
       "env": {
@@ -25,14 +40,12 @@
       "command": "docker",
       "args": [
         "run",
-        "-i",
         "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "-i",
         "ghcr.io/github/github-mcp-server:latest"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-personal-access-token}"
+        "GITHUB_TOKEN": "${input:github-token}"
       },
       "autoApprove": [
         "push_files",
@@ -45,19 +58,5 @@
         "get_commit"
       ]
     }
-  },
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "supabase-access-token",
-      "description": "Supabase personal access token",
-      "password": true
-    },
-    {
-      "type": "promptString",
-      "id": "github-personal-access-token",
-      "description": "GitHub personal access token (repo, workflow, read:org, user scopes recommended)",
-      "password": true
-    }
-  ]
+  }
 }
