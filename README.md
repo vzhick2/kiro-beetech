@@ -101,15 +101,19 @@ KIRO is a **private, internal inventory management system** designed specificall
 3. **Environment setup**
 
    ```bash
+   # Copy the example environment file
    cp .env.example .env.local
    ```
 
-   Add your environment variables:
+   Edit `.env.local` and add your actual Supabase credentials:
 
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_actual_anon_key_here
+   SUPABASE_SERVICE_ROLE_KEY=your_actual_service_role_key_here
    ```
+
+   **Get your keys from:** https://supabase.com/dashboard/project/jjpklpivpvywagmjjwpu/settings/api
 
 4. **Run development server**
 
