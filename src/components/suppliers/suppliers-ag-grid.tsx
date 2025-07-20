@@ -10,12 +10,16 @@ import {
   SelectionChangedEvent,
   ModuleRegistry,
   AllCommunityModule,
+  ContextMenuModule,
+  MenuModule,
+  GridOptions,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import '@/styles/ag-grid-custom.css';
 
 // Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, ContextMenuModule, MenuModule]);
 
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Archive } from 'lucide-react';
@@ -48,10 +52,10 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
     const isArchived = params.value;
     return (
       <span
-        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
           isArchived
-            ? 'bg-gray-100 text-gray-800'
-            : 'bg-green-100 text-green-800'
+            ? 'bg-gray-100 text-gray-700 border border-gray-200'
+            : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
         }`}
       >
         {isArchived ? 'Archived' : 'Active'}
@@ -73,7 +77,7 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-800 hover:underline"
+        className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
         onClick={e => e.stopPropagation()}
       >
         {params.value}
@@ -90,7 +94,7 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
     return (
       <a
         href={`tel:${params.value}`}
-        className="text-blue-600 hover:text-blue-800 hover:underline"
+        className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
         onClick={e => e.stopPropagation()}
       >
         {params.value}
@@ -106,9 +110,10 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
         field: 'name',
         flex: 2,
         editable: true,
+        cellClass: 'font-medium text-gray-900',
+        headerClass: 'font-semibold text-gray-700',
         checkboxSelection: true,
         headerCheckboxSelection: true,
-        cellClass: 'font-medium',
       },
       {
         headerName: 'Website',
@@ -116,6 +121,7 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
         flex: 2,
         editable: true,
         cellRenderer: WebsiteRenderer,
+        cellClass: 'text-blue-600',
       },
       {
         headerName: 'Phone',
@@ -123,13 +129,15 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
         flex: 1,
         editable: true,
         cellRenderer: PhoneRenderer,
+        cellClass: 'text-blue-600',
       },
       {
         headerName: 'Status',
         field: 'isArchived',
-        width: 100,
+        width: 120,
         cellRenderer: StatusRenderer,
         editable: false,
+        headerClass: 'font-semibold text-gray-700',
       },
     ],
     [WebsiteRenderer, PhoneRenderer, StatusRenderer]
@@ -142,42 +150,52 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
       filter: true,
       resizable: true,
       editable: false,
-      floatingFilter: true, // This adds search boxes below each column header
+      floatingFilter: true,
+      floatingFilterComponentParams: {
+        suppressFilterButton: true,
+      },
+      cellClass: 'text-gray-700',
+      headerClass: 'font-semibold text-gray-700 bg-gray-50',
     }),
     []
   );
 
-  // Grid options
-  const gridOptions = useMemo(
+  // Grid options with modern v34 syntax
+  const gridOptions = useMemo<GridOptions>(
     () => ({
-      rowSelection: 'multiple' as const,
-      suppressRowDeselection: false,
-      suppressRowClickSelection: true,
-      editType: 'fullRow' as const,
+      // Modern row selection configuration
+      rowSelection: {
+        type: 'multiple',
+        enableClickSelection: true,
+        checkboxes: true,
+        headerCheckbox: true,
+      },
+      // Editing configuration
+      editType: 'fullRow',
       stopEditingWhenCellsLoseFocus: true,
-      getContextMenuItems: (params: any) =>
-        [
-          'copy',
-          'copyWithHeaders',
-          'paste',
-          'separator',
-          {
-            name: 'Add New Supplier',
-            action: () => handleAddSupplierAtIndex(0), // Add at top
-            icon: '<span>+</span>',
-          },
-          'separator',
-          'export',
-        ].map(item => {
-          if (typeof item === 'string') {
-            // AG Grid built-in menu item keys as objects
-            return {
-              name: item.charAt(0).toUpperCase() + item.slice(1),
-              action: () => params.api.copySelectedRowsToClipboard(),
-            };
-          }
-          return item;
-        }),
+      // Context menu
+      getContextMenuItems: (params: any) => [
+        'copy',
+        'copyWithHeaders',
+        'paste',
+        'separator',
+        {
+          name: 'Add New Supplier',
+          action: () => handleAddSupplierAtIndex(0),
+          icon: '<span class="text-green-600">+</span>',
+        },
+        'separator',
+        'export',
+      ],
+      // Styling and behavior
+      animateRows: true,
+      enableCellTextSelection: true,
+      ensureDomOrder: true,
+      // Theme customization
+      domLayout: 'normal',
+      suppressRowHoverHighlight: false,
+      suppressCellFocus: false,
+      suppressRowClickSelection: false,
     }),
     []
   );
@@ -344,22 +362,62 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
   }
 
   return (
-    <div className="ag-theme-alpine border border-gray-200 rounded-lg overflow-hidden">
-      <div style={{ height: '600px' }}>
-        <AgGridReact
-          ref={gridRef}
-          rowData={suppliers}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          gridOptions={gridOptions}
-          onGridReady={onGridReady}
-          onCellEditingStopped={onCellEditingStopped}
-          onSelectionChanged={onSelectionChanged}
-          getRowId={(params: any) => params.data.supplierId}
-          animateRows={true}
-          enableCellTextSelection={true}
-          ensureDomOrder={true}
-        />
+    <div className="space-y-4">
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={handleAddSupplier}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Supplier
+          </Button>
+          {selectedRows.length > 0 && (
+            <>
+              <Button
+                onClick={handleBulkArchive}
+                variant="outline"
+                className="border-amber-200 hover:bg-amber-50"
+              >
+                <Archive className="h-4 w-4 mr-2" />
+                Archive ({selectedRows.length})
+              </Button>
+              <Button
+                onClick={handleBulkDelete}
+                variant="outline"
+                className="border-red-200 hover:bg-red-50 text-red-600"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete ({selectedRows.length})
+              </Button>
+            </>
+          )}
+        </div>
+        <div className="text-sm text-gray-500">
+          {suppliers.length} supplier{suppliers.length !== 1 ? 's' : ''}
+        </div>
+      </div>
+
+      {/* AG Grid with enhanced styling */}
+      <div className="ag-theme-alpine border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+        <div style={{ height: '600px' }}>
+          <AgGridReact
+            ref={gridRef}
+            rowData={suppliers}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            gridOptions={gridOptions}
+            onGridReady={onGridReady}
+            onCellEditingStopped={onCellEditingStopped}
+            onSelectionChanged={onSelectionChanged}
+            getRowId={(params: any) => params.data.supplierId}
+            animateRows={true}
+            enableCellTextSelection={true}
+            ensureDomOrder={true}
+            className="text-sm"
+          />
+        </div>
       </div>
     </div>
   );
