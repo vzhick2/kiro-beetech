@@ -213,39 +213,6 @@ export function SuppliersAgGrid() {
     [updateSupplierMutation]
   );
 
-  // Grid options with responsive features - FIXED deprecated properties
-  const gridOptions = useMemo(
-    () => ({
-      // Row selection - FIXED: Use correct v34 object syntax
-      rowSelection: {
-        mode: 'multiRow' as const,
-        checkboxes: true,
-        headerCheckbox: true,
-      },
-      // Editing
-      editType: 'fullRow' as const,
-      stopEditingWhenCellsLoseFocus: true,
-      animateRows: true,
-      // Use legacy theme to avoid conflict with CSS imports
-      theme: 'legacy' as const,
-      // Responsive row height
-      rowHeight: isMobile ? 60 : 48, // Taller rows on mobile
-      // Performance
-      suppressCellFocus: true,
-      // Mobile optimizations
-      suppressColumnVirtualisation: isMobile, // Better mobile performance
-      suppressRowVirtualisation: false,
-      // Default column properties
-      defaultColDef: {
-        resizable: true,
-        sortable: true,
-        filter: true,
-        floatingFilter: true,
-      },
-    }),
-    [isMobile]
-  );
-
   // Handle grid ready
   const onGridReady = useCallback((params: GridReadyEvent) => {
     params.api.sizeColumnsToFit();
@@ -294,7 +261,20 @@ export function SuppliersAgGrid() {
         ref={gridRef}
         columnDefs={columnDefs}
         rowData={suppliers}
-        gridOptions={gridOptions}
+        rowSelection="multiple"
+        editType="fullRow"
+        stopEditingWhenCellsLoseFocus={true}
+        animateRows={true}
+        rowHeight={isMobile ? 60 : 48}
+        suppressCellFocus={true}
+        suppressColumnVirtualisation={isMobile}
+        suppressRowVirtualisation={false}
+        defaultColDef={{
+          resizable: true,
+          sortable: true,
+          filter: true,
+          floatingFilter: true,
+        }}
         onGridReady={onGridReady}
         onCellEditingStopped={onCellEditingStopped}
         className="w-full h-full"
