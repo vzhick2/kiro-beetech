@@ -4,7 +4,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@supabase/mcp-server-supabase@0.4.5",
+        "@supabase/mcp-server-supabase@latest",
         "--project-ref=jjpklpivpvywagmjjwpu"
       ],
       "env": {
@@ -23,7 +23,7 @@
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@andrebuzeli/github-mcp-v2@latest"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-personal-access-token}"
       },
