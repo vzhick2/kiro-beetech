@@ -87,7 +87,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           {/* Responsive Sidebar - Always rendered but controlled by visibility */}
           <ResponsiveSidebar
             isOpen={false}
-            onClose={closeSidebar}
+            onCloseAction={closeSidebar}
             isDesktop={false}
           />
           <div className="content-area flex-1 transition-all duration-200 ease-out">
@@ -111,7 +111,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
         {/* Responsive Sidebar */}
         <ResponsiveSidebar
           isOpen={isSidebarOpen}
-          onClose={closeSidebar}
+          onCloseAction={closeSidebar}
           isDesktop={isDesktop}
         />
 

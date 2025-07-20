@@ -89,7 +89,7 @@ export async function createDraftPurchase(purchaseData: {
         supplierid: purchaseData.supplierId,
         purchasedate: purchaseData.purchaseDate,
         effectivedate: purchaseData.effectiveDate,
-        grandtotal: purchaseData.grandTotal,
+        total: purchaseData.grandTotal,
         shipping: purchaseData.shipping || 0,
         taxes: purchaseData.taxes || 0,
         othercosts: purchaseData.otherCosts || 0,
@@ -140,7 +140,7 @@ export async function updateDraftPurchase(
       updateData.effectivedate = purchaseData.effectiveDate;
     }
     if (purchaseData.grandTotal !== undefined) {
-      updateData.grandtotal = purchaseData.grandTotal;
+      updateData.total = purchaseData.grandTotal;
     }
     if (purchaseData.shipping !== undefined) {
       updateData.shipping = purchaseData.shipping;
@@ -297,58 +297,13 @@ export async function deleteLineItem(lineItemId: string) {
 
 export async function finalizeDraftPurchase(purchaseId: string) {
   try {
-    // TODO: Deploy finalize_draft_purchase RPC function to database
-    // For now, manually update purchase and line items
-    const { error: updateError } = await supabase
-      .from('purchases')
-      .update({ isdraft: false, updated_at: new Date().toISOString() })
-      .eq('purchaseid', purchaseId)
-      .eq('isdraft', true);
+    // Use the deployed finalize_draft_purchase RPC function for atomic operation
+    const { data, error } = await supabase.rpc('finalize_draft_purchase', {
+      purchase_id: purchaseId,
+    });
 
-    if (updateError) {
-      throw updateError;
-    }
-
-    // Get line items to update inventory
-    const { data: lineItems, error: lineItemsError } = await supabase
-      .from('purchase_line_items')
-      .select('itemid, quantity, unitcost')
-      .eq('purchaseid', purchaseId);
-
-    if (lineItemsError) {
-      throw lineItemsError;
-    }
-
-    // Update inventory for each line item
-    for (const lineItem of lineItems || []) {
-      const { error: inventoryError } = await supabase.rpc(
-        'update_item_quantity_atomic',
-        {
-          item_id: lineItem.itemid,
-          quantity_change: lineItem.quantity,
-        }
-      );
-
-      if (inventoryError) {
-        throw inventoryError;
-      }
-
-      // Log transaction
-      const { error: transactionError } = await supabase
-        .from('transactions')
-        .insert({
-          itemid: lineItem.itemid,
-          transactiontype: 'purchase',
-          quantity: lineItem.quantity,
-          referenceid: purchaseId,
-          referencetype: 'purchase',
-          unitcost: lineItem.unitcost,
-          effectivedate: new Date().toISOString().split('T')[0] || '',
-        });
-
-      if (transactionError) {
-        throw transactionError;
-      }
+    if (error) {
+      throw error;
     }
 
     revalidatePath('/purchases');

@@ -46,12 +46,12 @@ export default function ItemsPage() {
           <div className="flex items-center space-x-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
+                            <input
                 type="text"
                 value={searchQuery}
                 onChange={e => handleSearch(e.target.value)}
-                placeholder="Search ingredients, packaging, or products..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                placeholder="Filter items by name, SKU, or type..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {searchQuery && (
                 <button

@@ -59,7 +59,7 @@ export function useCreateSupplier() {
       }
       return result.data;
     },
-    onSuccess: (newSupplier) => {
+    onSuccess: newSupplier => {
       // Add to suppliers list cache
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },

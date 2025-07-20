@@ -275,7 +275,6 @@ export type Database = {
           created_at: string | null;
           displayid: string;
           effectivedate: string;
-          grandtotal: number;
           isdraft: boolean | null;
           notes: string | null;
           othercosts: number | null;
@@ -284,13 +283,13 @@ export type Database = {
           shipping: number | null;
           supplierid: string;
           taxes: number | null;
+          total: number;
           updated_at: string | null;
         };
         Insert: {
           created_at?: string | null;
           displayid: string;
           effectivedate: string;
-          grandtotal: number;
           isdraft?: boolean | null;
           notes?: string | null;
           othercosts?: number | null;
@@ -299,13 +298,13 @@ export type Database = {
           shipping?: number | null;
           supplierid: string;
           taxes?: number | null;
+          total: number;
           updated_at?: string | null;
         };
         Update: {
           created_at?: string | null;
           displayid?: string;
           effectivedate?: string;
-          grandtotal?: number;
           isdraft?: boolean | null;
           notes?: string | null;
           othercosts?: number | null;
@@ -314,6 +313,7 @@ export type Database = {
           shipping?: number | null;
           supplierid?: string;
           taxes?: number | null;
+          total?: number;
           updated_at?: string | null;
         };
         Relationships: [
@@ -464,27 +464,30 @@ export type Database = {
       };
       suppliers: {
         Row: {
+          address: string | null;
+          contactphone: string | null;
           created_at: string | null;
           isarchived: boolean | null;
           name: string;
-          phone: string | null;
-          storeurl: string | null;
+          notes: string | null;
           supplierid: string;
         };
         Insert: {
+          address?: string | null;
+          contactphone?: string | null;
           created_at?: string | null;
           isarchived?: boolean | null;
           name: string;
-          phone?: string | null;
-          storeurl?: string | null;
+          notes?: string | null;
           supplierid?: string;
         };
         Update: {
+          address?: string | null;
+          contactphone?: string | null;
           created_at?: string | null;
           isarchived?: boolean | null;
           name?: string;
-          phone?: string | null;
-          storeurl?: string | null;
+          notes?: string | null;
           supplierid?: string;
         };
         Relationships: [];
@@ -545,6 +548,10 @@ export type Database = {
         Args: { item_id: string };
         Returns: number;
       };
+      finalize_draft_purchase: {
+        Args: { purchase_id: string };
+        Returns: Json;
+      };
       get_cycle_count_alerts: {
         Args: { limit_count?: number };
         Returns: {
@@ -555,15 +562,19 @@ export type Database = {
           priorityscore: number;
           reorderpoint: number;
           alerttype: string;
+          shortageamount: number;
         }[];
       };
-
+      get_last_used_suppliers: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          itemid: string;
+          supplier_name: string;
+        }[];
+      };
       update_item_quantity_atomic: {
         Args: { item_id: string; quantity_change: number };
-        Returns: {
-          new_quantity: number;
-          transaction_id: string;
-        }[];
+        Returns: number;
       };
     };
     Enums: {

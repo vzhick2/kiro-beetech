@@ -44,9 +44,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
       !searchQuery ||
       supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (supplier.website &&
-        supplier.website
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())) ||
+        supplier.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (supplier.contactPhone &&
         supplier.contactPhone
           .toLowerCase()
@@ -239,7 +237,11 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
       if (field === 'website' && value) {
         return (
           <a
-            href={String(value).startsWith('http') ? String(value) : `https://${value}`}
+            href={
+              String(value).startsWith('http')
+                ? String(value)
+                : `https://${value}`
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 hover:underline"
@@ -371,9 +373,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
                   <td className="p-3 font-medium">
                     {renderCell(supplier, 'name')}
                   </td>
-                  <td className="p-3">
-                    {renderCell(supplier, 'website')}
-                  </td>
+                  <td className="p-3">{renderCell(supplier, 'website')}</td>
                   <td className="p-3">
                     {renderCell(supplier, 'contactPhone')}
                   </td>

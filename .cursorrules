@@ -90,6 +90,15 @@
 - Use PostgreSQL RPCs for atomic operations
 - Use display ID pattern for user-facing references
 
+## MCP (Model Context Protocol) Access
+- Supabase MCP server is configured and operational for this project
+- Project ref: `jjpklpivpvywagmjjwpu` (read/write access, project-scoped)
+- Available via VS Code/Copilot for natural language database queries and modifications
+- Can use MCP to explore database structure, query data, modify data, and run migrations
+- Write operations: INSERT, UPDATE, DELETE, migrations, Edge Function deployment
+- Useful for debugging, data analysis, database modifications, and real-time development
+- Examples: "Show me all tables", "Add a new supplier", "Update inventory quantities", "Run this migration"
+
 ## AI Development Commands
 - Use `pnpm ai:validate` for fast validation (type-check, lint, format)
 - Use `pnpm ai:validate:full` for full type-check for production builds

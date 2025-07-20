@@ -36,7 +36,9 @@ interface NewRowData {
   isEditing: boolean;
 }
 
-export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreadsheetTableProps) {
+export function SuppliersSpreadsheetTable({
+  searchQuery = '',
+}: SuppliersSpreadsheetTableProps) {
   const [editingCell, setEditingCell] = useState<EditableCell | null>(null);
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [newRow, setNewRow] = useState<NewRowData | null>(null);
@@ -54,9 +56,7 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
       !searchQuery ||
       supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (supplier.website &&
-        supplier.website
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())) ||
+        supplier.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (supplier.contactPhone &&
         supplier.contactPhone
           .toLowerCase()
@@ -283,7 +283,11 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
           <div className="group flex items-center space-x-1">
             {field === 'website' && value ? (
               <a
-                href={String(value).startsWith('http') ? String(value) : `https://${value}`}
+                href={
+                  String(value).startsWith('http')
+                    ? String(value)
+                    : `https://${value}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 hover:underline"
@@ -331,9 +335,13 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
               prev ? { ...prev, [field]: e.target.value } : null
             )
           }
-          placeholder={field === 'name' ? 'Supplier name' : 
-                     field === 'website' ? 'Website URL' : 
-                     'Phone number'}
+          placeholder={
+            field === 'name'
+              ? 'Supplier name'
+              : field === 'website'
+                ? 'Website URL'
+                : 'Phone number'
+          }
           className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onKeyDown={e => {
             if (e.key === 'Enter') {
@@ -469,7 +477,10 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
 
               {/* Add New Row Button */}
               {!newRow && (
-                <tr className="border-b border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer group" onClick={handleAddNewRow}>
+                <tr
+                  className="border-b border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer group"
+                  onClick={handleAddNewRow}
+                >
                   <td className="p-3">
                     <Plus className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
                   </td>
@@ -502,9 +513,7 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
                   <td className="p-3 font-medium">
                     {renderCell(supplier, 'name')}
                   </td>
-                  <td className="p-3">
-                    {renderCell(supplier, 'website')}
-                  </td>
+                  <td className="p-3">{renderCell(supplier, 'website')}</td>
                   <td className="p-3">
                     {renderCell(supplier, 'contactPhone')}
                   </td>
@@ -528,25 +537,45 @@ export function SuppliersSpreadsheetTable({ searchQuery = '' }: SuppliersSpreads
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-56">
                         <DropdownMenuItem
-                          onClick={() => console.log('View purchase history for supplier:', supplier.supplierId)}
+                          onClick={() =>
+                            console.log(
+                              'View purchase history for supplier:',
+                              supplier.supplierId
+                            )
+                          }
                         >
                           <Edit3 className="w-4 h-4 mr-2" />
                           View Purchase History
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => console.log('Create purchase order for supplier:', supplier.supplierId)}
+                          onClick={() =>
+                            console.log(
+                              'Create purchase order for supplier:',
+                              supplier.supplierId
+                            )
+                          }
                         >
                           <Plus className="w-4 h-4 mr-2" />
                           Create Purchase Order
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => console.log('Set as primary supplier for selected items:', supplier.supplierId)}
+                          onClick={() =>
+                            console.log(
+                              'Set as primary supplier for selected items:',
+                              supplier.supplierId
+                            )
+                          }
                         >
                           <Check className="w-4 h-4 mr-2" />
                           Set as Primary for Items
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => console.log('Duplicate supplier:', supplier.supplierId)}
+                          onClick={() =>
+                            console.log(
+                              'Duplicate supplier:',
+                              supplier.supplierId
+                            )
+                          }
                         >
                           <Edit3 className="w-4 h-4 mr-2" />
                           Duplicate Supplier

@@ -281,14 +281,18 @@ export function SpreadsheetTable({
           const reorderPoint = item.reorderPoint || 0;
           const isLowStock = quantity <= reorderPoint;
           const isNegative = quantity < 0;
-          
+
           return (
             <div className="flex items-center space-x-1">
-              <span className={`font-medium ${
-                isNegative ? 'text-red-600' : 
-                isLowStock ? 'text-orange-600' : 
-                'text-gray-900'
-              }`}>
+              <span
+                className={`font-medium ${
+                  isNegative
+                    ? 'text-red-600'
+                    : isLowStock
+                      ? 'text-orange-600'
+                      : 'text-gray-900'
+                }`}
+              >
                 {String(value)}
               </span>
               {isNegative && (
@@ -400,12 +404,17 @@ export function SpreadsheetTable({
         return (
           <div className="group flex items-center space-x-1">
             {field === 'type' ? (
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                value === 'ingredient' ? 'bg-blue-100 text-blue-800' :
-                value === 'packaging' ? 'bg-purple-100 text-purple-800' :
-                value === 'product' ? 'bg-green-100 text-green-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  value === 'ingredient'
+                    ? 'bg-blue-100 text-blue-800'
+                    : value === 'packaging'
+                      ? 'bg-purple-100 text-purple-800'
+                      : value === 'product'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                }`}
+              >
                 {String(value || '')}
               </span>
             ) : (
@@ -495,14 +504,12 @@ export function SpreadsheetTable({
                     />
                   </div>
                 </th>
+                {/* Essential columns - always visible */}
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px] sm:table-cell hidden">
                   SKU
-                </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
-                  Type
                 </th>
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
                   Quantity
@@ -510,16 +517,20 @@ export function SpreadsheetTable({
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Unit Cost
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
+                {/* Desktop-priority columns */}
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px] md:table-cell hidden">
+                  Type
+                </th>
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px] lg:table-cell hidden">
                   Reorder Point
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px] xl:table-cell hidden">
                   Last Used Supplier
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[90px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[90px] xl:table-cell hidden">
                   Last Counted
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[70px]">
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[70px] lg:table-cell hidden">
                   Status
                 </th>
                 <th className="w-12 p-3">
@@ -620,15 +631,17 @@ export function SpreadsheetTable({
                       />
                     </div>
                   </td>
+                  {/* Essential columns - always visible */}
                   <td className="p-3">{renderCell(item, 'name')}</td>
-                  <td className="p-3">{renderCell(item, 'SKU')}</td>
-                  <td className="p-3">{renderCell(item, 'type')}</td>
+                  <td className="p-3 sm:table-cell hidden">{renderCell(item, 'SKU')}</td>
                   <td className="p-3">{renderCell(item, 'currentQuantity')}</td>
                   <td className="p-3">
                     {renderCell(item, 'weightedAverageCost')}
                   </td>
-                  <td className="p-3">{renderCell(item, 'reorderPoint')}</td>
-                  <td className="p-3">
+                  {/* Desktop-priority columns */}
+                  <td className="p-3 md:table-cell hidden">{renderCell(item, 'type')}</td>
+                  <td className="p-3 lg:table-cell hidden">{renderCell(item, 'reorderPoint')}</td>
+                  <td className="p-3 xl:table-cell hidden">
                     <div className="text-sm">
                       {item.lastUsedSupplier ? (
                         <span className="text-gray-900">
@@ -641,8 +654,8 @@ export function SpreadsheetTable({
                       )}
                     </div>
                   </td>
-                  <td className="p-3">{renderCell(item, 'lastCountedDate')}</td>
-                  <td className="p-3">
+                  <td className="p-3 xl:table-cell hidden">{renderCell(item, 'lastCountedDate')}</td>
+                  <td className="p-3 lg:table-cell hidden">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                         item.isArchived
@@ -674,13 +687,20 @@ export function SpreadsheetTable({
                           Manual Count
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => console.log('View purchase history for:', item.itemId)}
+                          onClick={() =>
+                            console.log(
+                              'View purchase history for:',
+                              item.itemId
+                            )
+                          }
                         >
                           <Edit3 className="w-4 h-4 mr-2" />
                           View Purchase History
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => console.log('Duplicate item:', item.itemId)}
+                          onClick={() =>
+                            console.log('Duplicate item:', item.itemId)
+                          }
                         >
                           <Edit3 className="w-4 h-4 mr-2" />
                           Duplicate Item
@@ -706,13 +726,13 @@ export function SpreadsheetTable({
           </table>
         </div>
 
-        {/* Mobile Scroll Hint */}
-        <div className="md:hidden p-2 bg-gray-50 border-t border-gray-200 text-center">
-          <span className="text-xs text-gray-500">
-            💡 Scroll horizontally to see all columns
+        {/* Mobile UX Enhancement - Desktop-First Approach */}
+        <div className="lg:hidden p-2 bg-blue-50 border-t border-blue-200 text-center">
+          <span className="text-xs text-blue-700">
+            💡 More details available on desktop view • Scroll horizontally for additional columns
           </span>
         </div>
-        
+
         {/* Legend for visual indicators */}
         <div className="hidden md:block p-2 bg-gray-50 border-t border-gray-200">
           <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
