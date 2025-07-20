@@ -43,8 +43,6 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
     const matchesSearch =
       !searchQuery ||
       supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (supplier.website &&
-        supplier.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (supplier.contactPhone &&
         supplier.contactPhone
           .toLowerCase()
@@ -75,7 +73,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
         const dbFieldMap: Record<keyof Supplier, string> = {
           supplierId: 'supplierid',
           name: 'name',
-          website: 'storeurl',
+
           contactPhone: 'phone',
           address: 'address',
           notes: 'notes',
@@ -234,22 +232,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
         return (value as Date).toLocaleDateString();
       }
 
-      if (field === 'website' && value) {
-        return (
-          <a
-            href={
-              String(value).startsWith('http')
-                ? String(value)
-                : `https://${value}`
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            {String(value)}
-          </a>
-        );
-      }
+      return String(value || '');
 
       if (field === 'contactPhone' && value) {
         return (
@@ -337,9 +320,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
                   Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 min-w-[120px]">
-                  Website
-                </th>
+
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px]">
                   Phone
                 </th>
@@ -373,7 +354,7 @@ export function SuppliersTable({ searchQuery = '' }: SuppliersTableProps) {
                   <td className="p-3 font-medium">
                     {renderCell(supplier, 'name')}
                   </td>
-                  <td className="p-3">{renderCell(supplier, 'website')}</td>
+
                   <td className="p-3">
                     {renderCell(supplier, 'contactPhone')}
                   </td>

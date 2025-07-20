@@ -191,7 +191,6 @@ const sampleItems = [
 const sampleSuppliers = [
   {
     name: 'BeeTech Supplies Co.',
-    website: 'https://beetechsupplies.com',
     contactphone: '555-123-4567',
     address: '123 Honey Lane, Beekeeping City, BC 12345',
     notes: 'Primary supplier for beekeeping equipment and raw materials',
@@ -199,7 +198,6 @@ const sampleSuppliers = [
   },
   {
     name: 'Organic Honey Farms',
-    website: 'https://organichoneyfarms.com',
     contactphone: '555-987-6543',
     address: '456 Organic Way, Natural Valley, NV 54321',
     notes: 'Supplier for organic honey and bee products',
@@ -207,7 +205,6 @@ const sampleSuppliers = [
   },
   {
     name: 'Packaging Plus',
-    website: 'https://packagingplus.com',
     contactphone: '555-456-7890',
     address: '789 Container Blvd, Packaging Town, PT 67890',
     notes: 'Supplier for glass jars, lids, and packaging materials',

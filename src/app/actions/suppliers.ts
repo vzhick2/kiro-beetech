@@ -30,9 +30,6 @@ export async function createSupplier(supplierData: CreateSupplierRequest) {
     };
 
     // Map fields to correct database column names
-    if (supplierData.website) {
-      insertData.website = supplierData.website; // Fixed: website -> website (not storeurl)
-    }
 
     if (supplierData.contactPhone) {
       insertData.contactphone = supplierData.contactPhone; // Fixed: contactPhone -> contactphone (not phone)

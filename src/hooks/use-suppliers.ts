@@ -33,7 +33,6 @@ export function useSuppliers(searchQuery = '') {
         (dbSupplier: any) => ({
           supplierId: dbSupplier.supplierid,
           name: dbSupplier.name,
-          website: dbSupplier.website,
           contactPhone: dbSupplier.contactphone,
           address: dbSupplier.address,
           notes: dbSupplier.notes,

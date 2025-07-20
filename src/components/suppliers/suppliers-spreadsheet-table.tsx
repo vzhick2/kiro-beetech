@@ -26,7 +26,6 @@ interface EditableRow {
   supplierId: string;
   fields: {
     name: string;
-    website: string;
     contactPhone: string;
   };
   isEditing: boolean;
@@ -34,7 +33,6 @@ interface EditableRow {
 
 interface NewRowData {
   name: string;
-  website: string;
   contactPhone: string;
   isEditing: boolean;
 }
@@ -59,8 +57,6 @@ export function SuppliersSpreadsheetTable({
     const matchesSearch =
       !searchQuery ||
       supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (supplier.website &&
-        supplier.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (supplier.contactPhone &&
         supplier.contactPhone
           .toLowerCase()
@@ -74,7 +70,7 @@ export function SuppliersSpreadsheetTable({
       supplierId: supplier.supplierId,
       fields: {
         name: supplier.name,
-        website: supplier.website || '',
+
         contactPhone: supplier.contactPhone || '',
       },
       isEditing: true,
@@ -106,9 +102,7 @@ export function SuppliersSpreadsheetTable({
         if (editingRow.fields.name !== supplier.name) {
           updates.name = editingRow.fields.name;
         }
-        if (editingRow.fields.website !== (supplier.website || '')) {
-          updates.website = editingRow.fields.website || null;
-        }
+
         if (editingRow.fields.contactPhone !== (supplier.contactPhone || '')) {
           updates.contactphone = editingRow.fields.contactPhone || null;
         }
@@ -156,7 +150,6 @@ export function SuppliersSpreadsheetTable({
       } else if (e.key === 'Tab') {
         const fieldOrder: (keyof EditableRow['fields'])[] = [
           'name',
-          'website',
           'contactPhone',
         ];
         const currentIndex = fieldOrder.indexOf(field);
@@ -194,7 +187,6 @@ export function SuppliersSpreadsheetTable({
   const handleAddNewRow = useCallback(() => {
     setNewRow({
       name: '',
-      website: '',
       contactPhone: '',
       isEditing: true,
     });
@@ -209,10 +201,6 @@ export function SuppliersSpreadsheetTable({
       const supplierData: CreateSupplierRequest = {
         name: newRow.name.trim(),
       };
-
-      if (newRow.website.trim()) {
-        supplierData.website = newRow.website.trim();
-      }
 
       if (newRow.contactPhone.trim()) {
         supplierData.contactPhone = newRow.contactPhone.trim();
@@ -306,26 +294,20 @@ export function SuppliersSpreadsheetTable({
             placeholder={
               field === 'name'
                 ? 'Supplier name'
-                : field === 'website'
-                  ? 'Website URL'
+                : field === 'contactPhone'
+                  ? 'Phone number'
                   : 'Phone number'
             }
           />
         );
       }
 
-      const value = supplier[field] || '';
+      const value = (supplier as any)[field] || '';
 
-      if (field === 'website' && value) {
+      if (field === 'contactPhone' && value) {
         return (
           <a
-            href={
-              String(value).startsWith('http')
-                ? String(value)
-                : `https://${value}`
-            }
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`tel:${value}`}
             className="text-blue-600 hover:text-blue-800 hover:underline"
             onClick={e => e.stopPropagation()} // Prevent row editing when clicking link
           >
@@ -369,8 +351,8 @@ export function SuppliersSpreadsheetTable({
           placeholder={
             field === 'name'
               ? 'Supplier name'
-              : field === 'website'
-                ? 'Website URL'
+              : field === 'contactPhone'
+                ? 'Phone'
                 : 'Phone number'
           }
           className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -471,9 +453,7 @@ export function SuppliersSpreadsheetTable({
                 <th className="text-left p-3 font-semibold text-gray-700 w-1/3">
                   Supplier Name
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-700 w-1/3">
-                  Website
-                </th>
+
                 <th className="text-left p-3 font-semibold text-gray-700 w-1/6">
                   Phone
                 </th>
@@ -509,7 +489,7 @@ export function SuppliersSpreadsheetTable({
                     </div>
                   </td>
                   <td className="p-3">{renderNewRowCell('name')}</td>
-                  <td className="p-3">{renderNewRowCell('website')}</td>
+
                   <td className="p-3">
                     {renderNewRowCell('contactPhone', true)}
                   </td>
@@ -582,7 +562,7 @@ export function SuppliersSpreadsheetTable({
                     <td className="p-3 font-medium">
                       {renderCell(supplier, 'name')}
                     </td>
-                    <td className="p-3">{renderCell(supplier, 'website')}</td>
+
                     <td className="p-3">
                       {renderCell(supplier, 'contactPhone')}
                     </td>

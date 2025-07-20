@@ -47,13 +47,7 @@ export function SuppliersAgGrid() {
       sortable: true,
       filter: true,
     },
-    {
-      field: 'website',
-      headerName: 'Website',
-      editable: true,
-      sortable: true,
-      filter: true,
-    },
+
     {
       field: 'contactPhone',
       headerName: 'Phone',

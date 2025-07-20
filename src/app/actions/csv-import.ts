@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase';
 import { parseQBOSalesCSV, validateQBOFormat } from '@/lib/utils/csv-parser';
 import {
   createErrorResponse,
@@ -105,8 +105,6 @@ export async function previewQBOImport(formData: FormData) {
 
 // Process and import QBO sales data
 export async function processQBOImport(formData: FormData) {
-  const supabase = createClient();
-
   try {
     const csvContent = formData.get('csvContent') as string;
     const effectiveDate = formData.get('effectiveDate') as string;
@@ -138,7 +136,7 @@ export async function processQBOImport(formData: FormData) {
     for (const sale of salesData) {
       try {
         // Check if item exists
-        const { data: existingItem } = await supabase
+        const { data: existingItem } = await supabaseAdmin
           .from('items')
           .select('itemid, currentquantity, name')
           .eq('name', sale.itemName)
@@ -152,7 +150,7 @@ export async function processQBOImport(formData: FormData) {
           const newQuantity =
             (existingItem.currentquantity || 0) - sale.quantity;
 
-          const { error: updateError } = await supabase
+          const { error: updateError } = await supabaseAdmin
             .from('items')
             .update({ currentquantity: newQuantity })
             .eq('itemid', existingItem.itemid);
@@ -168,7 +166,7 @@ export async function processQBOImport(formData: FormData) {
           results.itemsUpdated++;
         } else if (createMissingItems) {
           // Create new item
-          const { data: newItem, error: createError } = await supabase
+          const { data: newItem, error: createError } = await supabaseAdmin
             .from('items')
             .insert({
               name: sale.itemName,
@@ -200,7 +198,7 @@ export async function processQBOImport(formData: FormData) {
         }
 
         // Log the sale transaction
-        const { error: transactionError } = await supabase
+        const { error: transactionError } = await supabaseAdmin
           .from('transactions')
           .insert({
             itemid: itemId,
@@ -254,10 +252,8 @@ export async function processQBOImport(formData: FormData) {
 
 // Get existing items for validation
 export async function getExistingItems() {
-  const supabase = createClient();
-
   try {
-    const { data: items, error } = await supabase
+    const { data: items, error } = await supabaseAdmin
       .from('items')
       .select('itemid, name, sku, currentquantity')
       .eq('isarchived', false)
