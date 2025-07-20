@@ -24,12 +24,7 @@
     },
     "github": {
       "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "ghcr.io/github/github-mcp-server:latest"
-      ],
+      "args": ["run", "--rm", "-i", "ghcr.io/github/github-mcp-server:latest"],
       "env": {
         "GITHUB_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       },
