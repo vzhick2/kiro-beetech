@@ -338,88 +338,22 @@ export function SuppliersAgGrid({}: SuppliersAgGridProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Action Bar - Only show when rows are selected */}
-      {selectedRows.length > 0 && (
-        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <span className="text-sm text-blue-900 font-medium">
-            {selectedRows.length} supplier{selectedRows.length !== 1 ? 's' : ''}{' '}
-            selected
-          </span>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleBulkArchive}
-              className="flex items-center space-x-1"
-            >
-              <Archive className="w-4 h-4" />
-              <span>Archive</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleBulkDelete}
-              className="flex items-center space-x-1 text-red-600 border-red-300 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>Delete</span>
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* AG-Grid Table with Toolbar */}
-      <div className="ag-theme-alpine border border-gray-200 rounded-lg overflow-hidden">
-        {/* Custom Toolbar */}
-        <div className="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={handleAddSupplier}
-              size="sm"
-              className="flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Supplier</span>
-            </Button>
-          </div>
-          <div className="text-sm text-gray-600">
-            Right-click for more options
-          </div>
-        </div>
-
-        {/* Grid */}
-        <div style={{ height: '600px' }}>
-          <AgGridReact
-            ref={gridRef}
-            rowData={suppliers}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            gridOptions={gridOptions}
-            onGridReady={onGridReady}
-            onCellEditingStopped={onCellEditingStopped}
-            onSelectionChanged={onSelectionChanged}
-            getRowId={(params: any) => params.data.supplierId}
-            animateRows={true}
-            enableCellTextSelection={true}
-            ensureDomOrder={true}
-          />
-        </div>
-      </div>
-
-      {/* Summary Bar */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between text-sm text-gray-700">
-          <span className="font-semibold">
-            {suppliers.length} suppliers total
-          </span>
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold">Active:</span>
-            <span className="text-green-600 font-bold">
-              {suppliers.filter(s => !s.isArchived).length}
-            </span>
-          </div>
-        </div>
+    <div className="ag-theme-alpine border border-gray-200 rounded-lg overflow-hidden">
+      <div style={{ height: '600px' }}>
+        <AgGridReact
+          ref={gridRef}
+          rowData={suppliers}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          gridOptions={gridOptions}
+          onGridReady={onGridReady}
+          onCellEditingStopped={onCellEditingStopped}
+          onSelectionChanged={onSelectionChanged}
+          getRowId={(params: any) => params.data.supplierId}
+          animateRows={true}
+          enableCellTextSelection={true}
+          ensureDomOrder={true}
+        />
       </div>
     </div>
   );
