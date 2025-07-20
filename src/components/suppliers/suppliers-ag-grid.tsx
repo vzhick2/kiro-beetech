@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import {
   ColDef,
@@ -23,8 +23,20 @@ export function SuppliersAgGrid() {
   const gridRef = useRef<AgGridReact>(null);
 
   // React Query hooks
-  const { data: suppliers = [], isLoading, error } = useSuppliers('');
+  const { data: suppliers = [], isLoading, error, isError } = useSuppliers('');
   const updateSupplierMutation = useUpdateSupplier();
+
+  // Debug logging
+  useEffect(() => {
+    console.log('=== AG Grid Debug Info ===');
+    console.log('Suppliers data:', suppliers);
+    console.log('Suppliers length:', suppliers.length);
+    console.log('Loading state:', isLoading);
+    console.log('Error state:', error);
+    console.log('Is error:', isError);
+    console.log('Grid ref:', gridRef.current);
+    console.log('========================');
+  }, [suppliers, isLoading, error, isError]);
 
   // Simple column definitions
   const columnDefs: ColDef[] = [
@@ -103,6 +115,8 @@ export function SuppliersAgGrid() {
 
   // Handle grid ready
   const onGridReady = useCallback((params: GridReadyEvent) => {
+    console.log('Grid ready event fired');
+    console.log('Grid API:', params.api);
     params.api.sizeColumnsToFit();
   }, []);
 
@@ -114,11 +128,26 @@ export function SuppliersAgGrid() {
     );
   }
 
-  if (error) {
+  if (error || isError) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-red-500">
-          Error loading suppliers: {error.message}
+          Error loading suppliers: {error?.message || 'Unknown error'}
+        </div>
+      </div>
+    );
+  }
+
+  // Debug display if no data
+  if (!suppliers || suppliers.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <div className="text-gray-500">No suppliers found</div>
+        <div className="text-sm text-gray-400">
+          Debug: suppliers array is empty or undefined
+        </div>
+        <div className="text-xs text-gray-300">
+          Length: {suppliers?.length || 'undefined'}
         </div>
       </div>
     );
