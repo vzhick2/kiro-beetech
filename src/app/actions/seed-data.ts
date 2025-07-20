@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
 type InventoryUnit = Database['public']['Enums']['inventory_unit'];
@@ -197,7 +197,10 @@ export async function seedSampleData() {
     let errorCount = 0;
 
     for (const item of sampleItems) {
-      const { error } = await supabase.from('items').insert([item]).select();
+      const { error } = await supabaseAdmin
+        .from('items')
+        .insert([item])
+        .select();
 
       if (error) {
         console.error(`Error inserting ${item.name}:`, error.message);

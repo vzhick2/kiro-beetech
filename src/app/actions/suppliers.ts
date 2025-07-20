@@ -1,11 +1,11 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { CreateSupplierRequest } from '@/types';
 
 export async function getSuppliers() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .select('*')
       .order('name');
@@ -46,7 +46,7 @@ export async function createSupplier(supplierData: CreateSupplierRequest) {
       insertData.notes = supplierData.notes;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .insert([insertData])
       .select()
@@ -69,7 +69,7 @@ export async function updateSupplier(
   updates: Record<string, unknown>
 ) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('suppliers')
       .update(updates)
       .eq('supplierid', supplierId)
@@ -90,7 +90,7 @@ export async function updateSupplier(
 
 export async function deleteSupplier(supplierId: string) {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('suppliers')
       .delete()
       .eq('supplierid', supplierId);
@@ -113,7 +113,7 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
       return { success: true, deletedCount: 0 };
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('suppliers')
       .delete()
       .in('supplierid', supplierIds);
@@ -136,7 +136,7 @@ export async function bulkArchiveSuppliers(supplierIds: string[]) {
       return { success: true, archivedCount: 0 };
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('suppliers')
       .update({ isarchived: true })
       .in('supplierid', supplierIds);

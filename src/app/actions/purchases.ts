@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 
 // Helper function to generate display ID
@@ -16,7 +16,7 @@ function generateDisplayId(): string {
 
 export async function getDraftPurchases() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchases')
       .select(
         `
@@ -44,7 +44,7 @@ export async function getDraftPurchases() {
 
 export async function getAllPurchases() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchases')
       .select(
         `
@@ -82,7 +82,7 @@ export async function createDraftPurchase(purchaseData: {
   try {
     const displayId = generateDisplayId();
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchases')
       .insert({
         displayid: displayId,
@@ -155,7 +155,7 @@ export async function updateDraftPurchase(
       updateData.notes = purchaseData.notes || null;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchases')
       .update(updateData)
       .eq('purchaseid', purchaseId)
@@ -188,7 +188,7 @@ export async function addLineItem(
   try {
     const totalCost = lineItemData.quantity * lineItemData.unitCost;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchase_line_items')
       .insert({
         purchaseid: purchaseId,
@@ -225,7 +225,7 @@ export async function updateLineItem(
 ) {
   try {
     // First get current line item to calculate total cost
-    const { data: currentLineItem, error: fetchError } = await supabase
+    const { data: currentLineItem, error: fetchError } = await supabaseAdmin
       .from('purchase_line_items')
       .select('quantity, unitcost')
       .eq('lineitemid', lineItemId)
@@ -255,7 +255,7 @@ export async function updateLineItem(
     const finalUnitCost = lineItemData.unitCost ?? currentLineItem.unitcost;
     updateData.totalcost = finalQuantity * finalUnitCost;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('purchase_line_items')
       .update(updateData)
       .eq('lineitemid', lineItemId)
@@ -277,7 +277,7 @@ export async function updateLineItem(
 
 export async function deleteLineItem(lineItemId: string) {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('purchase_line_items')
       .delete()
       .eq('lineitemid', lineItemId);
@@ -298,7 +298,7 @@ export async function deleteLineItem(lineItemId: string) {
 export async function finalizeDraftPurchase(purchaseId: string) {
   try {
     // Use the deployed finalize_draft_purchase RPC function for atomic operation
-    const { data, error } = await supabase.rpc('finalize_draft_purchase', {
+    const { data, error } = await supabaseAdmin.rpc('finalize_draft_purchase', {
       purchase_id: purchaseId,
     });
 
@@ -320,7 +320,7 @@ export async function finalizeDraftPurchase(purchaseId: string) {
 export async function deleteDraftPurchase(purchaseId: string) {
   try {
     // Delete line items first (cascade should handle this, but being explicit)
-    const { error: lineItemsError } = await supabase
+    const { error: lineItemsError } = await supabaseAdmin
       .from('purchase_line_items')
       .delete()
       .eq('purchaseid', purchaseId);
@@ -330,7 +330,7 @@ export async function deleteDraftPurchase(purchaseId: string) {
     }
 
     // Delete purchase
-    const { error: purchaseError } = await supabase
+    const { error: purchaseError } = await supabaseAdmin
       .from('purchases')
       .delete()
       .eq('purchaseid', purchaseId)

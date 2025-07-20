@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import {
   handleError,
   handleSuccess,
@@ -16,7 +16,7 @@ import {
 export async function getItems() {
   try {
     // Optimized single query with last used supplier information
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('items')
       .select(
         `
@@ -31,18 +31,19 @@ export async function getItems() {
     }
 
     // Get last used supplier for all items in a single optimized query
-    const { data: lastUsedSuppliers, error: supplierError } = await supabase
-      .from('purchase_line_items')
-      .select(
-        `
+    const { data: lastUsedSuppliers, error: supplierError } =
+      await supabaseAdmin
+        .from('purchase_line_items')
+        .select(
+          `
         itemid,
         purchase:purchases!inner(
           purchasedate,
           supplier:suppliers!inner(name)
         )
       `
-      )
-      .order('purchase.purchasedate', { ascending: false });
+        )
+        .order('purchase.purchasedate', { ascending: false });
 
     if (supplierError) {
       console.error('Error fetching last used suppliers:', supplierError);
@@ -101,7 +102,7 @@ export async function createItem(itemData: unknown) {
       isarchived: false,
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('items')
       .insert([dbData])
       .select()
@@ -158,7 +159,7 @@ export async function updateItem(itemId: string, updates: unknown) {
       dbUpdates.isarchived = validatedUpdates.isarchived;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('items')
       .update(dbUpdates)
       .eq('itemid', itemId)
@@ -180,7 +181,7 @@ export async function updateItem(itemId: string, updates: unknown) {
 
 export async function deleteItem(itemId: string) {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('items')
       .delete()
       .eq('itemid', itemId);
@@ -198,7 +199,7 @@ export async function deleteItem(itemId: string) {
 export async function getItemDetails(itemId: string) {
   try {
     // Get item details
-    const { data: item, error: itemError } = await supabase
+    const { data: item, error: itemError } = await supabaseAdmin
       .from('items')
       .select('*')
       .eq('itemid', itemId)
@@ -209,7 +210,7 @@ export async function getItemDetails(itemId: string) {
     }
 
     // Get recent transactions for this item
-    const { data: transactions, error: transactionError } = await supabase
+    const { data: transactions, error: transactionError } = await supabaseAdmin
       .from('transactions')
       .select('*')
       .eq('itemid', itemId)
@@ -239,7 +240,7 @@ export async function bulkDeleteItems(itemIds: unknown) {
       return handleSuccess({ deletedCount: 0 });
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('items')
       .delete()
       .in('itemid', validatedIds);
@@ -266,7 +267,7 @@ export async function bulkArchiveItems(itemIds: unknown) {
       return handleSuccess({ archivedCount: 0 });
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('items')
       .update({ isarchived: true })
       .in('itemid', validatedIds);
