@@ -8,9 +8,15 @@ import {
   GridReadyEvent,
   CellEditingStoppedEvent,
   SelectionChangedEvent,
+  ModuleRegistry,
+  AllCommunityModule,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+// Register AG Grid modules
+ModuleRegistry.registerModules([AllCommunityModule]);
+
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Archive } from 'lucide-react';
 import { Supplier, CreateSupplierRequest } from '@/types';
