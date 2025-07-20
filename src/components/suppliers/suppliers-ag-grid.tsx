@@ -25,7 +25,7 @@ export function SuppliersAgGrid() {
   const [isTablet, setIsTablet] = useState(false);
 
   // React Query hooks
-  const { data: suppliers = [], isLoading } = useSuppliers('');
+  const { data: suppliers = [], isLoading, error } = useSuppliers('');
   const updateSupplierMutation = useUpdateSupplier();
 
   // Responsive breakpoint detection
@@ -213,14 +213,15 @@ export function SuppliersAgGrid() {
     [updateSupplierMutation]
   );
 
-  // Grid options with responsive features
+  // Grid options with responsive features - FIXED deprecated properties
   const gridOptions = useMemo(
     () => ({
-      // Row selection
+      // Row selection - FIXED: Use new v34 syntax
       rowSelection: {
         mode: 'multiRow' as const,
         checkboxes: true,
         headerCheckbox: true,
+        enableClickSelection: false, // This replaces suppressRowClickSelection
       },
       // Editing
       editType: 'fullRow' as const,
@@ -230,12 +231,18 @@ export function SuppliersAgGrid() {
       theme: 'legacy' as const,
       // Responsive row height
       rowHeight: isMobile ? 60 : 48, // Taller rows on mobile
-      // Performance
-      suppressRowClickSelection: true,
+      // Performance - REMOVED deprecated properties
       suppressCellFocus: true,
       // Mobile optimizations
       suppressColumnVirtualisation: isMobile, // Better mobile performance
       suppressRowVirtualisation: false,
+      // Default column properties
+      defaultColDef: {
+        resizable: true,
+        sortable: true,
+        filter: true,
+        floatingFilter: true,
+      },
     }),
     [isMobile]
   );
@@ -257,10 +264,27 @@ export function SuppliersAgGrid() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Suppliers data:', suppliers);
+    console.log('Loading state:', isLoading);
+    console.log('Error state:', error);
+  }, [suppliers, isLoading, error]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-gray-500">Loading suppliers...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-500">
+          Error loading suppliers: {error.message}
+        </div>
       </div>
     );
   }
