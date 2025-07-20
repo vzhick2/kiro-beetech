@@ -14,29 +14,25 @@ export default function DebugPage() {
   useEffect(() => {
     async function testActions() {
       try {
-        console.log('Testing suppliers action...');
         const suppliersResult = await getSuppliers();
-        console.log('Suppliers result:', suppliersResult);
         
         if (suppliersResult.success) {
           setSuppliersData(suppliersResult.data);
         } else {
-          setSuppliersError(suppliersResult.error);
+          setSuppliersError(suppliersResult.error || 'Unknown suppliers error');
         }
 
-        console.log('Testing items action...');
         const itemsResult = await getItems();
-        console.log('Items result:', itemsResult);
         
         if (itemsResult.success) {
           setItemsData(itemsResult.data);
         } else {
-          setItemsError(itemsResult.error);
+          setItemsError(itemsResult.error || 'Unknown items error');
         }
       } catch (err) {
-        console.error('Debug test error:', err);
-        setSuppliersError(err instanceof Error ? err.message : 'Unknown error');
-        setItemsError(err instanceof Error ? err.message : 'Unknown error');
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setSuppliersError(errorMessage);
+        setItemsError(errorMessage);
       } finally {
         setLoading(false);
       }
