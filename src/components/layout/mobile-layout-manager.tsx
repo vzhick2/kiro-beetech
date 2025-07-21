@@ -130,10 +130,10 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           className={`content-area flex-1 transition-all duration-200 ease-out`}
           style={{
             // CRITICAL FIX: For fixed positioned sidebar, use viewport-relative calculations
-            marginLeft: !isDesktop && isSidebarOpen ? '14rem' : '0', // 224px
-            width: !isDesktop && isSidebarOpen ? 'calc(100vw - 14rem)' : '100%',
+            marginLeft: !isDesktop && isSidebarOpen ? '12rem' : '0', // 192px
+            width: !isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100%',
             maxWidth:
-              !isDesktop && isSidebarOpen ? 'calc(100vw - 14rem)' : '100vw',
+              !isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100vw',
           }}
         >
           <main className="p-4 sm:p-6">{children}</main>

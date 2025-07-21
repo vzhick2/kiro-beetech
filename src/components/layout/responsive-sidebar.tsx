@@ -69,26 +69,33 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  const handleMobileNavClick = (e: React.MouseEvent) => {
-    // Ensure the event is properly handled
-    e.stopPropagation();
-    
+  const handleMobileNavClick = () => {
     if (!isDesktop) {
-      // Small delay to allow visual feedback before closing
+      // Close sidebar after navigation on mobile
       setTimeout(() => {
         onCloseAction();
-      }, 150);
+      }, 100);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // Handle touch events for mobile
+    e.stopPropagation();
+    if (!isDesktop) {
+      setTimeout(() => {
+        onCloseAction();
+      }, 100);
     }
   };
 
   const NavigationContent = () => (
-    <div className="p-4 space-y-1">
+    <div className="p-3 space-y-1">
       {navigation.map((item, index) => {
         if ('separator' in item && item.separator) {
           return (
             <div
               key={`separator-${index}`}
-              className="my-3 border-t border-slate-700/30"
+              className="my-2 border-t border-slate-700/30"
             />
           );
         }
@@ -100,15 +107,17 @@ export function ResponsiveSidebar({
             key={navItem.name}
             href={navItem.href}
             onClick={handleMobileNavClick}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
+            onTouchEnd={handleTouchEnd}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
               isActive
                 ? 'bg-blue-600 text-white shadow-lg'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700'
             }`}
             style={{
               // Ensure clickable on mobile
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
+              minHeight: '40px',
             }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
@@ -124,7 +133,7 @@ export function ResponsiveSidebar({
       return null;
     }
     return (
-      <div className="w-56 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
+      <div className="w-52 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
         <NavigationContent />
       </div>
     );
@@ -138,7 +147,7 @@ export function ResponsiveSidebar({
       }`}
       style={{
         position: 'fixed',
-        width: '14rem',
+        width: '12rem',
         height: 'calc(100vh - 4rem)',
         top: '4rem',
         left: '0',
