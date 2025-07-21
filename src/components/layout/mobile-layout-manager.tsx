@@ -25,7 +25,6 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           navigator.userAgent
         );
       const isVeryNarrow = window.innerWidth < 480; // Extremely narrow
-      const isNarrow = window.innerWidth < 640; // sm breakpoint
 
       // Desktop behavior: desktop browser on reasonable width
       // Mobile behavior: actual mobile device OR extremely narrow desktop

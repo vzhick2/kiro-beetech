@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import {
-  usePurchases,
   useCreateDraftPurchase,
   useUpdateDraftPurchase,
 } from '@/hooks/use-purchases';
@@ -308,7 +307,7 @@ export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
           <div className="text-center py-12 text-gray-500">
             <p>Line items management coming soon...</p>
             <p className="text-sm mt-1">
-              You'll be able to add items to this purchase order here.
+              You&apos;ll be able to add items to this purchase order here.
             </p>
           </div>
         </div>

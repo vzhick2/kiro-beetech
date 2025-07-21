@@ -34,7 +34,7 @@ export default function SuppliersDebugPage() {
           Suppliers Database Debug
         </h2>
         <p className="text-yellow-700 mb-4">
-          This page tests the direct database connection to see what's in the
+          This page tests the direct database connection to see what&apos;s in the
           suppliers table.
         </p>
 
