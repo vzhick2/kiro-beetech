@@ -175,7 +175,29 @@ The project has comprehensive MCP integration for enhanced development workflow:
 - Use `pnpm supabase:types` for updating database types
 
 ## Git Workflow Rules (2025 Modern Approach)
-### Primary Workflow: VS Code Integrated Git
+### Single Batch Sync & Commit Process (PREFERRED)
+- **Primary Workflow**: GitHub MCP for multi-file batch operations
+- **Batch Commit Template**: Use `mcp_github_push_files` for atomic commits with multiple files
+- **Immediate Local Sync**: Always sync VS Code after MCP operations
+- **Benefits**: ~85% faster than traditional Git, atomic commits, no terminal dependency
+
+### Batch Commit Example Pattern
+```typescript
+// When AI needs to commit multiple changes:
+mcp_github_push_files({
+  owner: "vzhick2",
+  repo: "kiro-beetech", 
+  branch: "main",
+  files: [
+    {path: "file1.ts", content: "..."},
+    {path: "file2.tsx", content: "..."},
+    // ... all related files in single atomic commit
+  ],
+  message: "feat: descriptive message covering all changes\n\n- Bullet point 1\n- Bullet point 2\n- Technical details and impact"
+})
+```
+
+### VS Code Auto-Sync Integration
 - **VS Code Auto-Sync**: Configured with `git.autofetch: true` (checks remote every 3 minutes)
 - **Status Bar Sync**: Use the "Synchronize Changes" button for one-click pull + push
 - **Source Control Panel**: `Ctrl+Shift+G` for visual commit and sync management
