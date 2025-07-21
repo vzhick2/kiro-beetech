@@ -1,0 +1,444 @@
+'use server';
+
+import { supabaseAdmin } from '@/lib/supabase';
+import { revalidatePath } from 'next/cache';
+
+// Helper function to generate display ID
+function generateDisplayId(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const random = Math.floor(Math.random() * 999) + 1;
+  const randomStr = String(random).padStart(3, '0');
+  return `PO-${year}${month}${day}-${randomStr}`;
+}
+
+export async function getDraftPurchases() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('purchases')
+      .select(
+        `
+        *,
+        supplier:suppliers(name),
+        line_items:purchase_line_items(
+          *,
+          item:items(name, sku, type)
+        )
+      `
+      )
+      .eq('isdraft', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to fetch draft purchases:', error);
+    return { success: false, error: 'Failed to fetch draft purchases' };
+  }
+}
+
+export async function getAllPurchases() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('purchases')
+      .select(
+        `
+        *,
+        supplier:suppliers(name),
+        line_items:purchase_line_items(
+          *,
+          item:items(name, sku, type)
+        )
+      `
+      )
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to fetch purchases:', error);
+    return { success: false, error: 'Failed to fetch purchases' };
+  }
+}
+
+// Enhanced purchase creation with smart allocation support
+export async function createDraftPurchase(purchaseData: {
+  supplierId: string;
+  purchaseDate: string;
+  effectiveDate: string;
+  totalAmount: number;
+  shippingCost?: number;
+  taxAmount?: number;
+  otherFees?: number;
+  nonInventoryTotal?: number;
+  notes?: string;
+}) {
+  try {
+    const displayId = generateDisplayId();
+
+    const { data, error } = await supabaseAdmin
+      .from('purchases')
+      .insert({
+        displayid: displayId,
+        supplierid: purchaseData.supplierId,
+        purchasedate: purchaseData.purchaseDate,
+        effectivedate: purchaseData.effectiveDate,
+        total: purchaseData.totalAmount,
+        shipping_cost: purchaseData.shippingCost || 0,
+        tax_amount: purchaseData.taxAmount || 0,
+        other_fees: purchaseData.otherFees || 0,
+        non_inventory_total: purchaseData.nonInventoryTotal || 0,
+        notes: purchaseData.notes || null,
+        isdraft: true,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to create draft purchase:', error);
+    return { success: false, error: 'Failed to create draft purchase' };
+  }
+}
+
+export async function updateDraftPurchase(
+  purchaseId: string,
+  purchaseData: {
+    supplierId?: string;
+    purchaseDate?: string;
+    effectiveDate?: string;
+    totalAmount?: number;
+    shippingCost?: number;
+    taxAmount?: number;
+    otherFees?: number;
+    nonInventoryTotal?: number;
+    notes?: string;
+  }
+) {
+  try {
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (purchaseData.supplierId) {
+      updateData.supplierid = purchaseData.supplierId;
+    }
+    if (purchaseData.purchaseDate) {
+      updateData.purchasedate = purchaseData.purchaseDate;
+    }
+    if (purchaseData.effectiveDate) {
+      updateData.effectivedate = purchaseData.effectiveDate;
+    }
+    if (purchaseData.totalAmount !== undefined) {
+      updateData.total = purchaseData.totalAmount;
+    }
+    if (purchaseData.shippingCost !== undefined) {
+      updateData.shipping_cost = purchaseData.shippingCost;
+    }
+    if (purchaseData.taxAmount !== undefined) {
+      updateData.tax_amount = purchaseData.taxAmount;
+    }
+    if (purchaseData.otherFees !== undefined) {
+      updateData.other_fees = purchaseData.otherFees;
+    }
+    if (purchaseData.nonInventoryTotal !== undefined) {
+      updateData.non_inventory_total = purchaseData.nonInventoryTotal;
+    }
+    if (purchaseData.notes !== undefined) {
+      updateData.notes = purchaseData.notes || null;
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('purchases')
+      .update(updateData)
+      .eq('purchaseid', purchaseId)
+      .eq('isdraft', true) // Safety check - only update drafts
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to update draft purchase:', error);
+    return { success: false, error: 'Failed to update draft purchase' };
+  }
+}
+
+// Enhanced line item creation with base cost tracking
+export async function addLineItem(
+  purchaseId: string,
+  lineItemData: {
+    itemId: string;
+    quantity: number;
+    baseUnitCost: number; // The actual item cost before allocation
+    isOverheadItem?: boolean; // For non-quantity tracking items
+    notes?: string;
+  }
+) {
+  try {
+    const totalCost = lineItemData.quantity * lineItemData.baseUnitCost;
+
+    const { data, error } = await supabaseAdmin
+      .from('purchase_line_items')
+      .insert({
+        purchaseid: purchaseId,
+        itemid: lineItemData.itemId,
+        quantity: lineItemData.quantity,
+        unitcost: lineItemData.baseUnitCost, // Will be updated during allocation
+        base_unit_cost: lineItemData.baseUnitCost,
+        totalcost: totalCost,
+        is_overhead_item: lineItemData.isOverheadItem || false,
+        notes: lineItemData.notes || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to add line item:', error);
+    return { success: false, error: 'Failed to add line item' };
+  }
+}
+
+export async function updateLineItem(
+  lineItemId: string,
+  lineItemData: {
+    itemId?: string;
+    quantity?: number;
+    baseUnitCost?: number;
+    isOverheadItem?: boolean;
+    notes?: string;
+  }
+) {
+  try {
+    // First get current line item to calculate total cost
+    const { data: currentLineItem, error: fetchError } = await supabaseAdmin
+      .from('purchase_line_items')
+      .select('quantity, base_unit_cost')
+      .eq('lineitemid', lineItemId)
+      .single();
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    const updateData: Record<string, any> = {};
+
+    if (lineItemData.itemId) {
+      updateData.itemid = lineItemData.itemId;
+    }
+    if (lineItemData.quantity !== undefined) {
+      updateData.quantity = lineItemData.quantity;
+    }
+    if (lineItemData.baseUnitCost !== undefined) {
+      updateData.base_unit_cost = lineItemData.baseUnitCost;
+      updateData.unitcost = lineItemData.baseUnitCost; // Will be recalculated during allocation
+    }
+    if (lineItemData.isOverheadItem !== undefined) {
+      updateData.is_overhead_item = lineItemData.isOverheadItem;
+    }
+    if (lineItemData.notes !== undefined) {
+      updateData.notes = lineItemData.notes || null;
+    }
+
+    // Calculate new total cost
+    const finalQuantity = lineItemData.quantity ?? currentLineItem.quantity;
+    const finalBaseUnitCost = lineItemData.baseUnitCost ?? currentLineItem.base_unit_cost;
+    updateData.totalcost = finalQuantity * finalBaseUnitCost;
+
+    const { data, error } = await supabaseAdmin
+      .from('purchase_line_items')
+      .update(updateData)
+      .eq('lineitemid', lineItemId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to update line item:', error);
+    return { success: false, error: 'Failed to update line item' };
+  }
+}
+
+export async function deleteLineItem(lineItemId: string) {
+  try {
+    const { error } = await supabaseAdmin
+      .from('purchase_line_items')
+      .delete()
+      .eq('lineitemid', lineItemId);
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete line item:', error);
+    return { success: false, error: 'Failed to delete line item' };
+  }
+}
+
+// Preview allocation before finalizing
+export async function previewAllocation(purchaseId: string) {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('calculate_smart_allocation', {
+      p_purchase_id: purchaseId,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to preview allocation:', error);
+    return { success: false, error: 'Failed to preview allocation' };
+  }
+}
+
+// Finalize with smart allocation
+export async function finalizeDraftPurchase(purchaseId: string) {
+  try {
+    // Use the new smart allocation function
+    const { data, error } = await supabaseAdmin.rpc('finalize_purchase_with_smart_allocation', {
+      p_purchase_id: purchaseId,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    // Check if finalization was successful
+    if (data && data.length > 0 && !data[0].success) {
+      return { success: false, error: data[0].message };
+    }
+
+    revalidatePath('/purchases');
+    revalidatePath('/items');
+    revalidatePath('/');
+
+    return { success: true, message: data?.[0]?.message || 'Purchase finalized successfully' };
+  } catch (error) {
+    console.error('Failed to finalize draft purchase:', error);
+    return { success: false, error: 'Failed to finalize purchase' };
+  }
+}
+
+export async function deleteDraftPurchase(purchaseId: string) {
+  try {
+    // Delete line items first (cascade should handle this, but being explicit)
+    const { error: lineItemsError } = await supabaseAdmin
+      .from('purchase_line_items')
+      .delete()
+      .eq('purchaseid', purchaseId);
+
+    if (lineItemsError) {
+      throw lineItemsError;
+    }
+
+    // Delete purchase
+    const { error: purchaseError } = await supabaseAdmin
+      .from('purchases')
+      .delete()
+      .eq('purchaseid', purchaseId)
+      .eq('isdraft', true); // Safety check - only delete drafts
+
+    if (purchaseError) {
+      throw purchaseError;
+    }
+
+    revalidatePath('/purchases');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete draft purchase:', error);
+    return { success: false, error: 'Failed to delete draft purchase' };
+  }
+}
+
+// Helper function to calculate current purchase totals for validation
+export async function calculatePurchaseVariance(purchaseId: string) {
+  try {
+    const { data: purchase, error: purchaseError } = await supabaseAdmin
+      .from('purchases')
+      .select('total, shipping_cost, tax_amount, other_fees, non_inventory_total')
+      .eq('purchaseid', purchaseId)
+      .single();
+
+    if (purchaseError) {
+      throw purchaseError;
+    }
+
+    const { data: lineItems, error: itemsError } = await supabaseAdmin
+      .from('purchase_line_items')
+      .select('quantity, base_unit_cost, is_overhead_item')
+      .eq('purchaseid', purchaseId);
+
+    if (itemsError) {
+      throw itemsError;
+    }
+
+    const itemsSubtotal = lineItems?.reduce((sum, item) => {
+      return sum + (item.quantity * item.base_unit_cost);
+    }, 0) || 0;
+
+    const calculatedTotal = itemsSubtotal + 
+                           (purchase.shipping_cost || 0) + 
+                           (purchase.tax_amount || 0) + 
+                           (purchase.other_fees || 0) + 
+                           (purchase.non_inventory_total || 0);
+
+    const variance = Math.abs(calculatedTotal - (purchase.total || 0));
+
+    return {
+      success: true,
+      data: {
+        itemsSubtotal,
+        shippingCost: purchase.shipping_cost || 0,
+        taxAmount: purchase.tax_amount || 0,
+        otherFees: purchase.other_fees || 0,
+        nonInventoryTotal: purchase.non_inventory_total || 0,
+        calculatedTotal,
+        actualTotal: purchase.total || 0,
+        variance,
+        isValid: variance < 0.50
+      }
+    };
+  } catch (error) {
+    console.error('Failed to calculate variance:', error);
+    return { success: false, error: 'Failed to calculate variance' };
+  }
+}
