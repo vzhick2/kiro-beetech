@@ -1,0 +1,163 @@
+'use server';
+
+import { supabaseAdmin } from '@/lib/supabase';
+import { revalidatePath } from 'next/cache';
+
+// Types for inventory operations
+export interface InventoryDeductionRequest {
+  itemId: string;
+  quantity: number;
+  transactionType: 'sale' | 'adjustment' | 'batch_consumption';
+  referenceId?: string;
+  referenceType?: string;
+  effectiveDate?: string;
+  unitCost?: number;
+  notes?: string;
+}
+
+export interface RecipeConsumptionRequest {
+  recipeId: string;
+  batchQuantity: number;
+  batchId?: string;
+  effectiveDate?: string;
+}
+
+export interface InventoryAdjustmentRequest {
+  itemId: string;
+  newQuantity: number;
+  reason?: string;
+  effectiveDate?: string;
+}
+
+// Deduct inventory for sales, consumption, or adjustments
+export async function deductInventory(request: InventoryDeductionRequest) {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('deduct_inventory', {
+      item_id: request.itemId,
+      quantity_to_deduct: request.quantity,
+      transaction_type_param: request.transactionType,
+      reference_id: request.referenceId || null,
+      reference_type: request.referenceType || null,
+      effective_date: request.effectiveDate || new Date().toISOString().split('T')[0],
+      unit_cost: request.unitCost || null,
+      notes: request.notes || null,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/items');
+    revalidatePath('/');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to deduct inventory:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to deduct inventory' 
+    };
+  }
+}
+
+// Process recipe ingredient consumption for batch production
+export async function consumeRecipeIngredients(request: RecipeConsumptionRequest) {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('consume_recipe_ingredients', {
+      recipe_id: request.recipeId,
+      batch_quantity: request.batchQuantity,
+      batch_id: request.batchId || null,
+      effective_date: request.effectiveDate || new Date().toISOString().split('T')[0],
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/items');
+    revalidatePath('/batches');
+    revalidatePath('/recipes');
+    revalidatePath('/');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to consume recipe ingredients:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to consume recipe ingredients' 
+    };
+  }
+}
+
+// Manual inventory adjustments (cycle counts, corrections, etc.)
+export async function adjustInventory(request: InventoryAdjustmentRequest) {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('adjust_inventory', {
+      item_id: request.itemId,
+      new_quantity: request.newQuantity,
+      reason: request.reason || 'Manual adjustment',
+      effective_date: request.effectiveDate || new Date().toISOString().split('T')[0],
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath('/items');
+    revalidatePath('/');
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to adjust inventory:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to adjust inventory' 
+    };
+  }
+}
+
+// Quick sale recording (common use case)
+export async function recordSale(itemId: string, quantity: number, salePrice?: number, notes?: string) {
+  return deductInventory({
+    itemId,
+    quantity,
+    transactionType: 'sale',
+    referenceType: 'sale',
+    unitCost: salePrice,
+    notes: notes || `Sale of ${quantity} units`,
+  });
+}
+
+// Quick waste/spoilage recording
+export async function recordWaste(itemId: string, quantity: number, reason?: string) {
+  return deductInventory({
+    itemId,
+    quantity,
+    transactionType: 'adjustment',
+    referenceType: 'waste',
+    notes: reason ? `Waste: ${reason}` : `Waste of ${quantity} units`,
+  });
+}
+
+// Bulk inventory adjustments (for cycle counts)
+export async function bulkInventoryAdjustments(adjustments: Array<{
+  itemId: string;
+  newQuantity: number;
+  reason?: string;
+}>) {
+  const results = [];
+  
+  for (const adjustment of adjustments) {
+    const result = await adjustInventory({
+      itemId: adjustment.itemId,
+      newQuantity: adjustment.newQuantity,
+      reason: adjustment.reason || 'Cycle count adjustment',
+    });
+    results.push({ itemId: adjustment.itemId, ...result });
+  }
+
+  revalidatePath('/items');
+  revalidatePath('/');
+
+  return { success: true, results };
+}
