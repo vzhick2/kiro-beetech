@@ -56,3 +56,4 @@ tailwindcss-*.log
 # Supabase
 .supabase/
 node_modules
+.cursor/
