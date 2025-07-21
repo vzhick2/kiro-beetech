@@ -2,7 +2,7 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { CreateSupplierRequest } from '@/types';
-import { z } from 'zod';
+
 import { SupplierSchema } from '@/lib/validations';
 
 const SupplierUpdateSchema = SupplierSchema.partial();

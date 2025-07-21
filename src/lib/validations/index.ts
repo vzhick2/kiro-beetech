@@ -80,6 +80,17 @@ export const PurchaseSchema = z.object({
   updated_at: z.date().optional(),
 });
 
+export const PurchaseUpdateSchema = z.object({
+  supplierId: z.string().uuid().optional(),
+  purchaseDate: z.date().optional(),
+  effectiveDate: z.date().optional(),
+  grandTotal: z.number().min(0, 'Grand total cannot be negative').optional(),
+  shipping: z.number().min(0).optional(),
+  taxes: z.number().min(0).optional(),
+  otherCosts: z.number().min(0).optional(),
+  notes: z.string().max(1000).optional(),
+});
+
 export const RecipeIngredientSchema = z.object({
   ingredientId: z.string().uuid(),
   recipeId: z.string().uuid(),
