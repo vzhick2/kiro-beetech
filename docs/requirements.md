@@ -312,3 +312,13 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 ---
 
 _For technical implementation details, see [technical-design.md](./technical-design.md). For database schema, see [data-model.md](./data-model.md)._
+
+### **Security and Optimization (2025-07-21)**
+- Server actions are now restricted to trusted domains via `serverActions.allowedOrigins` in `next.config.ts`.
+- No images currently used in the UI; if added in the future, use Next.js `<Image />` for performance and LCP.
+
+### **Spreadsheet-Lite Bulk Editing** (2025-07-21)
+- All major data tables (suppliers, items, purchases, batches, etc.) will support inline, spreadsheet-like editing and batch operations.
+- Implementation will use TanStack Table v8 for robust grid features.
+- Each table will be bespoke, with master-detail views as needed.
+- Focus is on minimizing user time and maximizing flexibility for small business workflows.

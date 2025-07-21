@@ -2,6 +2,8 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { PurchaseSchema, PurchaseUpdateSchema, PurchaseLineItemSchema } from '@/lib/validations';
 
 // Helper function to generate display ID
 function generateDisplayId(): string {
@@ -69,16 +71,11 @@ export async function getAllPurchases() {
   }
 }
 
-export async function createDraftPurchase(purchaseData: {
-  supplierId: string;
-  purchaseDate: string;
-  effectiveDate: string;
-  grandTotal: number;
-  shipping?: number;
-  taxes?: number;
-  otherCosts?: number;
-  notes?: string;
-}) {
+export async function createDraftPurchase(purchaseData: any) {
+  const parseResult = PurchaseSchema.safeParse(purchaseData);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid purchase data', details: parseResult.error.flatten() };
+  }
   try {
     const displayId = generateDisplayId();
 
@@ -114,17 +111,12 @@ export async function createDraftPurchase(purchaseData: {
 
 export async function updateDraftPurchase(
   purchaseId: string,
-  purchaseData: {
-    supplierId?: string;
-    purchaseDate?: string;
-    effectiveDate?: string;
-    grandTotal?: number;
-    shipping?: number;
-    taxes?: number;
-    otherCosts?: number;
-    notes?: string;
-  }
+  purchaseData: any
 ) {
+  const parseResult = PurchaseUpdateSchema.safeParse(purchaseData);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid update data', details: parseResult.error.flatten() };
+  }
   try {
     const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
@@ -178,13 +170,12 @@ export async function updateDraftPurchase(
 
 export async function addLineItem(
   purchaseId: string,
-  lineItemData: {
-    itemId: string;
-    quantity: number;
-    unitCost: number;
-    notes?: string;
-  }
+  lineItemData: any
 ) {
+  const parseResult = PurchaseLineItemSchema.safeParse(lineItemData);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid line item data', details: parseResult.error.flatten() };
+  }
   try {
     const totalCost = lineItemData.quantity * lineItemData.unitCost;
 
@@ -216,13 +207,12 @@ export async function addLineItem(
 
 export async function updateLineItem(
   lineItemId: string,
-  lineItemData: {
-    itemId?: string;
-    quantity?: number;
-    unitCost?: number;
-    notes?: string;
-  }
+  lineItemData: any
 ) {
+  const parseResult = PurchaseLineItemSchema.partial().safeParse(lineItemData);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid line item update', details: parseResult.error.flatten() };
+  }
   try {
     // First get current line item to calculate total cost
     const { data: currentLineItem, error: fetchError } = await supabaseAdmin

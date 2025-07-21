@@ -2,6 +2,10 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { CreateSupplierRequest } from '@/types';
+import { z } from 'zod';
+import { SupplierSchema } from '@/lib/validations';
+
+const SupplierUpdateSchema = SupplierSchema.partial();
 
 export async function getSuppliers() {
   try {
@@ -23,6 +27,10 @@ export async function getSuppliers() {
 }
 
 export async function createSupplier(supplierData: CreateSupplierRequest) {
+  const parseResult = SupplierSchema.safeParse(supplierData);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid supplier data', details: parseResult.error.flatten() };
+  }
   try {
     const insertData: any = {
       name: supplierData.name,
@@ -68,6 +76,10 @@ export async function updateSupplier(
   supplierId: string,
   updates: Record<string, unknown>
 ) {
+  const parseResult = SupplierUpdateSchema.safeParse(updates);
+  if (!parseResult.success) {
+    return { success: false, error: 'Invalid update data', details: parseResult.error.flatten() };
+  }
   try {
     const { data, error } = await supabaseAdmin
       .from('suppliers')
@@ -108,6 +120,9 @@ export async function deleteSupplier(supplierId: string) {
 }
 
 export async function bulkDeleteSuppliers(supplierIds: string[]) {
+  if (!Array.isArray(supplierIds) || supplierIds.some(id => typeof id !== 'string')) {
+    return { success: false, error: 'Invalid supplier IDs' };
+  }
   try {
     if (supplierIds.length === 0) {
       return { success: true, deletedCount: 0 };
@@ -131,6 +146,9 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
 }
 
 export async function bulkArchiveSuppliers(supplierIds: string[]) {
+  if (!Array.isArray(supplierIds) || supplierIds.some(id => typeof id !== 'string')) {
+    return { success: false, error: 'Invalid supplier IDs' };
+  }
   try {
     if (supplierIds.length === 0) {
       return { success: true, archivedCount: 0 };

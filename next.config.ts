@@ -20,6 +20,9 @@ const nextConfig: NextConfig = {
         },
       },
     },
+    serverActions: {
+      allowedOrigins: ['http://localhost:3000', 'https://your-production-domain.com'],
+    },
   },
 
   // Image optimization

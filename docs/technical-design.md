@@ -849,6 +849,39 @@ export function useTrackingModeGestures(itemId: string) {
 }
 ```
 
+## Authentication, Authorization, and Access Control (2025-07-21)
+
+- **Authentication:**
+  - The app uses Supabase Auth for internal user authentication. Only trusted users are provisioned accounts; there is no public sign-up.
+- **Server Actions:**
+  - All server actions use the Supabase Admin client (`supabaseAdmin`), which bypasses RLS and is only accessible to trusted, authenticated users.
+  - No user-facing server actions are exposed to the public.
+- **Row-Level Security (RLS):**
+  - RLS is enforced at the database level for all user-facing endpoints (if needed in the future).
+  - For now, all critical actions are performed by trusted users via the admin client.
+- **Access Control:**
+  - No complex role-based access control is implemented, as the app is for a small internal team.
+  - If multi-role or external access is needed in the future, RLS and role checks can be extended.
+
+## 2025-07-21: Security and Optimization Updates
+
+- **Server Actions Security:**
+  - `next.config.ts` now includes `serverActions.allowedOrigins` to restrict server actions to trusted domains (localhost and production domain).
+  - Update your production domain in this config before deploying.
+
+- **Image Optimization:**
+  - As of this update, the app does not use images in the UI. For any future images, use the Next.js `<Image />` component for LCP and responsive optimization.
+
+## 2025-07-21: Spreadsheet-Lite Bulk Editing Decision
+
+- **Bulk Edit Everywhere:**
+  - All major data tables (suppliers, items, purchases, batches, etc.) will support spreadsheet-like bulk editing.
+  - Implementation will use TanStack Table v8 for robust, flexible grid features.
+  - Each page will have a bespoke table design, tailored to the workflow and data needs of that domain.
+  - Inline editing, multi-row selection, and batch operations will be supported.
+  - Master-detail views may be added where appropriate (e.g., purchases with line items), to be decided per page.
+  - The goal is to minimize user time and maximize flexibility, making the app feel as close to a spreadsheet as possible while retaining business logic and validation.
+
 ---
 
 _This technical design reflects the simplified, business-focused approach prioritizing meaningful COGS tracking over perfectionist inventory management. For implementation details, see [development-guide.md](./development-guide.md). For database schema, see [data-model.md](./data-model.md)._
