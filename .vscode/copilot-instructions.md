@@ -10,8 +10,9 @@
 - **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
 - **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
 - **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
-- ALWAYS ask "Should I implement this?" before making file changes
-- Provide options first, then wait for explicit approval
+- **Smart Permission Model**: 
+  - ASK for new features, schema changes, major architecture decisions
+  - IMPLEMENT autonomously for bug fixes, UI polish, performance improvements, small enhancements
 - Follow docs/requirements.md for feature specifications
 - Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
 - Reference docs/technical-design.md for architecture decisions
@@ -27,6 +28,11 @@
 - Follow established naming conventions
 - Update tasks.md with ✅ and completion date when marking tasks complete
 - Update CHANGELOG.md with version and description when adding features
+- **UI Polish & Styling**: Improve existing interfaces, fix responsive issues, enhance UX
+- **Performance Fixes**: Database indexes, query optimization, bundle size improvements
+- **Bug Fixes**: Resolve errors, fix broken functionality, improve error handling
+- **Code Refactoring**: Improve code quality, extract utilities, optimize components
+- **Small Feature Enhancements**: Extend existing functionality without changing core logic
 
 ### Permission Required Actions
 - Add new features or components
@@ -178,45 +184,54 @@ To eliminate all the complexity you just experienced, here's the new simplified 
 - NO complex merge resolution instructions
 
 **VS Code Git Integration (User-Friendly)**
-- **Status Bar Sync**: Click sync button for pull/push (one-click operation)
-- **Source Control Panel**: `Ctrl+Shift+G` for visual Git management
-- **Auto-Resolve**: Let VS Code handle merge conflicts with built-in editor
-- **Simple Commits**: Use commit message box and commit button
-- **No CLI Required**: Everything through VS Code interface
+- **Status Bar Sync**: Use the "Synchronize Changes" button for one-click pull + push
+- **Source Control Panel**: `Ctrl+Shift+G` for visual commit and sync management
+- **Smart Commit**: Enabled `git.postCommitCommand: "sync"` for automatic sync after commits
+- **Visual Indicators**: Status bar shows `↑1 ↓2` for ahead/behind commit counts
 
-**When Conflicts Happen (SIMPLIFIED)**
-1. **Click "Resolve in Merge Editor"** (VS Code will guide you)
-2. **Accept Current/Incoming** as appropriate (visual interface)
-3. **Click "Complete Merge"** (one button)
-4. **Click "Commit"** (standard VS Code flow)
+### MCP Integration Strategy
+- **GitHub MCP**: Use for complex multi-file operations and bulk changes (~85% faster)
+- **Immediate Sync After MCP**: Always run VS Code sync or `git pull` after MCP commits
+- **Local-Remote Alignment**: MCP bypasses local Git, so sync immediately to maintain IDE consistency
+- **Batch Operations**: Group related changes into single atomic commits via GitHub MCP
 
-**AI Role in Git Operations**
-- **AI commits via MCP**: When implementing features across multiple files
-- **User commits via VS Code**: For their own changes and edits
-- **No AI Git advice**: Unless user specifically asks for Git help
-- **Focus on code**: AI focuses on implementation, user handles Git workflow
+### Sync Workflow After MCP Operations
+1. **After MCP Commit**: VS Code status bar shows "behind" indicator
+2. **Click Sync Button**: One-click in status bar pulls MCP changes + pushes any local commits  
+3. **Alternative CLI**: `git stash → git pull → git stash pop` for manual sync
+4. **Verification**: Status bar returns to clean state (no arrows)
 
-### GitHub MCP Usage (AI Only)
-```typescript
-// Only when AI implements features:
-mcp_github_push_files({
-  owner: "vzhick2",
-  repo: "kiro-beetech", 
-  branch: "main",
-  files: [{path: "file.ts", content: "..."}],
-  message: "feat: implement X\n\n- Details"
-})
-```
-
-**Post-MCP Sync (Simple)**
-- AI tells user: "Please click the sync button in VS Code status bar"
-- That's it. No complex commands or explanations.
+### Traditional Git (Fallback Only)
+- **Use When**: MCP unavailable or single-file changes
+- **Commands**: `git add . && git commit -m "message" && git push origin main`  
+- **Branch Strategy**: Direct commits to main branch for internal development (no PR overhead)
 
 ## Development Server Rules
 - NEVER suggest or ask to run `pnpm dev` or start development servers
 - User manages development server independently
 - Focus on code implementation and testing via build validation
 - Use `pnpm build` to verify functionality instead of running servers
+
+## Modern 2025 Development Environment
+### VS Code Configuration
+- **Auto-Fetch**: Enabled for automatic remote change detection (3-minute intervals)
+- **Smart Sync**: One-click synchronization via status bar integration
+- **Source Control Integration**: Visual commit and sync management (`Ctrl+Shift+G`)
+- **Conflict Resolution**: Built-in 3-way merge editor for handling conflicts
+- **Real-time Status**: Always-visible ahead/behind indicators in status bar
+
+### IDE-First Workflow Benefits
+- **No Terminal Commands**: Git operations through VS Code UI
+- **Visual Git State**: Real-time indicators for repository status
+- **Automatic Conflict Detection**: IDE alerts for merge conflicts
+- **Integrated Diff Viewer**: Side-by-side change visualization
+- **One-Click Operations**: Sync, commit, and push without CLI knowledge
+
+### Expert 2025 Patterns
+- **Status Bar First**: Always check sync status before starting work
+- **Auto-Sync After MCP**: Immediate synchronization after GitHub MCP operations  
+- **Visual Confirmation**: Use Source Control panel to verify changes before commit
+- **Smart Commits**: IDE automatically suggests sync after commit operations
 
 ## AI Behavior Rules
 - This is an internal business tool prioritizing flexibility over rigid constraints
