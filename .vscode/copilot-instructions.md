@@ -39,9 +39,6 @@
 - Create test components or example code
 - Update data-model.md and api-documentation.md when modifying database schema
 - Update technical-design.md when changing architecture decisions
-- **Add package.json scripts** (favor built-in tools and IDE features over custom scripts)
-- **Create configuration files** (.vscode/*, .env.*, etc.) unless specifically requested
-- **Add automation** that could be handled by existing IDE or platform features
 
 ## Error Prevention Rules
 - Check existing implementations before creating new ones
@@ -50,13 +47,6 @@
 - Verify imports and dependencies before adding
 - Check for duplicate functionality
 - Ensure all documentation is aligned before finalizing changes
-
-## Minimalism and Simplicity Rules
-- **Favor Built-in Solutions**: Use platform/IDE features over custom scripts
-- **No Unnecessary Files**: Don't create configs, scripts, or docs unless explicitly requested
-- **Question Complexity**: Ask "Is this simpler than existing approaches?" before adding anything
-- **Modern Over Legacy**: Prefer 2025 built-in capabilities (VS Code Git, auto-fetch) over manual solutions
-- **User Approval Required**: For any file creation that adds project complexity or maintenance burden
 
 ## Code Standards (AI Must Follow)
 - Use TypeScript strict mode with explicit return types
@@ -173,6 +163,8 @@ The project has comprehensive MCP integration for enhanced development workflow:
 - Use `pnpm ai:type-check` for fast type-check only
 - Use `pnpm build` for production build
 - Use `pnpm supabase:types` for updating database types
+- Use `pnpm sync:after-mcp` for post-MCP synchronization (automated stash/pull/pop)
+- Use `pnpm sync:force` for quick pull when no local changes exist
 
 ## Git Workflow Rules (2025 Modern Approach)
 ### Primary Workflow: VS Code Integrated Git
