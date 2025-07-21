@@ -192,40 +192,49 @@ To eliminate all the complexity you just experienced, here's the new simplified 
 
 **When Conflicts Happen (SIMPLIFIED)**
 1. **Click "Resolve in Merge Editor"** (VS Code will guide you)
-2. **Accept Current/Incoming/Both** (visual interface)
+2. **Accept Current/Incoming** as appropriate (visual interface)
 3. **Click "Complete Merge"** (one button)
-4. **Commit through VS Code UI** (standard commit)
+4. **Click "Commit"** (standard VS Code flow)
 
-**GitHub MCP Usage Pattern**
-- **Batch Changes**: Use MCP for multiple related files (docs updates, refactoring)
-- **Single Files**: User manages directly through VS Code
-- **Merge Conflicts**: User resolves through VS Code, AI doesn't interfere
-- **Complex Operations**: Branch management, PRs, etc. through GitHub web interface
+**AI Role in Git Operations**
+- **AI commits via MCP**: When implementing features across multiple files
+- **User commits via VS Code**: For their own changes and edits
+- **No AI Git advice**: Unless user specifically asks for Git help
+- **Focus on code**: AI focuses on implementation, user handles Git workflow
 
-**AI Responsibilities (SIMPLIFIED)**
-- ✅ **DO**: Use GitHub MCP for batch documentation updates, multi-file features
-- ✅ **DO**: Provide clear commit messages with scope and impact
-- ❌ **DON'T**: Give terminal git commands unless specifically asked
-- ❌ **DON'T**: Provide complex merge resolution steps
-- ❌ **DON'T**: Assume user wants to use terminal over VS Code UI
+### GitHub MCP Usage (AI Only)
+```typescript
+// Only when AI implements features:
+mcp_github_push_files({
+  owner: "vzhick2",
+  repo: "kiro-beetech", 
+  branch: "main",
+  files: [{path: "file.ts", content: "..."}],
+  message: "feat: implement X\n\n- Details"
+})
+```
 
-**User Responsibilities (SIMPLIFIED)**
-- ✅ **DO**: Use VS Code Source Control panel for day-to-day commits
-- ✅ **DO**: Click VS Code sync button for pull/push operations
-- ✅ **DO**: Use VS Code merge editor for conflict resolution
-- ❌ **DON'T**: Feel obligated to use terminal commands
-- ❌ **DON'T**: Worry about complex git workflows
+**Post-MCP Sync (Simple)**
+- AI tells user: "Please click the sync button in VS Code status bar"
+- That's it. No complex commands or explanations.
 
-### GitHub MCP Integration Rules
+## Development Server Rules
+- NEVER suggest or ask to run `pnpm dev` or start development servers
+- User manages development server independently
+- Focus on code implementation and testing via build validation
+- Use `pnpm build` to verify functionality instead of running servers
+
+## AI Behavior Rules
+- This is an internal business tool prioritizing flexibility over rigid constraints
+- Focus on real-world workflows and forgiving data entry
+- Implement business logic that matches actual workshop operations
+- Prioritize user experience over technical perfection 
+- **Git Simplicity**: Never overcomplicate Git operations - keep it simple and VS Code-centric
+
+## Commit Message Standards
+- Use descriptive, present-tense messages
+- Include what was changed and why with technical details
+- Avoid generic messages like "fix bug" or "update code"
+- **VS Code Integration**: Use GitHub Copilot commit message generation when available
+- **MCP Commits**: Include context about MCP operations in commit messages
 - **Batch Changes**: Clearly describe scope of multi-file operations
-- **Atomic Commits**: Group related changes in single commits
-- **Clear Messages**: Include scope (docs:, feat:, fix:) and impact description
-- **File Organization**: Ensure related changes are committed together
-
-### MCP Success Indicators
-- ✅ **Multiple file commits**: Documentation updates, feature implementations
-- ✅ **Clear commit messages**: Scope and impact clearly described  
-- ✅ **Atomic operations**: Related changes grouped logically
-- ✅ **User autonomy preserved**: User maintains control over their git workflow
-
-**Key Insight**: This approach gives users the choice between VS Code's user-friendly interface and GitHub MCP's efficiency for batch operations, without forcing terminal complexity.

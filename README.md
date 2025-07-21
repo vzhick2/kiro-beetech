@@ -89,8 +89,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 1. **Clone the repository**
 
    ```bash
-   git clone <private-repository-url>
-   cd kiro-inventory-management
+   git clone https://github.com/vzhick2/kiro-beetech.git
+   cd kiro-beetech
    ```
 
 2. **Install dependencies**
@@ -102,16 +102,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 3. **Environment setup**
 
    ```bash
-   # Copy the example environment file
    cp .env.example .env.local
-   ```
-
-   Edit `.env.local` and add your actual Supabase credentials:
-
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_actual_anon_key_here
-   SUPABASE_SERVICE_ROLE_KEY=your_actual_service_role_key_here
+   # Add your Supabase credentials
    ```
 
    **Get your keys from:** https://supabase.com/dashboard/project/jjpklpivpvywagmjjwpu/settings/api
@@ -119,10 +111,7 @@ KIRO is a **private, business-focused inventory management system** designed spe
 4. **Run database migrations**
 
    ```bash
-   # Apply all business logic fixes and enhancements
-   pnpm supabase:reset  # If starting fresh
-   # OR
-   pnpm supabase:migrate  # If updating existing database
+   pnpm supabase:migrate
    ```
 
 5. **Run development server**
@@ -136,81 +125,97 @@ KIRO is a **private, business-focused inventory management system** designed spe
    http://localhost:3000
    ```
 
-## 🏗️ **Design Philosophy**
+## 📚 **Documentation**
 
-This app follows a **simplified, business-focused approach** that prioritizes practical cost management over perfectionist inventory tracking:
+- **[Requirements](docs/requirements.md)** - Business requirements and feature specifications
+- **[Data Model](docs/data-model.md)** - Database schema and relationships
+- **[Technical Design](docs/technical-design.md)** - Architecture decisions and patterns
+- **[Development Guide](docs/development-guide.md)** - Development standards and workflow
+- **[Tasks](docs/tasks.md)** - Development progress and task tracking
+- **[UI Blueprint](docs/ui-blueprint.md)** - UI design patterns and mobile-first approach
 
-### **80/20 Cost Tracking**
+## 🔧 **Development**
 
-- Focus on items that matter most for profitability
-- Flexible tracking modes based on business importance
-- Smart allocation reduces manual calculation overhead
+### **Commands**
 
-### **Statement-Based Workflow**
+```bash
+# Development
+pnpm dev                    # Start development server
+pnpm build                  # Build for production
+pnpm start                  # Start production server
 
-- Aligned with real accounting practices
-- Monthly inventory sessions instead of daily perfectionism
-- Mixed invoice handling for COGS and non-COGS items
+# Code Quality
+pnpm lint                   # Run ESLint
+pnpm lint:fix              # Fix ESLint errors
+pnpm type-check            # Run TypeScript checks
+pnpm format                # Format with Prettier
 
-### **Forgiving Operations**
+# Database
+pnpm supabase:types        # Generate TypeScript types
+pnpm supabase:migrate      # Run migrations
+pnpm supabase:reset        # Reset database
 
-- Editable records with full audit trails
-- Support for negative inventory during corrections
-- Real-world workflow accommodation
+# AI Development (Optimized)
+pnpm ai:validate           # Fast validation (type-check, lint, format)
+pnpm ai:validate:full      # Full type-check for production
+pnpm ai:fix               # Auto-fix common issues
+pnpm ai:type-check        # Fast type-check only
 
-### **Mobile-First Design**
+# Git Sync (Post-MCP)
+pnpm sync:after-mcp       # Automated stash/pull/pop after MCP operations
+pnpm sync:force           # Quick pull when no local changes
+```
 
-- Touch-optimized allocation approval
-- Workshop-friendly inventory checks
-- Desktop focus for complex administrative tasks
+### **Project Structure**
 
-## 🎯 **Key Features Implemented**
+```
+src/
+├── app/                   # Next.js 15 App Router
+│   ├── actions/          # Server Actions
+│   ├── api/              # API routes
+│   └── [pages]/          # Application pages
+├── components/           # React components
+│   ├── dashboard/        # Dashboard components
+│   ├── items/           # Items management
+│   ├── layout/          # Layout components
+│   ├── purchases/       # Purchase management
+│   └── ui/              # Base UI components
+├── hooks/               # Custom React hooks
+├── lib/                 # Utilities and configurations
+│   ├── supabase/        # Supabase client
+│   ├── utils/           # Business logic utilities
+│   └── validations/     # Zod schemas
+└── types/               # TypeScript definitions
+```
 
-### **Enhanced Business Logic ✅ (100% Complete)**
+## 📊 **Progress Tracking**
 
-- ✅ Fixed WAC calculation with proper inventory awareness
-- ✅ Smart cost allocation with proportional overhead distribution
-- ✅ Multi-mode tracking system (Full, Cost-Only, Estimate)
-- ✅ Comprehensive inventory deduction system
-- ✅ Consolidated business rules and transaction handling
-- ✅ Enhanced purchase workflows with allocation preview
+This app follows a **simplified, business-focused approach** that prioritizes practical inventory management over perfectionist systems.
 
-### **Foundation & Performance ✅ (100% Complete)**
+### **Phase 1: Foundation** ✅ **100% Complete**
 
-- ✅ Next.js 15.4.1 + React 19.1.0 setup with Turbopack
-- ✅ Application layout and navigation system
-- ✅ TypeScript strict mode with comprehensive interfaces
-- ✅ Performance optimizations and React Compiler integration
+- ✅ Next.js 15.4.1 + React 19.1.0 setup with TypeScript
+- ✅ Supabase integration with PostgreSQL database
+- ✅ Tailwind CSS 4.1.11 design system
+- ✅ Mobile-first responsive layout
+- ✅ Authentication and security setup
 
-### **Core Database Architecture ✅ (100% Complete)**
+### **Phase 2: Core Database** ✅ **100% Complete**
 
-- ✅ Complete schema implementation with business logic fixes
-- ✅ Advanced stored procedures for cost calculations
-- ✅ Multi-mode tracking support in database schema
-- ✅ Enhanced transaction logging and audit capabilities
+- ✅ Complete database schema with proper relationships
+- ✅ PostgreSQL functions for WAC calculations
+- ✅ Transaction logging system for audit trails
+- ✅ Row Level Security policies
+- ✅ Seed data generation for testing
 
-## 🗺️ **Development Roadmap**
+### **Phase 3: Smart Business Logic** ✅ **100% Complete**
 
-### **Phase 1: Foundation ✅ (100% Complete)**
-
-- ✅ Next.js 15.4.1 + React 19.1.0 setup
-- ✅ Application layout and navigation
-- ✅ Core TypeScript interfaces and utilities
-- ✅ Performance optimizations
-
-### **Phase 2: Database & Business Logic ✅ (100% Complete)**
-
-- ✅ Complete database schema with tracking modes
-- ✅ Fixed WAC calculation and smart allocation
-- ✅ Multi-mode tracking system implementation
-- ✅ Enhanced business workflows and validation
-
-### **Phase 3: Business Logic Fixes ✅ (100% Complete)**
-
-- ✅ Fixed broken WAC calculation system
-- ✅ Implemented missing inventory deduction logic
-- ✅ Removed over-engineered forecasting features
-- ✅ Smart cost allocation with proportional distribution
+- ✅ Smart cost allocation engine with preview
+- ✅ Multi-mode tracking system (Full/Cost-Only/Estimate)
+- ✅ Cycle count alerts with priority scoring
+- ✅ CSV import system with validation
+- ✅ Purchase management with draft workflow
+- ✅ Enhanced WAC calculation with inventory awareness
 - ✅ Consolidated business rules across components
 - ✅ Enhanced purchase workflow with allocation preview
 
@@ -223,158 +228,31 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 
 ### **Phase 5: Advanced Workflows 📋 (20% Complete)**
 
-- ✅ Purchase management workflow design
-- 📋 CSV import and automated draft creation
-- 📋 Recipe and batch management with cost tracking
-- 📋 Sales tracking and COGS analysis
-
-### **Phase 6: Polish & Integration 📋 (10% Complete)**
-
-- ✅ Mobile-first responsive design patterns
+- 📋 Recipe management with cost calculations
+- 📋 Batch production with yield tracking
+- 📋 Sales integration with BigCommerce
+- 📋 Reporting dashboard with COGS analytics
 - 📋 Statement-based import automation
-- 📋 Monthly session workflow implementation
-- 📋 Comprehensive testing and error handling
 
-**Current Progress: ~73% Complete**
+### **Phase 6: Polish & Optimization 📋 (0% Complete)**
 
-## 🔧 **Enhanced Development Features**
+- 📋 Performance optimization
+- 📋 Advanced error handling
+- 📋 User onboarding flow
+- 📋 Mobile app considerations
+- 📋 Documentation completion
 
-### **Smart Allocation System**
+## 🔐 **Security & Privacy**
 
-```typescript
-// Real-time cost allocation preview
-const allocationPreview = await previewAllocation(purchaseId, {
-  shipping: 50.0,
-  tax: 25.5,
-  fees: 10.0,
-});
+- **Private Application**: Not intended for public use or distribution
+- **Data Security**: All data stored in Supabase with RLS policies
+- **No Analytics**: Privacy-focused with minimal data collection
+- **Local Development**: Full control over data and deployment
 
-// Proportional distribution with variance checking
-const result = await finalizePurchaseWithAllocation(
-  purchaseId,
-  allocationPreview
-);
-```
+## 📝 **License**
 
-### **Multi-Mode Tracking**
-
-```typescript
-// Flexible tracking based on business importance
-await setupItemTracking(itemId, {
-  mode: 'cost_only', // full | cost_only | estimate
-  countFrequencyDays: 30,
-  alertThresholds: { lowStock: 10, timeBasedDays: 45 },
-});
-```
-
-### **Statement Integration**
-
-```typescript
-// Automated supplier matching from bank statements
-const matches = await matchSuppliersFromStatement(bankTransactions);
-const drafts = await createAutomatedDrafts(matches);
-```
-
-### **Available Scripts**
-
-```bash
-# Development
-pnpm dev             # Start development server with Turbo
-pnpm build           # Build for production
-pnpm start           # Start production server
-pnpm lint            # Run ESLint
-pnpm type-check      # TypeScript checking
-
-# Database
-pnpm supabase:start  # Start local Supabase
-pnpm supabase:reset  # Reset database with all migrations
-pnpm supabase:migrate # Apply new migrations
-
-# Deployment (Vercel CLI)
-pnpm run deploy:preview  # Deploy preview
-pnpm run deploy          # Deploy production
-```
-
-## 🤖 **MCP Integration**
-
-This project is configured to use the **Model Context Protocol (MCP)** to provide AI assistants with secure access to development tools and Supabase database operations.
-
-### **Available Servers**
-
-1.  **`supabase`**: Execute SQL queries, manage migrations, and interact with the enhanced database schema
-2.  **`github`**: Repository management, issue tracking, and automated deployment workflows
-
-### **Enhanced Database Operations**
-
-With the smart allocation and tracking mode implementations, MCP can now:
-
-- Execute complex cost allocation queries
-- Test multi-mode tracking scenarios
-- Validate WAC calculations with real data
-- Simulate statement import workflows
-
-## 📚 **Documentation**
-
-- [Requirements](./docs/requirements.md) - **Updated**: COGS-focused approach and tracking modes
-- [Tasks](./docs/tasks.md) - **Updated**: Current progress (73% complete) and remaining work
-- [Technical Design](./docs/technical-design.md) - **Updated**: Smart allocation architecture and tracking modes
-- [UI Blueprint](./docs/ui-blueprint.md) - **Updated**: Mode-aware interface and allocation previews
-- [Data Model](./docs/data-model.md) - Database schema with business logic enhancements
-- [Development Guide](./docs/development-guide.md) - Development standards and workflow
-- [AI Guidelines](./docs/ai-guidelines.md) - AI assistant guidelines
-- [Deployment Guide](./docs/deployment.md) - Production deployment
-- [API Documentation](./docs/api-documentation.md) - Enhanced backend functions and allocation APIs
-
-## 🔐 **Enhanced Security**
-
-- ✅ **Smart Allocation Security**: Row-level security for allocation operations
-- ✅ **Multi-Mode Authorization**: Secure tracking mode changes with audit trails
-- ✅ **Enhanced Input Validation**: Zod schemas for allocation and tracking operations
-- ✅ **Statement Import Security**: Secure supplier matching and draft creation
-- ✅ **Cost Calculation Integrity**: Database-level validation for WAC and allocation logic
-
-## 🎨 **New UI Components**
-
-### **Allocation Preview**
-
-- Real-time cost distribution visualization
-- Variance warnings for unusual allocations
-- Mobile-friendly approval workflow
-
-### **Tracking Mode Indicators**
-
-- Color-coded badges (🟢 Full, 🟡 Cost-Only, 🟠 Estimate)
-- Mode-specific action buttons
-- Mixed alert dashboard
-
-### **COGS Analytics**
-
-- Traffic light COGS percentage indicators
-- Purchase variance analysis
-- Monthly reconciliation summaries
-
-## 📊 **Business Impact**
-
-### **Cost Management Improvements**
-
-- **Accurate WAC**: Fixed calculation provides reliable inventory valuation
-- **Smart Allocation**: Reduces manual overhead distribution errors by 90%
-- **Flexible Tracking**: Allows focus on high-impact items while maintaining awareness of all inventory
-
-### **Workflow Alignment**
-
-- **Statement Integration**: Matches real bookkeeping practices
-- **Monthly Sessions**: Aligns with accounting cycles
-- **Mixed Invoices**: Handles real-world purchasing scenarios
-
-### **Time Savings**
-
-- **Automated Matching**: Reduces manual data entry by 80%
-- **Proportional Allocation**: Eliminates manual calculation overhead
-- **Mode-Based Alerts**: Focus attention where it matters most
+**Private/Internal Use Only** - This project is not licensed for public use, distribution, or commercial purposes.
 
 ---
 
-**Built with ❤️ for practical small business cost management using Next.js 15, React 19, and intelligent business logic**
-
-_For detailed changelog, see [CHANGELOG.md](./CHANGELOG.md)_
+**Built for small business owners who need practical inventory management without the complexity of enterprise solutions.**
