@@ -2,7 +2,7 @@
 title: 'Tasks'
 description: 'Development tasks and progress tracking for internal inventory management system'
 purpose: 'Reference for development progress and task management'
-last_updated: 'July 18, 2025'
+last_updated: 'July 21, 2025'
 doc_type: 'task-tracking'
 related: ['requirements.md', 'technical-design.md', 'development-guide.md']
 ---
@@ -15,10 +15,10 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 ## 📊 **Progress Overview**
 
-- **Total Tasks**: 45
-- **Completed**: 29 (64%)
+- **Total Tasks**: 52
+- **Completed**: 38 (73%)
 - **In Progress**: 0 (0%)
-- **Planned**: 16 (36%)
+- **Planned**: 14 (27%)
 
 ## ✅ **Completed Tasks**
 
@@ -119,186 +119,216 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Recent activity feed** - July 19, 2025
 - ✅ **Action center notifications** - July 19, 2025
 
+### **Phase 3: Business Logic Fixes** ✅ **100% Complete**
+
+#### **3.1 WAC Calculation Fixes** ✅ **Complete**
+
+- ✅ **Fixed broken WAC calculation algorithm** - July 21, 2025
+- ✅ **Inventory-aware WAC with proper allocation** - July 21, 2025
+- ✅ **Purchase finalization with WAC updates** - July 21, 2025
+- ✅ **Database migration for WAC fixes** - July 21, 2025
+
+#### **3.2 Inventory Deduction System** ✅ **Complete**
+
+- ✅ **Sales inventory deduction logic** - July 21, 2025
+- ✅ **Recipe ingredient consumption tracking** - July 21, 2025
+- ✅ **Manual inventory adjustments** - July 21, 2025
+- ✅ **Waste tracking and recording** - July 21, 2025
+- ✅ **TypeScript actions for all deduction types** - July 21, 2025
+
+#### **3.3 Simplified Business Logic** ✅ **Complete**
+
+- ✅ **Removed over-engineered forecasting system** - July 21, 2025
+- ✅ **Consolidated cycle count alert logic** - July 21, 2025
+- ✅ **Standardized business rules** - July 21, 2025
+- ✅ **Simplified reorder calculations** - July 21, 2025
+
+#### **3.4 Smart Cost Allocation** ✅ **Complete**
+
+- ✅ **Proportional overhead allocation algorithm** - July 21, 2025
+- ✅ **Base cost vs allocated overhead tracking** - July 21, 2025
+- ✅ **Purchase variance validation** - July 21, 2025
+- ✅ **Non-inventory item handling** - July 21, 2025
+- ✅ **Enhanced purchase actions with allocation** - July 21, 2025
+
+#### **3.5 Multi-Mode Tracking System** ✅ **Complete**
+
+- ✅ **Full tracking mode for core ingredients** - July 21, 2025
+- ✅ **Cost-only tracking for packaging materials** - July 21, 2025
+- ✅ **Estimate tracking for consumables** - July 21, 2025
+- ✅ **Mixed tracking alert system** - July 21, 2025
+- ✅ **Flexible tracking mode assignment** - July 21, 2025
+
+#### **3.6 Transaction Type Standardization** ✅ **Complete**
+
+- ✅ **Fixed enum case mismatch issues** - July 21, 2025
+- ✅ **Uppercase transaction type support** - July 21, 2025
+- ✅ **Backward compatibility for legacy data** - July 21, 2025
+- ✅ **Type normalization functions** - July 21, 2025
+
 ## **Planned Tasks**
 
-### **Phase 3: Business Workflows** 📋 **0% Complete**
+### **Phase 4: Enhanced Workflows** 📋 **0% Complete**
 
-#### **3.1 Recipe Management** 📋 **Planned**
+#### **4.1 Statement-Based Purchase Workflow** 📋 **Planned**
 
-- 📋 **Recipe creation interface**
-- 📋 **Ingredient management**
-- 📋 **Recipe versioning system**
-- 📋 **Cost projection calculations**
-- 📋 **Recipe scaling functionality**
+- 📋 **Monthly inventory session UI design**
+- 📋 **COGS vs non-COGS purchase splitting**
+- 📋 **Batch purchase entry interface**
+- 📋 **Receipt reconciliation workflow**
+- 📋 **Purchase variance resolution UI**
 
-#### **3.2 Batch Production** 📋 **Planned**
+#### **4.2 Recipe Management with Mixed Tracking** 📋 **Planned**
+
+- 📋 **Recipe creation with multi-mode ingredients**
+- 📋 **Cost calculation with allocation integration**
+- 📋 **Recipe scaling with accurate costing**
+- 📋 **Version control and change tracking**
+- 📋 **Recipe template system**
+
+#### **4.3 Production Workflows** 📋 **Planned**
 
 - 📋 **Batch creation from recipes**
-- 📋 **Ingredient consumption tracking**
-- 📋 **Yield percentage calculation**
-- 📋 **Cost variance analysis**
-- 📋 **Batch template system**
+- 📋 **Selective inventory deduction by tracking mode**
+- 📋 **Yield analysis and cost variance**
+- 📋 **Labor cost integration**
+- 📋 **Production scheduling interface**
 
-#### **3.3 Sales Tracking** 📋 **Planned**
+#### **4.4 Enhanced Reporting** 📋 **Planned**
 
-- 📋 **Sales period logging**
-- 📋 **Revenue tracking by item**
-- 📋 **Customer and channel tracking**
-- 📋 **Sales forecasting algorithms**
+- 📋 **Cost allocation breakdown reports**
+- 📋 **COGS analysis and trends**
+- 📋 **Supplier cost performance metrics**
+- 📋 **Product margin analysis with allocated costs**
 
-#### **3.4 Advanced Reporting** 📋 **Planned**
+### **Phase 5: Advanced Features** 📋 **0% Complete**
 
-- 📋 **Inventory valuation reports**
-- 📋 **Purchase history analysis**
-- 📋 **Sales performance metrics**
-- 📋 **Cost analysis and margins**
+#### **5.1 Bookkeeping Integration** 📋 **Planned**
 
-### **Phase 4: Advanced Features** 📋 **0% Complete**
+- 📋 **Export for accounting systems**
+- 📋 **COGS reporting for tax purposes**
+- 📋 **Statement reconciliation tools**
+- 📋 **Purchase categorization automation**
 
-#### **4.1 Forecasting and Analytics** 📋 **Planned**
+#### **5.2 Mobile Optimization** 📋 **Planned**
 
-- 📋 **Demand forecasting algorithms**
-- 📋 **Seasonal adjustment calculations**
-- 📋 **Reorder point optimization**
-- 📋 **Trend analysis and insights**
+- 📋 **Mobile-first inventory checking**
+- 📋 **Touch-optimized batch entry**
+- 📋 **Mobile barcode scanning**
+- 📋 **Offline inventory updates**
 
-#### **4.2 Automation Features** 📋 **Planned**
+#### **5.3 Data Analysis** 📋 **Planned**
 
-- 📋 **Automated reorder suggestions**
-- 📋 **Cycle count scheduling**
-- 📋 **Alert system configuration**
-- 📋 **Email notification system**
-
-#### **4.3 Data Export System** 📋 **Planned**
-
-- 📋 **CSV export for all data types**
-- 📋 **Custom date range exports**
-- 📋 **Template downloads**
-- 📋 **Backup and restore functionality**
-
-#### **4.4 Advanced UI Features** 📋 **Planned**
-
-- 📋 **Advanced filtering and sorting**
-- 📋 **Customizable dashboards**
-- 📋 **Simplified navigation system**
-- 📋 **Drag and drop functionality**
-
-### **Phase 5: Polish and Optimization** 📋 **0% Complete**
-
-#### **5.1 Performance Optimization** 📋 **Planned**
-
-- 📋 **Query optimization**
-- 📋 **Caching strategies**
-- 📋 **Lazy loading implementation**
-- 📋 **Bundle size optimization**
-
-#### **5.2 Testing and Quality Assurance** 📋 **Planned**
-
-- 📋 **Unit test coverage**
-- 📋 **Integration testing**
-- 📋 **End-to-end testing**
-- 📋 **Performance testing**
-
-#### **5.3 Documentation and Training** 📋 **Planned**
-
-- 📋 **User documentation**
-- 📋 **Admin guide**
-- 📋 **API documentation updates**
-- 📋 **Training materials**
+- 📋 **Cost trend analysis**
+- 📋 **Supplier performance metrics**
+- 📋 **Inventory turnover analysis**
+- 📋 **Predictive reorder suggestions**
 
 ## 🎯 **Current Sprint Goals**
 
-### **Sprint 3 (July 19-25, 2025)**
+### **Sprint 4 (July 21-28, 2025)**
 
 #### **High Priority**
 
-1. **Complete Purchase Management UI** 🚧
-   - Purchase creation form
-   - Purchase list view with filtering
-   - Draft purchase management interface
-   - Line item editor with cost allocation
+1. **Statement-Based Purchase Workflow UI** 🚧
+   - Monthly inventory session interface
+   - COGS vs non-COGS splitting workflow
+   - Batch purchase entry with variance checking
+   - Purchase allocation preview functionality
 
-2. **Implement Dashboard** 🚧
-   - Cycle count alerts display
-   - Quick statistics overview
-   - Recent activity feed
-   - Action center notifications
+2. **Recipe Management Enhancement** 🚧
+   - Multi-mode ingredient support
+   - True cost calculation with allocated overhead
+   - Recipe templates and scaling
+   - Cost variance analysis
 
 #### **Medium Priority**
 
-3. **Enhance Error Handling**
-   - Improve error messages
-   - Add error recovery suggestions
-   - Implement error logging
+3. **Enhanced Tracking Mode UI**
+   - Visual indicators for tracking modes
+   - Mode switching workflows
+   - Mixed tracking displays
+   - Time-based alert interfaces
 
-4. **Performance Optimization**
-   - Optimize database queries
-   - Implement caching strategies
-   - Reduce bundle size
+4. **Bookkeeping Integration Planning**
+   - Export format specification
+   - COGS reporting design
+   - Statement reconciliation planning
 
 #### **Low Priority**
 
-5. **Documentation Updates**
-   - Update API documentation
-   - Create user guides
-   - Add code comments
+5. **Documentation Completion**
+   - Updated workflow documentation
+   - Business logic documentation
+   - User training materials
 
 ## 📈 **Task Statistics**
 
 ### **Completion by Category**
 
 - **Foundation**: 100% (8/8 tasks)
-- **Core Features**: 60% (10/17 tasks)
-- **Business Workflows**: 0% (0/12 tasks)
-- **Advanced Features**: 0% (0/8 tasks)
+- **Core Features**: 100% (16/16 tasks)
+- **Business Logic Fixes**: 100% (14/14 tasks)
+- **Enhanced Workflows**: 0% (0/14 tasks)
 
 ### **Completion by Priority**
 
-- **High Priority**: 75% (12/16 tasks)
-- **Medium Priority**: 25% (4/16 tasks)
-- **Low Priority**: 15% (2/13 tasks)
+- **Critical Business Logic**: 100% (14/14 tasks)
+- **High Priority**: 85% (17/20 tasks)
+- **Medium Priority**: 50% (6/12 tasks)
+- **Low Priority**: 17% (1/6 tasks)
 
 ### **Recent Activity**
 
-- **July 19, 2025**: Completed Dashboard Implementation with cycle count alerts, statistics overview, recent activity feed, and action center notifications
-- **July 19, 2025**: Completed Purchase Management UI with master-detail layout, React Query integration, and TypeScript strict mode compatibility
-- **July 19, 2025**: Fixed critical database field naming inconsistency in purchases actions
-- **July 19, 2025**: Simplified UX by removing command palette system and fixing mobile search bar visibility
-- **July 18, 2025**: Completed CSV import system
-- **July 18, 2025**: Completed seed data system
-- **July 18, 2025**: Completed error handling system
-- **July 17, 2025**: Completed items management interface
-- **July 17, 2025**: Completed suppliers management
+- **July 21, 2025**: Completed comprehensive business logic fixes including WAC calculation, inventory deduction, cost allocation, and multi-mode tracking
+- **July 21, 2025**: Fixed critical transaction type enum mismatch
+- **July 21, 2025**: Implemented smart proportional cost allocation with variance checking
+- **July 21, 2025**: Added flexible tracking modes (full, cost-only, estimate)
+- **July 21, 2025**: Consolidated duplicate business rules into single source of truth
+- **July 21, 2025**: Removed over-engineered forecasting system
+- **July 19, 2025**: Completed Dashboard Implementation and Purchase Management UI
+- **July 18, 2025**: Completed CSV import and purchase management foundation
 
 ## 🔄 **Task Management Notes**
 
-### **Completed This Week**
+### **Major Accomplishments This Week**
 
-- ✅ Completed Purchase Management UI with master-detail layout and React Query integration
-- ✅ Fixed critical database field naming inconsistency (purchases.ts)
-- ✅ CSV import system with QBO support
-- ✅ Seed data generation with 16 sample items
-- ✅ Enhanced error handling and validation
-- ✅ Purchase management foundation
-- ✅ Advanced items interface with spreadsheet-style table
-- ✅ Mobile search bar visibility and UX simplification
+- ✅ **Fixed 7 Critical Business Logic Issues**: WAC calculation, inventory deduction, forecasting, cost allocation, business rules, transaction types, purchase workflows
+- ✅ **Implemented Smart Cost Allocation**: Proportional overhead distribution with variance checking
+- ✅ **Added Multi-Mode Tracking**: Full, cost-only, and estimate tracking modes
+- ✅ **Consolidated Business Rules**: Single source of truth for cycle count alerts
+- ✅ **Enhanced Purchase System**: Base cost vs allocated overhead tracking
 
-### **Blocked Tasks**
+### **Key Architectural Decisions**
 
-- None currently
+- **Simplified Workflow**: Focus on 80/20 rule for COGS tracking
+- **Statement-Based Entry**: Monthly inventory sessions vs real-time entry
+- **Flexible Tracking**: Different modes based on item cost and importance
+- **Cost Transparency**: Separate base costs from allocated overhead
+- **Variance Tolerance**: Business-friendly $0.50 variance threshold
 
-### **Dependencies**
+### **Next Priority Areas**
 
-- Purchase UI depends on purchase management foundation ✅
-- Dashboard depends on cycle count alerts function ✅
-- Recipe management depends on items and suppliers ✅
+1. **Statement-Based Workflow UI**: Design monthly inventory session interface
+2. **Recipe Enhancement**: Multi-mode ingredient support with true costing
+3. **Mobile Optimization**: Touch-friendly interfaces for production floor
+4. **Bookkeeping Integration**: Export and reconciliation tools
 
-### **Technical Debt**
+### **Technical Debt Addressed**
 
-- Need to add comprehensive test coverage
-- Should implement proper error boundaries
-- Consider adding performance monitoring
-- Need to optimize database queries for large datasets
+- ✅ Fixed broken WAC calculation algorithm
+- ✅ Eliminated over-engineered forecasting system
+- ✅ Consolidated duplicate business rule implementations
+- ✅ Standardized transaction type handling
+- ✅ Improved error handling and validation
+
+### **Dependencies Met**
+
+- All core business logic fixes completed ✅
+- Smart cost allocation system ready ✅
+- Multi-mode tracking foundation established ✅
+- Purchase workflow enhanced ✅
+- Ready for advanced UI development ✅
 
 ---
 
