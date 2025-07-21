@@ -44,6 +44,7 @@ export function useCycleCountAlerts(limit: number = 5) {
   return useQuery({
     queryKey: dashboardKeys.alerts(limit),
     queryFn: async () => {
+      // Use the standardized consolidated function (TODO: Update types after migration)
       const { data, error } = await supabase.rpc('get_cycle_count_alerts', {
         limit_count: limit,
       });
@@ -106,7 +107,7 @@ export function useDashboardStats() {
 
       const stats: DashboardStats = {
         totalItems: itemsResult.count || 0,
-        lowStockItems: alertsResult.data?.length || 0,
+        lowStockItems: Array.isArray(alertsResult.data) ? alertsResult.data.length : 0,
         draftPurchases: purchasesResult.count || 0,
         recentTransactions: transactionsResult.count || 0,
       };
@@ -198,15 +199,15 @@ export function useRecentActivity(limit: number = 10) {
         let icon = 'I';
         let iconColor = 'green';
 
-        if (transaction.transactiontype === 'PURCHASE') {
+        if (transaction.transactiontype === 'purchase') {
           title = 'Inventory increased';
           icon = '+';
           iconColor = 'green';
-        } else if (transaction.transactiontype === 'SALE') {
+        } else if (transaction.transactiontype === 'sale') {
           title = 'Inventory decreased';
           icon = '-';
           iconColor = 'red';
-        } else if (transaction.transactiontype === 'ADJUSTMENT') {
+        } else if (transaction.transactiontype === 'adjustment') {
           title = 'Inventory adjusted';
           icon = '±';
           iconColor = 'amber';

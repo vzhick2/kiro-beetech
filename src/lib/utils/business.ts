@@ -1,5 +1,6 @@
 /**
  * Business logic utilities and calculations
+ * SIMPLIFIED: Removed over-engineered forecasting until real usage data available
  */
 
 import {
@@ -11,7 +12,7 @@ import {
 
 /**
  * Calculate cycle count alert priority score
- * Formula: (days since last count / 30) + (1 - current qty / reorder point)
+ * Simple formula: days since last count + stock level factor
  */
 export function calculateCycleCountPriority(item: Item): number {
   const daysSinceCount = item.lastCountedDate
@@ -20,9 +21,17 @@ export function calculateCycleCountPriority(item: Item): number {
       )
     : 365; // Default to 1 year if never counted
 
-  const countScore = daysSinceCount / 30;
-  const stockScore =
-    1 - item.currentQuantity / Math.max(item.reorderPoint || 1, 1);
+  const countScore = Math.min(daysSinceCount / 30, 10); // Cap at 10
+  
+  // Simple stock scoring
+  let stockScore = 0;
+  if (item.currentQuantity <= 0) {
+    stockScore = 5; // High priority for out of stock
+  } else if (item.reorderPoint && item.currentQuantity <= item.reorderPoint) {
+    stockScore = 3; // Medium priority for below reorder point
+  } else {
+    stockScore = 1; // Low priority for normal stock
+  }
 
   return countScore + stockScore;
 }
@@ -152,27 +161,28 @@ export function calculateCostVariance(
 }
 
 /**
- * Check if item needs reordering
+ * Check if item needs reordering (simplified)
  */
 export function needsReorder(item: Item): boolean {
   if (!item.reorderPoint) {
-    return false;
+    return item.currentQuantity <= 0; // No reorder point set, only alert if out of stock
   }
   return item.currentQuantity <= item.reorderPoint;
 }
 
 /**
- * Calculate suggested reorder quantity
+ * Calculate suggested reorder quantity (simplified manual approach)
+ * This is a basic calculation - improve when you have usage data
  */
-export function calculateReorderQuantity(
-  item: Item,
-  averageUsage?: number
-): number {
+export function calculateReorderQuantity(item: Item): number {
   const leadTimeDays = item.leadTimeDays || 7;
-  const safetyStock = item.reorderPoint || 0;
-  const dailyUsage = averageUsage ? averageUsage / 30 : 1; // Default to 1 per day if no usage data
-
-  return Math.ceil(dailyUsage * leadTimeDays + safetyStock);
+  const reorderPoint = item.reorderPoint || 0;
+  
+  // Simple approach: order enough to get back to reorder point + lead time buffer
+  const shortage = Math.max(0, reorderPoint - item.currentQuantity);
+  const leadTimeBuffer = reorderPoint * 0.3; // 30% buffer for lead time
+  
+  return Math.ceil(shortage + leadTimeBuffer);
 }
 
 /**
