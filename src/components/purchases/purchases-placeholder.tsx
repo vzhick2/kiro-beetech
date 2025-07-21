@@ -35,8 +35,8 @@ export function PurchasesPlaceholder() {
                 rebuild it with a cleaner architecture.
               </p>
               <p className="text-sm">
-                <strong>What&apos;s working:</strong> Database schema is ready with
-                purchases, suppliers, and line items tables.
+                <strong>What&apos;s working:</strong> Database schema is ready
+                with purchases, suppliers, and line items tables.
               </p>
               <p className="text-sm">
                 <strong>Coming soon:</strong> Simplified purchase order

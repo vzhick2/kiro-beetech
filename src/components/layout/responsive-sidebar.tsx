@@ -69,14 +69,20 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  const handleMobileNavClick = () => {
+  const handleMobileNavClick = (e: React.MouseEvent) => {
+    // Ensure the event is properly handled
+    e.stopPropagation();
+    
     if (!isDesktop) {
-      onCloseAction();
+      // Small delay to allow visual feedback before closing
+      setTimeout(() => {
+        onCloseAction();
+      }, 150);
     }
   };
 
   const NavigationContent = () => (
-    <div className="p-3 space-y-1">
+    <div className="p-4 space-y-1">
       {navigation.map((item, index) => {
         if ('separator' in item && item.separator) {
           return (
@@ -94,11 +100,16 @@ export function ResponsiveSidebar({
             key={navItem.name}
             href={navItem.href}
             onClick={handleMobileNavClick}
-            className={`flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-200 group ${
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
               isActive
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
+            style={{
+              // Ensure clickable on mobile
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+            }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
             <span className="font-medium">{navItem.name}</span>
@@ -113,7 +124,7 @@ export function ResponsiveSidebar({
       return null;
     }
     return (
-      <div className="w-48 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
+      <div className="w-56 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
         <NavigationContent />
       </div>
     );
@@ -127,15 +138,16 @@ export function ResponsiveSidebar({
       }`}
       style={{
         position: 'fixed',
-        width: '8rem',
+        width: '14rem',
         height: 'calc(100vh - 4rem)',
         top: '4rem',
         left: '0',
-        zIndex: 50,
+        zIndex: 60,
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         touchAction: 'manipulation',
         WebkitUserSelect: 'none',
         userSelect: 'none',
+        pointerEvents: isOpen ? 'auto' : 'none',
       }}
     >
       <NavigationContent />

@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
 
   // Build performance improvements
   experimental: {
-    optimizePackageImports: ['ag-grid-community', 'ag-grid-react', '@radix-ui/react-icons'],
+    optimizePackageImports: [
+      'ag-grid-community',
+      'ag-grid-react',
+      '@radix-ui/react-icons',
+    ],
     turbo: {
       rules: {
         '*.svg': {

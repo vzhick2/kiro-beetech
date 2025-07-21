@@ -110,7 +110,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
         {/* Mobile Backdrop Overlay - only visible when sidebar is open on mobile */}
         {!isDesktop && isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/20 z-40 transition-opacity duration-200"
+            className="fixed inset-0 bg-black/20 z-50 transition-opacity duration-200"
             onClick={closeSidebar}
             style={{
               top: '4rem', // Below header
@@ -126,13 +126,14 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
         />
 
         {/* Content Area - Properly adjusts for mobile sidebar */}
-        <div 
+        <div
           className={`content-area flex-1 transition-all duration-200 ease-out`}
           style={{
             // CRITICAL FIX: For fixed positioned sidebar, use viewport-relative calculations
-            marginLeft: !isDesktop && isSidebarOpen ? '8rem' : '0', // 128px
-            width: !isDesktop && isSidebarOpen ? 'calc(100vw - 8rem)' : '100%',
-            maxWidth: !isDesktop && isSidebarOpen ? 'calc(100vw - 8rem)' : '100vw',
+            marginLeft: !isDesktop && isSidebarOpen ? '14rem' : '0', // 224px
+            width: !isDesktop && isSidebarOpen ? 'calc(100vw - 14rem)' : '100%',
+            maxWidth:
+              !isDesktop && isSidebarOpen ? 'calc(100vw - 14rem)' : '100vw',
           }}
         >
           <main className="p-4 sm:p-6">{children}</main>

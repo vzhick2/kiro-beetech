@@ -5,11 +5,13 @@ This project uses symbolic links to eliminate duplicate configuration files:
 ## Current Symlinks
 
 ### AI Instructions
+
 - **Target**: `.vscode/copilot-instructions.md` (master file)
 - **Link**: `.cursorrules` → `.vscode/copilot-instructions.md`
 - **Purpose**: Unified AI behavior rules for both VS Code and Cursor
 
 ### MCP Configuration
+
 - **Target**: `mcp.json` (master file)
 - **Link**: `.cursor/mcp.json` → `../mcp.json`
 - **Purpose**: Single MCP configuration for both IDEs

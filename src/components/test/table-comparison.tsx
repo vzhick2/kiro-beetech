@@ -67,7 +67,8 @@ export function TableComparisonTest() {
               AG Grid Implementation
             </h3>
             <p className="text-gray-600 mb-4">
-              Enterprise-grade table with built-in features. Used for data-heavy interfaces.
+              Enterprise-grade table with built-in features. Used for data-heavy
+              interfaces.
             </p>
             {/* Your existing AG Grid component can be imported here */}
           </div>
