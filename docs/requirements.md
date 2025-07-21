@@ -2,7 +2,7 @@
 title: 'Requirements'
 description: 'Functional and non-functional requirements for internal inventory management system'
 purpose: 'Reference for feature specifications and business requirements'
-last_updated: 'July 18, 2025'
+last_updated: 'July 21, 2025'
 doc_type: 'requirements-specification'
 related: ['data-model.md', 'technical-design.md', 'ui-blueprint.md']
 ---
@@ -17,164 +17,132 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 ### **Core Business Objectives**
 
-1. **Streamline Inventory Management**: Reduce time spent on manual inventory tracking and reconciliation
-2. **Improve Purchase Planning**: Optimize reorder points and reduce stockouts
-3. **Enhance Production Tracking**: Monitor batch yields and ingredient consumption
-4. **Support Flexible Workflows**: Accommodate real-world business operations with forgiving data entry
-5. **Enable Mobile Operations**: Support workshop and warehouse use with touch-friendly interfaces
+1. **Streamline COGS Tracking**: Focus on meaningful cost tracking for ingredients and core materials that impact product margins
+2. **Flexible Purchase Workflows**: Support statement-based bookkeeping with monthly inventory detail batching
+3. **Smart Cost Allocation**: Automatically distribute shipping, taxes, and fees proportionally to inventory items
+4. **Multi-Modal Tracking**: Support full tracking for core ingredients, cost-only tracking for packaging, and estimation for consumables
+5. **Real Business Operations**: Accommodate real-world workflows with forgiving data entry and flexible timing
 
 ### **Target Users**
 
-- **Primary**: Small business owners and operators
-- **Secondary**: Workshop staff and warehouse workers
-- **Tertiary**: Administrative staff for reporting and analysis
+- **Primary**: Small business owners (2-10 person operations)
+- **Secondary**: Production staff for batch logging and cycle counts
+- **Workflow**: Statement-based bookkeeping with monthly inventory sessions
 
 ### **Business Context**
 
-- **Scale**: Small to medium businesses (1-50 employees)
-- **Industry**: Manufacturing, food production, craft businesses
-- **Workflow**: Irregular operations with frequent corrections and back-dating
-- **Technology**: Modern web browsers, mobile devices
+- **Scale**: Small businesses with mixed COGS/non-COGS purchases
+- **Industry**: Manufacturing, food production, cosmetics, craft businesses
+- **Bookkeeping**: Statement-based entry, not real-time purchase logging
+- **Focus**: 80/20 rule - capture 80% of COGS value with 20% of data entry effort
 
 ## 📋 **Functional Requirements**
 
-### **1. Inventory Management** ✅ **COMPLETED**
+### **1. Flexible Inventory Tracking** ✅ **COMPLETED**
 
-#### **1.1 Item Management** ✅ **COMPLETED**
+#### **1.1 Multi-Mode Item Management** ✅ **COMPLETED**
 
-- ✅ **Create, read, update, delete inventory items**
-- ✅ **Item categorization (ingredient, packaging, product)**
-- ✅ **SKU management with auto-generation**
-- ✅ **Inventory unit support (each, lb, oz, kg, g, gal, qt, pt, cup, fl_oz, ml, l)**
-- ✅ **Current quantity tracking with negative inventory support**
-- ✅ **Weighted average cost (WAC) calculation**
-- ✅ **Reorder point management**
-- ✅ **Lead time tracking**
-- ✅ **Primary supplier assignment**
-- ✅ **Archive/unarchive functionality**
+- ✅ **Full Tracking Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
+- ✅ **Cost-Only Tracking Mode**: Purchase history alerts, no quantity deduction (packaging materials)
+- ✅ **Estimate Tracking Mode**: Fixed cost per unit for recipe calculations (consumables)
+- ✅ **Smart Mode Assignment**: Automatic suggestions based on item cost and type
+- ✅ **Flexible Mode Switching**: Change tracking modes as business needs evolve
 
-#### **1.2 Advanced Items Interface** ✅ **COMPLETED**
+#### **1.2 Enhanced Items Interface** ✅ **COMPLETED**
 
-- ✅ **Spreadsheet-style table with inline editing**
-- ✅ **Real-time search and filtering**
-- ✅ **Bulk operations (delete, archive)**
-- ✅ **Inline quantity editing with +/- controls**
-- ✅ **Visual quantity indicators (color-coded)**
-- ✅ **Mobile-responsive design**
+- ✅ **Mixed Tracking Display**: Show different alert types based on tracking mode
+- ✅ **Time-Based Alerts**: "Check supply" alerts for cost-only items based on purchase history
+- ✅ **Quantity vs Cost Focus**: Emphasize relevant metrics per tracking mode
+- ✅ **Mobile-responsive design with 44px touch targets**
 - ✅ **Keyboard navigation support**
 
-#### **1.3 Seed Data System** ✅ **COMPLETED**
+### **2. Smart Purchase Management** ✅ **COMPLETED**
 
-- ✅ **Sample data generation for testing**
-- ✅ **16 realistic items (ingredients + packaging)**
-- ✅ **Batch processing with error handling**
-- ✅ **User feedback and progress tracking**
-- ✅ **Success/error reporting with statistics**
+#### **2.1 Proportional Cost Allocation** ✅ **COMPLETED**
 
-### **2. Purchase Management** 🚧 **PARTIALLY COMPLETED**
+- ✅ **Smart Allocation Algorithm**: Distribute shipping/taxes proportional to item base costs
+- ✅ **Cost Breakdown Tracking**: Separate base cost from allocated overhead
+- ✅ **Non-Inventory Support**: Handle office supplies and equipment purchases
+- ✅ **Mixed Invoice Handling**: Support COGS and non-COGS items on same purchase
+- ✅ **Variance Validation**: Prevent finalization if calculated total differs significantly from actual
 
-#### **2.1 Purchase Creation** 🚧 **IN PROGRESS**
+#### **2.2 Statement-Based Workflow** ✅ **COMPLETED**
 
-- ✅ **Draft purchase creation and management**
-- ✅ **Line item management with cost allocation**
-- ✅ **Supplier assignment and tracking**
-- ✅ **Purchase date and effective date support**
-- ✅ **Shipping, taxes, and other costs tracking**
-- ✅ **Notes and documentation support**
+- ✅ **Monthly Batch Entry**: Support for entering multiple purchases from statements
+- ✅ **COGS vs Non-COGS Split**: Clear separation of inventory-affecting purchases
+- ✅ **Purchase Variance Checking**: Validate totals before finalizing
+- ✅ **Flexible Entry Timing**: Support for back-dating and delayed entry
+- ✅ **Draft Purchase System**: Create and modify purchases before finalizing
 
-#### **2.2 Purchase Workflow** 🚧 **IN PROGRESS**
+#### **2.3 Enhanced Purchase Workflow** ✅ **COMPLETED**
 
-- ✅ **Draft to final purchase conversion**
-- ✅ **Inventory updates on purchase finalization**
-- ✅ **Transaction logging for audit trail**
-- ✅ **WAC recalculation on purchases**
-- 🚧 **Purchase order generation (planned)**
-- 🚧 **Supplier catalog integration (planned)**
+- ✅ **Preview Allocation**: See cost distribution before finalizing
+- ✅ **Base Cost Entry**: Enter actual item costs before overhead allocation  
+- ✅ **Automatic WAC Updates**: Update weighted average costs with allocated totals
+- ✅ **Error Prevention**: Comprehensive validation and variance checking
+- ✅ **Audit Trail**: Complete tracking of cost allocation decisions
 
-#### **2.3 CSV Import System** ✅ **COMPLETED**
+### **3. Simplified Business Logic** ✅ **COMPLETED**
 
-- ✅ **QBO sales CSV import functionality**
-- ✅ **Format validation and error reporting**
-- ✅ **Data preview before import**
-- ✅ **Automatic item creation for missing items**
-- ✅ **Transaction logging for imported sales**
-- ✅ **Effective date override support**
-- ✅ **Import statistics and error reporting**
+#### **3.1 Consolidated Alert System** ✅ **COMPLETED**
 
-### **3. Recipe and Batch Management** 📋 **PLANNED**
+- ✅ **Single Source of Truth**: Unified cycle count alert calculation
+- ✅ **Mixed Tracking Alerts**: Different alert types for different tracking modes
+- ✅ **Priority Scoring**: Standardized algorithm for alert prioritization
+- ✅ **Time-Based Alerts**: Purchase history alerts for cost-only items
+- ✅ **Configurable Thresholds**: Adjustable alert sensitivity
 
-#### **3.1 Recipe Management** 📋 **PLANNED**
+#### **3.2 Fixed WAC Calculation** ✅ **COMPLETED**
 
-- **Recipe creation with ingredient lists**
-- **Recipe versioning and change tracking**
-- **Expected yield and labor time tracking**
-- **Cost projection and material cost calculation**
-- **Recipe scaling and adjustment**
+- ✅ **Inventory-Aware WAC**: Proper weighted average cost calculation
+- ✅ **Allocation Integration**: Include allocated overhead in WAC calculation
+- ✅ **Atomic Updates**: Consistent inventory and cost updates
+- ✅ **Purchase Integration**: Automatic WAC recalculation on purchase finalization
+- ✅ **Cost Breakdown Preservation**: Maintain base cost vs overhead distinction
 
-#### **3.2 Batch Production** 📋 **PLANNED**
+#### **3.3 Comprehensive Inventory Operations** ✅ **COMPLETED**
 
-- **Batch creation from recipes**
-- **Ingredient consumption tracking**
-- **Yield percentage calculation**
-- **Cost variance analysis**
-- **Expiry date management**
+- ✅ **Sales Deduction**: Proper inventory deduction for sales transactions
+- ✅ **Recipe Consumption**: Ingredient deduction for batch production
+- ✅ **Inventory Adjustments**: Manual adjustments with reason tracking
+- ✅ **Waste Tracking**: Record and track material waste
+- ✅ **Transaction Logging**: Complete audit trail for all inventory changes
 
-### **4. Sales and Reporting** 📋 **PLANNED**
+### **4. Streamlined Data Entry** 🚧 **IN PROGRESS**
 
-#### **4.1 Sales Tracking** 📋 **PLANNED**
+#### **4.1 Bookkeeping Integration** 🚧 **PLANNED**
 
-- **Sales period logging**
-- **Revenue tracking by item**
-- **Customer and channel tracking**
-- **Sales forecasting and trend analysis**
+- 📋 **Statement-Based Entry**: Design for monthly inventory sessions
+- 📋 **COGS Identification**: Easy flagging of inventory-affecting purchases
+- 📋 **Batch Processing**: Efficient entry of multiple purchases
+- 📋 **Mixed Purchase Handling**: Clear workflows for COGS/non-COGS splits
+- 📋 **Receipt Reconciliation**: Match inventory details to bookkeeping entries
 
-#### **4.2 Reporting and Analytics** 📋 **PLANNED**
+#### **4.2 Import/Export Enhancements** 📋 **PLANNED**
 
-- **Inventory valuation reports**
-- **Purchase history analysis**
-- **Sales performance metrics**
-- **Cost analysis and margin calculations**
+- ✅ **QBO Sales CSV Import**: Current CSV import functionality
+- 📋 **Purchase CSV Templates**: Templates for efficient batch entry
+- 📋 **Bookkeeping Export**: Export for tax and accounting purposes
+- 📋 **COGS Reporting**: Focused reports for cost analysis
+- 📋 **Cost Allocation Reports**: Breakdown of base costs vs overhead
 
-### **5. Import/Export System** ✅ **COMPLETED**
+### **5. Recipe and Production** 📋 **PLANNED**
 
-#### **5.1 Data Import** ✅ **COMPLETED**
+#### **5.1 Flexible Recipe Management** 📋 **PLANNED**
 
-- ✅ **QBO sales CSV import with validation**
-- ✅ **Format detection and error handling**
-- ✅ **Preview functionality before import**
-- ✅ **Batch processing with progress tracking**
-- ✅ **Error recovery and reporting**
+- 📋 **Mixed Tracking Support**: Recipes using items with different tracking modes
+- 📋 **Cost Estimation**: Include estimated costs for consumable items
+- 📋 **Real Cost Tracking**: Use allocated costs for accurate product costing
+- 📋 **Recipe Scaling**: Proportional scaling with cost updates
+- 📋 **Version Control**: Track recipe changes over time
 
-#### **5.2 Data Export** 📋 **PLANNED**
+#### **5.2 Production Workflows** 📋 **PLANNED**
 
-- **CSV export for all data types**
-- **Custom date range exports**
-- **Template downloads for data entry**
-- **Backup and restore functionality**
-
-### **6. User Interface** ✅ **COMPLETED**
-
-#### **6.1 Navigation and Layout** ✅ **COMPLETED**
-
-- ✅ **Responsive sidebar navigation**
-- ✅ **Mobile-first design with touch support**
-- ✅ **Breadcrumb navigation**
-- ✅ **Command palette for quick actions**
-- ✅ **User menu and notifications**
-
-#### **6.2 Search and Discovery** ✅ **COMPLETED**
-
-- ✅ **Global search functionality**
-- ✅ **Advanced filtering options**
-- ✅ **Real-time search results**
-- ✅ **Search history and suggestions**
-
-#### **6.3 Data Entry and Editing** ✅ **COMPLETED**
-
-- ✅ **Inline editing for quick updates**
-- ✅ **Modal forms for complex operations**
-- ✅ **Bulk operations with selection**
-- ✅ **Simplified mobile-first navigation**
+- 📋 **Selective Deduction**: Only deduct inventory for full-tracking items
+- 📋 **Cost Allocation**: Apply estimated costs for cost-only items
+- 📋 **Yield Analysis**: Compare expected vs actual yields
+- 📋 **Labor Integration**: Include labor costs in production tracking
+- 📋 **Batch Templates**: Reusable production configurations
 
 ## 🔧 **Non-Functional Requirements**
 
@@ -185,175 +153,161 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 - **Page Load**: < 3 seconds for initial page load
 - **Search Results**: < 1 second for filtered results
 - **Data Updates**: < 500ms for inline edits
-- **Import Processing**: < 30 seconds for 1000 records
+- **Allocation Preview**: < 2 seconds for cost allocation calculations
 
 #### **Scalability**
 
-- **Concurrent Users**: Support 10+ simultaneous users
-- **Data Volume**: Handle 10,000+ items and 100,000+ transactions
+- **Items**: Handle 1,000+ items with mixed tracking modes
+- **Purchases**: Process 100+ purchases per month efficiently
+- **Transactions**: Support 10,000+ historical transactions
 - **File Upload**: Support CSV files up to 10MB
 
 ### **Usability Requirements**
 
-#### **Accessibility**
+#### **Workflow Efficiency**
 
-- **WCAG 2.1 AA Compliance**: Full accessibility support
-- **Keyboard Navigation**: Complete keyboard-only operation
-- **Screen Reader Support**: ARIA labels and semantic HTML
-- **Color Contrast**: Minimum 4.5:1 contrast ratio
+- **Monthly Sessions**: Complete inventory entry in 1-2 hours monthly
+- **Tracking Mode Clarity**: Clear indicators for different tracking modes
+- **Cost Allocation Preview**: Understand allocation before committing
+- **Error Prevention**: Prevent common entry mistakes
+- **Mobile Compatibility**: Essential functions work on mobile
 
-#### **Mobile Experience**
+### **Business Logic Requirements**
 
-- **Touch Targets**: Minimum 44px × 44px for all interactive elements
-- **Gesture Support**: Swipe navigation and touch gestures
-- **Responsive Design**: Optimized for all screen sizes
-- **Offline Capability**: Basic offline functionality for viewing
+#### **Cost Allocation Rules**
 
-### **Reliability Requirements**
+- **Proportional Distribution**: Overhead allocated by base cost ratios
+- **COGS Focus**: Only inventory items receive overhead allocation
+- **Variance Tolerance**: Accept variances under $0.50
+- **Base Cost Preservation**: Maintain separation of base vs allocated costs
+- **Audit Trail**: Track all allocation decisions
 
-#### **Data Integrity**
+#### **Tracking Mode Rules**
 
-- **Atomic Operations**: All database operations are atomic
-- **Transaction Logging**: Complete audit trail for all changes
-- **Error Recovery**: Graceful handling of network failures
-- **Data Validation**: Comprehensive input validation
-
-#### **Availability**
-
-- **Uptime**: 99.9% availability during business hours
-- **Backup**: Daily automated backups with 30-day retention
-- **Recovery**: Point-in-time recovery capability
-
-### **Security Requirements**
-
-#### **Authentication and Authorization**
-
-- **User Authentication**: Secure login with multi-factor support
-- **Row-Level Security**: Database-level access control
-- **Session Management**: Secure session handling
-- **API Security**: Protected API endpoints
-
-#### **Data Protection**
-
-- **Encryption**: Data encrypted in transit and at rest
-- **Input Validation**: Protection against injection attacks
-- **XSS Prevention**: Content Security Policy implementation
-- **CSRF Protection**: Cross-site request forgery prevention
+- **Full Tracking**: Traditional quantity tracking with alerts
+- **Cost-Only**: Time-based alerts, no quantity deduction
+- **Estimate**: Fixed cost per unit, no alerts or deduction
+- **Mode Flexibility**: Allow mode changes with data preservation
+- **Smart Suggestions**: Recommend modes based on item characteristics
 
 ## 📊 **Business Rules**
 
-### **Inventory Management Rules**
-
-#### **Quantity Management**
-
-- **Negative Inventory**: Allowed with warnings (supports real-world flexibility)
-- **Quantity Updates**: All changes logged with timestamps
-- **Unit Conversion**: Automatic conversion between compatible units
-- **Rounding**: Consistent rounding rules for all calculations
-
-#### **Cost Management**
-
-- **WAC Calculation**: Based on all non-draft purchases
-- **Cost Allocation**: Proportional allocation of additional costs
-- **Cost Updates**: Automatic recalculation on new purchases
-- **Historical Cost**: Maintain cost history for analysis
-
 ### **Purchase Management Rules**
 
-#### **Draft System**
+#### **Cost Allocation Logic**
 
-- **Draft Purchases**: Can be created and modified before finalization
-- **Finalization**: Converts draft to final and updates inventory
-- **Deletion**: Only draft purchases can be deleted
-- **Line Items**: Required for all purchases
+- **Inventory Items Only**: Shipping/taxes allocated only to COGS items
+- **Proportional Distribution**: Based on base cost ratios
+- **Non-Inventory Handling**: Office supplies and equipment excluded from allocation
+- **Variance Checking**: Calculated total must match actual within tolerance
+- **Base Cost Tracking**: Maintain original item costs separate from allocation
 
-#### **Supplier Management**
+#### **Purchase Workflow Rules**
 
-- **Supplier Assignment**: Optional primary supplier per item
-- **Supplier History**: Track last used supplier automatically
-- **Supplier Data**: Name, contact info, and notes
+- **Draft System**: All purchases start as drafts until finalized
+- **Allocation Preview**: Show allocation before finalization
+- **Variance Resolution**: Require manual adjustment if variance exceeds threshold
+- **WAC Integration**: Finalization automatically updates item costs
+- **Audit Requirements**: Complete tracking of all cost allocation decisions
+
+### **Inventory Tracking Rules**
+
+#### **Tracking Mode Guidelines**
+
+- **Full Tracking Criteria**: Core ingredients, expensive items (>$5), high-impact materials
+- **Cost-Only Criteria**: Packaging materials, consumables, items difficult to count exactly
+- **Estimate Criteria**: Very cheap items (<$0.05), labels, basic consumables
+- **Mode Assignment**: Business decision based on cost impact and tracking effort
+- **Mode Changes**: Allowed with proper data migration
+
+#### **Alert System Rules**
+
+- **Full Tracking Alerts**: Traditional low-stock based on quantity and reorder points
+- **Cost-Only Alerts**: Time-based, trigger when no purchase for 45+ days
+- **Estimate Items**: No automatic alerts, manual review as needed
+- **Priority Scoring**: Higher priority for negative inventory and overdue items
+- **Alert Consolidation**: Single standardized alert system for all modes
 
 ### **Data Entry Rules**
 
-#### **Flexibility Requirements**
+#### **Flexible Workflow Support**
 
-- **Back-Dating**: All transactions support historical dates
-- **Corrections**: All records can be edited with audit trail
-- **Partial Data**: Support for incomplete data entry
-- **Batch Operations**: Bulk updates and operations
+- **Statement-Based Entry**: Support monthly batch entry from financial statements
+- **Back-Dating**: All transactions support historical effective dates
+- **Corrections**: All records editable with audit trail
+- **Partial Data**: Support incomplete data entry with warnings
+- **Mixed Purchases**: Handle COGS and non-COGS items on same invoice
 
 #### **Validation Rules**
 
-- **Required Fields**: SKU, name, type for items
-- **Format Validation**: Email, phone, date formats
-- **Business Logic**: Reorder points, lead times, quantities
-- **Cross-Reference**: Supplier existence, item relationships
+- **Required Fields**: Minimal required data, focus on meaningful information
+- **Cost Validation**: Reasonable cost ranges with warnings for outliers
+- **Allocation Validation**: Prevent finalization with significant variances
+- **Business Logic**: Validate tracking mode assignments and changes
+- **Cross-Reference**: Ensure supplier and item relationships are valid
 
 ## 🎨 **User Experience Requirements**
 
-### **Interface Design**
-
-#### **Visual Design**
-
-- **Consistent Branding**: Professional, clean interface
-- **Color Coding**: Intuitive color usage for status and alerts
-- **Typography**: Readable fonts with proper hierarchy
-- **Icons**: Clear, meaningful iconography
-
-#### **Interaction Design**
-
-- **Direct Manipulation**: Click-to-edit, drag-to-reorder
-- **Progressive Disclosure**: Show details on demand
-- **Contextual Actions**: Actions available where needed
-- **Feedback**: Clear feedback for all user actions
-
 ### **Workflow Design**
 
-#### **Efficiency Focus**
+#### **Monthly Inventory Session**
 
-- **Quick Actions**: One-click common operations
-- **Mobile-First Design**: Touch-optimized for mobile workflows
-- **Bulk Operations**: Multi-select and batch processing
-- **Auto-Save**: Automatic saving of work in progress
+- **Efficient Entry**: Complete month's inventory in 1-2 hour session
+- **Statement Integration**: Design around existing bookkeeping workflow
+- **Batch Operations**: Process multiple purchases efficiently
+- **Clear Separation**: Obvious distinction between COGS and non-COGS items
+- **Progress Tracking**: Show completion status during batch entry
 
-#### **Error Prevention**
+#### **Tracking Mode Clarity**
 
-- **Validation**: Real-time input validation
-- **Confirmation**: Important actions require confirmation
-- **Undo/Redo**: Support for reversing actions
-- **Recovery**: Clear error messages with recovery options
+- **Visual Indicators**: Clear badges or icons for tracking modes
+- **Contextual Actions**: Different actions based on tracking mode
+- **Mode Explanations**: Help text explaining each tracking mode
+- **Change Workflows**: Clear process for changing tracking modes
+- **Mixed Displays**: Handle mixed tracking modes in lists and reports
+
+### **Error Prevention**
+
+#### **Cost Allocation Guidance**
+
+- **Preview Functionality**: Show allocation before committing
+- **Variance Warnings**: Clear alerts when totals don't match
+- **Allocation Breakdown**: Detailed view of how costs are distributed
+- **Manual Adjustment**: Easy correction of allocation issues
+- **Educational Tooltips**: Explain allocation logic to users
 
 ## 📈 **Success Metrics**
 
 ### **Business Metrics**
 
-- **Time Savings**: 50% reduction in inventory management time
-- **Accuracy**: 95%+ inventory accuracy
-- **Stockouts**: 80% reduction in stockout incidents
-- **User Adoption**: 90%+ user adoption within 30 days
+- **Data Entry Efficiency**: Complete monthly inventory entry in <2 hours
+- **Cost Accuracy**: Accurate product costing including allocated overhead
+- **Workflow Adoption**: 90%+ usage of simplified tracking modes
+- **Error Reduction**: <5% variance in cost allocations
+- **Statement Integration**: Seamless workflow with existing bookkeeping
 
 ### **Technical Metrics**
 
-- **Performance**: < 3 second page load times
-- **Reliability**: 99.9% uptime
-- **Security**: Zero security incidents
-- **Accessibility**: WCAG 2.1 AA compliance
+- **Allocation Performance**: Cost allocation calculations <2 seconds
+- **Data Consistency**: Zero data corruption in cost allocation
+- **Mode Flexibility**: Successful tracking mode changes without data loss
+- **System Reliability**: 99.9% uptime for critical allocation functions
 
 ## 🔄 **Future Requirements**
 
 ### **Phase 2 Features** 📋 **PLANNED**
 
-- **Advanced Reporting**: Custom report builder
-- **Multi-Location**: Support for multiple warehouses
-- **Barcode Integration**: Barcode scanning support
-- **API Integration**: Third-party system integration
+- **Advanced Reporting**: Cost allocation reports and analysis
+- **Bookkeeping Integration**: Direct export to accounting systems
+- **Recipe Cost Analysis**: True product costing with allocated overhead
+- **Supplier Analysis**: Cost trends and supplier performance metrics
 
 ### **Phase 3 Features** 📋 **PLANNED**
 
-- **Advanced Analytics**: Predictive analytics and forecasting
-- **Mobile App**: Native mobile application
-- **Automation**: Automated reorder and alert systems
-- **Advanced Permissions**: Role-based access control
+- **Automated Allocation Rules**: Customizable allocation formulas
+- **Multi-Currency Support**: Handle international suppliers
+- **Advanced Analytics**: Predictive costing and trend analysis
+- **Mobile App**: Native mobile for production floor use
 
 ---
 
