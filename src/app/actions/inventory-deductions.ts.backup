@@ -32,7 +32,8 @@ export interface InventoryAdjustmentRequest {
 // Deduct inventory for sales, consumption, or adjustments
 export async function deductInventory(request: InventoryDeductionRequest) {
   try {
-    const { data, error } = await supabaseAdmin.rpc('deduct_inventory', {
+    // TODO: Update database types after applying migrations
+    const { data, error } = await supabaseAdmin.rpc('deduct_inventory' as any, {
       item_id: request.itemId,
       quantity_to_deduct: request.quantity,
       transaction_type_param: request.transactionType,
@@ -63,7 +64,8 @@ export async function deductInventory(request: InventoryDeductionRequest) {
 // Process recipe ingredient consumption for batch production
 export async function consumeRecipeIngredients(request: RecipeConsumptionRequest) {
   try {
-    const { data, error } = await supabaseAdmin.rpc('consume_recipe_ingredients', {
+    // TODO: Update database types after applying migrations
+    const { data, error } = await supabaseAdmin.rpc('consume_recipe_ingredients' as any, {
       recipe_id: request.recipeId,
       batch_quantity: request.batchQuantity,
       batch_id: request.batchId || null,
@@ -92,7 +94,8 @@ export async function consumeRecipeIngredients(request: RecipeConsumptionRequest
 // Manual inventory adjustments (cycle counts, corrections, etc.)
 export async function adjustInventory(request: InventoryAdjustmentRequest) {
   try {
-    const { data, error } = await supabaseAdmin.rpc('adjust_inventory', {
+    // TODO: Update database types after applying migrations
+    const { data, error } = await supabaseAdmin.rpc('adjust_inventory' as any, {
       item_id: request.itemId,
       new_quantity: request.newQuantity,
       reason: request.reason || 'Manual adjustment',
@@ -123,7 +126,7 @@ export async function recordSale(itemId: string, quantity: number, salePrice?: n
     quantity,
     transactionType: 'sale',
     referenceType: 'sale',
-    unitCost: salePrice,
+    unitCost: salePrice || 0,
     notes: notes || `Sale of ${quantity} units`,
   });
 }

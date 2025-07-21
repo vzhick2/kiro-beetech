@@ -297,8 +297,8 @@ export async function deleteLineItem(lineItemId: string) {
 
 export async function finalizeDraftPurchase(purchaseId: string) {
   try {
-    // Use the new WAC-aware finalize function for atomic operation
-    const { data, error } = await supabaseAdmin.rpc('finalize_draft_purchase_with_wac', {
+    // Use the deployed finalize_draft_purchase RPC function for atomic operation
+    const { data, error } = await supabaseAdmin.rpc('finalize_draft_purchase', {
       purchase_id: purchaseId,
     });
 

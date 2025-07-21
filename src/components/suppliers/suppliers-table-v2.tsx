@@ -63,122 +63,131 @@ export function SuppliersTableV2({ searchQuery = '' }: SuppliersTableV2Props) {
   // Inline editing cell component
   const EditableCell = useCallback(
     ({ row, column, getValue }: { row: Row<Supplier>; column: Column<Supplier>; getValue: () => any }) => {
-      const initialValue = getValue();
-      const [value, setValue] = useState(initialValue);
-      const [isEditing, setIsEditing] = useState(false);
-      const [loading, setLoading] = useState(false);
-
-      const handleSave = async () => {
-        if (value === initialValue) {
-          setIsEditing(false);
-          return;
-        }
-
-        setLoading(true);
-        try {
-          const field = column.id as keyof Supplier;
-          const dbFieldMap: Record<keyof Supplier, string> = {
-            supplierId: 'supplierid',
-            name: 'name',
-            website: 'website',
-            contactPhone: 'phone',
-            address: 'address',
-            notes: 'notes',
-            isArchived: 'isarchived',
-            created_at: 'created_at',
-          };
-
-          const dbField = dbFieldMap[field];
-          await updateSupplierMutation.mutateAsync({
-            supplierId: row.original.supplierId,
-            updates: { [dbField]: value },
-          });
-          setIsEditing(false);
-        } catch (error) {
-          console.error('Failed to save cell:', error);
-          setValue(initialValue);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      const handleCancel = () => {
-        setValue(initialValue);
-        setIsEditing(false);
-      };
-
-      if (isEditing) {
-        return (
-          <div className="flex items-center space-x-1">
-            <input
-              type="text"
-              value={value || ''}
-              onChange={e => setValue(e.target.value)}
-              className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  handleSave();
-                } else if (e.key === 'Escape') {
-                  handleCancel();
-                }
-              }}
-              onBlur={handleSave}
-              autoFocus
-              disabled={loading}
-            />
-            <div className="flex space-x-1">
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                title="Save"
-              >
-                <Check className="w-3 h-3" />
-              </button>
-              <button
-                onClick={handleCancel}
-                disabled={loading}
-                className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                title="Cancel"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <div
-          className="cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
-          onClick={() => setIsEditing(true)}
-        >
-          {column.id === 'contactPhone' && value ? (
-            <a
-              href={`tel:${value}`}
-              className="text-blue-600 hover:text-blue-800 hover:underline"
-              onClick={e => e.stopPropagation()}
-            >
-              {String(value)}
-            </a>
-          ) : column.id === 'website' && value ? (
-            <a
-              href={value.startsWith('http') ? value : `https://${value}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 hover:underline"
-              onClick={e => e.stopPropagation()}
-            >
-              {String(value)}
-            </a>
-          ) : (
-            String(value || '')
-          )}
-        </div>
-      );
+      return <EditableCellComponent row={row} column={column} getValue={getValue} updateSupplierMutation={updateSupplierMutation} />;
     },
     [updateSupplierMutation]
   );
+
+  // Separate component to handle editing state
+  function EditableCellComponent({ row, column, getValue, updateSupplierMutation }: {
+    row: Row<Supplier>;
+    column: Column<Supplier>;
+    getValue: () => any;
+    updateSupplierMutation: any;
+  }) {
+    const initialValue = getValue();
+    const [value, setValue] = useState(initialValue);
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleSave = async () => {
+      if (value === initialValue) {
+        setIsEditing(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const field = column.id as keyof Supplier;
+        const dbFieldMap: Record<keyof Supplier, string> = {
+          supplierId: 'supplierid',
+          name: 'name',
+          website: 'website',
+          contactPhone: 'phone',
+          address: 'address',
+          notes: 'notes',
+          isArchived: 'isarchived',
+          created_at: 'created_at',
+        };
+
+        const dbField = dbFieldMap[field];
+        await updateSupplierMutation.mutateAsync({
+          supplierId: row.original.supplierId,
+          updates: { [dbField]: value },
+        });
+        setIsEditing(false);
+      } catch (error) {
+        setValue(initialValue);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleCancel = () => {
+      setValue(initialValue);
+      setIsEditing(false);
+    };
+
+    if (isEditing) {
+      return (
+        <div className="flex items-center space-x-1">
+          <input
+            type="text"
+            value={value || ''}
+            onChange={e => setValue(e.target.value)}
+            className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSave();
+              } else if (e.key === 'Escape') {
+                handleCancel();
+              }
+            }}
+            onBlur={handleSave}
+            autoFocus
+            disabled={loading}
+          />
+          <div className="flex space-x-1">
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
+              title="Save"
+            >
+              <Check className="w-3 h-3" />
+            </button>
+            <button
+              onClick={handleCancel}
+              disabled={loading}
+              className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+              title="Cancel"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className="cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
+        onClick={() => setIsEditing(true)}
+      >
+        {column.id === 'contactPhone' && value ? (
+          <a
+            href={`tel:${value}`}
+            className="text-blue-600 hover:text-blue-800 hover:underline"
+            onClick={e => e.stopPropagation()}
+          >
+            {String(value)}
+          </a>
+        ) : column.id === 'website' && value ? (
+          <a
+            href={value.startsWith('http') ? value : `https://${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 hover:underline"
+            onClick={e => e.stopPropagation()}
+          >
+            {String(value)}
+          </a>
+        ) : (
+          String(value || '')
+        )}
+      </div>
+    );
+  }
 
   // Column definitions
   const columns = useMemo(
@@ -276,7 +285,9 @@ export function SuppliersTableV2({ searchQuery = '' }: SuppliersTableV2Props) {
         header: 'Created',
         cell: ({ getValue }: any) => {
           const date = getValue();
-          if (!date) return '-';
+          if (!date) {
+            return '-';
+          }
           return (
             <div className="cursor-help" title={`Created: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`}>
               {date.toLocaleDateString()}
@@ -306,7 +317,6 @@ export function SuppliersTableV2({ searchQuery = '' }: SuppliersTableV2Props) {
                   const nameCell = row.getAllCells().find((cell: any) => cell.column.id === 'name');
                   if (nameCell) {
                     // This would need to be handled by the EditableCell component
-                    console.log('Edit supplier:', row.original.supplierId);
                   }
                 }}
               >
@@ -367,7 +377,9 @@ export function SuppliersTableV2({ searchQuery = '' }: SuppliersTableV2Props) {
   // Bulk operations
   const handleBulkDelete = useCallback(async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
-    if (selectedRows.length === 0) return;
+    if (selectedRows.length === 0) {
+      return;
+    }
 
     try {
       const supplierIds = selectedRows.map(row => row.original.supplierId);
@@ -380,7 +392,9 @@ export function SuppliersTableV2({ searchQuery = '' }: SuppliersTableV2Props) {
 
   const handleBulkArchive = useCallback(async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
-    if (selectedRows.length === 0) return;
+    if (selectedRows.length === 0) {
+      return;
+    }
 
     try {
       const supplierIds = selectedRows.map(row => row.original.supplierId);

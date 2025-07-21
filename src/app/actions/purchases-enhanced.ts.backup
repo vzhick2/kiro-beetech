@@ -268,7 +268,7 @@ export async function updateLineItem(
 
     // Calculate new total cost
     const finalQuantity = lineItemData.quantity ?? currentLineItem.quantity;
-    const finalBaseUnitCost = lineItemData.baseUnitCost ?? currentLineItem.base_unit_cost;
+    const finalBaseUnitCost = lineItemData.baseUnitCost ?? currentLineItem.unitcost;
     updateData.totalcost = finalQuantity * finalBaseUnitCost;
 
     const { data, error } = await supabaseAdmin
