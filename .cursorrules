@@ -16,6 +16,7 @@
 - Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
 - Reference docs/technical-design.md for architecture decisions
 - Use docs/development-guide.md for development standards
+- **Missing Documentation**: If referenced docs don't exist or are incomplete, ask user to clarify requirements rather than assume
 
 ## Autonomous Processing Rules
 ### Autonomous Actions (No Permission Needed)
@@ -38,6 +39,9 @@
 - Create test components or example code
 - Update data-model.md and api-documentation.md when modifying database schema
 - Update technical-design.md when changing architecture decisions
+- **Add package.json scripts** (favor built-in tools and IDE features over custom scripts)
+- **Create configuration files** (.vscode/*, .env.*, etc.) unless specifically requested
+- **Add automation** that could be handled by existing IDE or platform features
 
 ## Error Prevention Rules
 - Check existing implementations before creating new ones
@@ -46,6 +50,13 @@
 - Verify imports and dependencies before adding
 - Check for duplicate functionality
 - Ensure all documentation is aligned before finalizing changes
+
+## Minimalism and Simplicity Rules
+- **Favor Built-in Solutions**: Use platform/IDE features over custom scripts
+- **No Unnecessary Files**: Don't create configs, scripts, or docs unless explicitly requested
+- **Question Complexity**: Ask "Is this simpler than existing approaches?" before adding anything
+- **Modern Over Legacy**: Prefer 2025 built-in capabilities (VS Code Git, auto-fetch) over manual solutions
+- **User Approval Required**: For any file creation that adds project complexity or maintenance burden
 
 ## Code Standards (AI Must Follow)
 - Use TypeScript strict mode with explicit return types
@@ -163,13 +174,29 @@ The project has comprehensive MCP integration for enhanced development workflow:
 - Use `pnpm build` for production build
 - Use `pnpm supabase:types` for updating database types
 
-## Git Workflow Rules
-- **PREFER GitHub MCP** for commits when multiple files need updating (~85% faster than traditional git)
-- **Use GitHub MCP**: `mcp_github_push_files` for batch commits with descriptive messages
-- **Fallback to Traditional Git**: Only when GitHub MCP is unavailable or for single-file changes
-- **Traditional Git**: Use combined commands: `git add . && git commit -m "message" && git push origin main`
-- **Commit Messages**: Descriptive, present-tense explaining what changed and why with technical details
+## Git Workflow Rules (2025 Modern Approach)
+### Primary Workflow: VS Code Integrated Git
+- **VS Code Auto-Sync**: Configured with `git.autofetch: true` (checks remote every 3 minutes)
+- **Status Bar Sync**: Use the "Synchronize Changes" button for one-click pull + push
+- **Source Control Panel**: `Ctrl+Shift+G` for visual commit and sync management
+- **Smart Commit**: Enabled `git.postCommitCommand: "sync"` for automatic sync after commits
+- **Visual Indicators**: Status bar shows `↑1 ↓2` for ahead/behind commit counts
+
+### MCP Integration Strategy
+- **GitHub MCP**: Use for complex multi-file operations and bulk changes (~85% faster)
+- **Immediate Sync After MCP**: Always run VS Code sync or `git pull` after MCP commits
+- **Local-Remote Alignment**: MCP bypasses local Git, so sync immediately to maintain IDE consistency
 - **Batch Operations**: Group related changes into single atomic commits via GitHub MCP
+
+### Sync Workflow After MCP Operations
+1. **After MCP Commit**: VS Code status bar shows "behind" indicator
+2. **Click Sync Button**: One-click in status bar pulls MCP changes + pushes any local commits  
+3. **Alternative CLI**: `git stash → git pull → git stash pop` for manual sync
+4. **Verification**: Status bar returns to clean state (no arrows)
+
+### Traditional Git (Fallback Only)
+- **Use When**: MCP unavailable or single-file changes
+- **Commands**: `git add . && git commit -m "message" && git push origin main`  
 - **Branch Strategy**: Direct commits to main branch for internal development (no PR overhead)
 
 ## Development Server Rules
@@ -177,6 +204,27 @@ The project has comprehensive MCP integration for enhanced development workflow:
 - User manages development server independently
 - Focus on code implementation and testing via build validation
 - Use `pnpm build` to verify functionality instead of running servers
+
+## Modern 2025 Development Environment
+### VS Code Configuration
+- **Auto-Fetch**: Enabled for automatic remote change detection (3-minute intervals)
+- **Smart Sync**: One-click synchronization via status bar integration
+- **Source Control Integration**: Visual commit and sync management (`Ctrl+Shift+G`)
+- **Conflict Resolution**: Built-in 3-way merge editor for handling conflicts
+- **Real-time Status**: Always-visible ahead/behind indicators in status bar
+
+### IDE-First Workflow Benefits
+- **No Terminal Commands**: Git operations through VS Code UI
+- **Visual Git State**: Real-time indicators for repository status
+- **Automatic Conflict Detection**: IDE alerts for merge conflicts
+- **Integrated Diff Viewer**: Side-by-side change visualization
+- **One-Click Operations**: Sync, commit, and push without CLI knowledge
+
+### Expert 2025 Patterns
+- **Status Bar First**: Always check sync status before starting work
+- **Auto-Sync After MCP**: Immediate synchronization after GitHub MCP operations  
+- **Visual Confirmation**: Use Source Control panel to verify changes before commit
+- **Smart Commits**: IDE automatically suggests sync after commit operations
 
 ## AI Behavior Rules
 - This is an internal business tool prioritizing flexibility over rigid constraints
@@ -186,5 +234,8 @@ The project has comprehensive MCP integration for enhanced development workflow:
 
 ## Commit Message Standards
 - Use descriptive, present-tense messages
-- Include what was changed and why
+- Include what was changed and why with technical details
 - Avoid generic messages like "fix bug" or "update code"
+- **VS Code Integration**: Use GitHub Copilot commit message generation when available
+- **MCP Commits**: Include context about MCP operations in commit messages
+- **Batch Changes**: Clearly describe scope of multi-file operations
