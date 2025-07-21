@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -55,6 +54,7 @@ export function ResponsiveSidebar({
 }: ResponsiveSidebarProps): React.ReactElement | null {
   const pathname = usePathname();
   const router = useRouter();
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -70,40 +70,67 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  const handleMobileNavClick = () => {
-    console.log('🔍 Mobile nav click detected!', { isDesktop, isOpen });
-    if (!isDesktop) {
-      // Close sidebar after navigation on mobile
-      setTimeout(() => {
-        console.log('🔍 Closing sidebar on mobile');
-        onCloseAction();
-      }, 100);
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    console.log('🔍 Touch end detected!', { isDesktop, isOpen });
-    // Handle touch events for mobile
+  // Android-optimized touch handling
+  const handleTouchStart = (e: React.TouchEvent, href: string) => {
+    console.log('🔍 Android touch start:', href);
     e.stopPropagation();
-    if (!isDesktop) {
-      setTimeout(() => {
-        console.log('🔍 Closing sidebar on touch');
-        onCloseAction();
-      }, 100);
+    
+    const touch = e.touches[0];
+    if (touch) {
+      setTouchStart({ x: touch.clientX, y: touch.clientY });
     }
+    
+    // Visual feedback for Android
+    const target = e.currentTarget as HTMLElement;
+    target.style.backgroundColor = 'rgb(30 41 59 / 0.8)';
   };
 
-  const handleMobileNavigation = (href: string, e: React.MouseEvent | React.TouchEvent) => {
-    console.log('🔍 Mobile navigation triggered for:', href);
+  const handleTouchEnd = (e: React.TouchEvent, href: string) => {
+    console.log('🔍 Android touch end:', href);
     e.preventDefault();
     e.stopPropagation();
     
-    if (!isDesktop) {
-      // Navigate programmatically and close sidebar
+    // Reset visual feedback
+    const target = e.currentTarget as HTMLElement;
+    target.style.backgroundColor = '';
+    
+    if (!touchStart) return;
+    
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    
+    const deltaX = Math.abs(touch.clientX - touchStart.x);
+    const deltaY = Math.abs(touch.clientY - touchStart.y);
+    
+    // Only navigate if it's a tap (not a scroll)
+    if (deltaX < 10 && deltaY < 10) {
+      console.log('🔍 Valid Android tap detected, navigating to:', href);
+      
+      // Force navigation and close sidebar
       router.push(href);
+      
+      if (!isDesktop) {
+        setTimeout(() => {
+          onCloseAction();
+        }, 50);
+      }
+    }
+    
+    setTouchStart(null);
+  };
+
+  // Fallback click handler for non-touch devices
+  const handleClick = (e: React.MouseEvent, href: string) => {
+    console.log('🔍 Click handler:', href);
+    e.preventDefault();
+    e.stopPropagation();
+    
+    router.push(href);
+    
+    if (!isDesktop) {
       setTimeout(() => {
         onCloseAction();
-      }, 100);
+      }, 50);
     }
   };
 
@@ -121,45 +148,30 @@ export function ResponsiveSidebar({
         const navItem = item as NavigationItem;
         const isActive = pathname === navItem.href;
         const IconComponent = navItem.icon;
+        
         return (
-          <Link
+          <div
             key={navItem.name}
-            href={navItem.href}
-            onClick={(e) => {
-              if (!isDesktop) {
-                handleMobileNavigation(navItem.href, e);
-              } else {
-                handleMobileNavClick();
-              }
-            }}
-            onTouchStart={(e) => {
-              console.log('🔍 Touch start on:', navItem.name);
-              e.currentTarget.style.transform = 'scale(0.95)';
-            }}
-            onTouchEnd={(e) => {
-              console.log('🔍 Touch end on:', navItem.name);
-              e.currentTarget.style.transform = 'scale(1)';
-              if (!isDesktop) {
-                handleMobileNavigation(navItem.href, e);
-              } else {
-                handleTouchEnd(e);
-              }
-            }}
+            onTouchStart={(e) => handleTouchStart(e, navItem.href)}
+            onTouchEnd={(e) => handleTouchEnd(e, navItem.href)}
+            onClick={(e) => handleClick(e, navItem.href)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
               isActive
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700'
             }`}
             style={{
-              // Ensure clickable on mobile
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
-              minHeight: '40px',
+              userSelect: 'none',
+              minHeight: '44px', // Larger touch target for Android
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
             <span className="font-medium">{navItem.name}</span>
-          </Link>
+          </div>
         );
       })}
     </div>
