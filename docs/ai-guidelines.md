@@ -29,27 +29,31 @@ Development philosophy and project context for the internal KIRO inventory manag
 This project uses a sophisticated AI setup designed to provide current, repository-aware assistance across multiple editors:
 
 #### **Core Architecture**
+
 - **Primary**: `.cursorrules` - Comprehensive AI behavior rules (works in Cursor + fallback for VS Code)
 - **VS Code Specific**: `.vscode/copilot-instructions.md` - References `.cursorrules` for consistency
 - **Real-time Context**: MCP (Model Context Protocol) servers for live repository/database awareness
 
 #### **MCP Integration - The Currency Solution**
+
 - **Supabase MCP Server**: Live database schema, real-time queries, current dependency awareness
 - **GitHub MCP Server**: Repository structure analysis, current branch context, file relationships
 - **Result**: AI always sees current tech stack (React 19, Next.js 15, etc.) rather than outdated patterns
 
 #### **Why This Approach Works**
+
 1. **Real-time Context**: MCP provides live data vs. static instruction files that become outdated
 2. **Multi-Editor Support**: Same rules work in Cursor and VS Code without conflicts
 3. **Repository Awareness**: AI reads actual `package.json`, project structure, and database schema
 4. **Current Best Practices**: Automatically suggests 2025 patterns, not legacy approaches
 
 #### **Contextual Prompting Strategy**
+
 ```bash
 # Force current tech stack awareness
 "@workspace check my package.json and suggest React 19 patterns"
 
-# Repository structure awareness  
+# Repository structure awareness
 "#file:package.json verify my Next.js version and suggest compatible patterns"
 
 # Real-time validation
@@ -59,6 +63,7 @@ This project uses a sophisticated AI setup designed to provide current, reposito
 This setup solves the "AI knowledge cutoff" problem by providing real-time repository context rather than relying on static training data.
 
 #### **Integration with .cursorrules**
+
 - **.cursorrules** contains immediate AI instructions for code generation
 - **ai-guidelines.md** documents the reasoning and philosophy behind those instructions
 - Together they provide both "what to do" and "why we do it this way"

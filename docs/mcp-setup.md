@@ -77,14 +77,17 @@ This project is configured with MCP servers for enhanced AI development workflow
 ### 1. Install Required Extensions
 
 **VS Code:**
+
 - Install the official MCP extension from Microsoft
 
 **Cursor:**
+
 - MCP is built-in, no additional extensions needed
 
 ### 2. Get Access Tokens
 
 #### Supabase Access Token
+
 1. Go to [Supabase Dashboard → Account → Access Tokens](https://supabase.com/dashboard/account/tokens)
 2. Click "Generate New Token"
 3. Give it a name (e.g., "MCP Development")
@@ -92,6 +95,7 @@ This project is configured with MCP servers for enhanced AI development workflow
 5. Copy the token
 
 #### GitHub Personal Access Token
+
 1. Go to [GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens](https://github.com/settings/tokens?type=beta)
 2. Click "Generate new token"
 3. Select repository: `vzhick2/kiro-beetech`
@@ -114,6 +118,7 @@ cp .env.example .env.local
 ```
 
 Required variables:
+
 ```bash
 SUPABASE_ACCESS_TOKEN=your_supabase_access_token_here
 GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here
@@ -122,11 +127,13 @@ GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here
 ### 4. Test MCP Servers
 
 #### Test Supabase MCP
+
 ```bash
 npx -y @supabase/mcp-server-supabase@latest --help
 ```
 
 #### Test GitHub MCP
+
 ```bash
 npx -y @modelcontextprotocol/server-github@latest --help
 ```
@@ -134,13 +141,16 @@ npx -y @modelcontextprotocol/server-github@latest --help
 ## Configuration Files
 
 ### For Both VS Code and Cursor
+
 - `mcp.json` - Root-level MCP configuration (uses environment variables)
 - `.env.local` - Your personal environment variables (not committed to git)
 
 ### VS Code Specific
+
 - `.vscode/mcp.json` - VS Code MCP configuration (prompts for tokens)
 
 ### Cursor Specific
+
 - Cursor reads from `mcp.json` automatically
 - Uses environment variables from `.env.local`
 
@@ -151,6 +161,7 @@ npx -y @modelcontextprotocol/server-github@latest --help
 **Project**: `jjpklpivpvywagmjjwpu`
 
 **Available Functions:**
+
 - `supabase_db_query` - Execute SELECT queries
 - `supabase_db_execute` - Execute INSERT/UPDATE/DELETE commands
 - `supabase_list_tables` - List all tables in database
@@ -164,6 +175,7 @@ npx -y @modelcontextprotocol/server-github@latest --help
 **Repository**: `vzhick2/kiro-beetech`
 
 **Available Functions:**
+
 - `create_or_update_file` - Create or update files in repository
 - `push_files` - Batch commit multiple files (~85% faster than git)
 - `get_file` - Get file contents from repository
@@ -199,13 +211,14 @@ AI: "Update multiple files and commit them as a batch"
 ## Advanced Configuration
 
 ### Auto-Approval (Optional)
+
 Add to your MCP configuration to auto-approve safe operations:
 
 ```json
 {
   "autoApprove": [
     "supabase_db_query",
-    "supabase_list_tables", 
+    "supabase_list_tables",
     "supabase_describe_table",
     "get_file",
     "list_files",
@@ -215,8 +228,9 @@ Add to your MCP configuration to auto-approve safe operations:
 ```
 
 ### Environment Variable Precedence
+
 1. `.env.local` (highest priority)
-2. `.env.development` 
+2. `.env.development`
 3. `.env`
 4. System environment variables
 
@@ -225,25 +239,30 @@ Add to your MCP configuration to auto-approve safe operations:
 ### Common Issues
 
 #### "Cannot find MCP servers"
+
 - Verify tokens are set in `.env.local`
 - Check MCP configuration files exist
 - Restart your IDE after configuration changes
 
 #### "Authentication failed"
+
 - Verify Supabase token has correct permissions
 - Verify GitHub token has repository access
 - Check token expiration dates
 
 #### "Command not found" errors
+
 - Ensure npm/npx is available in PATH
 - Try installing packages globally: `npm install -g @supabase/mcp-server-supabase@latest`
 
 #### VS Code Specific Issues
+
 - Install the official MCP extension
 - Check VS Code settings for MCP configuration
 - Use Command Palette: "MCP: Restart Servers"
 
 #### Cursor Specific Issues
+
 - Ensure `mcp.json` is in project root
 - Check Cursor settings: Cursor Tab → Features → Enable Model Context Protocol
 - Environment variables should be in `.env.local`
@@ -266,6 +285,7 @@ Add to your MCP configuration to auto-approve safe operations:
 ## Latest Versions
 
 This setup uses the latest stable versions:
+
 - **Supabase MCP**: `@supabase/mcp-server-supabase@latest`
 - **GitHub MCP**: `@modelcontextprotocol/server-github@latest`
 

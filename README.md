@@ -140,21 +140,25 @@ KIRO is a **private, business-focused inventory management system** designed spe
 This app follows a **simplified, business-focused approach** that prioritizes practical cost management over perfectionist inventory tracking:
 
 ### **80/20 Cost Tracking**
+
 - Focus on items that matter most for profitability
 - Flexible tracking modes based on business importance
 - Smart allocation reduces manual calculation overhead
 
 ### **Statement-Based Workflow**
+
 - Aligned with real accounting practices
 - Monthly inventory sessions instead of daily perfectionism
 - Mixed invoice handling for COGS and non-COGS items
 
 ### **Forgiving Operations**
+
 - Editable records with full audit trails
 - Support for negative inventory during corrections
 - Real-world workflow accommodation
 
 ### **Mobile-First Design**
+
 - Touch-optimized allocation approval
 - Workshop-friendly inventory checks
 - Desktop focus for complex administrative tasks
@@ -239,13 +243,16 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 ```typescript
 // Real-time cost allocation preview
 const allocationPreview = await previewAllocation(purchaseId, {
-  shipping: 50.00,
-  tax: 25.50,
-  fees: 10.00
+  shipping: 50.0,
+  tax: 25.5,
+  fees: 10.0,
 });
 
 // Proportional distribution with variance checking
-const result = await finalizePurchaseWithAllocation(purchaseId, allocationPreview);
+const result = await finalizePurchaseWithAllocation(
+  purchaseId,
+  allocationPreview
+);
 ```
 
 ### **Multi-Mode Tracking**
@@ -253,9 +260,9 @@ const result = await finalizePurchaseWithAllocation(purchaseId, allocationPrevie
 ```typescript
 // Flexible tracking based on business importance
 await setupItemTracking(itemId, {
-  mode: 'cost_only',  // full | cost_only | estimate
+  mode: 'cost_only', // full | cost_only | estimate
   countFrequencyDays: 30,
-  alertThresholds: { lowStock: 10, timeBasedDays: 45 }
+  alertThresholds: { lowStock: 10, timeBasedDays: 45 },
 });
 ```
 
@@ -301,7 +308,7 @@ This project is configured to use the **Model Context Protocol (MCP)** to provid
 With the smart allocation and tracking mode implementations, MCP can now:
 
 - Execute complex cost allocation queries
-- Test multi-mode tracking scenarios  
+- Test multi-mode tracking scenarios
 - Validate WAC calculations with real data
 - Simulate statement import workflows
 
@@ -328,16 +335,19 @@ With the smart allocation and tracking mode implementations, MCP can now:
 ## 🎨 **New UI Components**
 
 ### **Allocation Preview**
+
 - Real-time cost distribution visualization
 - Variance warnings for unusual allocations
 - Mobile-friendly approval workflow
 
 ### **Tracking Mode Indicators**
+
 - Color-coded badges (🟢 Full, 🟡 Cost-Only, 🟠 Estimate)
 - Mode-specific action buttons
 - Mixed alert dashboard
 
 ### **COGS Analytics**
+
 - Traffic light COGS percentage indicators
 - Purchase variance analysis
 - Monthly reconciliation summaries
@@ -345,16 +355,19 @@ With the smart allocation and tracking mode implementations, MCP can now:
 ## 📊 **Business Impact**
 
 ### **Cost Management Improvements**
+
 - **Accurate WAC**: Fixed calculation provides reliable inventory valuation
 - **Smart Allocation**: Reduces manual overhead distribution errors by 90%
 - **Flexible Tracking**: Allows focus on high-impact items while maintaining awareness of all inventory
 
 ### **Workflow Alignment**
+
 - **Statement Integration**: Matches real bookkeeping practices
 - **Monthly Sessions**: Aligns with accounting cycles
 - **Mixed Invoices**: Handles real-world purchasing scenarios
 
 ### **Time Savings**
+
 - **Automated Matching**: Reduces manual data entry by 80%
 - **Proportional Allocation**: Eliminates manual calculation overhead
 - **Mode-Based Alerts**: Focus attention where it matters most

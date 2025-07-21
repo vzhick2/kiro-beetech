@@ -46,14 +46,16 @@ export function usePurchases(draftsOnly = false) {
         // Use Supabase client directly for testing
         const { data, error } = await supabase
           .from('purchases')
-          .select(`
+          .select(
+            `
             *,
             supplier:suppliers(name),
             line_items:purchase_line_items(
               *,
               item:items(name, sku)
             )
-          `)
+          `
+          )
           .eq('isdraft', draftsOnly)
           .order('created_at', { ascending: false });
 
@@ -72,38 +74,42 @@ export function usePurchases(draftsOnly = false) {
 
         // Transform database fields to match TypeScript interface
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const transformedPurchases: PurchaseWithRelations[] = data.map((dbPurchase: any) => {
-          console.log('Raw database purchase:', dbPurchase);
-          
-          return {
-            purchaseId: dbPurchase.purchaseid,
-            displayId: dbPurchase.displayid,
-            supplierId: dbPurchase.supplierid,
-            purchaseDate: new Date(dbPurchase.purchasedate),
-            effectiveDate: new Date(dbPurchase.effectivedate),
-            grandTotal: Number(dbPurchase.total) || 0, // Convert numeric string to number
-            shipping: Number(dbPurchase.shipping) || 0,
-            taxes: Number(dbPurchase.taxes) || 0,
-            otherCosts: Number(dbPurchase.othercosts) || 0,
-            notes: dbPurchase.notes || '',
-            isDraft: Boolean(dbPurchase.isdraft),
-            created_at: new Date(dbPurchase.created_at),
-            updated_at: dbPurchase.updated_at
-              ? new Date(dbPurchase.updated_at)
-              : new Date(),
-            supplier: dbPurchase.supplier,
-            lineItems: (dbPurchase.line_items || []).map((dbLineItem: any) => ({
-              lineItemId: dbLineItem.lineitemid,
-              purchaseId: dbLineItem.purchaseid,
-              itemId: dbLineItem.itemid,
-              quantity: Number(dbLineItem.quantity) || 0,
-              unitCost: Number(dbLineItem.unitcost) || 0,
-              totalCost: Number(dbLineItem.totalcost) || 0,
-              notes: dbLineItem.notes || '',
-              item: dbLineItem.item,
-            })),
-          };
-        });
+        const transformedPurchases: PurchaseWithRelations[] = data.map(
+          (dbPurchase: any) => {
+            console.log('Raw database purchase:', dbPurchase);
+
+            return {
+              purchaseId: dbPurchase.purchaseid,
+              displayId: dbPurchase.displayid,
+              supplierId: dbPurchase.supplierid,
+              purchaseDate: new Date(dbPurchase.purchasedate),
+              effectiveDate: new Date(dbPurchase.effectivedate),
+              grandTotal: Number(dbPurchase.total) || 0, // Convert numeric string to number
+              shipping: Number(dbPurchase.shipping) || 0,
+              taxes: Number(dbPurchase.taxes) || 0,
+              otherCosts: Number(dbPurchase.othercosts) || 0,
+              notes: dbPurchase.notes || '',
+              isDraft: Boolean(dbPurchase.isdraft),
+              created_at: new Date(dbPurchase.created_at),
+              updated_at: dbPurchase.updated_at
+                ? new Date(dbPurchase.updated_at)
+                : new Date(),
+              supplier: dbPurchase.supplier,
+              lineItems: (dbPurchase.line_items || []).map(
+                (dbLineItem: any) => ({
+                  lineItemId: dbLineItem.lineitemid,
+                  purchaseId: dbLineItem.purchaseid,
+                  itemId: dbLineItem.itemid,
+                  quantity: Number(dbLineItem.quantity) || 0,
+                  unitCost: Number(dbLineItem.unitcost) || 0,
+                  totalCost: Number(dbLineItem.totalcost) || 0,
+                  notes: dbLineItem.notes || '',
+                  item: dbLineItem.item,
+                })
+              ),
+            };
+          }
+        );
 
         console.log('Transformed purchases:', transformedPurchases);
         return transformedPurchases;
@@ -138,7 +144,7 @@ export function useCreateDraftPurchase() {
         total: purchaseData.grandTotal,
       };
       delete (dbPurchaseData as any).grandTotal;
-      
+
       const result = await createDraftPurchase(dbPurchaseData);
       if (!result.success) {
         throw new Error(result.error);
@@ -179,7 +185,7 @@ export function useUpdateDraftPurchase() {
         (dbUpdates as any).total = updates.grandTotal;
         delete (dbUpdates as any).grandTotal;
       }
-      
+
       const result = await updateDraftPurchase(purchaseId, dbUpdates);
       if (!result.success) {
         throw new Error(result.error);

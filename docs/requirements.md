@@ -77,7 +77,7 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 #### **2.3 Enhanced Purchase Workflow** ✅ **COMPLETED**
 
 - ✅ **Preview Allocation**: See cost distribution before finalizing
-- ✅ **Base Cost Entry**: Enter actual item costs before overhead allocation  
+- ✅ **Base Cost Entry**: Enter actual item costs before overhead allocation
 - ✅ **Automatic WAC Updates**: Update weighted average costs with allocated totals
 - ✅ **Error Prevention**: Comprehensive validation and variance checking
 - ✅ **Audit Trail**: Complete tracking of cost allocation decisions

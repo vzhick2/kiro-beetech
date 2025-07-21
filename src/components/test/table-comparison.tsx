@@ -1,7 +1,7 @@
 /**
  * Test component to compare table solutions:
  * 1. AG Grid (existing)
- * 2. TanStack React Table  
+ * 2. TanStack React Table
  * 3. TanStack Virtual (for large datasets)
  */
 
@@ -17,19 +17,21 @@ const sampleData = [
 ];
 
 export function TableComparisonTest() {
-  const [activeTab, setActiveTab] = useState<'ag-grid' | 'tanstack-table' | 'tanstack-virtual'>('ag-grid');
+  const [activeTab, setActiveTab] = useState<
+    'ag-grid' | 'tanstack-table' | 'tanstack-virtual'
+  >('ag-grid');
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Table Solutions Comparison</h1>
-      
+
       {/* Tab Navigation */}
       <div className="flex space-x-4 mb-6">
         <button
           onClick={() => setActiveTab('ag-grid')}
           className={`px-4 py-2 rounded ${
-            activeTab === 'ag-grid' 
-              ? 'bg-blue-500 text-white' 
+            activeTab === 'ag-grid'
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'
           }`}
         >
@@ -38,8 +40,8 @@ export function TableComparisonTest() {
         <button
           onClick={() => setActiveTab('tanstack-table')}
           className={`px-4 py-2 rounded ${
-            activeTab === 'tanstack-table' 
-              ? 'bg-blue-500 text-white' 
+            activeTab === 'tanstack-table'
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'
           }`}
         >
@@ -48,8 +50,8 @@ export function TableComparisonTest() {
         <button
           onClick={() => setActiveTab('tanstack-virtual')}
           className={`px-4 py-2 rounded ${
-            activeTab === 'tanstack-virtual' 
-              ? 'bg-blue-500 text-white' 
+            activeTab === 'tanstack-virtual'
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'
           }`}
         >
@@ -61,9 +63,12 @@ export function TableComparisonTest() {
       <div className="border rounded-lg p-4">
         {activeTab === 'ag-grid' && (
           <div>
-            <h3 className="text-lg font-semibold mb-4">AG Grid Implementation</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              AG Grid Implementation
+            </h3>
             <p className="text-gray-600 mb-4">
-              Enterprise-grade table with built-in features. Your existing implementation in suppliers-ag-grid.tsx.
+              Enterprise-grade table with built-in features. Your existing
+              implementation in suppliers-ag-grid.tsx.
             </p>
             {/* Your existing AG Grid component can be imported here */}
           </div>
@@ -73,11 +78,13 @@ export function TableComparisonTest() {
           <div>
             <h3 className="text-lg font-semibold mb-4">TanStack React Table</h3>
             <p className="text-gray-600 mb-4">
-              Headless table library for building custom tables. You have this installed!
+              Headless table library for building custom tables. You have this
+              installed!
             </p>
             <div className="bg-yellow-50 p-4 rounded border">
               <p className="text-sm">
-                🚧 To implement: Create a component using useReactTable() hook from @tanstack/react-table
+                🚧 To implement: Create a component using useReactTable() hook
+                from @tanstack/react-table
               </p>
             </div>
           </div>
@@ -87,7 +94,8 @@ export function TableComparisonTest() {
           <div>
             <h3 className="text-lg font-semibold mb-4">TanStack Virtual</h3>
             <p className="text-gray-600 mb-4">
-              For virtualizing large datasets. Requires installation of @tanstack/react-virtual.
+              For virtualizing large datasets. Requires installation of
+              @tanstack/react-virtual.
             </p>
             <div className="bg-blue-50 p-4 rounded border">
               <p className="text-sm">

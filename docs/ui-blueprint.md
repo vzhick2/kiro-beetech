@@ -4,7 +4,14 @@ description: 'UI design and workflow specifications for mobile-first internal bu
 purpose: 'Reference for user interface design, workflows, and component specifications'
 last_updated: 'January 20, 2025'
 doc_type: 'ui-design'
-related: ['README.md', 'data-model.md', 'development-guide.md', 'requirements.md', 'technical-design.md']
+related:
+  [
+    'README.md',
+    'data-model.md',
+    'development-guide.md',
+    'requirements.md',
+    'technical-design.md',
+  ]
 ---
 
 # UI Blueprint
@@ -54,7 +61,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Dashboard
 
 - **Goal**: 30-second business health check with focus on actionable COGS insights.
-- **Features**: 
+- **Features**:
   - **Mixed Alert Center**: Combined alerts showing low-stock items (Full tracking), time-based checks (Cost-Only tracking), and variance warnings (Estimate tracking)
   - **COGS Summary**: Simple percentage showing COGS/Revenue ratio with traffic light indicators (Green <30%, Yellow 30-50%, Red >50%)
   - **Draft Purchases Alert**: Show count of pending draft purchases with smart allocation preview
@@ -65,7 +72,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Items
 
 - **Goal**: Manage item status with flexible tracking modes.
-- **Features**: 
+- **Features**:
   - **Tracking Mode Setup**: Easy toggle between Full/Cost-Only/Estimate tracking with setup wizard
   - **Mode-Aware Interface**: UI adapts based on tracking mode:
     - Full: Shows current quantity with plus/minus buttons
@@ -78,7 +85,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Recipes
 
 - **Goal**: Define/edit products with cost awareness.
-- **Features**: 
+- **Features**:
   - **Cost Impact Preview**: Show estimated cost per batch based on ingredient WAC
   - **Yield Tracking**: Simple interface for tracking actual vs expected yields
   - **Ingredient Substitution**: UI for temporary ingredient swaps with cost impact
@@ -87,7 +94,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Batches
 
 - **Goal**: Log production with cost tracking.
-- **Features**: 
+- **Features**:
   - **Smart Batch Logging**: Auto-generated display IDs (BATCH-YYYYMMDD-XXX)
   - **Cost Variance Alerts**: Visual indicators when actual costs deviate from recipe estimates
   - **Flexible Ingredient Entry**: Support for substitutions and partial usage
@@ -102,12 +109,12 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 - **Goal**: Streamlined purchase logging with intelligent cost distribution.
 - **Features**:
-  - **Smart Allocation Engine**: 
+  - **Smart Allocation Engine**:
     - Real-time preview of shipping/tax/fee distribution
     - Proportional allocation based on item base costs
     - Visual variance warnings for unusual distributions
     - Override capability for manual adjustments
-  - **Statement Integration**: 
+  - **Statement Integration**:
     - "Import Statement" workflow for bulk entry
     - Automated supplier matching with confidence scores
     - Mixed invoice handling (COGS + non-COGS items)
@@ -122,7 +129,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Sales (Simplified)
 
 - **Goal**: Bulk logging aligned with monthly inventory sessions.
-- **Features**: 
+- **Features**:
   - **Period-Based Entry**: Monthly/quarterly sales periods matching business cycles
   - **Channel Tracking**: Revenue by sales channel for basic analytics
   - **Integration Points**: Simple CSV import with validation
@@ -141,7 +148,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 ### Activity & Audit
 
 - **Goal**: Track changes across all tracking modes.
-- **Features**: 
+- **Features**:
   - **Unified Activity Feed**: All edits, adjustments, and mode changes
   - **Cost Impact Tracking**: Show financial impact of inventory adjustments
   - **User Action History**: Complete audit trail with timestamps

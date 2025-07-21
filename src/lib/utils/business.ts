@@ -22,7 +22,7 @@ export function calculateCycleCountPriority(item: Item): number {
     : 365; // Default to 1 year if never counted
 
   const countScore = Math.min(daysSinceCount / 30, 10); // Cap at 10
-  
+
   // Simple stock scoring
   let stockScore = 0;
   if (item.currentQuantity <= 0) {
@@ -177,11 +177,11 @@ export function needsReorder(item: Item): boolean {
 export function calculateReorderQuantity(item: Item): number {
   const leadTimeDays = item.leadTimeDays || 7;
   const reorderPoint = item.reorderPoint || 0;
-  
+
   // Simple approach: order enough to get back to reorder point + lead time buffer
   const shortage = Math.max(0, reorderPoint - item.currentQuantity);
   const leadTimeBuffer = reorderPoint * 0.3; // 30% buffer for lead time
-  
+
   return Math.ceil(shortage + leadTimeBuffer);
 }
 

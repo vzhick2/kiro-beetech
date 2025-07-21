@@ -255,7 +255,7 @@ For each new feature:
 # Add runtime dependency
 pnpm add package-name
 
-# Add dev dependency  
+# Add dev dependency
 pnpm add -D package-name
 
 # Always commit BOTH files together

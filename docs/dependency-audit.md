@@ -50,23 +50,23 @@
 | **Supabase JS**    | ^2.52.0         | 2.52.0         | ✅ **Latest** | Upgraded from 2.39.0                |
 | **TanStack Query** | ^5.83.0         | 5.83.0         | ✅ **Latest** | Upgraded from 5.0.0                 |
 | **TanStack Table** | ^8.21.3         | 8.21.3         | ✅ **Latest** | Upgraded from 8.0.0                 |
-| **AG Grid**        | ^34.0.2         | 34.0.2         | ✅ **Latest** | Enterprise data grid                 |
+| **AG Grid**        | ^34.0.2         | 34.0.2         | ✅ **Latest** | Enterprise data grid                |
 | **Zod**            | ^4.0.5          | 4.0.5          | ✅ **Latest** | Upgraded to 4.x for latest features |
 | **Zustand**        | ^5.0.6          | 5.0.6          | ✅ **Latest** | Upgraded from 4.5.x                 |
-| **Date-fns**       | ^4.1.0          | 4.1.0          | ✅ **Latest** | Date utility library                 |
+| **Date-fns**       | ^4.1.0          | 4.1.0          | ✅ **Latest** | Date utility library                |
 
 ---
 
 ## 🔧 **Development Tools**
 
-| Package                | Current Version | Latest Version | Status        | Notes                     |
-| ---------------------- | --------------- | -------------- | ------------- | ------------------------- |
-| **ESLint**             | ^9.31.0         | 9.31.0         | ✅ **Latest** | Upgraded from 8.x         |
-| **ESLint Config Next** | 15.4.1          | 15.4.1         | ✅ **Latest** | Matches Next.js version   |
-| **TypeScript ESLint**  | ^7.0.0          | 7.x.x          | ✅ **Latest** | TypeScript linting rules  |
-| **Prettier**           | ^3.0.0          | 3.x.x          | ✅ **Latest** | Code formatting           |
-| **Husky**              | ^8.0.0          | 8.x.x          | ✅ **Latest** | Git hooks                 |
-| **Lint Staged**        | ^15.0.0         | 15.x.x         | ✅ **Latest** | Pre-commit linting        |
+| Package                | Current Version | Latest Version | Status        | Notes                    |
+| ---------------------- | --------------- | -------------- | ------------- | ------------------------ |
+| **ESLint**             | ^9.31.0         | 9.31.0         | ✅ **Latest** | Upgraded from 8.x        |
+| **ESLint Config Next** | 15.4.1          | 15.4.1         | ✅ **Latest** | Matches Next.js version  |
+| **TypeScript ESLint**  | ^7.0.0          | 7.x.x          | ✅ **Latest** | TypeScript linting rules |
+| **Prettier**           | ^3.0.0          | 3.x.x          | ✅ **Latest** | Code formatting          |
+| **Husky**              | ^8.0.0          | 8.x.x          | ✅ **Latest** | Git hooks                |
+| **Lint Staged**        | ^15.0.0         | 15.x.x         | ✅ **Latest** | Pre-commit linting       |
 
 ---
 

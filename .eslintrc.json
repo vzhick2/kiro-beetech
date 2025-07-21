@@ -22,5 +22,12 @@
     "@next/next/no-img-element": "off",
     "@next/next/no-html-link-for-pages": "off"
   },
-  "ignorePatterns": ["node_modules/", ".next/", "out/", "build/", "dist/", "**/archived/**"]
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "build/",
+    "dist/",
+    "**/archived/**"
+  ]
 }

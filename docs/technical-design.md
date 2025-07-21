@@ -4,7 +4,14 @@ description: 'Architecture decisions, patterns, and technical specifications for
 purpose: 'Reference for development decisions and system architecture'
 last_updated: 'January 20, 2025'
 doc_type: 'technical-specification'
-related: ['data-model.md', 'api-documentation.md', 'development-guide.md', 'requirements.md', 'ui-blueprint.md']
+related:
+  [
+    'data-model.md',
+    'api-documentation.md',
+    'development-guide.md',
+    'requirements.md',
+    'ui-blueprint.md',
+  ]
 ---
 
 # Technical Design
@@ -110,15 +117,15 @@ DECLARE
   v_allocation_result JSON[];
 BEGIN
   -- Calculate total base cost for inventory items only
-  SELECT COALESCE(SUM(quantity * unit_cost), 0) 
+  SELECT COALESCE(SUM(quantity * unit_cost), 0)
   INTO v_total_base_cost
   FROM purchase_line_items pli
   JOIN items i ON pli.item_id = i.item_id
-  WHERE pli.purchase_id = p_purchase_id 
+  WHERE pli.purchase_id = p_purchase_id
     AND i.type != 'non-inventory';
 
   -- Calculate proportional allocation for each line item
-  FOR v_line_item IN 
+  FOR v_line_item IN
     SELECT pli.*, i.type, i.sku
     FROM purchase_line_items pli
     JOIN items i ON pli.item_id = i.item_id
@@ -126,7 +133,7 @@ BEGIN
   LOOP
     -- Process allocation logic...
   END LOOP;
-  
+
   RETURN v_result;
 END;
 $$ LANGUAGE plpgsql;
@@ -207,11 +214,11 @@ export function calculateVariance(
 ): VarianceCheck {
   const variance = Math.abs(expected - allocated);
   const percentageVariance = expected > 0 ? variance / expected : 0;
-  
+
   let warningLevel: 'info' | 'warning' | 'error' = 'info';
   if (percentageVariance > tolerance * 2) warningLevel = 'error';
   else if (percentageVariance > tolerance) warningLevel = 'warning';
-  
+
   return {
     expected,
     allocated,
@@ -261,13 +268,13 @@ RETURNS TABLE(
 ) AS $$
 BEGIN
   RETURN QUERY
-  SELECT 
+  SELECT
     i.item_id,
     i.sku,
     i.name,
     i.tracking_mode,
-    CASE 
-      WHEN i.tracking_mode = 'full' AND i.current_quantity <= COALESCE(i.reorder_point, 0) 
+    CASE
+      WHEN i.tracking_mode = 'full' AND i.current_quantity <= COALESCE(i.reorder_point, 0)
         THEN 'low_stock'
       WHEN i.tracking_mode = 'cost_only' AND (CURRENT_DATE - COALESCE(i.last_counted_date, i.created_at::date)) > i.count_frequency_days
         THEN 'count_due'
@@ -292,33 +299,33 @@ interface TrackingModeIndicatorProps {
   className?: string;
 }
 
-export function TrackingModeIndicator({ 
-  mode, 
-  alertType, 
-  className 
+export function TrackingModeIndicator({
+  mode,
+  alertType,
+  className
 }: TrackingModeIndicatorProps) {
   const modeConfig = {
-    full: { 
-      label: 'Full', 
-      color: 'green', 
-      icon: '🟢' 
+    full: {
+      label: 'Full',
+      color: 'green',
+      icon: '🟢'
     },
-    cost_only: { 
-      label: 'Cost-Only', 
-      color: 'yellow', 
-      icon: '🟡' 
+    cost_only: {
+      label: 'Cost-Only',
+      color: 'yellow',
+      icon: '🟡'
     },
-    estimate: { 
-      label: 'Estimate', 
-      color: 'orange', 
-      icon: '🟠' 
+    estimate: {
+      label: 'Estimate',
+      color: 'orange',
+      icon: '🟠'
     },
   };
 
   const config = modeConfig[mode];
-  
+
   return (
-    <Badge 
+    <Badge
       variant={alertType ? 'destructive' : 'secondary'}
       className={cn('text-xs', className)}
     >
@@ -345,7 +352,7 @@ export function ModeSpecificActions({ item }: { item: Item }) {
           </Button>
         </div>
       );
-    
+
     case 'cost_only':
       return (
         <Button size="sm" onClick={() => recordCount(item.id)}>
@@ -353,7 +360,7 @@ export function ModeSpecificActions({ item }: { item: Item }) {
           Count Now
         </Button>
       );
-    
+
     case 'estimate':
       return (
         <Button size="sm" onClick={() => reviewCost(item.id)}>
@@ -395,7 +402,7 @@ BEGIN
   -- Calculate new WAC using proper formula:
   -- New WAC = (Current Value + New Value) / (Current Qty + New Qty)
   v_new_wac := (
-    (v_current_quantity * v_current_wac) + 
+    (v_current_quantity * v_current_wac) +
     (p_new_quantity * p_new_unit_cost)
   ) / (v_current_quantity + p_new_quantity);
 
@@ -414,17 +421,20 @@ export async function finalizePurchaseWithWAC(
 ): Promise<AppResult<void>> {
   try {
     // Start transaction
-    const { error } = await supabase.rpc('finalize_purchase_with_smart_allocation', {
-      p_purchase_id: purchaseId,
-      p_allocation_data: JSON.stringify(allocationData),
-    });
+    const { error } = await supabase.rpc(
+      'finalize_purchase_with_smart_allocation',
+      {
+        p_purchase_id: purchaseId,
+        p_allocation_data: JSON.stringify(allocationData),
+      }
+    );
 
     if (error) throw error;
 
     // Revalidate affected queries
     revalidatePath('/purchases');
     revalidatePath('/items');
-    
+
     return { success: true, data: undefined };
   } catch (error) {
     return handleError(error, 'finalizePurchaseWithWAC');
@@ -461,35 +471,35 @@ CREATE OR REPLACE FUNCTION match_supplier_from_statement(
 BEGIN
   RETURN QUERY
   WITH supplier_matches AS (
-    SELECT 
+    SELECT
       s.supplier_id,
       s.name,
       s.website,
       -- Exact name match (highest confidence)
-      CASE WHEN LOWER(p_description) LIKE '%' || LOWER(s.name) || '%' 
+      CASE WHEN LOWER(p_description) LIKE '%' || LOWER(s.name) || '%'
            THEN 0.9 ELSE 0 END +
       -- Website domain match
       CASE WHEN s.website IS NOT NULL AND LOWER(p_description) LIKE '%' || LOWER(SPLIT_PART(s.website, '.', 1)) || '%'
            THEN 0.7 ELSE 0 END +
       -- Previous transaction amount match
       CASE WHEN EXISTS(
-        SELECT 1 FROM purchases p2 
-        WHERE p2.supplier_id = s.supplier_id 
+        SELECT 1 FROM purchases p2
+        WHERE p2.supplier_id = s.supplier_id
           AND ABS(p2.total_amount - p_amount) < 1.00
           AND p2.purchase_date > CURRENT_DATE - INTERVAL '90 days'
       ) THEN 0.5 ELSE 0 END as confidence,
-      
+
       -- Match reason explanation
-      CASE 
+      CASE
         WHEN LOWER(p_description) LIKE '%' || LOWER(s.name) || '%' THEN 'Name match'
         WHEN s.website IS NOT NULL AND LOWER(p_description) LIKE '%' || LOWER(SPLIT_PART(s.website, '.', 1)) || '%' THEN 'Website match'
         ELSE 'Amount history match'
       END as reason
-      
+
     FROM suppliers s
     WHERE s.is_archived = false
   )
-  SELECT 
+  SELECT
     sm.supplier_id,
     sm.confidence,
     sm.reason
@@ -557,11 +567,11 @@ interface AllocationPreviewProps {
   onReject: () => void;
 }
 
-export function AllocationPreview({ 
-  purchaseId, 
-  overheadCosts, 
-  onApprove, 
-  onReject 
+export function AllocationPreview({
+  purchaseId,
+  overheadCosts,
+  onApprove,
+  onReject
 }: AllocationPreviewProps) {
   const { data: preview, isLoading } = useQuery({
     queryKey: ['allocation-preview', purchaseId, overheadCosts],
@@ -584,7 +594,7 @@ export function AllocationPreview({
       </CardHeader>
       <CardContent>
         <AllocationTable preview={allocation.preview} />
-        <AllocationSummary 
+        <AllocationSummary
           totalAllocated={allocation.totalAllocated}
           variance={allocation.variance}
           warnings={allocation.warnings}
@@ -616,7 +626,7 @@ export function TrackingModeDashboard() {
 
   const groupedAlerts = useMemo(() => {
     if (!alerts?.success) return {};
-    
+
     return alerts.data.reduce((acc, alert) => {
       const mode = alert.tracking_mode;
       if (!acc[mode]) acc[mode] = [];
@@ -627,19 +637,19 @@ export function TrackingModeDashboard() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <TrackingModeCard 
+      <TrackingModeCard
         mode="full"
         alerts={groupedAlerts.full || []}
         title="Full Tracking"
         description="Exact quantity management"
       />
-      <TrackingModeCard 
+      <TrackingModeCard
         mode="cost_only"
         alerts={groupedAlerts.cost_only || []}
         title="Cost-Only Tracking"
         description="Time-based inventory checks"
       />
-      <TrackingModeCard 
+      <TrackingModeCard
         mode="estimate"
         alerts={groupedAlerts.estimate || []}
         title="Estimate Tracking"
@@ -658,16 +668,16 @@ export function TrackingModeDashboard() {
 
 ```sql
 -- Optimized indexes for allocation queries
-CREATE INDEX idx_purchase_line_items_purchase_allocation 
-ON purchase_line_items(purchase_id, item_id) 
+CREATE INDEX idx_purchase_line_items_purchase_allocation
+ON purchase_line_items(purchase_id, item_id)
 INCLUDE (quantity, unit_cost);
 
-CREATE INDEX idx_items_type_archived 
-ON items(type, is_archived) 
+CREATE INDEX idx_items_type_archived
+ON items(type, is_archived)
 WHERE is_archived = false;
 
-CREATE INDEX idx_items_tracking_mode_alerts 
-ON items(tracking_mode, last_counted_date, count_frequency_days) 
+CREATE INDEX idx_items_tracking_mode_alerts
+ON items(tracking_mode, last_counted_date, count_frequency_days)
 WHERE is_archived = false;
 ```
 
@@ -676,7 +686,7 @@ WHERE is_archived = false;
 ```sql
 -- Materialized view for WAC performance
 CREATE MATERIALIZED VIEW item_wac_cache AS
-SELECT 
+SELECT
   item_id,
   current_quantity,
   weighted_average_cost,
@@ -702,31 +712,30 @@ $$ LANGUAGE plpgsql;
 // Optimistic allocation updates
 export function useOptimisticAllocation() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (allocation: AllocationResult) => 
-      applyAllocation(allocation),
-    
-    onMutate: async (allocation) => {
+    mutationFn: (allocation: AllocationResult) => applyAllocation(allocation),
+
+    onMutate: async allocation => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['purchases'] });
-      
+
       // Snapshot previous value
       const previousPurchases = queryClient.getQueryData(['purchases']);
-      
+
       // Optimistically update
-      queryClient.setQueryData(['purchases'], (old: any) => 
+      queryClient.setQueryData(['purchases'], (old: any) =>
         updatePurchaseWithAllocation(old, allocation)
       );
-      
+
       return { previousPurchases };
     },
-    
+
     onError: (err, allocation, context) => {
       // Revert on error
       queryClient.setQueryData(['purchases'], context?.previousPurchases);
     },
-    
+
     onSettled: () => {
       // Refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['purchases'] });
@@ -783,26 +792,26 @@ const TrackingModeSchema = z.object({
 
 ```typescript
 // Mobile allocation approval
-export function MobileAllocationApproval({ 
-  allocation, 
-  onApprove, 
-  onReject 
+export function MobileAllocationApproval({
+  allocation,
+  onApprove,
+  onReject
 }: MobileAllocationApprovalProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 bg-background border-t p-4 safe-area-pb">
       <div className="flex flex-col gap-3">
         <AllocationSummaryMobile allocation={allocation} />
         <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            size="lg" 
+          <Button
+            variant="outline"
+            size="lg"
             className="flex-1"
             onClick={onReject}
           >
             Modify
           </Button>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="flex-1"
             onClick={onApprove}
           >
@@ -821,20 +830,20 @@ export function MobileAllocationApproval({
 // Swipe gestures for tracking mode switching
 export function useTrackingModeGestures(itemId: string) {
   const [mode, setMode] = useState<TrackingMode>('full');
-  
+
   const handlers = useSwipeable({
     onSwipedLeft: () => nextMode(),
     onSwipedRight: () => previousMode(),
     trackMouse: true,
   });
-  
+
   const nextMode = () => {
     const modes: TrackingMode[] = ['full', 'cost_only', 'estimate'];
     const currentIndex = modes.indexOf(mode);
     const nextIndex = (currentIndex + 1) % modes.length;
     setMode(modes[nextIndex]);
   };
-  
+
   return { mode, handlers };
 }
 ```

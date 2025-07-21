@@ -52,8 +52,13 @@ export function useCycleCountAlerts(limit: number = 5) {
 
         if (error) {
           // If RPC function doesn't exist, fall back to basic query
-          if (error.code === '42883' || error.message.includes('does not exist')) {
-            console.warn('RPC function get_cycle_count_alerts not found, using fallback query');
+          if (
+            error.code === '42883' ||
+            error.message.includes('does not exist')
+          ) {
+            console.warn(
+              'RPC function get_cycle_count_alerts not found, using fallback query'
+            );
             return await getFallbackAlerts(limit);
           }
           throw new Error(error.message);
@@ -78,7 +83,9 @@ async function getFallbackAlerts(limit: number): Promise<CycleCountAlert[]> {
     .from('items')
     .select('itemid, sku, name, currentquantity, reorderpoint')
     .eq('isarchived', false)
-    .or('currentquantity.lt.0,and(reorderpoint.not.is.null,currentquantity.lte.reorderpoint)')
+    .or(
+      'currentquantity.lt.0,and(reorderpoint.not.is.null,currentquantity.lte.reorderpoint)'
+    )
     .order('currentquantity', { ascending: true })
     .limit(limit);
 
@@ -89,18 +96,29 @@ async function getFallbackAlerts(limit: number): Promise<CycleCountAlert[]> {
   return (data || []).map(item => {
     const currentQty = item.currentquantity ?? 0;
     const reorderPoint = item.reorderpoint ?? 0;
-    
+
     return {
       itemid: item.itemid,
       sku: item.sku,
       name: item.name,
       currentquantity: currentQty,
       reorderpoint: item.reorderpoint,
-      priorityscore: currentQty < 0 ? Math.abs(currentQty) * 2 : 
-                     (item.reorderpoint ? (reorderPoint - currentQty) * 1.5 : 0),
-      alerttype: currentQty < 0 ? 'NEGATIVE_INVENTORY' as const : 'LOW_STOCK' as const,
-      shortageamount: currentQty < 0 ? Math.abs(currentQty) :
-                     (item.reorderpoint ? Math.max(0, reorderPoint - currentQty) : 0),
+      priorityscore:
+        currentQty < 0
+          ? Math.abs(currentQty) * 2
+          : item.reorderpoint
+            ? (reorderPoint - currentQty) * 1.5
+            : 0,
+      alerttype:
+        currentQty < 0
+          ? ('NEGATIVE_INVENTORY' as const)
+          : ('LOW_STOCK' as const),
+      shortageamount:
+        currentQty < 0
+          ? Math.abs(currentQty)
+          : item.reorderpoint
+            ? Math.max(0, reorderPoint - currentQty)
+            : 0,
     };
   });
 }
@@ -122,16 +140,22 @@ export function useDashboardStats() {
           // Low stock items (alerts) - try RPC first, then fallback
           (async () => {
             try {
-              const result = await supabase.rpc('get_cycle_count_alerts', { limit_count: 100 });
+              const result = await supabase.rpc('get_cycle_count_alerts', {
+                limit_count: 100,
+              });
               return result;
             } catch (error) {
-              console.warn('RPC function not available, using fallback for alerts count');
+              console.warn(
+                'RPC function not available, using fallback for alerts count'
+              );
               // Fallback to basic query
               return await supabase
                 .from('items')
                 .select('itemid', { count: 'exact' })
                 .eq('isarchived', false)
-                .or('currentquantity.lt.0,and(reorderpoint.not.is.null,currentquantity.lte.reorderpoint)');
+                .or(
+                  'currentquantity.lt.0,and(reorderpoint.not.is.null,currentquantity.lte.reorderpoint)'
+                );
             }
           })(),
 
