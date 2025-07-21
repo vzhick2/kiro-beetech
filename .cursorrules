@@ -130,6 +130,31 @@ The project has comprehensive MCP integration for enhanced development workflow:
 - **GitHub**: "Commit these changes with message X", "Create branch for feature Y", "Search for function Z in codebase"
 - **Analysis**: "Analyze current inventory levels", "Show recent purchase patterns", "Validate database integrity"
 
+## Dependency Management Rules (CRITICAL)
+### Always Use Package Manager Commands
+- ✅ **CORRECT**: `pnpm add package@version` (updates both package.json and lockfile)
+- ✅ **CORRECT**: `pnpm add -D package@version` (for devDependencies)
+- ✅ **CORRECT**: `pnpm remove package` (cleanly removes from both files)
+- ❌ **NEVER**: Manually edit package.json dependencies section
+- ❌ **NEVER**: Copy package.json from other projects without regenerating lockfile
+
+### Configuration-Dependency Alignment
+- When config files reference packages (postcss.config.js, tailwind.config.ts), ensure they're installed
+- Example: If postcss.config.js uses `@tailwindcss/postcss`, run `pnpm add -D @tailwindcss/postcss`
+- Always verify config dependencies exist before committing
+
+### Lockfile Hygiene Prevention
+- **Before Adding Dependencies**: Check if similar functionality already exists
+- **After Dependency Changes**: Run `pnpm build` to verify everything works
+- **Before Committing**: Ensure package.json and pnpm-lock.yaml are synchronized
+- **Clean Removal**: When removing features, also remove their unused dependencies
+
+### Deployment Validation
+- Vercel uses `--frozen-lockfile` mode (strict lockfile validation)
+- Any mismatch between package.json and pnpm-lock.yaml causes deployment failure
+- Local `pnpm install` allows updates, production does not
+- Always test: `pnpm install --frozen-lockfile && pnpm build` before deployment
+
 ## AI Development Commands
 - Use `pnpm ai:validate` for fast validation (type-check, lint, format)
 - Use `pnpm ai:validate:full` for full type-check for production builds
