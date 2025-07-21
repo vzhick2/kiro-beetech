@@ -14,7 +14,10 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_forecasting_data_itemid ON forecasti
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_batch_templates_recipeid ON batch_templates(recipeid);
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_items_primarysupplierid ON items(primarysupplierid);
 
--- Drop unused indexes (if they exist)
 DROP INDEX CONCURRENTLY IF EXISTS idx_items_category;
 DROP INDEX CONCURRENTLY IF EXISTS idx_suppliers_created_at;
+<<<<<<< HEAD
 DROP INDEX CONCURRENTLY IF EXISTS idx_purchases_created_at_status;
+=======
+DROP INDEX CONCURRENTLY IF EXISTS idx_purchases_created_at_status;
+>>>>>>> 3cf6b52c0e60e6f2edfef63f54d65e75e46550dc

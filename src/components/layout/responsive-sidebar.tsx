@@ -29,20 +29,15 @@ interface NavigationSeparator {
 type NavigationElement = NavigationItem | NavigationSeparator;
 
 const navigation: NavigationElement[] = [
-  // Daily Operations Group
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
   { name: 'Batches', href: '/batches', icon: Factory },
   { name: 'Recipes', href: '/recipes', icon: ChefHat },
-  // Separator after operations
   { separator: true },
-  // Business Management Group
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
-  // Separator after business
   { separator: true },
-  // Analysis & Reporting Group
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data', href: '/data', icon: Database },
 ];
@@ -57,28 +52,24 @@ export function ResponsiveSidebar({
   isOpen,
   onCloseAction,
   isDesktop,
-}: ResponsiveSidebarProps) {
+}: ResponsiveSidebarProps): React.ReactElement | null {
   const pathname = usePathname();
 
-  // Close sidebar when clicking outside (mobile only)
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onCloseAction();
       }
     };
-
     if (isOpen && !isDesktop) {
       document.addEventListener('keydown', handleEscape);
     }
-
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
   const handleMobileNavClick = () => {
-    // Only close on mobile, not desktop
     if (!isDesktop) {
       onCloseAction();
     }
@@ -87,7 +78,6 @@ export function ResponsiveSidebar({
   const NavigationContent = () => (
     <div className="p-3 space-y-1">
       {navigation.map((item, index) => {
-        // Render separator
         if ('separator' in item && item.separator) {
           return (
             <div
@@ -96,12 +86,9 @@ export function ResponsiveSidebar({
             />
           );
         }
-
-        // Type guard to ensure we have a NavigationItem
         const navItem = item as NavigationItem;
         const isActive = pathname === navItem.href;
         const IconComponent = navItem.icon;
-
         return (
           <Link
             key={navItem.name}
@@ -122,11 +109,9 @@ export function ResponsiveSidebar({
   );
 
   if (isDesktop) {
-    // Desktop: Conditionally render sidebar - no space taken when closed
     if (!isOpen) {
       return null;
     }
-
     return (
       <div className="w-48 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
         <NavigationContent />
@@ -141,15 +126,13 @@ export function ResponsiveSidebar({
         isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
       }`}
       style={{
-        // CRITICAL: Explicit viewport-based positioning to prevent layout conflicts
         position: 'fixed',
-        width: '8rem', // 128px - explicit width
-        height: 'calc(100vh - 4rem)', // Full height minus header
-        top: '4rem', // Header height
+        width: '8rem',
+        height: 'calc(100vh - 4rem)',
+        top: '4rem',
         left: '0',
         zIndex: 50,
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-        // Touch and interaction improvements
         touchAction: 'manipulation',
         WebkitUserSelect: 'none',
         userSelect: 'none',

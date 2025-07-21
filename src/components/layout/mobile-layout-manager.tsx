@@ -126,6 +126,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           isDesktop={isDesktop}
         />
 
+<<<<<<< HEAD
         {/* Content Area - Properly adjusts for mobile sidebar */}
         <div 
           className={`content-area flex-1 transition-all duration-200 ease-out`}
@@ -136,6 +137,12 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
             maxWidth: !isDesktop && isSidebarOpen ? 'calc(100vw - 8rem)' : '100vw',
           }}
         >
+=======
+        {/* Content Area - Adjusts for mobile sidebar when open */}
+        <div className={`content-area flex-1 transition-all duration-200 ease-out ${
+          !isDesktop && isSidebarOpen ? 'ml-32' : ''
+        }`}>
+>>>>>>> 3cf6b52c0e60e6f2edfef63f54d65e75e46550dc
           <main className="p-4 sm:p-6">{children}</main>
         </div>
       </div>
