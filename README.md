@@ -60,6 +60,7 @@ KIRO is a **private, business-focused inventory management system** designed spe
 - **TypeScript 5.8.3** for type safety
 - **Tailwind CSS 4.1.11** for styling
 - **Radix UI** for accessible components
+- **TanStack Table** for data tables
 
 ### **Backend & Database**
 
@@ -213,11 +214,11 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 - ✅ Consolidated business rules across components
 - ✅ Enhanced purchase workflow with allocation preview
 
-### **Phase 4: Core Features 🚧 (40% Complete)**
+### **Core Features 🚧 (40% Complete)**
 
 - ✅ Enhanced Server Actions with smart allocation
+- ✅ Simplified suppliers management (removed AG Grid complexity)
 - 🚧 Items management with tracking mode support
-- 🚧 Suppliers management with statement integration
 - 📋 Complete UI implementation for all tracking modes
 
 ### **Phase 5: Advanced Workflows 📋 (20% Complete)**

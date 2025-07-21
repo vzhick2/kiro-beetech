@@ -184,66 +184,48 @@ To eliminate all the complexity you just experienced, here's the new simplified 
 - NO complex merge resolution instructions
 
 **VS Code Git Integration (User-Friendly)**
-- **Status Bar Sync**: Use the "Synchronize Changes" button for one-click pull + push
-- **Source Control Panel**: `Ctrl+Shift+G` for visual commit and sync management
-- **Smart Commit**: Enabled `git.postCommitCommand: "sync"` for automatic sync after commits
-- **Visual Indicators**: Status bar shows `↑1 ↓2` for ahead/behind commit counts
+- **Status Bar Sync**: Click sync button for pull/push (one-click operation)
+- **Source Control Panel**: `Ctrl+Shift+G` for visual Git management
+- **Auto-Resolve**: Let VS Code handle merge conflicts with built-in editor
+- **Simple Commits**: Use commit message box and commit button
+- **No CLI Required**: Everything through VS Code interface
 
-### MCP Integration Strategy
-- **GitHub MCP**: Use for complex multi-file operations and bulk changes (~85% faster)
-- **Immediate Sync After MCP**: Always run VS Code sync or `git pull` after MCP commits
-- **Local-Remote Alignment**: MCP bypasses local Git, so sync immediately to maintain IDE consistency
-- **Batch Operations**: Group related changes into single atomic commits via GitHub MCP
+**When Conflicts Happen (SIMPLIFIED)**
+1. **Click "Resolve in Merge Editor"** (VS Code will guide you)
+2. **Accept Current/Incoming/Both** (visual interface)
+3. **Click "Complete Merge"** (one button)
+4. **Commit through VS Code UI** (standard commit)
 
-### Sync Workflow After MCP Operations
-1. **After MCP Commit**: VS Code status bar shows "behind" indicator
-2. **Click Sync Button**: One-click in status bar pulls MCP changes + pushes any local commits  
-3. **Alternative CLI**: `git stash → git pull → git stash pop` for manual sync
-4. **Verification**: Status bar returns to clean state (no arrows)
+**GitHub MCP Usage Pattern**
+- **Batch Changes**: Use MCP for multiple related files (docs updates, refactoring)
+- **Single Files**: User manages directly through VS Code
+- **Merge Conflicts**: User resolves through VS Code, AI doesn't interfere
+- **Complex Operations**: Branch management, PRs, etc. through GitHub web interface
 
-### Traditional Git (Fallback Only)
-- **Use When**: MCP unavailable or single-file changes
-- **Commands**: `git add . && git commit -m "message" && git push origin main`  
-- **Branch Strategy**: Direct commits to main branch for internal development (no PR overhead)
+**AI Responsibilities (SIMPLIFIED)**
+- ✅ **DO**: Use GitHub MCP for batch documentation updates, multi-file features
+- ✅ **DO**: Provide clear commit messages with scope and impact
+- ❌ **DON'T**: Give terminal git commands unless specifically asked
+- ❌ **DON'T**: Provide complex merge resolution steps
+- ❌ **DON'T**: Assume user wants to use terminal over VS Code UI
 
-## Development Server Rules
-- NEVER suggest or ask to run `pnpm dev` or start development servers
-- User manages development server independently
-- Focus on code implementation and testing via build validation
-- Use `pnpm build` to verify functionality instead of running servers
+**User Responsibilities (SIMPLIFIED)**
+- ✅ **DO**: Use VS Code Source Control panel for day-to-day commits
+- ✅ **DO**: Click VS Code sync button for pull/push operations
+- ✅ **DO**: Use VS Code merge editor for conflict resolution
+- ❌ **DON'T**: Feel obligated to use terminal commands
+- ❌ **DON'T**: Worry about complex git workflows
 
-## Modern 2025 Development Environment
-### VS Code Configuration
-- **Auto-Fetch**: Enabled for automatic remote change detection (3-minute intervals)
-- **Smart Sync**: One-click synchronization via status bar integration
-- **Source Control Integration**: Visual commit and sync management (`Ctrl+Shift+G`)
-- **Conflict Resolution**: Built-in 3-way merge editor for handling conflicts
-- **Real-time Status**: Always-visible ahead/behind indicators in status bar
-
-### IDE-First Workflow Benefits
-- **No Terminal Commands**: Git operations through VS Code UI
-- **Visual Git State**: Real-time indicators for repository status
-- **Automatic Conflict Detection**: IDE alerts for merge conflicts
-- **Integrated Diff Viewer**: Side-by-side change visualization
-- **One-Click Operations**: Sync, commit, and push without CLI knowledge
-
-### Expert 2025 Patterns
-- **Status Bar First**: Always check sync status before starting work
-- **Auto-Sync After MCP**: Immediate synchronization after GitHub MCP operations  
-- **Visual Confirmation**: Use Source Control panel to verify changes before commit
-- **Smart Commits**: IDE automatically suggests sync after commit operations
-
-## AI Behavior Rules
-- This is an internal business tool prioritizing flexibility over rigid constraints
-- Focus on real-world workflows and forgiving data entry
-- Implement business logic that matches actual workshop operations
-- Prioritize user experience over technical perfection 
-- **Git Simplicity**: Never overcomplicate Git operations - keep it simple and VS Code-centric
-
-## Commit Message Standards
-- Use descriptive, present-tense messages
-- Include what was changed and why with technical details
-- Avoid generic messages like "fix bug" or "update code"
-- **VS Code Integration**: Use GitHub Copilot commit message generation when available
-- **MCP Commits**: Include context about MCP operations in commit messages
+### GitHub MCP Integration Rules
 - **Batch Changes**: Clearly describe scope of multi-file operations
+- **Atomic Commits**: Group related changes in single commits
+- **Clear Messages**: Include scope (docs:, feat:, fix:) and impact description
+- **File Organization**: Ensure related changes are committed together
+
+### MCP Success Indicators
+- ✅ **Multiple file commits**: Documentation updates, feature implementations
+- ✅ **Clear commit messages**: Scope and impact clearly described  
+- ✅ **Atomic operations**: Related changes grouped logically
+- ✅ **User autonomy preserved**: User maintains control over their git workflow
+
+**Key Insight**: This approach gives users the choice between VS Code's user-friendly interface and GitHub MCP's efficiency for batch operations, without forcing terminal complexity.
