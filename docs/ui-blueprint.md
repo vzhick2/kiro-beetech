@@ -2,16 +2,22 @@
 title: 'UI Blueprint'
 description: 'UI design and workflow specifications for mobile-first internal business app'
 purpose: 'Reference for user interface design, workflows, and component specifications'
-last_updated: 'July 17, 2025'
+last_updated: 'January 20, 2025'
 doc_type: 'ui-design'
-related: ['README.md', 'data-model.md', 'development-guide.md']
+related: ['README.md', 'data-model.md', 'development-guide.md', 'requirements.md', 'technical-design.md']
 ---
 
 # UI Blueprint
 
-UI design and workflows for mobile-first internal business app with direct edits and cycle count alerts.
+UI design and workflows for mobile-first internal business app focusing on simplified COGS tracking and statement-based bookkeeping.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
+
+## Design Philosophy
+
+**Simplified Business Focus**: Following the 80/20 rule, the UI prioritizes meaningful cost tracking over perfectionist inventory management. Support statement-based bookkeeping with monthly inventory sessions aligned with actual business practices.
+
+**Mixed Tracking Support**: Visual indicators for different tracking modes (Full, Cost-Only, Estimate) allow businesses to balance precision with practicality.
 
 ## Navigation Architecture
 
@@ -30,10 +36,16 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Error Handling**: Inline validation with plain language using standardized error types from data-model.md; toasts for API errors with clear actions.
 - **Data Patterns**: URL params for filters; "Show key info first" - lists show essentials, details in panels.
 - **User References**: Always show user-friendly identifiers (SKU for items, displayId for batches/purchases) rather than internal database IDs.
+- **Tracking Mode Indicators**: Color-coded badges showing item tracking modes:
+  - 🟢 **Full** (exact quantities tracked)
+  - 🟡 **Cost-Only** (time-based alerts)
+  - 🟠 **Estimate** (fixed cost, no inventory)
 
 ## Form & Input Design
 
 Top-aligned labels with bordered inputs. Direct-edit mode for existing records using mutable logs. Inline validation flags non-inventory items in purchases. Negative inventory warnings shown but transactions allowed to support real-world workflows.
+
+**Smart Cost Allocation Preview**: Purchase forms show allocation preview before saving, displaying proportional distribution of shipping/taxes/fees to inventory items with variance warnings for unusual allocations.
 
 ## P1 Views (Mobile-First: Workshop Focus)
 
@@ -41,78 +53,149 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 ### Dashboard
 
-- **Goal**: 30-second business health check.
-- **Features**: Action Center lists top 5 low-stock items (algorithm: sort by ((CURRENT_DATE - lastCountedDate) / 30) + (1 - currentQuantity / GREATEST(reorderPoint, 1)) for cycle count alerts). "View All" links to Items (pre-filtered). Export All Data button (CSV for items/purchases) in header with download icon, plus one-click "Export Recent Changes" (last 30 days via mutable logs), optimized for mobile touch targets (44x44px). **Basic Margin Calculator**: On-demand query showing estimated margins (revenue - COGS from sales_periods and WAC), displayed as a simple stat for quick profitability insights. **Draft Purchases Alert**: Show count of pending draft purchases with direct link to review/finalize.
-- **Mitigations**: Cycle count alerts reduce cycle count over-reliance; links to direct-edit modals. Export uses Supabase queries for real-time data accuracy. Margin calculation uses existing data without new schema requirements. Draft alerts prevent stale imports from being forgotten.
+- **Goal**: 30-second business health check with focus on actionable COGS insights.
+- **Features**: 
+  - **Mixed Alert Center**: Combined alerts showing low-stock items (Full tracking), time-based checks (Cost-Only tracking), and variance warnings (Estimate tracking)
+  - **COGS Summary**: Simple percentage showing COGS/Revenue ratio with traffic light indicators (Green <30%, Yellow 30-50%, Red >50%)
+  - **Draft Purchases Alert**: Show count of pending draft purchases with smart allocation preview
+  - **Monthly Session Reminder**: Visual indicator when approaching month-end for inventory session
+  - **Quick Actions**: Export options (All Data, Recent Changes) optimized for mobile
+- **Mitigations**: Mixed tracking alerts reduce over-reliance on any single tracking method; margin insights focus on meaningful business metrics.
 
 ### Items
 
-- **Goal**: Manage item status with quick edits.
-- **Features**: List with search/filters (Name/SKU/Type); direct-edit currentQuantity (plus/minus buttons); "cycle count alert" mode sorts by cycle count alert algorithm. **Quick Reorder Button**: For low-stock items, display "Quick Reorder" button that auto-generates a draft purchase using primarySupplierId if set, else most recent supplier from purchase history, pulling quantity from reorderPoint. **Auto/Manual Indicator**: Show 'Auto' or 'Manual' badge next to reorderPoint in item details to indicate calculation method. Simple client-side action triggering purchase draft RPC.
-- **Mitigations**: Negative inventory warnings with alert system; history subtitle ("Last change: [Date] by [User]") via mutable logs. All direct edits require edit permissions and are tracked for auditability. Quick Reorder reduces manual entry for restocking workflows.
+- **Goal**: Manage item status with flexible tracking modes.
+- **Features**: 
+  - **Tracking Mode Setup**: Easy toggle between Full/Cost-Only/Estimate tracking with setup wizard
+  - **Mode-Aware Interface**: UI adapts based on tracking mode:
+    - Full: Shows current quantity with plus/minus buttons
+    - Cost-Only: Shows days since last count with "Count Now" button
+    - Estimate: Shows fixed cost with "Review Cost" button
+  - **Quick Reorder**: Smart button using primarySupplierId and reorderPoint
+  - **COGS Focus**: Highlight high-value items for better cost tracking attention
+- **Mitigations**: Mode indicators prevent confusion; negative inventory warnings with alert system; history tracking via mutable logs.
 
 ### Recipes
 
-- **Goal**: Define/edit products easily.
-- **Features**: CRUD with ingredient lists; on-demand "Max Batches Possible" in details; direct edits with version increment.
-- **Mitigations**: Negative inventory warnings in linked batches with alert system for resolution.
+- **Goal**: Define/edit products with cost awareness.
+- **Features**: 
+  - **Cost Impact Preview**: Show estimated cost per batch based on ingredient WAC
+  - **Yield Tracking**: Simple interface for tracking actual vs expected yields
+  - **Ingredient Substitution**: UI for temporary ingredient swaps with cost impact
+- **Mitigations**: Cost calculations use current WAC; ingredient availability warnings.
 
 ### Batches
 
-- **Goal**: Log production with adjustments.
-- **Features**: Form for recipe-based logging with auto-generated display IDs (format: 'BATCH-YYYYMMDD-XXX' shown to users); recipe scaling with proportional ingredient calculations; batch template creation and reuse for frequently used configurations; optional labor cost and expiry date fields; yield/cost variance; expandable notes; direct-edit for post-log fixes.
-- **UI Focus**: All batch lists, search, and references use displayId for user-friendly experience; database relationships use internal batchId for performance.
-- **Mitigations**: RPC validation for stock sufficiency with negative inventory warnings; auto-displayId generation prevents manual entry errors; optional fields support future analysis without MVP complexity.
+- **Goal**: Log production with cost tracking.
+- **Features**: 
+  - **Smart Batch Logging**: Auto-generated display IDs (BATCH-YYYYMMDD-XXX)
+  - **Cost Variance Alerts**: Visual indicators when actual costs deviate from recipe estimates
+  - **Flexible Ingredient Entry**: Support for substitutions and partial usage
+  - **Yield Analysis**: Simple comparison of planned vs actual output
+- **Mitigations**: Stock sufficiency warnings; cost variance prompts for review.
 
 ## P2 Views (Desktop-First: Admin Focus)
 
-**Rationale**: These views require complex data entry and analysis, better suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting. While fully mobile-compatible, the desktop experience is optimized for efficiency.
+**Rationale**: These views require complex data entry and analysis, better suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting.
 
-### Purchases (Purchase Inbox)
+### Purchases (Enhanced with Smart Allocation)
 
-- **Goal**: Streamlined purchase logging with automated bank import workflow.
+- **Goal**: Streamlined purchase logging with intelligent cost distribution.
 - **Features**:
-  - **Master-Detail Layout**: Draft list (left pane) + purchase form (right pane) for desktop efficiency
-  - **Smart Import**: "Import Bank CSV" button triggers automated supplier matching and draft creation
-  - **Review Workflow**: "Review Ignored Transactions" shows unmatched transactions with "Create Supplier & Draft" buttons
-  - **Traditional Entry**: Manual purchase form for direct entry when needed with auto-generated purchase references (displayId: 'PO-YYYYMMDD-XXX')
-  - **Import Templates**: Downloadable CSV templates for sales/purchases via link in view header, reducing user errors in imports
-  - **Validation**: Multi-line form with supplier select (creatable); allocate shipping/taxes proportionally (form flag excludes non-inventory)
-- **Mobile Responsive**: Collapses to single-column list-and-navigate flow on mobile devices
-- **Mitigations**: Import duplicate detection; post-save validation (e.g., cost variance prompt); negative inventory warnings for quantities. CSV templates reduce import errors.
+  - **Smart Allocation Engine**: 
+    - Real-time preview of shipping/tax/fee distribution
+    - Proportional allocation based on item base costs
+    - Visual variance warnings for unusual distributions
+    - Override capability for manual adjustments
+  - **Statement Integration**: 
+    - "Import Statement" workflow for bulk entry
+    - Automated supplier matching with confidence scores
+    - Mixed invoice handling (COGS + non-COGS items)
+  - **Enhanced Validation**:
+    - Pre-save allocation preview with approval step
+    - Cost variance prompts for review
+    - WAC impact preview before finalization
+  - **Purchase Review**: Draft management with allocation verification
+- **Mobile Responsive**: Collapses to simplified workflow on mobile
+- **Mitigations**: Smart allocation prevents manual calculation errors; statement workflow matches real bookkeeping practices.
 
-### Sales
+### Sales (Simplified)
 
-- **Goal**: Bulk logging with corrections.
-- **Features**: Simplified CSV import with periodStart/periodEnd date ranges by channel; review summaries. **Import Templates**: Downloadable CSV templates via link in view header to ensure correct format for sales data imports.
-- **Mitigations**: Import validation for positives; link to cycle counts for drift. CSV templates reduce import format errors.
+- **Goal**: Bulk logging aligned with monthly inventory sessions.
+- **Features**: 
+  - **Period-Based Entry**: Monthly/quarterly sales periods matching business cycles
+  - **Channel Tracking**: Revenue by sales channel for basic analytics
+  - **Integration Points**: Simple CSV import with validation
+- **Mitigations**: Period-based approach aligns with statement workflow; validation ensures data quality.
 
-### Activity
+### Reports (COGS-Focused)
 
-- **Goal**: Overview recent changes.
-- **Features**: Reverse-chronological feed of events (e.g., "Edited Batch #123 on [Date]"); date filters.
-- **Mitigations**: Draws from mutable logs for editable history. All edits, including direct edits and archiving, are tracked with user, timestamp, and effectiveDate.
+- **Goal**: Actionable insights for cost management.
+- **Features**:
+  - **COGS Analysis**: Monthly COGS trends with variance analysis
+  - **Inventory Valuation**: Current inventory value using WAC
+  - **Purchase Variance**: Analysis of actual vs budgeted purchase costs
+  - **Tracking Mode Performance**: Insights on different tracking approaches
+- **Export Options**: All reports exportable for external analysis
 
-### Settings
+### Activity & Audit
 
-- **Goal**: App configs.
-- **Features**: Form for labor rate, cycle count alert thresholds, and notification preferences; accessed via profile. **Customizable Notification Rules**: Interface for setting up custom alert types, delivery methods (email, in-app), and trigger conditions for low stock, negative inventory, batch completion, and purchase approvals.
-- **Email Alerts**: Optional Supabase Edge Function to email owner when cycle count alerts exceed threshold. Uses existing alert algorithm for low complexity.
+- **Goal**: Track changes across all tracking modes.
+- **Features**: 
+  - **Unified Activity Feed**: All edits, adjustments, and mode changes
+  - **Cost Impact Tracking**: Show financial impact of inventory adjustments
+  - **User Action History**: Complete audit trail with timestamps
+- **Mitigations**: Comprehensive logging supports compliance and troubleshooting.
 
-## Key Workflows (Cross-View Processes)
+### Settings (Enhanced)
 
-All terminology is standardized: use "cycle count alert" for proactive inventory checks, "inventory adjustment" for direct edits, and "archived" for soft-deleted records.
+- **Goal**: Configure tracking modes and business rules.
+- **Features**:
+  - **Tracking Mode Defaults**: Set default tracking mode for new items
+  - **Alert Thresholds**: Configure time-based and quantity-based alerts
+  - **Cost Allocation Rules**: Customize proportional allocation logic
+  - **Statement Integration**: Configure automated import matching rules
+- **Business Rules**: Labor rates, overhead allocation, variance tolerances
 
-1. **Procure to Stock**:
-   - **Traditional**: Enter purchase; allocate (exclude non-inventory); save with WAC
-   - **Import Workflow**: Import bank CSV → Review automated drafts → Complete line items → Save with WAC
-   - Mitigation: Validation with negative inventory warnings; direct edit for fixes; duplicate detection
-2. **Production Run**: Select recipe; log batch; analyze yield. Mitigation: Stock checks with negative inventory warnings; editable post-save.
-3. **Bulk Sales Entry**: Simplified CSV import with date ranges; decrement stock. Mitigation: Positive validation; cycle count alerts for corrections.
-4. **Cycle Count**: Triggered via Dashboard cycle count alerts; adjust quantity. Mitigation: Algorithm reduces over-reliance; negative inventory alerts for attention.
-5. **Monthly Reconciliation**: Review Dashboard; edit missed data; cycle count alerts for corrections. Mitigation: Mutable logs track changes.
-6. **Recipe Development**: Create/edit; test batch. Mitigation: Version on edit; tied to batch validation.
+## Key Workflows (Simplified & Enhanced)
 
-For development standards, see development-guide.md; for schema, see data-model.md.
+1. **Purchase-to-Stock (Enhanced)**:
+   - **Statement Workflow**: Import → Auto-match suppliers → Review drafts → Apply smart allocation → Finalize with WAC
+   - **Manual Entry**: Create purchase → Add line items → Preview allocation → Approve and save
+   - **Allocation Intelligence**: Real-time cost distribution with variance warnings
 
-This blueprint ensures mobile-optimized, forgiving, and risk-mitigated UX for small business needs.
+2. **Monthly Inventory Session**:
+   - **Full Tracking**: Physical counts with quantity adjustments
+   - **Cost-Only**: Time-based reviews and spot checks
+   - **Estimate**: Cost validation and fixed-cost updates
+   - **Mixed Approach**: Combine tracking modes based on item importance
+
+3. **Production Run (Cost-Aware)**:
+   - Recipe selection with cost preview → Batch logging → Yield tracking → Cost variance analysis
+   - Automatic ingredient substitution handling with cost impact
+
+4. **COGS Analysis**:
+   - **Monthly Review**: COGS percentage trends and variance analysis
+   - **Item Performance**: High-impact items for focused tracking
+   - **Purchase Effectiveness**: Supplier performance and cost optimization
+
+5. **Tracking Mode Management**:
+   - **Setup Workflow**: Item categorization → Mode assignment → Alert configuration
+   - **Mode Migration**: Easy switching between tracking modes with data preservation
+   - **Performance Review**: Regular assessment of tracking mode effectiveness
+
+## Mobile-Specific Enhancements
+
+- **Touch-Optimized Allocation**: Large buttons for quick approval/rejection of cost allocations
+- **Voice Notes**: Quick voice memos for inventory sessions and batch notes
+- **Barcode Integration**: Camera-based SKU lookup for mobile inventory counts
+- **Offline Support**: Core functionality works without internet for warehouse use
+
+## Accessibility & Usability
+
+- **High Contrast Mode**: Enhanced visibility for warehouse lighting conditions
+- **Large Touch Targets**: Minimum 44px for all interactive elements
+- **Clear Status Indicators**: Color-blind friendly tracking mode indicators
+- **Simplified Language**: Plain English for all business terms and processes
+
+This blueprint ensures a practical, cost-focused interface that adapts to different business tracking needs while maintaining simplicity and mobile usability for small business operations.
