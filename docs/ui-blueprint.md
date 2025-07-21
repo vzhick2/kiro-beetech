@@ -2,7 +2,7 @@
 title: 'UI Blueprint'
 description: 'UI design and workflow specifications for mobile-first internal business app'
 purpose: 'Reference for user interface design, workflows, and component specifications'
-last_updated: 'January 20, 2025'
+last_updated: 'July 21, 2025'
 doc_type: 'ui-design'
 related:
   [
@@ -29,6 +29,8 @@ UI design and workflows for mobile-first internal business app focusing on simpl
 ## Navigation Architecture
 
 Responsive sidebar (persistent on desktop, hamburger on mobile) with primary views. Global "+" button for quick actions. Simplified mobile-first navigation with search bar visible on all screen sizes for quick item/recipe searches.
+
+**Mobile Sidebar Optimization**: Narrower mobile sidebar (w-32, 128px) with balanced padding to maximize content space while maintaining touch-friendly navigation.
 
 ## Visual Identity & Design Tokens
 
@@ -58,16 +60,16 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 **Rationale**: These views prioritize mobile because small business owners typically use phones/tablets while working in warehouses, workshops, or production areas - quick inventory checks while walking the floor, logging batches during production runs, and performing cycle counts with items in hand require touch-friendly mobile interfaces.
 
-### Dashboard
+### Suppliers
 
-- **Goal**: 30-second business health check with focus on actionable COGS insights.
+- **Goal**: Simplified supplier management with focus on purchase relationships.
 - **Features**:
-  - **Mixed Alert Center**: Combined alerts showing low-stock items (Full tracking), time-based checks (Cost-Only tracking), and variance warnings (Estimate tracking)
-  - **COGS Summary**: Simple percentage showing COGS/Revenue ratio with traffic light indicators (Green <30%, Yellow 30-50%, Red >50%)
-  - **Draft Purchases Alert**: Show count of pending draft purchases with smart allocation preview
-  - **Monthly Session Reminder**: Visual indicator when approaching month-end for inventory session
-  - **Quick Actions**: Export options (All Data, Recent Changes) optimized for mobile
-- **Mitigations**: Mixed tracking alerts reduce over-reliance on any single tracking method; margin insights focus on meaningful business metrics.
+  - **Basic CRUD Operations**: Create, edit, archive suppliers with essential information
+  - **Purchase Integration**: Quick supplier selection in purchase workflows
+  - **Statement Matching**: Automated supplier identification from bank statements
+  - **Contact Management**: Essential contact details and payment terms
+- **Mobile Responsive**: Simplified table layout adapting to narrow mobile screens
+- **Mitigations**: Archived supplier retention for historical purchase data; duplicate prevention.
 
 ### Items
 

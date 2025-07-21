@@ -127,9 +127,7 @@
   flex: 1;
   overflow-y: auto; /* Scrollbar appears here - below header, right of sidebar */
   overflow-x: hidden;
-  width: 100%;
   min-width: 0; /* Allow shrinking below content size */
-  max-width: 100%;
   box-sizing: border-box;
   /* 2025 Mobile UX: Smooth scrolling and prevent horizontal scroll */
   scroll-behavior: smooth;
@@ -138,6 +136,11 @@
   /* Prevent zoom on content */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  /* CRITICAL: Allow dynamic width adjustment - remove fixed constraints */
+  width: auto;
+  max-width: none;
+  /* Ensure proper positioning for mobile sidebar interaction */
+  position: relative;
 }
 
 /* Custom Scrollbar Styling - Dark Theme, Wider for Better Usability */

@@ -15,10 +15,10 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 ## 📊 **Progress Overview**
 
-- **Total Tasks**: 52
-- **Completed**: 38 (73%)
+- **Total Tasks**: 54
+- **Completed**: 41 (76%)
 - **In Progress**: 0 (0%)
-- **Planned**: 14 (27%)
+- **Planned**: 13 (24%)
 
 ## ✅ **Completed Tasks**
 
@@ -47,6 +47,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Mobile search bar visibility** - July 19, 2025
 - ✅ **Simplified UX (removed command palette)** - July 19, 2025
 - ✅ **User menu and notifications** - July 16, 2025
+- ✅ **Mobile sidebar width optimization (w-48 → w-32)** - July 21, 2025
 
 ### **Phase 2: Core Features** ✅ **100% Complete**
 
@@ -66,6 +67,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Supplier table with inline editing** - July 17, 2025
 - ✅ **Supplier-item relationships** - July 17, 2025
 - ✅ **Archive/unarchive functionality** - July 17, 2025
+- ✅ **Simplified AG Grid removal** - July 21, 2025
 
 #### **2.3 Seed Data System** ✅ **Complete**
 
@@ -286,6 +288,8 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - **July 21, 2025**: Added flexible tracking modes (full, cost-only, estimate)
 - **July 21, 2025**: Consolidated duplicate business rules into single source of truth
 - **July 21, 2025**: Removed over-engineered forecasting system
+- **July 21, 2025**: Simplified suppliers page by removing AG Grid complexity
+- **July 21, 2025**: Optimized mobile sidebar width (192px → 128px) for better content space
 - **July 19, 2025**: Completed Dashboard Implementation and Purchase Management UI
 - **July 18, 2025**: Completed CSV import and purchase management foundation
 
@@ -298,6 +302,8 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Added Multi-Mode Tracking**: Full, cost-only, and estimate tracking modes
 - ✅ **Consolidated Business Rules**: Single source of truth for cycle count alerts
 - ✅ **Enhanced Purchase System**: Base cost vs allocated overhead tracking
+- ✅ **Simplified Suppliers Management**: Removed AG Grid complexity for maintainable code
+- ✅ **Optimized Mobile UX**: Narrower sidebar (33% reduction) for better content space
 
 ### **Key Architectural Decisions**
 

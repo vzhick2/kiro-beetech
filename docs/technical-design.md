@@ -2,7 +2,7 @@
 title: 'Technical Design'
 description: 'Architecture decisions, patterns, and technical specifications for internal inventory management'
 purpose: 'Reference for development decisions and system architecture'
-last_updated: 'January 20, 2025'
+last_updated: 'July 21, 2025'
 doc_type: 'technical-specification'
 related:
   [
@@ -46,6 +46,7 @@ Comprehensive technical design documentation for the internal KIRO inventory man
 - **TypeScript 5.8.3** for type safety
 - **Tailwind CSS 4.1.11** for styling
 - **Radix UI** for accessible components
+- **TanStack Table** for data tables (replacing AG Grid)
 
 #### **Backend Layer**
 

@@ -2,7 +2,7 @@
 title: 'Development Guide'
 description: 'Complete development standards, workflow, and progress tracking for internal business application'
 purpose: 'Reference for development process, technical standards, and project progress'
-last_updated: 'July 18, 2025'
+last_updated: 'July 21, 2025'
 doc_type: 'development-reference'
 related:
   [
@@ -35,7 +35,7 @@ Balance speed and stability for both human and AI developers:
 - **Backend/Database**: Supabase (PostgreSQL) with mutable logs, simplified RPCs for atomic ops
 - **UI Library**: shadcn/ui + Tailwind CSS 4.1.11 for customizable, accessible components
 - **State Management**: TanStack Query for server data; URL params for view state; Zustand for global UI
-- **Data Tables**: TanStack Table for custom, performant grids
+- **Data Tables**: TanStack Table for custom, performant grids (simplified from AG Grid)
 - **Deployment**: Vercel for CI/CD; GitHub for repos
 
 ## 📝 **Coding Standards & Best Practices**

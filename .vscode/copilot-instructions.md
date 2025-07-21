@@ -10,8 +10,9 @@
 - **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
 - **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
 - **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
-- ALWAYS ask "Should I implement this?" before making file changes
-- Provide options first, then wait for explicit approval
+- **Smart Permission Model**: 
+  - ASK for new features, schema changes, major architecture decisions
+  - IMPLEMENT autonomously for bug fixes, UI polish, performance improvements, small enhancements
 - Follow docs/requirements.md for feature specifications
 - Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
 - Reference docs/technical-design.md for architecture decisions
@@ -27,6 +28,11 @@
 - Follow established naming conventions
 - Update tasks.md with ✅ and completion date when marking tasks complete
 - Update CHANGELOG.md with version and description when adding features
+- **UI Polish & Styling**: Improve existing interfaces, fix responsive issues, enhance UX
+- **Performance Fixes**: Database indexes, query optimization, bundle size improvements
+- **Bug Fixes**: Resolve errors, fix broken functionality, improve error handling
+- **Code Refactoring**: Improve code quality, extract utilities, optimize components
+- **Small Feature Enhancements**: Extend existing functionality without changing core logic
 
 ### Permission Required Actions
 - Add new features or components

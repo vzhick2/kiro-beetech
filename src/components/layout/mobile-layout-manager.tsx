@@ -107,7 +107,18 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
       />
 
       {/* Main Layout - Below header with proper spacing */}
-      <div className="main-layout pt-16 flex">
+      <div className="main-layout pt-16 flex relative">
+        {/* Mobile Backdrop Overlay - only visible when sidebar is open on mobile */}
+        {!isDesktop && isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 z-40 transition-opacity duration-200"
+            onClick={closeSidebar}
+            style={{
+              top: '4rem', // Below header
+            }}
+          />
+        )}
+
         {/* Responsive Sidebar */}
         <ResponsiveSidebar
           isOpen={isSidebarOpen}
@@ -115,8 +126,16 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           isDesktop={isDesktop}
         />
 
-        {/* Content Area - Modern 2025 Pattern: Always starts from left, gets pushed when sidebar opens */}
-        <div className="content-area flex-1 transition-all duration-200 ease-out">
+        {/* Content Area - Properly adjusts for mobile sidebar */}
+        <div 
+          className={`content-area flex-1 transition-all duration-200 ease-out`}
+          style={{
+            // CRITICAL FIX: For fixed positioned sidebar, use viewport-relative calculations
+            marginLeft: !isDesktop && isSidebarOpen ? '8rem' : '0', // 128px
+            width: !isDesktop && isSidebarOpen ? 'calc(100vw - 8rem)' : '100%',
+            maxWidth: !isDesktop && isSidebarOpen ? 'calc(100vw - 8rem)' : '100vw',
+          }}
+        >
           <main className="p-4 sm:p-6">{children}</main>
         </div>
       </div>

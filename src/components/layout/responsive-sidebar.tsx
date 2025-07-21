@@ -40,7 +40,6 @@ const navigation: NavigationElement[] = [
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
-  { name: 'Suppliers (Modern)', href: '/suppliers/suppliers2', icon: Users },
   // Separator after business
   { separator: true },
   // Analysis & Reporting Group
@@ -86,7 +85,7 @@ export function ResponsiveSidebar({
   };
 
   const NavigationContent = () => (
-    <div className="p-4 space-y-1">
+    <div className="p-3 space-y-1">
       {navigation.map((item, index) => {
         // Render separator
         if ('separator' in item && item.separator) {
@@ -108,7 +107,7 @@ export function ResponsiveSidebar({
             key={navItem.name}
             href={navItem.href}
             onClick={handleMobileNavClick}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 group ${
+            className={`flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-200 group ${
               isActive
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
@@ -135,31 +134,28 @@ export function ResponsiveSidebar({
     );
   }
 
-  // Mobile: Overlay sidebar with smooth animations
+  // Mobile: Fixed positioned sidebar with explicit viewport measurements
   return (
-    <>
-      {/* Backdrop with fade animation */}
-      <div
-        className={`fixed inset-0 z-30 transition-all duration-200 ease-out ${
-          isOpen ? 'bg-black/50' : 'bg-transparent pointer-events-none'
-        }`}
-        onClick={onCloseAction}
-        aria-hidden="true"
-      />
-
-      {/* Sidebar overlay with slide + fade animation */}
-      <div
-        className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
-          isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
-        }`}
-        style={{
-          touchAction: 'manipulation',
-          WebkitUserSelect: 'none',
-          userSelect: 'none',
-        }}
-      >
-        <NavigationContent />
-      </div>
-    </>
+    <div
+      className={`fixed top-16 left-0 bottom-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
+        isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+      }`}
+      style={{
+        // CRITICAL: Explicit viewport-based positioning to prevent layout conflicts
+        position: 'fixed',
+        width: '8rem', // 128px - explicit width
+        height: 'calc(100vh - 4rem)', // Full height minus header
+        top: '4rem', // Header height
+        left: '0',
+        zIndex: 50,
+        transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+        // Touch and interaction improvements
+        touchAction: 'manipulation',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+      }}
+    >
+      <NavigationContent />
+    </div>
   );
 }
