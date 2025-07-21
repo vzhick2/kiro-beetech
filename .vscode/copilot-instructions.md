@@ -1,36 +1,241 @@
-# KIRO-BEETECH VS Code Configuration
+# AI Development Rules for KIRO-BEETECH Inventory System
 
-This project uses **modern multi-IDE AI rules** with primary rules in `.cursor/rules/` and fallback support for VS Code.
+## Project Context
+- Internal business inventory management system (not public/commercial)
+- Next.js 15.4.1 with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- Supabase for database and authentication
+- Small business workflows with flexible data entry patterns
 
-## AI Rules Hierarchy
+## AI Workflow Rules
+- **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
+- **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
+- **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
+- ALWAYS ask "Should I implement this?" before making file changes
+- Provide options first, then wait for explicit approval
+- Follow docs/requirements.md for feature specifications
+- Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
+- Reference docs/technical-design.md for architecture decisions
+- Use docs/development-guide.md for development standards
+- **Missing Documentation**: If referenced docs don't exist or are incomplete, ask user to clarify requirements rather than assume
 
-**Modern Cursor (0.46+)**: `.cursor/rules/*.mdc` files
-**VS Code Copilot**: This file + `.cursorrules` fallback
-**Other IDEs**: `.cursorrules` fallback
+## Autonomous Processing Rules
+### Autonomous Actions (No Permission Needed)
+- Fix linting and TypeScript errors
+- Format code with Prettier
+- Update documentation for completed tasks
+- Use existing utility functions from src/lib/utils
+- Follow established naming conventions
+- Update tasks.md with ✅ and completion date when marking tasks complete
+- Update CHANGELOG.md with version and description when adding features
 
-## Quick Reference for VS Code Copilot
+### Permission Required Actions
+- Add new features or components
+- Modify database schema
+- Change business logic
+- Update dependencies
+- Create new utility functions
+- Create scripts (.ps1, .sh, .bat files)
+- Create documentation files (.md files)
+- Create test components or example code
+- Update data-model.md and api-documentation.md when modifying database schema
+- Update technical-design.md when changing architecture decisions
+- **Add package.json scripts** (favor built-in tools and IDE features over custom scripts)
+- **Create configuration files** (.vscode/*, .env.*, etc.) unless specifically requested
+- **Add automation** that could be handled by existing IDE or platform features
 
-### Core Project Rules
+## Error Prevention Rules
+- Check existing implementations before creating new ones
+- Use existing utility functions from src/lib/utils
+- Follow established naming conventions
+- Verify imports and dependencies before adding
+- Check for duplicate functionality
+- Ensure all documentation is aligned before finalizing changes
 
-- **Framework**: Next.js 15 (App Router) + React 19
-- **Language**: TypeScript (strict mode)
-- **Styling**: Tailwind CSS 4.x only
-- **Database**: Supabase
-- **State**: Zustand + TanStack Query
+## Minimalism and Simplicity Rules
+- **Favor Built-in Solutions**: Use platform/IDE features over custom scripts
+- **No Unnecessary Files**: Don't create configs, scripts, or docs unless explicitly requested
+- **Question Complexity**: Ask "Is this simpler than existing approaches?" before adding anything
+- **Modern Over Legacy**: Prefer 2025 built-in capabilities (VS Code Git, auto-fetch) over manual solutions
+- **User Approval Required**: For any file creation that adds project complexity or maintenance burden
 
-### Key Development Standards
+## Code Standards (AI Must Follow)
+- Use TypeScript strict mode with explicit return types
+- Prefer interfaces over types for object shapes
+- Write functional components with TypeScript interfaces (avoid React.FC)
+- Use server components by default, 'use client' only when necessary
+- Use Tailwind CSS for ALL styling (no CSS-in-JS)
+- Implement early returns for better readability
+- Use descriptive variable names with auxiliary verbs (isLoading, hasError)
 
-- Server components by default, 'use client' only when necessary
-- TypeScript for ALL code, prefer interfaces over types
-- Early returns for better readability
-- Component interfaces match component name
-- Always ask before implementing changes
+## AI Code Quality Standards
+- Use Zod validation for runtime type safety
+- Implement exhaustive branch checking with ensureExhaustive patterns
+- Use efficient TypeScript checking with --skipLibCheck for development
+- Prioritize type safety over convenience
 
-### VS Code Specific Workflow
+## Business Logic Requirements
+- Support negative inventory with warnings (real-world flexibility)
+- Implement mutable transaction logs with editable records and timestamps
+- Add cycle count alerts for proactive inventory management
+- Design mobile-first for workshop operations
+- Create direct-edit workflows for quick updates
+- Support back-dating for corrections
 
-1. Use `Ctrl+Shift+P` for command palette
-2. Leverage built-in TypeScript IntelliSense
-3. Use integrated ESLint/Prettier for code quality
-4. Reference `.cursor/rules/` or `.cursorrules` for complete standards
+## File Structure Patterns
+- `src/app/` - Next.js 15 App Router pages
+- `src/components/` - Reusable UI components
+- `src/lib/` - Utilities, Supabase client, business logic
+- `src/hooks/` - Custom React hooks
+- `src/types/` - TypeScript definitions
+- `docs/` - Project specifications
 
-**For complete AI coding instructions, see `.cursor/rules/` directory or `.cursorrules` fallback.**
+## Debugging and Analysis Patterns
+- **MCP-Powered Debugging**: Use Supabase MCP for real-time database analysis and GitHub MCP for codebase search
+- **Database Issues**: Query database directly via MCP to understand data state and validate business logic
+- **Code Analysis**: Use GitHub MCP to search for similar implementations, usage patterns, and related functionality
+- **Performance Investigation**: Use Supabase MCP to analyze query performance, check indexes, review security advisors
+- **Integration Testing**: Use MCP tools to create test data, validate workflows, and verify end-to-end functionality
+- Prioritize error handling at function beginnings
+- Use guard clauses for preconditions
+- Implement Zod validation for runtime type checking
+- Create user-friendly error messages with clear actions
+
+## State Management Patterns
+- Use TanStack Query for server state and caching
+- Use Zustand for global UI state only
+- Use URL params for view state
+- Use server actions for mutations
+
+## Database Patterns
+- Use Supabase client for database operations
+- Implement row-level security policies
+- Use PostgreSQL RPCs for atomic operations
+- Use display ID pattern for user-facing references
+
+## MCP (Model Context Protocol) Capabilities
+The project has comprehensive MCP integration for enhanced development workflow:
+
+### Supabase MCP Server
+- **Project Access**: `jjpklpivpvywagmjjwpu` (full read/write access, project-scoped)
+- **Database Operations**: Direct SQL queries, table inspection, data modification, schema analysis
+- **Development Operations**: Run migrations, deploy Edge Functions, generate TypeScript types
+- **Real-time Development**: Live database debugging, data analysis, and instant modifications
+- **Advanced Features**: Security advisor checks, logs analysis, branch operations for development databases
+
+### GitHub MCP Server  
+- **Repository Access**: `vzhick2/kiro-beetech` (full repo, workflow, read:org, user scopes)
+- **Fast Commits**: Single API call commits with multiple files (~85% faster than traditional git)
+- **Repository Operations**: Create/update files, manage branches, handle pull requests, search code
+- **Issue Management**: Create issues, manage discussions, handle project workflows
+- **Deployment**: Direct push to main branch, atomic commits, batch file operations
+
+### MCP Development Workflow
+- **Database-First Development**: Use Supabase MCP to explore schema, test queries, validate data integrity
+- **Rapid Prototyping**: Direct database modifications for testing business logic and data flows  
+- **Fast Iteration**: GitHub MCP for instant commits, eliminating traditional git workflow delays
+- **Integrated Debugging**: Real-time database inspection and modification during development
+- **Production Safety**: Use Supabase branch operations for safe schema testing before production deployment
+
+### MCP Usage Examples
+- **Database**: "Show me all tables", "Add test supplier", "Check cycle count alerts", "Deploy this migration"
+- **GitHub**: "Commit these changes with message X", "Create branch for feature Y", "Search for function Z in codebase"
+- **Analysis**: "Analyze current inventory levels", "Show recent purchase patterns", "Validate database integrity"
+
+## Dependency Management Rules (CRITICAL)
+### Always Use Package Manager Commands
+- ✅ **CORRECT**: `pnpm add package@version` (updates both package.json and lockfile)
+- ✅ **CORRECT**: `pnpm add -D package@version` (for devDependencies)
+- ✅ **CORRECT**: `pnpm remove package` (cleanly removes from both files)
+- ❌ **NEVER**: Manually edit package.json dependencies section
+- ❌ **NEVER**: Copy package.json from other projects without regenerating lockfile
+
+### Configuration-Dependency Alignment
+- When config files reference packages (postcss.config.js, tailwind.config.ts), ensure they're installed
+- Example: If postcss.config.js uses `@tailwindcss/postcss`, run `pnpm add -D @tailwindcss/postcss`
+- Always verify config dependencies exist before committing
+
+### Lockfile Hygiene Prevention
+- **Before Adding Dependencies**: Check if similar functionality already exists
+- **After Dependency Changes**: Run `pnpm build` to verify everything works
+- **Before Committing**: Ensure package.json and pnpm-lock.yaml are synchronized
+- **Clean Removal**: When removing features, also remove their unused dependencies
+
+### Deployment Validation
+- Vercel uses `--frozen-lockfile` mode (strict lockfile validation)
+- Any mismatch between package.json and pnpm-lock.yaml causes deployment failure
+- Local `pnpm install` allows updates, production does not
+- Always test: `pnpm install --frozen-lockfile && pnpm build` before deployment
+
+## AI Development Commands
+- Use `pnpm ai:validate` for fast validation (type-check, lint, format)
+- Use `pnpm ai:validate:full` for full type-check for production builds
+- Use `pnpm ai:fix` for auto-fixing common issues
+- Use `pnpm ai:type-check` for fast type-check only
+- Use `pnpm build` for production build
+- Use `pnpm supabase:types` for updating database types
+
+## Git Workflow Rules (2025 Modern Approach)
+### Primary Workflow: VS Code Integrated Git
+- **VS Code Auto-Sync**: Configured with `git.autofetch: true` (checks remote every 3 minutes)
+- **Status Bar Sync**: Use the "Synchronize Changes" button for one-click pull + push
+- **Source Control Panel**: `Ctrl+Shift+G` for visual commit and sync management
+- **Smart Commit**: Enabled `git.postCommitCommand: "sync"` for automatic sync after commits
+- **Visual Indicators**: Status bar shows `↑1 ↓2` for ahead/behind commit counts
+
+### MCP Integration Strategy
+- **GitHub MCP**: Use for complex multi-file operations and bulk changes (~85% faster)
+- **Immediate Sync After MCP**: Always run VS Code sync or `git pull` after MCP commits
+- **Local-Remote Alignment**: MCP bypasses local Git, so sync immediately to maintain IDE consistency
+- **Batch Operations**: Group related changes into single atomic commits via GitHub MCP
+
+### Sync Workflow After MCP Operations
+1. **After MCP Commit**: VS Code status bar shows "behind" indicator
+2. **Click Sync Button**: One-click in status bar pulls MCP changes + pushes any local commits  
+3. **Alternative CLI**: `git stash → git pull → git stash pop` for manual sync
+4. **Verification**: Status bar returns to clean state (no arrows)
+
+### Traditional Git (Fallback Only)
+- **Use When**: MCP unavailable or single-file changes
+- **Commands**: `git add . && git commit -m "message" && git push origin main`  
+- **Branch Strategy**: Direct commits to main branch for internal development (no PR overhead)
+
+## Development Server Rules
+- NEVER suggest or ask to run `pnpm dev` or start development servers
+- User manages development server independently
+- Focus on code implementation and testing via build validation
+- Use `pnpm build` to verify functionality instead of running servers
+
+## Modern 2025 Development Environment
+### VS Code Configuration
+- **Auto-Fetch**: Enabled for automatic remote change detection (3-minute intervals)
+- **Smart Sync**: One-click synchronization via status bar integration
+- **Source Control Integration**: Visual commit and sync management (`Ctrl+Shift+G`)
+- **Conflict Resolution**: Built-in 3-way merge editor for handling conflicts
+- **Real-time Status**: Always-visible ahead/behind indicators in status bar
+
+### IDE-First Workflow Benefits
+- **No Terminal Commands**: Git operations through VS Code UI
+- **Visual Git State**: Real-time indicators for repository status
+- **Automatic Conflict Detection**: IDE alerts for merge conflicts
+- **Integrated Diff Viewer**: Side-by-side change visualization
+- **One-Click Operations**: Sync, commit, and push without CLI knowledge
+
+### Expert 2025 Patterns
+- **Status Bar First**: Always check sync status before starting work
+- **Auto-Sync After MCP**: Immediate synchronization after GitHub MCP operations  
+- **Visual Confirmation**: Use Source Control panel to verify changes before commit
+- **Smart Commits**: IDE automatically suggests sync after commit operations
+
+## AI Behavior Rules
+- This is an internal business tool prioritizing flexibility over rigid constraints
+- Focus on real-world workflows and forgiving data entry
+- Implement business logic that matches actual workshop operations
+- Prioritize user experience over technical perfection 
+
+## Commit Message Standards
+- Use descriptive, present-tense messages
+- Include what was changed and why with technical details
+- Avoid generic messages like "fix bug" or "update code"
+- **VS Code Integration**: Use GitHub Copilot commit message generation when available
+- **MCP Commits**: Include context about MCP operations in commit messages
+- **Batch Changes**: Clearly describe scope of multi-file operations
