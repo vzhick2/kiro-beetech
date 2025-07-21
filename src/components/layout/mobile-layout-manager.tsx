@@ -115,8 +115,10 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           isDesktop={isDesktop}
         />
 
-        {/* Content Area - Modern 2025 Pattern: Always starts from left, gets pushed when sidebar opens */}
-        <div className="content-area flex-1 transition-all duration-200 ease-out">
+        {/* Content Area - Adjusts for mobile sidebar when open */}
+        <div className={`content-area flex-1 transition-all duration-200 ease-out ${
+          !isDesktop && isSidebarOpen ? 'ml-32' : ''
+        }`}>
           <main className="p-4 sm:p-6">{children}</main>
         </div>
       </div>
