@@ -2,6 +2,7 @@
   "name": "inventory-management",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.7.2",
   "scripts": {
     "dev": "next dev --turbo --port 3001",
     "build": "next build",
@@ -25,9 +26,7 @@
     "supabase:status": "npx supabase status",
     "supabase:api-keys": "npx supabase projects api-keys --project-ref jjpklpivpvywagmjjwpu",
     "supabase:db-pull": "echo 'Use: npx supabase db pull --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'",
-    "supabase:db-push": "echo 'Use: npx supabase db push --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'",
-    "clean": "rm -rf .next",
-    "clean:all": "rm -rf .next node_modules && pnpm install"
+    "supabase:db-push": "echo 'Use: npx supabase db push --project-ref jjpklpivpvywagmjjwpu -p YOUR_PASSWORD'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
