@@ -1,3 +1,3 @@
-# This file is now a symbolic link to .vscode/copilot-instructions.md
-# All AI development rules are managed in the VS Code location
-# This provides seamless compatibility between Cursor and VS Code
+# SYMLINK TARGET: .vscode/copilot-instructions.md
+# This file will be replaced with a symbolic link
+# Content is now managed in .vscode/copilot-instructions.md
