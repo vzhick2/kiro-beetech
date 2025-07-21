@@ -67,8 +67,7 @@ export function TableComparisonTest() {
               AG Grid Implementation
             </h3>
             <p className="text-gray-600 mb-4">
-              Enterprise-grade table with built-in features. Your existing
-              implementation in suppliers-ag-grid.tsx.
+              Enterprise-grade table with built-in features. Used for data-heavy interfaces.
             </p>
             {/* Your existing AG Grid component can be imported here */}
           </div>
@@ -79,66 +78,92 @@ export function TableComparisonTest() {
             <h3 className="text-lg font-semibold mb-4">TanStack React Table</h3>
             <p className="text-gray-600 mb-4">
               Headless table library for building custom tables. You have this
-              installed!
+              dependency already installed.
             </p>
-            <div className="bg-yellow-50 p-4 rounded border">
-              <p className="text-sm">
-                🚧 To implement: Create a component using useReactTable() hook
-                from @tanstack/react-table
-              </p>
+            {/* TanStack Table implementation would go here */}
+            <div className="border rounded p-4">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">ID</th>
+                    <th className="text-left p-2">Name</th>
+                    <th className="text-left p-2">Price</th>
+                    <th className="text-left p-2">Category</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sampleData.map(item => (
+                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2">{item.id}</td>
+                      <td className="p-2">{item.name}</td>
+                      <td className="p-2">${item.price}</td>
+                      <td className="p-2">{item.category}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
         {activeTab === 'tanstack-virtual' && (
           <div>
-            <h3 className="text-lg font-semibold mb-4">TanStack Virtual</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              TanStack Virtual Implementation
+            </h3>
             <p className="text-gray-600 mb-4">
-              For virtualizing large datasets. Requires installation of
-              @tanstack/react-virtual.
+              Virtual scrolling for large datasets. Great for 10k+ rows.
             </p>
-            <div className="bg-blue-50 p-4 rounded border">
-              <p className="text-sm">
-                💡 To add: pnpm add @tanstack/react-virtual
+            {/* TanStack Virtual implementation would go here */}
+            <div className="border rounded p-4 h-64 overflow-auto">
+              <p className="text-gray-500">
+                Virtual scrolling table would render here for large datasets.
               </p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Comparison Notes */}
-      <div className="mt-6 grid md:grid-cols-3 gap-4">
-        <div className="bg-green-50 p-4 rounded border">
-          <h4 className="font-semibold text-green-800">AG Grid</h4>
-          <ul className="text-sm text-green-700 mt-2 space-y-1">
-            <li>✅ Feature-complete</li>
-            <li>✅ Built-in sorting, filtering</li>
-            <li>✅ Enterprise features</li>
-            <li>❌ Large bundle size</li>
-            <li>❌ Less customizable styling</li>
-          </ul>
-        </div>
+      {/* Comparison Summary */}
+      <div className="mt-8 bg-gray-50 rounded-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Solution Comparison</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-4 rounded border">
+            <h4 className="font-semibold text-blue-600 mb-2">AG Grid</h4>
+            <ul className="text-sm space-y-1">
+              <li>✅ Feature-rich out of the box</li>
+              <li>✅ Built-in filtering, sorting, pagination</li>
+              <li>✅ Excel-like experience</li>
+              <li>❌ Larger bundle size</li>
+              <li>❌ Less customization</li>
+            </ul>
+          </div>
 
-        <div className="bg-blue-50 p-4 rounded border">
-          <h4 className="font-semibold text-blue-800">TanStack Table</h4>
-          <ul className="text-sm text-blue-700 mt-2 space-y-1">
-            <li>✅ Fully customizable</li>
-            <li>✅ Headless (bring your own UI)</li>
-            <li>✅ TypeScript-first</li>
-            <li>✅ Smaller bundle</li>
-            <li>❌ More setup required</li>
-          </ul>
-        </div>
+          <div className="bg-white p-4 rounded border">
+            <h4 className="font-semibold text-green-600 mb-2">
+              TanStack Table
+            </h4>
+            <ul className="text-sm space-y-1">
+              <li>✅ Lightweight and flexible</li>
+              <li>✅ Full customization control</li>
+              <li>✅ TypeScript-first</li>
+              <li>❌ More setup required</li>
+              <li>❌ Build features from scratch</li>
+            </ul>
+          </div>
 
-        <div className="bg-purple-50 p-4 rounded border">
-          <h4 className="font-semibold text-purple-800">TanStack Virtual</h4>
-          <ul className="text-sm text-purple-700 mt-2 space-y-1">
-            <li>✅ Handles 100k+ rows</li>
-            <li>✅ Excellent performance</li>
-            <li>✅ Small bundle size</li>
-            <li>❌ Only for large datasets</li>
-            <li>❌ More complex setup</li>
-          </ul>
+          <div className="bg-white p-4 rounded border">
+            <h4 className="font-semibold text-purple-600 mb-2">
+              TanStack Virtual
+            </h4>
+            <ul className="text-sm space-y-1">
+              <li>✅ Handles massive datasets</li>
+              <li>✅ Excellent performance</li>
+              <li>✅ Memory efficient</li>
+              <li>❌ Complex implementation</li>
+              <li>❌ Overkill for small data</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
