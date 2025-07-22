@@ -7,9 +7,7 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Dashboard
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
         <p className="text-gray-600">
           Welcome to your inventory management system
         </p>
@@ -29,7 +27,7 @@ export default function Home() {
         <div className="xl:col-span-1">
           <RecentActivity limit={6} />
         </div>
-        
+
         {/* Action Center - Takes full width on smaller screens, spans 2 columns on lg+ */}
         <div className="lg:col-span-2 xl:col-span-3">
           <ActionCenter />

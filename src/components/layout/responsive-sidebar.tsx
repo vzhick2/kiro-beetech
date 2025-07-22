@@ -16,13 +16,15 @@ import {
 } from 'lucide-react';
 
 // Type definitions for navigation items
-type NavigationItem = {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-} | {
-  type: 'separator';
-};
+type NavigationItem =
+  | {
+      name: string;
+      href: string;
+      icon: React.ComponentType<{ className?: string }>;
+    }
+  | {
+      type: 'separator';
+    };
 
 // Navigation with logical groupings for better UX
 const navigation: NavigationItem[] = [
@@ -96,16 +98,16 @@ export function ResponsiveSidebar({
         if ('name' in item && 'href' in item && 'icon' in item) {
           const isActive = pathname === item.href;
           const IconComponent = item.icon;
-          
+
           return (
             <Link
               key={item.name}
               href={item.href}
               onClick={handleMobileNavClick}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  : 'text-slate-200 hover:bg-slate-800 hover:text-slate-50'
               }`}
               style={{
                 // Enhanced touch targets for new requirements while keeping c32a068 simplicity
@@ -114,7 +116,7 @@ export function ResponsiveSidebar({
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
-              <IconComponent className="h-4 w-4 flex-shrink-0" />
+              <IconComponent className="h-5 w-5 flex-shrink-0" />
               <span>{item.name}</span>
             </Link>
           );

@@ -1,4 +1,3 @@
-
 Section 1: The Cornerstone of COGS: Selecting and Implementing an Inventory Valuation Method
 
 The single most important piece of business logic in this application is the inventory valuation method. This is not a minor technical detail to be decided by a developer; it is a formal accounting principle that has profound and lasting implications for the business's financial reporting. The chosen method directly determines the calculation of the Cost of Goods Sold (COGS), which in turn dictates the reported gross profit, net income, and tax liability.1 Accounting standards, such as the U.S. Generally Accepted Accounting Principles (GAAP), and tax authorities like the IRS, mandate that once a business selects an inventory valuation method, it must be applied consistently from one period to the next.1 A change in method requires formal justification and documentation.
@@ -118,7 +117,7 @@ Fields: SO_ID (Primary Key), CustomerName, OrderDate, Status (e.g., 'Pending', '
 SalesOrderLineItems: This table details the items on a customer's order and, crucially, records the financial outcome of the fulfillment.
 Fields: SOLineID (Primary Key), SO_ID (Foreign Key to SalesOrders), ProductID (Foreign Key to Products), QuantitySold, PricePerUnit (the price charged to the customer).
 FulfillmentRecords: This table creates a many-to-many relationship between SalesOrderLineItems and InventoryLots. It is essential for accurately tracking which specific lots were used to fulfill which parts of a sale.
-Fields: FulfillmentID (Primary Key), SOLineID (Foreign Key to SalesOrderLineItems), LotID (Foreign Key to InventoryLots), QuantityFulfilled, COGS_at_time_of_sale (calculated as QuantityFulfilled * InventoryLots.UnitCost).
+Fields: FulfillmentID (Primary Key), SOLineID (Foreign Key to SalesOrderLineItems), LotID (Foreign Key to InventoryLots), QuantityFulfilled, COGS_at_time_of_sale (calculated as QuantityFulfilled \* InventoryLots.UnitCost).
 Adjustments: This table is a transactional log that captures every change to inventory that is not a purchase or a sale. This is vital for maintaining an accurate inventory count and for financial accounting of losses.
 Fields: AdjustmentID (Primary Key), LotID (Foreign Key to InventoryLots), ProductID (Foreign Key to Products), Timestamp, UserID (Foreign Key to Users), AdjustmentType (e.g., 'Damaged', 'Theft', 'Return', 'Internal Use', 'Stock Count Correction', 'Transfer Out'), QuantityChange (a positive or negative integer), ReasonNotes.47
 Users, Roles, Permissions, RolePermissions: These tables form the basis of the Role-Based Access Control (RBAC) system, detailed in the next section.
@@ -297,8 +296,8 @@ System Response: This initiates the core outbound logic. For each SalesOrderLine
 It queries the InventoryLots table for all lots matching Product X, sorted by ReceivedDate in ascending order (oldest lots first).
 It begins a loop through these sorted lots.
 For the first (oldest) lot, it checks if its CurrentQuantity is sufficient to fulfill the entire order (CurrentQuantity >= N).
-If yes: It decrements this lot's CurrentQuantity by N. The COGS for this portion of the sale is calculated as N * UnitCost of this specific lot. The loop terminates.
-If no: The first lot is insufficient. The system uses all remaining units from this lot. It calculates the COGS for this partial fulfillment (CurrentQuantity * UnitCost), sets the lot's CurrentQuantity to 0, and reduces the remaining quantity needed to be fulfilled (N = N - lot.CurrentQuantity). It then proceeds to the next oldest lot and repeats the process until the entire original quantity N has been fulfilled.
+If yes: It decrements this lot's CurrentQuantity by N. The COGS for this portion of the sale is calculated as N _ UnitCost of this specific lot. The loop terminates.
+If no: The first lot is insufficient. The system uses all remaining units from this lot. It calculates the COGS for this partial fulfillment (CurrentQuantity _ UnitCost), sets the lot's CurrentQuantity to 0, and reduces the remaining quantity needed to be fulfilled (N = N - lot.CurrentQuantity). It then proceeds to the next oldest lot and repeats the process until the entire original quantity N has been fulfilled.
 Step 3: Recording the Transactional Data
 System Response: Once the FIFO logic is complete, the system finalizes the transaction by writing the results to the database.
 It updates the CurrentQuantity and version number for every InventoryLot that was affected by the fulfillment.

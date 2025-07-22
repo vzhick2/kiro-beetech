@@ -93,13 +93,19 @@ export function DashboardStats() {
           <div
             className={`bg-gradient-to-br ${card.color} rounded-xl border ${card.borderColor} p-6 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer group`}
           >
-            <h3 className={`text-sm font-semibold ${card.textColor} mb-3 group-hover:text-opacity-80 transition-all`}>
+            <h3
+              className={`text-sm font-semibold ${card.textColor} mb-3 group-hover:text-opacity-80 transition-all`}
+            >
               {card.title}
             </h3>
-            <p className={`text-3xl font-bold ${card.valueColor} mb-2 group-hover:scale-105 transition-transform`}>
+            <p
+              className={`text-3xl font-bold ${card.valueColor} mb-2 group-hover:scale-105 transition-transform`}
+            >
               {card.value.toLocaleString()}
             </p>
-            <p className={`text-sm ${card.subtextColor} group-hover:text-opacity-80 transition-all`}>
+            <p
+              className={`text-sm ${card.subtextColor} group-hover:text-opacity-80 transition-all`}
+            >
               {card.description}
             </p>
           </div>

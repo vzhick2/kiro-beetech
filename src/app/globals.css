@@ -277,8 +277,8 @@ button,
 input,
 select,
 textarea,
-a[role="button"],
-[role="button"] {
+a[role='button'],
+[role='button'] {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -286,7 +286,7 @@ a[role="button"],
 /* Allow pull-to-refresh on page content */
 main,
 .page-container,
-[role="main"] {
+[role='main'] {
   touch-action: pan-y; /* Allow vertical panning for pull-to-refresh */
 }
 
@@ -343,8 +343,8 @@ nav *,
   input,
   select,
   textarea,
-  a[role="button"],
-  [role="button"] {
+  a[role='button'],
+  [role='button'] {
     font-size: 16px !important; /* iOS prevents zoom on 16px+ elements */
     -webkit-text-size-adjust: none !important;
     -ms-text-size-adjust: none !important;
@@ -356,7 +356,7 @@ nav *,
   /* Allow pull-to-refresh on main content areas */
   main,
   .page-container,
-  [role="main"],
+  [role='main'],
   .content-area {
     touch-action: pan-y !important; /* Allow vertical panning for pull-to-refresh */
     -webkit-user-select: auto !important;
