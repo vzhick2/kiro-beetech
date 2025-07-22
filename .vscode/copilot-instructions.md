@@ -249,15 +249,28 @@ mcp_github_push_files({
 - AI tells user: "Please click the sync button in VS Code status bar"
 - That's it. No complex commands or explanations.
 
-## Development Server Rules
+## Development Server Rules (CRITICAL - NO AI TERMINAL)
 
-- **ALWAYS use background flags** when starting development servers: `pnpm dev` with `is_background: true`
-- **Check if server is already running** before starting new instances
-- **Prefer VS Code's built-in terminal** for long-running dev servers
-- **Use AI terminal** only for quick server management (start/stop/restart)
-- Focus on code implementation and testing via build validation
-- Use `pnpm build` to verify functionality instead of running servers
-- **Never run dev servers synchronously** - this causes Cursor to hang
+**🚫 NEVER run `pnpm dev` in AI terminal - it ALWAYS hangs Cursor**
+
+- **❌ FORBIDDEN**: `pnpm dev` in AI terminal (causes hanging)
+- **❌ FORBIDDEN**: `npm start` in AI terminal (causes hanging)
+- **❌ FORBIDDEN**: `yarn dev` in AI terminal (causes hanging)
+- **✅ ALLOWED**: `pnpm build` (quick, non-hanging)
+- **✅ ALLOWED**: `pnpm type-check` (quick, non-hanging)
+
+**Development Server Management:**
+
+1. **User Responsibility**: User manages dev servers in VS Code terminal (Ctrl+`)
+2. **AI Role**: AI focuses on code, not server management
+3. **Testing**: Use `pnpm build` to verify functionality instead of running servers
+4. **Server Status**: User tells AI if server is running, AI doesn't check
+
+**When User Needs Dev Server:**
+- **User opens VS Code terminal** (Ctrl+`)
+- **User runs**: `pnpm dev`
+- **AI continues working** on code while server runs in background
+- **No AI terminal commands** for server management
 
 ## AI Behavior Rules
 
@@ -281,11 +294,17 @@ mcp_github_push_files({
 
 ### Command Categories
 
-**Background Commands (Use `is_background: true` or `&` flag):**
-- Development servers: `pnpm dev`, `npm start`, `yarn dev`
-- File watchers: `pnpm build --watch`
-- Long-running processes: `Get-Process`, `netstat -an`
-- Database operations: `supabase start`, `supabase db reset`
+**🚫 FORBIDDEN Commands (Never run in AI terminal):**
+- Development servers: `pnpm dev`, `npm start`, `yarn dev` (ALWAYS hang)
+- File watchers: `pnpm build --watch` (long-running)
+- Database operations: `supabase start`, `supabase db reset` (long-running)
+
+**✅ Safe Commands (Can run in AI terminal):**
+- Build commands: `pnpm build`, `pnpm type-check`
+- Git operations: `git status`, `git add`, `git commit`
+- Package management: `pnpm add`, `pnpm remove`
+- File operations: `ls`, `dir`, `cat`, `type`
+- Quick process checks: `Get-Process node -ErrorAction SilentlyContinue`
 
 **Quick Commands (Safe to run synchronously):**
 - Build commands: `pnpm build`, `pnpm type-check`
@@ -301,10 +320,17 @@ mcp_github_push_files({
 3. **Always use background flags** when AI needs to start dev servers
 4. **Check if server is already running** before starting new instances
 
-**For Process Management:**
-- Check running processes: `Get-Process | Where-Object {$_.ProcessName -like "*node*"}`
-- Kill processes: `taskkill /F /IM node.exe` (Windows) or `pkill node` (Unix)
-- Check ports: `netstat -an | findstr :3001` (Windows) or `lsof -i :3001` (Unix)
+**For Process Management (Non-Hanging Commands):**
+- Check running processes: `Get-Process node -ErrorAction SilentlyContinue`
+- Kill processes: `Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force`
+- Check ports: `Test-NetConnection -ComputerName localhost -Port 3001 -InformationLevel Quiet`
+- Quick git status: `git status --porcelain`
+
+**Commands That Hang (AVOID):**
+- `git log --oneline -10` (use `git status` instead)
+- `Get-Process | Where-Object {...}` (use direct process name)
+- `taskkill /F /IM node.exe` (use Stop-Process instead)
+- `netstat -an | findstr :3001` (use Test-NetConnection instead)
 
 ### MCP Integration with Terminal
 
@@ -312,6 +338,35 @@ mcp_github_push_files({
 - **Supabase MCP**: Use for database operations instead of terminal commands
 - **GitHub MCP**: Use for commits instead of git terminal commands
 - **Terminal**: Use only for local development server management and quick checks
+
+### Quick Command Reference (Non-Hanging)
+
+**✅ Safe Commands:**
+```powershell
+# Process Management
+Get-Process node -ErrorAction SilentlyContinue
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# Port Checking
+Test-NetConnection -ComputerName localhost -Port 3001 -InformationLevel Quiet
+
+# Git Status
+git status --porcelain
+git rev-parse HEAD
+
+# Build Commands
+pnpm build
+pnpm type-check
+```
+
+**❌ Commands That Hang:**
+```powershell
+# Avoid these
+git log --oneline -10
+Get-Process | Where-Object {$_.ProcessName -like "*node*"}
+taskkill /F /IM node.exe
+netstat -an | findstr :3001
+```
 
 ## Commit Message Standards
 
