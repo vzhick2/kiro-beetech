@@ -9,11 +9,11 @@ export function DashboardStats() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="bg-gray-100 rounded-lg p-6 shadow-sm animate-pulse"
+            className="bg-gray-100 rounded-xl p-6 shadow-sm animate-pulse"
           >
             <div className="h-4 bg-gray-200 rounded mb-3"></div>
             <div className="h-8 bg-gray-200 rounded mb-2"></div>
@@ -26,9 +26,9 @@ export function DashboardStats() {
 
   if (error) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 shadow-sm col-span-full">
-          <p className="text-red-700 text-center">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm col-span-full">
+          <p className="text-red-700 text-center font-medium">
             Unable to load dashboard statistics
           </p>
           <p className="text-red-600 text-sm text-center mt-1">
@@ -87,19 +87,19 @@ export function DashboardStats() {
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {statCards.map(card => (
         <Link key={card.title} href={card.href}>
           <div
-            className={`bg-gradient-to-br ${card.color} rounded-lg border ${card.borderColor} p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+            className={`bg-gradient-to-br ${card.color} rounded-xl border ${card.borderColor} p-6 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer group`}
           >
-            <h3 className={`text-sm font-medium ${card.textColor} mb-2`}>
+            <h3 className={`text-sm font-semibold ${card.textColor} mb-3 group-hover:text-opacity-80 transition-all`}>
               {card.title}
             </h3>
-            <p className={`text-2xl font-bold ${card.valueColor}`}>
+            <p className={`text-3xl font-bold ${card.valueColor} mb-2 group-hover:scale-105 transition-transform`}>
               {card.value.toLocaleString()}
             </p>
-            <p className={`text-sm ${card.subtextColor} mt-1`}>
+            <p className={`text-sm ${card.subtextColor} group-hover:text-opacity-80 transition-all`}>
               {card.description}
             </p>
           </div>
