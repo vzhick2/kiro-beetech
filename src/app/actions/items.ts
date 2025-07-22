@@ -43,7 +43,7 @@ export async function getItems() {
         )
       `
         )
-        .order('purchase.purchasedate', { ascending: false });
+        .order('purchases.purchasedate', { ascending: false });
 
     if (supplierError) {
       console.error('Error fetching last used suppliers:', supplierError);
