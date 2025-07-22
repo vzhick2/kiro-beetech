@@ -18,7 +18,7 @@ related:
 
 # AI Guidelines
 
-Development philosophy and project context for the internal KIRO inventory management system.
+Development philosophy and project context for the internal BTINV inventory management system.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 

@@ -1,4 +1,4 @@
-# Supabase Setup Guide - KIRO-BEETECH
+# Supabase Setup Guide - BTINV-BEETECH
 
 ## Overview
 
@@ -9,7 +9,7 @@ This project is configured for **remote Supabase development** using the cloud-h
 ### Remote Project
 
 - **Project ID**: `jjpklpivpvywagmjjwpu`
-- **Project Name**: `kiro-beetech`
+- **Project Name**: `btinv-beetech`
 - **Region**: `us-east-2`
 - **Status**: ✅ Linked and configured
 

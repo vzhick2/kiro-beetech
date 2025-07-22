@@ -9,7 +9,7 @@ related: ['data-model.md', 'technical-design.md', 'ui-blueprint.md']
 
 # Requirements
 
-Comprehensive requirements specification for the internal KIRO inventory management system, including functional requirements, non-functional requirements, and business rules.
+Comprehensive requirements specification for the internal BTINV inventory management system, including functional requirements, non-functional requirements, and business rules.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
@@ -40,13 +40,13 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 ### **1. Flexible Inventory Tracking**
 
-#### **1.1 Multi-Mode Item Management**
+#### **1.1 Simplified Two-Mode Item Management**
 
-- **Full Tracking Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
-- **Cost-Only Tracking Mode**: Purchase history alerts, no quantity deduction (packaging materials)
-- **Estimate Tracking Mode**: Fixed cost per unit for recipe calculations (consumables)
-- **Smart Mode Assignment**: Automatic suggestions based on item cost and type
-- **Flexible Mode Switching**: Change tracking modes as business needs evolve
+- **Fully Tracked Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
+- **Cost-Added Mode**: Purchase history alerts, quantities hidden in UI (packaging materials)
+- **Simple Mode Assignment**: Business decision based on cost impact and tracking effort
+- **Flexible Mode Switching**: Change tracking modes with data preservation (no snapshots needed)
+- **UI Quantity Hiding**: Cost-only items show "Cost only" instead of quantity values
 
 #### **1.2 Enhanced Items Interface**
 
@@ -184,9 +184,8 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 #### **Tracking Mode Rules**
 
-- **Full Tracking**: Traditional quantity tracking with alerts
-- **Cost-Only**: Time-based alerts, no quantity deduction
-- **Estimate**: Fixed cost per unit, no alerts or deduction
+- **Fully Tracked**: Traditional quantity tracking with low-stock alerts
+- **Cost Added**: Time-based supply check alerts, quantities hidden in UI
 - **Mode Flexibility**: Allow mode changes with data preservation
 - **Smart Suggestions**: Recommend modes based on item characteristics
 
@@ -214,19 +213,21 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 #### **Tracking Mode Guidelines**
 
-- **Full Tracking Criteria**: Core ingredients, expensive items (>$5), high-impact materials
-- **Cost-Only Criteria**: Packaging materials, consumables, items difficult to count exactly
-- **Estimate Criteria**: Very cheap items (<$0.05), labels, basic consumables
+- **Fully Tracked Criteria**: Core ingredients, expensive items (>$5), high-impact materials
+- **Cost Added Criteria**: Packaging materials, consumables, items where exact quantities don't matter
 - **Mode Assignment**: Business decision based on cost impact and tracking effort
-- **Mode Changes**: Allowed with proper data migration
+- **Mode Changes**: Allowed with data preservation - quantities reappear when switching back to fully tracked
+- **UI Display**: Cost-added items show costs but hide quantity values and stock alerts
 
 #### **Alert System Rules**
 
-- **Full Tracking Alerts**: Traditional low-stock based on quantity and reorder points
-- **Cost-Only Alerts**: Time-based, trigger when no purchase for 45+ days
-- **Estimate Items**: No automatic alerts, manual review as needed
+- **Fully Tracked Alerts**: Traditional low-stock based on quantity and reorder points
+- **Cost Added Alerts**: Time-based, trigger when no purchase for 45+ days
 - **Priority Scoring**: Higher priority for negative inventory and overdue items
-- **Alert Consolidation**: Single standardized alert system for all modes
+- **Alert Consolidation**: Single standardized alert system for both modes
+- **Cost-Added Alerts**: Time-based, trigger when no purchase for 45+ days
+- **Priority Scoring**: Higher priority for negative inventory and overdue items
+- **Alert Consolidation**: Single standardized alert system for both modes
 
 ### **Data Entry Rules**
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { InventoryUnit, ItemType } from '@/types';
+import { InventoryUnit, ItemType, TrackingMode } from '@/types';
 
 // Base item validation schema
 export const ItemSchema = z.object({
@@ -42,6 +42,10 @@ export const ItemSchema = z.object({
     .min(1, 'Lead time must be at least 1 day')
     .max(365, 'Lead time cannot exceed 1 year')
     .default(7),
+  trackingmode: z
+    .enum(['fully_tracked', 'cost_added'] as const)
+    .refine((val): val is TrackingMode => true)
+    .default('fully_tracked'),
   isarchived: z.boolean().default(false),
 });
 
@@ -55,6 +59,14 @@ export const CreateItemSchema = ItemSchema.omit({
 // Schema for updating items
 export const UpdateItemSchema = ItemSchema.partial();
 
+// Schema for tracking mode changes
+export const TrackingModeChangeSchema = z.object({
+  itemId: z.string().uuid(),
+  newMode: z.enum(['fully_tracked', 'cost_added'] as const),
+  inventorySnapshot: z.number().min(0).optional(),
+  reason: z.string().max(500).optional(),
+});
+
 // Schema for bulk operations
 export const BulkItemIdsSchema = z.object({
   itemIds: z
@@ -67,3 +79,4 @@ export type CreateItemRequest = z.infer<typeof CreateItemSchema>;
 export type UpdateItemRequest = z.infer<typeof UpdateItemSchema>;
 export type ItemValidation = z.infer<typeof ItemSchema>;
 export type BulkItemIdsRequest = z.infer<typeof BulkItemIdsSchema>;
+export type TrackingModeChangeRequest = z.infer<typeof TrackingModeChangeSchema>;

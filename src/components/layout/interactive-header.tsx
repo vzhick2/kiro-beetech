@@ -138,11 +138,7 @@ export function InteractiveHeader({
                   type="text"
                   placeholder="Search..."
                   value={searchValue}
-<<<<<<< HEAD
-                  onChange={e => setSearchValue(e.target.value)}
-=======
                   onChange={(e) => setSearchValue(e.target.value)}
->>>>>>> 4fc9e2eb8c89a67870e1458d70145d1aab22cede
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className={`w-full pl-10 pr-10 py-2 bg-slate-800/50 border rounded-lg text-slate-100 placeholder-slate-400 transition-all duration-200 ${

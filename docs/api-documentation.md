@@ -9,7 +9,7 @@ related: ['data-model.md', 'technical-design.md', 'requirements.md']
 
 # API Documentation
 
-Comprehensive API documentation for the internal KIRO inventory management system, including Supabase RPCs, server actions, and database functions.
+Comprehensive API documentation for the internal BTINV inventory management system, including Supabase RPCs, server actions, and database functions.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 

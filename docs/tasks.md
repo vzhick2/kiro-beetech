@@ -2,23 +2,23 @@
 title: 'Tasks'
 description: 'Development tasks and progress tracking for internal inventory management system'
 purpose: 'Reference for development progress and task management'
-last_updated: 'July 21, 2025'
+last_updated: 'July 22, 2025'
 doc_type: 'task-tracking'
 related: ['requirements.md', 'technical-design.md', 'development-guide.md']
 ---
 
 # Tasks
 
-Development tasks and progress tracking for the internal KIRO inventory management system.
+Development tasks and progress tracking for the internal BTINV inventory management system.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
 ## 📊 **Progress Overview**
 
 - **Total Tasks**: 54
-- **Completed**: 41 (76%)
+- **Completed**: 42 (78%)
 - **In Progress**: 0 (0%)
-- **Planned**: 13 (24%)
+- **Planned**: 12 (22%)
 
 ## ✅ **Completed Tasks**
 
@@ -196,13 +196,14 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - ✅ **Non-inventory item handling** - July 21, 2025
 - ✅ **Enhanced purchase actions with allocation** - July 21, 2025
 
-#### **3.5 Multi-Mode Tracking System** ✅ **Complete**
+#### **3.5 Simplified Two-Mode Tracking System** ✅ **Complete**
 
-- ✅ **Full tracking mode for core ingredients** - July 21, 2025
-- ✅ **Cost-only tracking for packaging materials** - July 21, 2025
-- ✅ **Estimate tracking for consumables** - July 21, 2025
-- ✅ **Mixed tracking alert system** - July 21, 2025
-- ✅ **Flexible tracking mode assignment** - July 21, 2025
+- ✅ **Simplified from three-mode to two-mode system** - July 22, 2025
+- ✅ **Fully tracked mode (fully_tracked) for core ingredients** - July 22, 2025
+- ✅ **Cost added mode (cost_added) for packaging materials** - July 22, 2025
+- ✅ **Quantity hiding for cost-only items in UI** - July 22, 2025
+- ✅ **Simple mode switching without complex snapshots** - July 22, 2025
+- ✅ **Data preservation when switching modes** - July 22, 2025
 
 #### **3.6 Transaction Type Standardization** ✅ **Complete**
 
@@ -226,7 +227,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 ## ℹ️ **Documentation Notes**
 
-> **📋 Single Source of Truth**: This file serves as the **authoritative task tracking system** for the KIRO project. All development progress, technical decisions, and implementation details are centralized here to provide clear guidance for AI agents and development teams.
+> **📋 Single Source of Truth**: This file serves as the **authoritative task tracking system** for the BTINV project. All development progress, technical decisions, and implementation details are centralized here to provide clear guidance for AI agents and development teams.
 
 > **🔗 Cross-References**:
 >
@@ -272,27 +273,21 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
    - Purchase allocation preview functionality
 
 2. **Recipe Management Enhancement** 🚧
-   - Multi-mode ingredient support
+   - Multi-mode ingredient support (updated for two-mode system)
    - True cost calculation with allocated overhead
    - Recipe templates and scaling
    - Cost variance analysis
 
 #### **Medium Priority**
 
-3. **Enhanced Tracking Mode UI**
-   - Visual indicators for tracking modes
-   - Mode switching workflows
-   - Mixed tracking displays
-   - Time-based alert interfaces
-
-4. **Bookkeeping Integration Planning**
+3. **Bookkeeping Integration Planning**
    - Export format specification
    - COGS reporting design
    - Statement reconciliation planning
 
 #### **Low Priority**
 
-5. **Documentation Completion**
+4. **Documentation Completion**
    - Updated workflow documentation
    - Business logic documentation
    - User training materials
@@ -315,10 +310,15 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 ### **Recent Activity**
 
-- **July 21, 2025**: Completed comprehensive business logic fixes including WAC calculation, inventory deduction, cost allocation, and multi-mode tracking
+- **July 22, 2025**: **MAJOR SIMPLIFICATION** - Reduced tracking system from three modes to two-mode approach based on real-world usage patterns
+- **July 22, 2025**: Implemented quantity hiding for cost-only items while preserving data for mode switching
+- **July 22, 2025**: Removed complex mode change tracking (dates, snapshots) in favor of simple per-item flags
+- **July 22, 2025**: Updated UI to show "Cost only" instead of quantities for cost_added items
+- **July 21, 2025**: Completed comprehensive business logic fixes including WAC calculation, inventory deduction, cost allocation, and two-mode tracking
+- **July 22, 2025**: Implemented comprehensive two-mode tracking system simplifying inventory management to "fully tracked" and "cost added" modes
 - **July 21, 2025**: Fixed critical transaction type enum mismatch
 - **July 21, 2025**: Implemented smart proportional cost allocation with variance checking
-- **July 21, 2025**: Added flexible tracking modes (full, cost-only, estimate)
+- **July 21, 2025**: Added flexible tracking modes (full, cost-only, estimate) - now simplified to two-mode system
 - **July 21, 2025**: Consolidated duplicate business rules into single source of truth
 - **July 21, 2025**: Removed over-engineered forecasting system
 - **July 21, 2025**: Simplified suppliers page by removing AG Grid complexity
@@ -330,9 +330,9 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 ### **Major Accomplishments This Week**
 
+- ✅ **Implemented Two-Mode Tracking System**: Simplified to "fully_tracked" and "cost_added" modes with interactive UI and safe transitions
 - ✅ **Fixed 7 Critical Business Logic Issues**: WAC calculation, inventory deduction, forecasting, cost allocation, business rules, transaction types, purchase workflows
 - ✅ **Implemented Smart Cost Allocation**: Proportional overhead distribution with variance checking
-- ✅ **Added Multi-Mode Tracking**: Full, cost-only, and estimate tracking modes
 - ✅ **Consolidated Business Rules**: Single source of truth for cycle count alerts
 - ✅ **Enhanced Purchase System**: Base cost vs allocated overhead tracking
 - ✅ **Simplified Suppliers Management**: Removed AG Grid complexity for maintainable code
@@ -342,14 +342,17 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 - **Simplified Workflow**: Focus on 80/20 rule for COGS tracking
 - **Statement-Based Entry**: Monthly inventory sessions vs real-time entry
-- **Flexible Tracking**: Different modes based on item cost and importance
+- **Two-Mode Tracking**: Simplified to two modes based on user feedback:
+  - `fully_tracked`: Show quantities, alerts, reorder points (core ingredients)
+  - `cost_added`: Hide quantities, show costs only (packaging, consumables)
+- **Data Preservation**: Quantities stay in database when switching to cost-only mode
 - **Cost Transparency**: Separate base costs from allocated overhead
 - **Variance Tolerance**: Business-friendly $0.50 variance threshold
 
 ### **Next Priority Areas**
 
 1. **Statement-Based Workflow UI**: Design monthly inventory session interface
-2. **Recipe Enhancement**: Multi-mode ingredient support with true costing
+2. **Recipe Enhancement**: Two-mode ingredient support with true costing
 3. **Mobile Optimization**: Touch-friendly interfaces for production floor
 4. **Bookkeeping Integration**: Export and reconciliation tools
 
@@ -365,7 +368,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 
 - All core business logic fixes completed ✅
 - Smart cost allocation system ready ✅
-- Multi-mode tracking foundation established ✅
+- Two-mode tracking foundation established ✅
 - Purchase workflow enhanced ✅
 - Ready for advanced UI development ✅
 

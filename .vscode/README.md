@@ -1,6 +1,6 @@
 # VS Code Configuration
 
-This folder contains VS Code-specific settings and configurations for the KIRO-BEETECH project.
+This folder contains VS Code-specific settings and configurations for the BTINV-BEETECH project.
 
 ## Files Overview
 

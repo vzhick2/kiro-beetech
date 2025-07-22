@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { getItemDetails } from '@/app/actions/items';
-import { Item, Transaction } from '@/types';
+import { Item, Transaction, TrackingMode } from '@/types';
 
 interface ItemDetailModalProps {
   isOpen: boolean;
@@ -52,6 +52,7 @@ export function ItemDetailModal({
               : new Date(),
             primarySupplierId: result.data.item.primarysupplierid || '',
             leadTimeDays: result.data.item.leadtimedays || 7,
+            trackingMode: (result.data.item.tracking_mode || 'fully_tracked') as TrackingMode,
             isArchived: result.data.item.isarchived || false,
             created_at: new Date(result.data.item.created_at || Date.now()),
             updated_at: new Date(result.data.item.updated_at || Date.now()),

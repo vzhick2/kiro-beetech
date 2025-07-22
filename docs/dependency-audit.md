@@ -1,4 +1,4 @@
-# KIRO Inventory Management - Dependency Audit Report
+# BTINV Inventory Management - Dependency Audit Report
 
 ## 📊 **Comprehensive Technology Stack Analysis**
 

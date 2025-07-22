@@ -109,14 +109,13 @@ export function SpreadsheetTable({
           lastCountedDate: 'lastcounteddate',
           primarySupplierId: 'primarysupplierid',
           leadTimeDays: 'leadtimedays',
+          trackingMode: 'tracking_mode',
           isArchived: 'isarchived',
           created_at: 'created_at',
           updated_at: 'updated_at',
           lastUsedSupplier: 'lastUsedSupplier',
           primarySupplierName: 'primarySupplierName',
-        };
-
-        const dbField = dbFieldMap[field];
+        };        const dbField = dbFieldMap[field];
         const dbValue =
           field === 'lastCountedDate' && value && typeof value !== 'boolean'
             ? new Date(value).toISOString()
@@ -215,6 +214,18 @@ export function SpreadsheetTable({
 
       // Special handling for quantity field with +/- buttons
       if (field === 'currentQuantity') {
+        // Hide quantity for cost-only items
+        if (item.trackingMode === 'cost_added') {
+          return (
+            <div className="flex items-center space-x-1">
+              <span className="text-gray-400 italic text-sm">Cost only</span>
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                No tracking
+              </span>
+            </div>
+          );
+        }
+
         if (isEditing) {
           return (
             <div className="flex items-center space-x-1">
@@ -319,6 +330,30 @@ export function SpreadsheetTable({
 
       // Standard inline editing for other fields
       if (isEditing) {
+        // Special dropdown for tracking mode
+        if (field === 'trackingMode') {
+          return (
+            <div className="flex items-center space-x-1">
+              <select
+                defaultValue={String(value || 'fully_tracked')}
+                className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    handleCellSave(item.itemId, field, e.currentTarget.value);
+                  } else if (e.key === 'Escape') {
+                    handleCellCancel();
+                  }
+                }}
+                onChange={e => handleCellSave(item.itemId, field, e.target.value)}
+                autoFocus
+              >
+                <option value="fully_tracked">Full Tracking</option>
+                <option value="cost_added">Cost Only</option>
+              </select>
+            </div>
+          );
+        }
+
         return (
           <div className="flex items-center space-x-1">
             <input
@@ -399,7 +434,7 @@ export function SpreadsheetTable({
       }
 
       // Make key fields clickable for editing
-      const editableFields = ['name', 'SKU', 'reorderPoint', 'type'];
+      const editableFields = ['name', 'SKU', 'reorderPoint', 'type', 'trackingMode'];
       if (editableFields.includes(field)) {
         return (
           <div className="group flex items-center space-x-1">
@@ -416,6 +451,18 @@ export function SpreadsheetTable({
                 }`}
               >
                 {String(value || '')}
+              </span>
+            ) : field === 'trackingMode' ? (
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  value === 'fully_tracked'
+                    ? 'bg-green-100 text-green-800'
+                    : value === 'cost_added'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {value === 'fully_tracked' ? 'Full Tracking' : 'Cost Only'}
               </span>
             ) : (
               <span>{String(value || '')}</span>
@@ -516,6 +563,9 @@ export function SpreadsheetTable({
                 </th>
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px]">
                   Unit Cost
+                </th>
+                <th className="text-left p-3 font-semibold text-gray-700 min-w-[100px] sm:table-cell hidden">
+                  Tracking Mode
                 </th>
                 {/* Desktop-priority columns */}
                 <th className="text-left p-3 font-semibold text-gray-700 min-w-[80px] md:table-cell hidden">
@@ -639,6 +689,9 @@ export function SpreadsheetTable({
                   <td className="p-3">{renderCell(item, 'currentQuantity')}</td>
                   <td className="p-3">
                     {renderCell(item, 'weightedAverageCost')}
+                  </td>
+                  <td className="p-3 sm:table-cell hidden">
+                    {renderCell(item, 'trackingMode')}
                   </td>
                   {/* Desktop-priority columns */}
                   <td className="p-3 md:table-cell hidden">
@@ -773,10 +826,10 @@ export function SpreadsheetTable({
             <span className="text-orange-600 font-semibold">
               {
                 filteredItems.filter(
-                  i => i.currentQuantity <= (i.reorderPoint || 0)
+                  i => i.trackingMode === 'fully_tracked' && i.currentQuantity <= (i.reorderPoint || 0)
                 ).length
               }{' '}
-              items below reorder point
+              tracked items below reorder point
             </span>
           </div>
           <div className="flex items-center space-x-2">

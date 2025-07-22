@@ -153,12 +153,15 @@ export type Database = {
           inventoryunit: Database['public']['Enums']['inventory_unit'];
           isarchived: boolean | null;
           itemid: string;
+          last_inventory_snapshot: number | null;
           lastcounteddate: string | null;
           leadtimedays: number | null;
+          mode_changed_date: string | null;
           name: string;
           primarysupplierid: string | null;
           reorderpoint: number | null;
           sku: string;
+          tracking_mode: string | null;
           type: Database['public']['Enums']['item_type'];
           updated_at: string | null;
           weightedaveragecost: number | null;
@@ -169,12 +172,15 @@ export type Database = {
           inventoryunit: Database['public']['Enums']['inventory_unit'];
           isarchived?: boolean | null;
           itemid?: string;
+          last_inventory_snapshot?: number | null;
           lastcounteddate?: string | null;
           leadtimedays?: number | null;
+          mode_changed_date?: string | null;
           name: string;
           primarysupplierid?: string | null;
           reorderpoint?: number | null;
           sku: string;
+          tracking_mode?: string | null;
           type: Database['public']['Enums']['item_type'];
           updated_at?: string | null;
           weightedaveragecost?: number | null;
@@ -185,12 +191,15 @@ export type Database = {
           inventoryunit?: Database['public']['Enums']['inventory_unit'];
           isarchived?: boolean | null;
           itemid?: string;
+          last_inventory_snapshot?: number | null;
           lastcounteddate?: string | null;
           leadtimedays?: number | null;
+          mode_changed_date?: string | null;
           name?: string;
           primarysupplierid?: string | null;
           reorderpoint?: number | null;
           sku?: string;
+          tracking_mode?: string | null;
           type?: Database['public']['Enums']['item_type'];
           updated_at?: string | null;
           weightedaveragecost?: number | null;
@@ -527,9 +536,22 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      calculate_recipe_cost_two_mode: {
+        Args: { p_recipe_id: string };
+        Returns: Json;
+      };
       calculate_wac: {
         Args: { item_id: string };
         Returns: number;
+      };
+      change_item_tracking_mode: {
+        Args: {
+          p_item_id: string;
+          p_new_mode: string;
+          p_inventory_snapshot?: number;
+          p_reason?: string;
+        };
+        Returns: Json;
       };
       finalize_draft_purchase: {
         Args: { purchase_id: string };
@@ -553,6 +575,18 @@ export type Database = {
         Returns: {
           itemid: string;
           supplier_name: string;
+        }[];
+      };
+      get_two_mode_alerts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          itemid: string;
+          sku: string;
+          name: string;
+          tracking_mode: string;
+          alert_type: string;
+          alert_message: string;
+          priority: number;
         }[];
       };
       update_item_quantity_atomic: {

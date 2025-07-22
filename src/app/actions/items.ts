@@ -10,6 +10,7 @@ import {
   CreateItemSchema,
   UpdateItemSchema,
   BulkItemIdsSchema,
+  TrackingModeChangeSchema,
 } from '@/lib/validations/items';
 // Removed unused type imports
 
@@ -99,6 +100,7 @@ export async function createItem(itemData: unknown) {
       reorderpoint: validatedData.reorderpoint ?? null,
       primarysupplierid: validatedData.primarysupplierid ?? null,
       leadtimedays: validatedData.leadtimedays,
+      tracking_mode: validatedData.trackingmode || 'fully_tracked',
       isarchived: false,
     };
 
@@ -154,6 +156,9 @@ export async function updateItem(itemId: string, updates: unknown) {
     }
     if (validatedUpdates.leadtimedays !== undefined) {
       dbUpdates.leadtimedays = validatedUpdates.leadtimedays;
+    }
+    if (validatedUpdates.trackingmode !== undefined) {
+      dbUpdates.tracking_mode = validatedUpdates.trackingmode;
     }
     if (validatedUpdates.isarchived !== undefined) {
       dbUpdates.isarchived = validatedUpdates.isarchived;
@@ -282,5 +287,73 @@ export async function bulkArchiveItems(itemIds: unknown) {
       return validationError('Invalid item IDs provided');
     }
     return handleError(error, 'bulkArchiveItems');
+  }
+}
+
+export async function changeTrackingMode(changeData: unknown) {
+  try {
+    // Validate input data
+    const validatedData = TrackingModeChangeSchema.parse(changeData);
+
+    // Use the database function for safe mode transitions
+    const params: {
+      p_item_id: string;
+      p_new_mode: string;
+      p_inventory_snapshot?: number;
+      p_reason?: string;
+    } = {
+      p_item_id: validatedData.itemId,
+      p_new_mode: validatedData.newMode,
+    };
+
+    if (validatedData.inventorySnapshot !== undefined) {
+      params.p_inventory_snapshot = validatedData.inventorySnapshot;
+    }
+    if (validatedData.reason !== undefined) {
+      params.p_reason = validatedData.reason;
+    }
+
+    const { data, error } = await supabaseAdmin.rpc('change_item_tracking_mode', params);
+
+    if (error) {
+      return handleError(error, 'changeTrackingMode');
+    }
+
+    return handleSuccess(data);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'ZodError') {
+      return validationError('Invalid tracking mode change data provided');
+    }
+    return handleError(error, 'changeTrackingMode');
+  }
+}
+
+export async function getTwoModeAlerts() {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('get_two_mode_alerts');
+
+    if (error) {
+      return handleError(error, 'getTwoModeAlerts');
+    }
+
+    return handleSuccess(data || []);
+  } catch (error) {
+    return handleError(error, 'getTwoModeAlerts');
+  }
+}
+
+export async function getRecipeCostTwoMode(recipeId: string) {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('calculate_recipe_cost_two_mode', {
+      p_recipe_id: recipeId,
+    });
+
+    if (error) {
+      return handleError(error, 'getRecipeCostTwoMode');
+    }
+
+    return handleSuccess(data);
+  } catch (error) {
+    return handleError(error, 'getRecipeCostTwoMode');
   }
 }

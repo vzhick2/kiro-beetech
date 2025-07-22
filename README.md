@@ -1,4 +1,4 @@
-# KIRO Inventory Management System
+# BTINV Inventory Management System
 
 > **A private, simplified COGS-focused inventory solution for small business operations**
 
@@ -10,7 +10,7 @@
 
 ## 📋 **Overview**
 
-KIRO is a **private, business-focused inventory management system** designed specifically for small businesses that prioritize meaningful COGS (Cost of Goods Sold) tracking over perfectionist inventory management. Following the 80/20 rule, it focuses on tracking what matters most for profitability while supporting real-world business workflows like statement-based bookkeeping and monthly inventory sessions.
+BTINV is a **private, business-focused inventory management system** designed specifically for small businesses that prioritize meaningful COGS (Cost of Goods Sold) tracking over perfectionist inventory management. Following the 80/20 rule, it focuses on tracking what matters most for profitability while supporting real-world business workflows like statement-based bookkeeping and monthly inventory sessions.
 
 **This is not a public application or open-source project.**
 
@@ -19,8 +19,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 ### 🧮 **Smart Cost Management**
 
 - **Intelligent Cost Allocation**: Proportional distribution of shipping, taxes, and fees to inventory items
-- **Fixed WAC Calculation**: Properly implemented Weighted Average Cost with inventory-aware calculations
-- **Multi-Mode Tracking**: Full tracking, Cost-Only alerts, and Estimate tracking based on item importance
+- **Enhanced WAC Calculation**: Properly implemented Weighted Average Cost with inventory-aware calculations
+- **Two-Mode Tracking**: Fully tracked for core ingredients, cost-added for packaging materials
 - **COGS-Focused Analytics**: 80/20 rule applied to track meaningful cost drivers
 
 ### 📦 **Enhanced Purchase Management**
@@ -32,8 +32,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 
 ### 🏪 **Flexible Inventory Tracking**
 
-- **Tracking Mode Indicators**: Visual badges showing Full 🟢, Cost-Only 🟡, or Estimate 🟠 tracking
-- **Mixed Alert System**: Combined low-stock, time-based, and cost review alerts
+- **Two-Mode Tracking System**: Simplified approach with Fully Tracked 🟢 and Cost Added 🟡 modes
+- **Smart Alert System**: Low-stock alerts for tracked items, supply check reminders for cost-only items
 - **Monthly Sessions**: Aligned with business cycles and statement-based bookkeeping
 - **Forgiving Workflows**: Support negative inventory and real-world correction needs
 
@@ -41,7 +41,7 @@ KIRO is a **private, business-focused inventory management system** designed spe
 
 - **COGS Percentage Tracking**: Simple traffic light indicators (Green <30%, Yellow 30-50%, Red >50%)
 - **Purchase Variance Analysis**: Track actual vs budgeted purchase costs
-- **Tracking Mode Performance**: Insights on different tracking approaches
+- **Two-Mode Performance**: Insights on fully tracked vs cost-added item performance
 - **Monthly Reconciliation**: Aligned with accounting periods and business practices
 
 ### 🔍 **Intelligent Automation**
@@ -72,8 +72,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 ### **Business Logic**
 
 - **Smart Allocation Engine** for proportional cost distribution
-- **Multi-Mode Tracking System** for flexible inventory management
-- **Fixed WAC Calculation** with proper inventory awareness
+- **Two-Mode Tracking System** with simplified fully tracked and cost-added modes
+- **Enhanced WAC Calculation** with proper inventory awareness
 - **Statement-Based Import** with automated supplier matching
 
 ## 📦 **Installation**
@@ -89,8 +89,8 @@ KIRO is a **private, business-focused inventory management system** designed spe
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/vzhick2/kiro-beetech.git
-   cd kiro-beetech
+   git clone https://github.com/vzhick2/btinv-beetech.git
+   cd btinv-beetech
    ```
 
 2. **Install dependencies**
@@ -211,7 +211,7 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 ### **Phase 3: Smart Business Logic** ✅ **100% Complete**
 
 - ✅ Smart cost allocation engine with preview
-- ✅ Multi-mode tracking system (Full/Cost-Only/Estimate)
+- ✅ Two-mode tracking system (Fully Tracked/Cost Added)
 - ✅ Cycle count alerts with priority scoring
 - ✅ CSV import system with validation
 - ✅ Purchase management with draft workflow
@@ -223,7 +223,7 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 
 - ✅ Enhanced Server Actions with smart allocation
 - ✅ Simplified suppliers management (removed AG Grid complexity)
-- 🚧 Items management with tracking mode support
+- 🚧 Items management with two-mode tracking support
 - 📋 Complete UI implementation for all tracking modes
 
 ### **Phase 5: Advanced Workflows 📋 (20% Complete)**

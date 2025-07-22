@@ -19,6 +19,7 @@ export type TransactionType =
   | 'adjustment'
   | 'batch_consumption'
   | 'batch_production';
+export type TrackingMode = 'fully_tracked' | 'cost_added';
 
 // Core interfaces
 export interface Item {
@@ -33,6 +34,7 @@ export interface Item {
   lastCountedDate?: Date;
   primarySupplierId?: string;
   leadTimeDays: number;
+  trackingMode: TrackingMode;
   isArchived: boolean;
   created_at: Date;
   updated_at?: Date;
@@ -154,6 +156,35 @@ export interface CycleCountAlert {
   shortageAmount?: number;
 }
 
+export interface TwoModeAlert {
+  itemid: string;
+  sku: string;
+  name: string;
+  tracking_mode: TrackingMode;
+  alert_type: 'LOW_STOCK' | 'CHECK_SUPPLY';
+  alert_message: string;
+  priority: number;
+}
+
+export interface TwoModeAlert {
+  itemid: string;
+  sku: string;
+  name: string;
+  tracking_mode: TrackingMode;
+  alert_type: 'LOW_STOCK' | 'CHECK_SUPPLY';
+  alert_message: string;
+  priority: number;
+}
+
+export interface TrackingModeChange {
+  success: boolean;
+  itemId: string;
+  oldMode: TrackingMode;
+  newMode: TrackingMode;
+  snapshotTaken?: number;
+  reason?: string;
+}
+
 export interface ForecastingData {
   forecastingId: string;
   itemId: string;
@@ -207,6 +238,7 @@ export interface CreateItemRequest {
   reorderPoint?: number;
   primarySupplierId?: string;
   leadTimeDays?: number;
+  trackingMode?: TrackingMode;
 }
 
 export interface CreateSupplierRequest {
@@ -258,4 +290,23 @@ export interface CreateBatchRequest {
   laborCost?: number;
   expiryDate?: Date;
   notes?: string;
+}
+
+export interface RecipeCostBreakdown {
+  itemId: string;
+  name: string;
+  sku: string;
+  trackingMode: TrackingMode;
+  quantity: number;
+  unitCost: number;
+  totalCost: number;
+  sufficient: boolean;
+}
+
+export interface RecipeCostCalculation {
+  totalCost: number;
+  costBreakdown: RecipeCostBreakdown[];
+  warnings: string[];
+  canProceed: boolean;
+  recipeId: string;
 }

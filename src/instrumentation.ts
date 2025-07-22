@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 // This function runs once when the server starts
 export async function register() {
   // Initialize observability tools
-  console.log('🚀 KIRO Inventory Management Server initialized');
+  console.log('🚀 BTINV Inventory Management Server initialized');
   console.log('📊 Telemetry and monitoring active');
 
   // You can initialize tools like:

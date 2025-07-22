@@ -1,4 +1,4 @@
-# KIRO-BEETECH Dependency Management Script
+# BTINV-BEETECH Dependency Management Script
 # PowerShell script for safe dependency management and lockfile verification
 # Usage: .\manage-deps.ps1 [command]
 
@@ -118,7 +118,7 @@ function Repair-Lockfile {
 }
 
 function Show-Help {
-    Write-Header "KIRO-BEETECH Dependency Management Tool"
+    Write-Header "BTINV-BEETECH Dependency Management Tool"
     
     Write-Host @"
 Commands:

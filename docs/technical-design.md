@@ -16,7 +16,7 @@ related:
 
 # Technical Design
 
-Comprehensive technical design documentation for the internal KIRO inventory management system, focusing on simplified COGS tracking, smart cost allocation, and multi-mode inventory management.
+Comprehensive technical design documentation for the internal BTINV inventory management system, focusing on simplified COGS tracking, smart cost allocation, and multi-mode inventory management.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
@@ -230,7 +230,7 @@ export function calculateVariance(
 }
 ```
 
-## 📊 **Multi-Mode Tracking Architecture**
+## 📊 **Two-Mode Tracking Architecture**
 
 ### **Tracking Mode Design**
 
@@ -239,53 +239,45 @@ Item Setup → Mode Selection → Alert Configuration → Operational Workflow
      │            │               │                      │
      │            │               │                      └── Mode-Specific UI
      │            │               └── Alert Thresholds
-     │            └── Full/Cost-Only/Estimate
+     │            └── Fully Tracked/Cost Added
      └── Business Categorization
 ```
 
 ### **Mode-Specific Database Schema**
 
 ```sql
--- Extended items table for tracking modes
-ALTER TABLE items ADD COLUMN tracking_mode tracking_mode_enum DEFAULT 'full';
-ALTER TABLE items ADD COLUMN last_counted_date TIMESTAMP;
-ALTER TABLE items ADD COLUMN count_frequency_days INTEGER DEFAULT 30;
-ALTER TABLE items ADD COLUMN fixed_cost_estimate DECIMAL(10,2);
+-- Extended items table for two-mode tracking
+ALTER TABLE items ADD COLUMN tracking_mode TEXT DEFAULT 'fully_tracked' 
+CHECK (tracking_mode IN ('fully_tracked', 'cost_added'));
 
--- Tracking mode enumeration
-CREATE TYPE tracking_mode_enum AS ENUM ('full', 'cost_only', 'estimate');
-
--- Mixed tracking alerts function
-CREATE OR REPLACE FUNCTION get_mixed_tracking_alerts()
+-- Two-mode alerts function
+CREATE OR REPLACE FUNCTION get_two_mode_alerts()
 RETURNS TABLE(
-  item_id UUID,
+  itemid UUID,
   sku TEXT,
   name TEXT,
-  tracking_mode tracking_mode_enum,
+  tracking_mode TEXT,
   alert_type TEXT,
-  alert_priority INTEGER,
-  days_since_count INTEGER,
-  suggested_action TEXT
+  alert_message TEXT,
+  priority INTEGER
 ) AS $$
 BEGIN
   RETURN QUERY
   SELECT
-    i.item_id,
+    i.itemid,
     i.sku,
     i.name,
     i.tracking_mode,
     CASE
-      WHEN i.tracking_mode = 'full' AND i.current_quantity <= COALESCE(i.reorder_point, 0)
-        THEN 'low_stock'
-      WHEN i.tracking_mode = 'cost_only' AND (CURRENT_DATE - COALESCE(i.last_counted_date, i.created_at::date)) > i.count_frequency_days
-        THEN 'count_due'
-      WHEN i.tracking_mode = 'estimate' AND (CURRENT_DATE - COALESCE(i.last_counted_date, i.created_at::date)) > 90
-        THEN 'cost_review'
-      ELSE 'none'
+      WHEN i.tracking_mode = 'fully_tracked' AND i.currentquantity <= COALESCE(i.reorderpoint, 0)
+        THEN 'LOW_STOCK'
+      WHEN i.tracking_mode = 'cost_added' AND (CURRENT_DATE - COALESCE(last_purchase_date, i.created_at::date)) > 45
+        THEN 'CHECK_SUPPLY'
+      ELSE 'NONE'
     END as alert_type,
-    -- Priority logic for mixed alerts...
+    -- Alert message generation...
   FROM items i
-  WHERE i.is_archived = false;
+  WHERE i.isarchived = false;
 END;
 $$ LANGUAGE plpgsql;
 ```
@@ -295,7 +287,7 @@ $$ LANGUAGE plpgsql;
 ```typescript
 // Tracking mode component
 interface TrackingModeIndicatorProps {
-  mode: 'full' | 'cost_only' | 'estimate';
+  mode: 'fully_tracked' | 'cost_added';
   alertType?: string;
   className?: string;
 }
@@ -306,20 +298,15 @@ export function TrackingModeIndicator({
   className
 }: TrackingModeIndicatorProps) {
   const modeConfig = {
-    full: {
-      label: 'Full',
+    fully_tracked: {
+      label: 'Fully Tracked',
       color: 'green',
       icon: '🟢'
     },
-    cost_only: {
-      label: 'Cost-Only',
+    cost_added: {
+      label: 'Cost Added',
       color: 'yellow',
       icon: '🟡'
-    },
-    estimate: {
-      label: 'Estimate',
-      color: 'orange',
-      icon: '🟠'
     },
   };
 
@@ -339,7 +326,7 @@ export function TrackingModeIndicator({
 // Mode-specific action buttons
 export function ModeSpecificActions({ item }: { item: Item }) {
   switch (item.tracking_mode) {
-    case 'full':
+    case 'fully_tracked':
       return (
         <div className="flex gap-2">
           <Button size="sm" onClick={() => adjustQuantity(item.id, -1)}>
@@ -354,19 +341,11 @@ export function ModeSpecificActions({ item }: { item: Item }) {
         </div>
       );
 
-    case 'cost_only':
+    case 'cost_added':
       return (
-        <Button size="sm" onClick={() => recordCount(item.id)}>
+        <Button size="sm" onClick={() => checkSupply(item.id)}>
           <Clock className="h-4 w-4 mr-2" />
-          Count Now
-        </Button>
-      );
-
-    case 'estimate':
-      return (
-        <Button size="sm" onClick={() => reviewCost(item.id)}>
-          <DollarSign className="h-4 w-4 mr-2" />
-          Review Cost
+          Check Supply
         </Button>
       );
   }

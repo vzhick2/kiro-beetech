@@ -16,7 +16,7 @@ related:
 
 # Development Guide
 
-Complete development standards, workflow, and progress tracking for the internal KIRO inventory management system.
+Complete development standards, workflow, and progress tracking for the internal BTINV inventory management system.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
@@ -255,7 +255,7 @@ pnpm supabase:types     # Generate types from remote database
 
 ### **Environment Setup**
 
-- **Remote Development**: Uses cloud Supabase project `cursor-kiro-beetech`
+- **Remote Development**: Uses cloud Supabase project `cursor-btinv-beetech`
 
 ### **Access URLs**
 
@@ -270,13 +270,6 @@ pnpm supabase:types     # Generate types from remote database
 - **Types**: `src/types/index.ts`
 - **Styles**: `src/app/globals.css`
 
-## 📋 **VS Code Extensions Recommended**
-
-- **Tailwind CSS IntelliSense** - Essential for Tailwind development
-- **GitLens** - Enhanced Git integration and history
-- **Supabase Extension** - Database management and schema tools
-
-**Note**: Auto Rename Tag, Bracket Pair Colorizer, and TypeScript Importer are now built into VS Code (2025).
 
 ## 🏗️ **Schema & Evolution**
 
@@ -287,17 +280,6 @@ pnpm supabase:types     # Generate types from remote database
 ## 📈 **Progress Tracking**
 
 All project progress and task completion tracking is maintained in [tasks.md](./tasks.md).
-
-### **Design Compliance**
-
-- **Color Scheme**: Exact match to BigCommerce design
-- **Typography**: System fonts with proper weights
-- **Icons**: Lucide React icons matching the aesthetic
-- **Spacing**: Consistent 6/4 unit system
-- **Responsive**: Mobile-first with unified components
-- **Interactions**: Smooth hover states and animations
-
----
 
 _Last Updated: July 18, 2025_
 _For detailed task breakdown, see `tasks.md`_

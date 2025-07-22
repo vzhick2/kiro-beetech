@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the KIRO Internal Inventory Management System will be documented in this file.
+All notable changes to the BTINV Internal Inventory Management System will be documented in this file.
 
 **This is a private, internal business application - not a public or commercial product.**
 

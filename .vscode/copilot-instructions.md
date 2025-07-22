@@ -1,4 +1,4 @@
-# AI Development Rules for KIRO-BEETECH Inventory System
+AI: IGNORE THIS CONTENT:
 
 ## Project Context
 
@@ -135,7 +135,7 @@ The project has comprehensive MCP integration for enhanced development workflow:
 
 ### GitHub MCP Server
 
-- **Repository Access**: `vzhick2/kiro-beetech` (full repo, workflow, read:org, user scopes)
+- **Repository Access**: `vzhick2/btinv-beetech` (full repo, workflow, read:org, user scopes)
 - **Fast Commits**: Single API call commits with multiple files (~85% faster than traditional git)
 - **Repository Operations**: Create/update files, manage branches, handle pull requests, search code
 - **Issue Management**: Create issues, manage discussions, handle project workflows
@@ -237,7 +237,7 @@ To eliminate all the complexity you just experienced, here's the new simplified 
 // Only when AI implements features:
 mcp_github_push_files({
   owner: 'vzhick2',
-  repo: 'kiro-beetech',
+  repo: 'btinv-beetech',
   branch: 'main',
   files: [{ path: 'file.ts', content: '...' }],
   message: 'feat: implement X\n\n- Details',

@@ -75,11 +75,10 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 - **Goal**: Manage item status with flexible tracking modes.
 - **Features**:
-  - **Tracking Mode Setup**: Easy toggle between Full/Cost-Only/Estimate tracking with setup wizard
+  - **Tracking Mode Setup**: Easy toggle between Fully Tracked/Cost Added tracking with setup wizard
   - **Mode-Aware Interface**: UI adapts based on tracking mode:
-    - Full: Shows current quantity with plus/minus buttons
-    - Cost-Only: Shows days since last count with "Count Now" button
-    - Estimate: Shows fixed cost with "Review Cost" button
+    - Fully Tracked: Shows current quantity with plus/minus buttons
+    - Cost Added: Shows days since last purchase with "Check Supply" button
   - **Quick Reorder**: Smart button using primarySupplierId and reorderPoint
   - **COGS Focus**: Highlight high-value items for better cost tracking attention
 - **Mitigations**: Mode indicators prevent confusion; negative inventory warnings with alert system; history tracking via mutable logs.

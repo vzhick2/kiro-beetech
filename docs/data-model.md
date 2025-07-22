@@ -35,6 +35,7 @@ Database schema and architectural foundation for internal inventory management w
 - **Display ID Pattern**: Separate user-facing identifiers (displayId) from database primary keys (UUID) for optimal UX and performance. Applied to batches, purchases, sales periods, and recipes.
 - **Optional Field Strategy**: Capture data fields for future analysis (laborCost, expiryDate) without implementing complex behaviors in MVP.
 - **Deferred Logic Approach**: Store data now, add complex system behaviors in Phase 2 to protect MVP timeline.
+- **Two-Mode Tracking**: Simplified inventory management with 'fully_tracked' and 'cost_added' modes based on business impact.
 
 ## Part 2: TypeScript Interfaces
 
