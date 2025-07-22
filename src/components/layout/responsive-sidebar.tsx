@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -54,7 +54,6 @@ export function ResponsiveSidebar({
 }: ResponsiveSidebarProps): React.ReactElement | null {
   const pathname = usePathname();
   const router = useRouter();
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -70,62 +69,12 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  // Improved touch handling for Android - based on React best practices
-  const handleTouchStart = (e: React.TouchEvent, href: string) => {
-    console.log('🔍 Touch start:', href);
-    e.stopPropagation();
-    
-    const touch = e.touches[0];
-    if (touch) {
-      setTouchStart({ x: touch.clientX, y: touch.clientY });
-    }
-    
-    // Visual feedback
-    const target = e.currentTarget as HTMLElement;
-    target.style.backgroundColor = 'rgb(30 41 59 / 0.8)';
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent, href: string) => {
-    console.log('🔍 Touch end:', href);
-    
-    // Reset visual feedback
-    const target = e.currentTarget as HTMLElement;
-    target.style.backgroundColor = '';
-    
-    if (!touchStart) return;
-    
-    const touch = e.changedTouches[0];
-    if (!touch) return;
-    
-    const deltaX = Math.abs(touch.clientX - touchStart.x);
-    const deltaY = Math.abs(touch.clientY - touchStart.y);
-    
-    // Very lenient tap detection for Android - increased tolerance
-    if (deltaX < 50 && deltaY < 50) {
-      console.log('🔍 Valid tap detected, navigating to:', href);
-      
-      // Navigate immediately
-      router.push(href);
-      
-      // Close sidebar on mobile
-      if (!isDesktop) {
-        setTimeout(() => {
-          onCloseAction();
-        }, 200); // Increased delay for better UX
-      }
-    }
-    
-    setTouchStart(null);
-  };
-
-  // Click handler for mouse devices
-  const handleClick = (e: React.MouseEvent, href: string) => {
-    console.log('🔍 Click handler:', href);
-    e.preventDefault();
-    e.stopPropagation();
-    
+  // Simple, reliable navigation handler
+  const handleNavigation = (href: string) => {
+    console.log('🔍 Navigating to:', href);
     router.push(href);
     
+    // Close sidebar on mobile
     if (!isDesktop) {
       setTimeout(() => {
         onCloseAction();
@@ -149,15 +98,10 @@ export function ResponsiveSidebar({
         const IconComponent = navItem.icon;
         
         return (
-          <div
+          <button
             key={navItem.name}
-            onTouchStart={(e) => handleTouchStart(e, navItem.href)}
-            onTouchEnd={(e) => handleTouchEnd(e, navItem.href)}
-            onTouchCancel={() => {
-              setTouchStart(null);
-            }}
-            onClick={(e) => handleClick(e, navItem.href)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
+            onClick={() => handleNavigation(navItem.href)}
+            className={`w-full flex items-center gap-2 px-3 py-3 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
               isActive
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700'
@@ -166,20 +110,26 @@ export function ResponsiveSidebar({
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
               userSelect: 'none',
-              minHeight: '56px', // Even larger touch target for Android
-              minWidth: '100%', // Full width touch target
-              display: 'flex',
-              alignItems: 'center',
+              minHeight: '56px',
+              border: 'none',
+              background: 'transparent',
+              textAlign: 'left',
+              fontFamily: 'inherit',
+              fontSize: 'inherit',
+              lineHeight: 'inherit',
               cursor: 'pointer',
-              // Additional Android-specific improvements
+              // Android-specific improvements
               WebkitUserSelect: 'none',
               MozUserSelect: 'none',
               msUserSelect: 'none',
+              WebkitTouchCallout: 'none',
+              WebkitUserDrag: 'none',
+              KhtmlUserSelect: 'none',
             }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
             <span className="font-medium">{navItem.name}</span>
-          </div>
+          </button>
         );
       })}
     </div>
@@ -196,7 +146,7 @@ export function ResponsiveSidebar({
     );
   }
 
-  // Mobile: Fixed positioned sidebar with explicit viewport measurements
+  // Mobile: Fixed positioned sidebar
   return (
     <div
       className={`sidebar fixed top-16 left-0 bottom-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
@@ -204,7 +154,7 @@ export function ResponsiveSidebar({
       }`}
       style={{
         position: 'fixed',
-        width: '13rem', // Match the desktop sidebar width
+        width: '12rem',
         height: 'calc(100vh - 4rem)',
         top: '4rem',
         left: '0',
