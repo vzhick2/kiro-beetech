@@ -141,10 +141,10 @@ export function ResponsiveSidebar({
   // Mobile: Overlay sidebar with smooth animations (c32a068 pattern)
   return (
     <>
-      {/* Backdrop with fade animation */}
+      {/* Backdrop with fade animation - only covers content area, not header */}
       <div
-        className={`fixed inset-0 z-30 transition-all duration-200 ease-out ${
-          isOpen ? 'bg-black/50' : 'bg-transparent pointer-events-none'
+        className={`fixed top-16 left-0 right-0 bottom-0 z-30 transition-all duration-200 ease-out ${
+          isOpen ? 'bg-black/30' : 'bg-transparent pointer-events-none'
         }`}
         onClick={onClose}
         aria-hidden="true"

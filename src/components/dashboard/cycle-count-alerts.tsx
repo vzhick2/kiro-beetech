@@ -14,7 +14,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
             Cycle Count Alerts
@@ -23,7 +23,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
         <div className="p-6">
           <div className="animate-pulse space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-100 rounded"></div>
+              <div key={i} className="h-16 bg-gray-100 rounded-lg"></div>
             ))}
           </div>
         </div>
@@ -112,7 +112,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
@@ -120,7 +120,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
           </h2>
           <Link
             href="/items"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all"
           >
             View all items →
           </Link>
@@ -131,7 +131,7 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
           {alerts.map(alert => (
             <div
               key={alert.itemid}
-              className={`rounded-lg border p-4 ${getAlertColor(alert.alerttype)}`}
+              className={`rounded-xl border p-4 ${getAlertColor(alert.alerttype)} transition-all hover:shadow-sm`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
@@ -171,13 +171,13 @@ export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
                   </Badge>
                 </div>
               </div>
-              <div className="mt-2 flex items-center justify-between">
+              <div className="mt-3 flex items-center justify-between">
                 <div className="text-xs text-gray-600">
                   Priority: {alert.priorityscore.toFixed(1)}
                 </div>
                 <Link
                   href={`/items?search=${encodeURIComponent(alert.sku)}`}
-                  className="text-xs font-medium hover:underline"
+                  className="text-xs font-medium hover:underline text-blue-600 hover:text-blue-700 transition-colors"
                 >
                   Update →
                 </Link>

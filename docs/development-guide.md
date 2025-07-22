@@ -98,88 +98,21 @@ Balance speed and stability for both human and AI developers:
 
 ## 📊 **Current Project Status**
 
-### ✅ **Completed Tasks**
+For detailed task breakdown and progress tracking, see [tasks.md](./tasks.md).
 
-#### **1. Project Setup and Navigation Layout**
+### **Key Architectural Decisions**
 
-- [x] **1.1** Create Next.js project foundation
-  - ✅ Next.js 15.4.1 project with TypeScript
-  - ✅ shadcn/ui components and Tailwind CSS
-  - ✅ Required dependencies installed
-  - ✅ Environment configuration ready
+1. **Unified Sidebar**: Same component for mobile/desktop (no Sheet component)
+2. **Fixed Header**: Consistent positioning with proper z-index
+3. **No Transparency**: Clean solid backgrounds as requested
+4. **Consistent Spacing**: Following 4px/8px/16px/24px system
+5. **Touch Targets**: 44px minimum for mobile interactions
 
-- [x] **1.2** Build main application layout and navigation
-  - ✅ AppLayout component with unified sidebar approach
-  - ✅ Fixed header design matching BigCommerce aesthetic
-  - ✅ Responsive navigation: unified sidebar for mobile/desktop
-  - ✅ Navigation menu with all required sections
-  - ✅ Mobile hamburger menu with slide-in animation
-  - ✅ Proper z-index layering and positioning
+### **Architecture Following Project Specs**
 
-- [x] **1.3** Define core TypeScript interfaces and utilities
-  - ✅ Core interfaces defined in types/index.ts
-  - ✅ Utility functions in lib/utils
-  - ✅ Page title hook for navigation
-
-#### **2. Design System Implementation**
-
-- [x] **2.1** Implement BigCommerce-inspired design system
-  - ✅ Dark blue sidebar (#1e293b) with white text
-  - ✅ Light gray background (#f8fafc)
-  - ✅ Consistent hover states (#34455a)
-  - ✅ Proper typography and spacing
-  - ✅ Unified color palette with CSS variables
-
-- [x] **2.2** Create responsive layout components
-  - ✅ Mobile-first approach with touch-friendly targets
-  - ✅ Smooth animations and transitions
-  - ✅ Consistent spacing and visual hierarchy
-  - ✅ Proper focus states and accessibility
-
-#### **3. Core Pages Implementation**
-
-- [x] **3.1** Dashboard with business metrics
-  - ✅ 30-second health check layout
-  - ✅ Key metrics cards with sample data
-  - ✅ Recent activity feed
-  - ✅ Proper spacing and visual hierarchy
-
-- [x] **3.2** Items management page
-  - ✅ Full-featured items table with search
-  - ✅ Type filtering and actions
-  - ✅ Sample inventory data
-  - ✅ Mobile-responsive table design
-
-### 🚧 **In Progress**
-
-- [ ] **3.3** Purchase management workflow
-  - [ ] Master-detail layout for purchases
-  - [ ] CSV import functionality
-  - [ ] Draft purchase creation
-  - [ ] Line item management
-
-### 📋 **Next Development Priorities**
-
-1. **✅ Database Schema Setup** (Task 2.1-2.2) - **COMPLETED**
-   - ✅ Supabase schema created and deployed
-   - ✅ Business logic functions implemented and tested
-   - ✅ Row Level Security configured
-   - ✅ Sample data seeded for development
-
-2. **Items Management Enhancement** (Task 3.1)
-   - Implement inline quantity editing with +/- buttons
-   - Add row actions dropdown and item detail modals
-   - Create "Add Item" modal with form validation
-
-3. **Purchase Management** (Task 4.1-4.3)
-   - Build Purchase Inbox component
-   - Implement CSV import workflow
-   - Create line item management interface
-
-4. **Recipe and Batch System** (Task 5.1-5.2)
-   - Recipe Manager with ingredient tracking
-   - Batch Logger with yield calculations
-   - Template system for common batches
+- **Database Schema**: Following data-model.md exactly with all tables and relationships
+- **Component Structure**: AppLayout as root with unified sidebar
+- **Development Workflow**: Spec-driven, task-oriented, iterative approach
 
 ## 🎨 **Design System Reference**
 
@@ -215,7 +148,7 @@ Before implementing any feature:
 1. Read the relevant requirement in `requirements.md`
 2. Check the design specifications in `data-model.md`
 3. Find the corresponding task in `tasks.md`
-4. Update progress tracking when complete
+4. Update progress tracking in `tasks.md` when complete
 
 ### **Step 2: Follow the Architecture**
 
@@ -235,13 +168,13 @@ Before implementing any feature:
 
 For each new feature:
 
-- [ ] Read requirement specification
-- [ ] Check design documentation
+- [ ] Read requirement specification in `requirements.md`
+- [ ] Check design documentation in `data-model.md`
 - [ ] Create/update TypeScript interfaces
 - [ ] Implement component following design system
 - [ ] Add mobile responsive behavior
 - [ ] Test on both desktop and mobile
-- [ ] Update progress documentation
+- [ ] Update progress documentation in `tasks.md`
 
 ## � **Dependency Management**
 
@@ -353,6 +286,8 @@ pnpm supabase:types     # Generate types from remote database
 
 ## 📈 **Progress Tracking**
 
+All project progress and task completion tracking is maintained in [tasks.md](./tasks.md).
+
 ### **Design Compliance**
 
 - **Color Scheme**: Exact match to BigCommerce design
@@ -361,20 +296,6 @@ pnpm supabase:types     # Generate types from remote database
 - **Spacing**: Consistent 6/4 unit system
 - **Responsive**: Mobile-first with unified components
 - **Interactions**: Smooth hover states and animations
-
-### **Key Design Decisions**
-
-1. **Unified Sidebar**: Same component for mobile/desktop (no Sheet component)
-2. **Fixed Header**: Consistent positioning with proper z-index
-3. **No Transparency**: Clean solid backgrounds as requested
-4. **Consistent Spacing**: Following 4px/8px/16px/24px system
-5. **Touch Targets**: 44px minimum for mobile interactions
-
-### **Architecture Following Project Specs**
-
-- **Database Schema**: Following data-model.md exactly with all tables and relationships
-- **Component Structure**: AppLayout as root with unified sidebar
-- **Development Workflow**: Spec-driven, task-oriented, iterative approach
 
 ---
 

@@ -38,111 +38,111 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 ## 📋 **Functional Requirements**
 
-### **1. Flexible Inventory Tracking** ✅ **COMPLETED**
+### **1. Flexible Inventory Tracking**
 
-#### **1.1 Multi-Mode Item Management** ✅ **COMPLETED**
+#### **1.1 Multi-Mode Item Management**
 
-- ✅ **Full Tracking Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
-- ✅ **Cost-Only Tracking Mode**: Purchase history alerts, no quantity deduction (packaging materials)
-- ✅ **Estimate Tracking Mode**: Fixed cost per unit for recipe calculations (consumables)
-- ✅ **Smart Mode Assignment**: Automatic suggestions based on item cost and type
-- ✅ **Flexible Mode Switching**: Change tracking modes as business needs evolve
+- **Full Tracking Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
+- **Cost-Only Tracking Mode**: Purchase history alerts, no quantity deduction (packaging materials)
+- **Estimate Tracking Mode**: Fixed cost per unit for recipe calculations (consumables)
+- **Smart Mode Assignment**: Automatic suggestions based on item cost and type
+- **Flexible Mode Switching**: Change tracking modes as business needs evolve
 
-#### **1.2 Enhanced Items Interface** ✅ **COMPLETED**
+#### **1.2 Enhanced Items Interface**
 
-- ✅ **Mixed Tracking Display**: Show different alert types based on tracking mode
-- ✅ **Time-Based Alerts**: "Check supply" alerts for cost-only items based on purchase history
-- ✅ **Quantity vs Cost Focus**: Emphasize relevant metrics per tracking mode
-- ✅ **Mobile-responsive design with 44px touch targets**
-- ✅ **Keyboard navigation support**
+- **Mixed Tracking Display**: Show different alert types based on tracking mode
+- **Time-Based Alerts**: "Check supply" alerts for cost-only items based on purchase history
+- **Quantity vs Cost Focus**: Emphasize relevant metrics per tracking mode
+- **Mobile-responsive design with 44px touch targets**
+- **Keyboard navigation support**
 
-### **2. Smart Purchase Management** ✅ **COMPLETED**
+### **2. Smart Purchase Management**
 
-#### **2.1 Proportional Cost Allocation** ✅ **COMPLETED**
+#### **2.1 Proportional Cost Allocation**
 
-- ✅ **Smart Allocation Algorithm**: Distribute shipping/taxes proportional to item base costs
-- ✅ **Cost Breakdown Tracking**: Separate base cost from allocated overhead
-- ✅ **Non-Inventory Support**: Handle office supplies and equipment purchases
-- ✅ **Mixed Invoice Handling**: Support COGS and non-COGS items on same purchase
-- ✅ **Variance Validation**: Prevent finalization if calculated total differs significantly from actual
+- **Smart Allocation Algorithm**: Distribute shipping/taxes proportional to item base costs
+- **Cost Breakdown Tracking**: Separate base cost from allocated overhead
+- **Non-Inventory Support**: Handle office supplies and equipment purchases
+- **Mixed Invoice Handling**: Support COGS and non-COGS items on same purchase
+- **Variance Validation**: Prevent finalization if calculated total differs significantly from actual
 
-#### **2.2 Statement-Based Workflow** ✅ **COMPLETED**
+#### **2.2 Statement-Based Workflow**
 
-- ✅ **Monthly Batch Entry**: Support for entering multiple purchases from statements
-- ✅ **COGS vs Non-COGS Split**: Clear separation of inventory-affecting purchases
-- ✅ **Purchase Variance Checking**: Validate totals before finalizing
-- ✅ **Flexible Entry Timing**: Support for back-dating and delayed entry
-- ✅ **Draft Purchase System**: Create and modify purchases before finalizing
+- **Monthly Batch Entry**: Support for entering multiple purchases from statements
+- **COGS vs Non-COGS Split**: Clear separation of inventory-affecting purchases
+- **Purchase Variance Checking**: Validate totals before finalizing
+- **Flexible Entry Timing**: Support for back-dating and delayed entry
+- **Draft Purchase System**: Create and modify purchases before finalizing
 
-#### **2.3 Enhanced Purchase Workflow** ✅ **COMPLETED**
+#### **2.3 Enhanced Purchase Workflow**
 
-- ✅ **Preview Allocation**: See cost distribution before finalizing
-- ✅ **Base Cost Entry**: Enter actual item costs before overhead allocation
-- ✅ **Automatic WAC Updates**: Update weighted average costs with allocated totals
-- ✅ **Error Prevention**: Comprehensive validation and variance checking
-- ✅ **Audit Trail**: Complete tracking of cost allocation decisions
+- **Preview Allocation**: See cost distribution before finalizing
+- **Base Cost Entry**: Enter actual item costs before overhead allocation
+- **Automatic WAC Updates**: Update weighted average costs with allocated totals
+- **Error Prevention**: Comprehensive validation and variance checking
+- **Audit Trail**: Complete tracking of cost allocation decisions
 
-### **3. Simplified Business Logic** ✅ **COMPLETED**
+### **3. Simplified Business Logic**
 
-#### **3.1 Consolidated Alert System** ✅ **COMPLETED**
+#### **3.1 Consolidated Alert System**
 
-- ✅ **Single Source of Truth**: Unified cycle count alert calculation
-- ✅ **Mixed Tracking Alerts**: Different alert types for different tracking modes
-- ✅ **Priority Scoring**: Standardized algorithm for alert prioritization
-- ✅ **Time-Based Alerts**: Purchase history alerts for cost-only items
-- ✅ **Configurable Thresholds**: Adjustable alert sensitivity
+- **Single Source of Truth**: Unified cycle count alert calculation
+- **Mixed Tracking Alerts**: Different alert types for different tracking modes
+- **Priority Scoring**: Standardized algorithm for alert prioritization
+- **Time-Based Alerts**: Purchase history alerts for cost-only items
+- **Configurable Thresholds**: Adjustable alert sensitivity
 
-#### **3.2 Fixed WAC Calculation** ✅ **COMPLETED**
+#### **3.2 Fixed WAC Calculation**
 
-- ✅ **Inventory-Aware WAC**: Proper weighted average cost calculation
-- ✅ **Allocation Integration**: Include allocated overhead in WAC calculation
-- ✅ **Atomic Updates**: Consistent inventory and cost updates
-- ✅ **Purchase Integration**: Automatic WAC recalculation on purchase finalization
-- ✅ **Cost Breakdown Preservation**: Maintain base cost vs overhead distinction
+- **Inventory-Aware WAC**: Proper weighted average cost calculation
+- **Allocation Integration**: Include allocated overhead in WAC calculation
+- **Atomic Updates**: Consistent inventory and cost updates
+- **Purchase Integration**: Automatic WAC recalculation on purchase finalization
+- **Cost Breakdown Preservation**: Maintain base cost vs overhead distinction
 
-#### **3.3 Comprehensive Inventory Operations** ✅ **COMPLETED**
+#### **3.3 Comprehensive Inventory Operations**
 
-- ✅ **Sales Deduction**: Proper inventory deduction for sales transactions
-- ✅ **Recipe Consumption**: Ingredient deduction for batch production
-- ✅ **Inventory Adjustments**: Manual adjustments with reason tracking
-- ✅ **Waste Tracking**: Record and track material waste
-- ✅ **Transaction Logging**: Complete audit trail for all inventory changes
+- **Sales Deduction**: Proper inventory deduction for sales transactions
+- **Recipe Consumption**: Ingredient deduction for batch production
+- **Inventory Adjustments**: Manual adjustments with reason tracking
+- **Waste Tracking**: Record and track material waste
+- **Transaction Logging**: Complete audit trail for all inventory changes
 
-### **4. Streamlined Data Entry** 🚧 **IN PROGRESS**
+### **4. Streamlined Data Entry**
 
-#### **4.1 Bookkeeping Integration** 🚧 **PLANNED**
+#### **4.1 Bookkeeping Integration**
 
-- 📋 **Statement-Based Entry**: Design for monthly inventory sessions
-- 📋 **COGS Identification**: Easy flagging of inventory-affecting purchases
-- 📋 **Batch Processing**: Efficient entry of multiple purchases
-- 📋 **Mixed Purchase Handling**: Clear workflows for COGS/non-COGS splits
-- 📋 **Receipt Reconciliation**: Match inventory details to bookkeeping entries
+- **Statement-Based Entry**: Design for monthly inventory sessions
+- **COGS Identification**: Easy flagging of inventory-affecting purchases
+- **Batch Processing**: Efficient entry of multiple purchases
+- **Mixed Purchase Handling**: Clear workflows for COGS/non-COGS splits
+- **Receipt Reconciliation**: Match inventory details to bookkeeping entries
 
-#### **4.2 Import/Export Enhancements** 📋 **PLANNED**
+#### **4.2 Import/Export Enhancements**
 
-- ✅ **QBO Sales CSV Import**: Current CSV import functionality
-- 📋 **Purchase CSV Templates**: Templates for efficient batch entry
-- 📋 **Bookkeeping Export**: Export for tax and accounting purposes
-- 📋 **COGS Reporting**: Focused reports for cost analysis
-- 📋 **Cost Allocation Reports**: Breakdown of base costs vs overhead
+- **QBO Sales CSV Import**: Current CSV import functionality
+- **Purchase CSV Templates**: Templates for efficient batch entry
+- **Bookkeeping Export**: Export for tax and accounting purposes
+- **COGS Reporting**: Focused reports for cost analysis
+- **Cost Allocation Reports**: Breakdown of base costs vs overhead
 
-### **5. Recipe and Production** 📋 **PLANNED**
+### **5. Recipe and Production**
 
-#### **5.1 Flexible Recipe Management** 📋 **PLANNED**
+#### **5.1 Flexible Recipe Management**
 
-- 📋 **Mixed Tracking Support**: Recipes using items with different tracking modes
-- 📋 **Cost Estimation**: Include estimated costs for consumable items
-- 📋 **Real Cost Tracking**: Use allocated costs for accurate product costing
-- 📋 **Recipe Scaling**: Proportional scaling with cost updates
-- 📋 **Version Control**: Track recipe changes over time
+- **Mixed Tracking Support**: Recipes using items with different tracking modes
+- **Cost Estimation**: Include estimated costs for consumable items
+- **Real Cost Tracking**: Use allocated costs for accurate product costing
+- **Recipe Scaling**: Proportional scaling with cost updates
+- **Version Control**: Track recipe changes over time
 
-#### **5.2 Production Workflows** 📋 **PLANNED**
+#### **5.2 Production Workflows**
 
-- 📋 **Selective Deduction**: Only deduct inventory for full-tracking items
-- 📋 **Cost Allocation**: Apply estimated costs for cost-only items
-- 📋 **Yield Analysis**: Compare expected vs actual yields
-- 📋 **Labor Integration**: Include labor costs in production tracking
-- 📋 **Batch Templates**: Reusable production configurations
+- **Selective Deduction**: Only deduct inventory for full-tracking items
+- **Cost Allocation**: Apply estimated costs for cost-only items
+- **Yield Analysis**: Compare expected vs actual yields
+- **Labor Integration**: Include labor costs in production tracking
+- **Batch Templates**: Reusable production configurations
 
 ## 🔧 **Non-Functional Requirements**
 
@@ -295,14 +295,14 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 ## 🔄 **Future Requirements**
 
-### **Phase 2 Features** 📋 **PLANNED**
+### **Phase 2 Features**
 
 - **Advanced Reporting**: Cost allocation reports and analysis
 - **Bookkeeping Integration**: Direct export to accounting systems
 - **Recipe Cost Analysis**: True product costing with allocated overhead
 - **Supplier Analysis**: Cost trends and supplier performance metrics
 
-### **Phase 3 Features** 📋 **PLANNED**
+### **Phase 3 Features**
 
 - **Automated Allocation Rules**: Customizable allocation formulas
 - **Multi-Currency Support**: Handle international suppliers
@@ -311,7 +311,7 @@ Comprehensive requirements specification for the internal KIRO inventory managem
 
 ---
 
-_For technical implementation details, see [technical-design.md](./technical-design.md). For database schema, see [data-model.md](./data-model.md)._
+_For technical implementation details, see [technical-design.md](./technical-design.md). For database schema, see [data-model.md](./data-model.md). For development task tracking, see [tasks.md](./tasks.md)._
 
 ### **Security and Optimization (2025-07-21)**
 
