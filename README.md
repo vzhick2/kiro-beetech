@@ -10,32 +10,32 @@
 
 ## 📋 **Overview**
 
-BTINV is a **private, business-focused inventory management system** designed specifically for small businesses that prioritize meaningful COGS (Cost of Goods Sold) tracking over perfectionist inventory management. Following the 80/20 rule, it focuses on tracking what matters most for profitability while supporting real-world business workflows like statement-based bookkeeping and monthly inventory sessions.
+BTINV is a **private, business-focused inventory management system** designed for small businesses that prioritize COGS (Cost of Goods Sold) tracking. Following the 80/20 rule, it focuses on tracking cost drivers for profitability while supporting real-world business workflows like statement-based bookkeeping and monthly inventory sessions.
 
 **This is not a public application or open-source project.**
 
 ## ✨ **Key Features**
 
-### 🧮 **Smart Cost Management**
+### 🧮 **Cost Management**
 
 - **Intelligent Cost Allocation**: Proportional distribution of shipping, taxes, and fees to inventory items
-- **Enhanced WAC Calculation**: Properly implemented Weighted Average Cost with inventory-aware calculations
+- **WAC Calculation**: Weighted Average Cost with inventory-aware calculations
 - **Two-Mode Tracking**: Fully tracked for core ingredients, cost-added for packaging materials
-- **COGS-Focused Analytics**: 80/20 rule applied to track meaningful cost drivers
+- **COGS-Focused Analytics**: 80/20 rule applied to track cost drivers
 
-### 📦 **Enhanced Purchase Management**
+### 📦 **Purchase Management**
 
-- **Smart Allocation Engine**: Real-time preview of cost distribution with variance warnings
+- **Allocation Engine**: Real-time preview of cost distribution with variance warnings
 - **Statement Integration**: Automated bank CSV import with supplier matching
 - **Mixed Invoice Support**: Handle COGS and non-COGS items in single purchases
 - **Draft Review Workflow**: Approval-based purchase finalization with allocation verification
 
-### 🏪 **Flexible Inventory Tracking**
+### 🏪 **Inventory Tracking**
 
-- **Two-Mode Tracking System**: Simplified approach with Fully Tracked 🟢 and Cost Added 🟡 modes
-- **Smart Alert System**: Low-stock alerts for tracked items, supply check reminders for cost-only items
+- **Two-Mode Tracking System**: Fully Tracked 🟢 and Cost Added 🟡 modes
+- **Alert System**: Low-stock alerts for tracked items, supply check reminders for cost-only items
 - **Monthly Sessions**: Aligned with business cycles and statement-based bookkeeping
-- **Forgiving Workflows**: Support negative inventory and real-world correction needs
+- **Flexible Workflows**: Support negative inventory and real-world correction needs
 
 ### 📊 **Business-Aligned Reporting**
 
@@ -44,10 +44,10 @@ BTINV is a **private, business-focused inventory management system** designed sp
 - **Two-Mode Performance**: Insights on fully tracked vs cost-added item performance
 - **Monthly Reconciliation**: Aligned with accounting periods and business practices
 
-### 🔍 **Intelligent Automation**
+### 🔍 **Automation**
 
 - **Automated Supplier Matching**: Confidence-scored matching from bank statements
-- **Smart Reorder Suggestions**: Based on tracking mode and supplier history
+- **Reorder Suggestions**: Based on tracking mode and supplier history
 - **Proportional Allocation**: Automatic overhead distribution with manual override capability
 - **Cost Impact Preview**: See financial effects before finalizing changes
 
@@ -71,9 +71,9 @@ BTINV is a **private, business-focused inventory management system** designed sp
 
 ### **Business Logic**
 
-- **Smart Allocation Engine** for proportional cost distribution
-- **Two-Mode Tracking System** with simplified fully tracked and cost-added modes
-- **Enhanced WAC Calculation** with proper inventory awareness
+- **Allocation Engine** for proportional cost distribution
+- **Two-Mode Tracking System** with fully tracked and cost-added modes
+- **WAC Calculation** with inventory awareness
 - **Statement-Based Import** with automated supplier matching
 
 ## 📦 **Installation**
@@ -132,7 +132,7 @@ BTINV is a **private, business-focused inventory management system** designed sp
 - **[Technical Design](docs/technical-design.md)** - Architecture decisions and patterns
 - **[Development Guide](docs/development-guide.md)** - Development standards and workflow
 - **[Tasks](docs/tasks.md)** - Development progress and task tracking
-- **[UI Blueprint](docs/ui-blueprint.md)** - UI design patterns and mobile-first approach
+- **[UI Blueprint](docs/ui-blueprint.md)** - UI design patterns and mobile-first design
 
 ## 🔧 **Development**
 
@@ -190,7 +190,7 @@ src/
 
 ## 📊 **Progress Tracking**
 
-This app follows a **simplified, business-focused approach** that prioritizes practical inventory management over perfectionist systems.
+This app follows a **business-focused design** that prioritizes practical inventory management for small businesses.
 
 ### **Phase 1: Foundation** ✅ **100% Complete**
 
@@ -210,19 +210,18 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 
 ### **Phase 3: Smart Business Logic** ✅ **100% Complete**
 
-- ✅ Smart cost allocation engine with preview
 - ✅ Two-mode tracking system (Fully Tracked/Cost Added)
 - ✅ Cycle count alerts with priority scoring
 - ✅ CSV import system with validation
 - ✅ Purchase management with draft workflow
-- ✅ Enhanced WAC calculation with inventory awareness
-- ✅ Consolidated business rules across components
-- ✅ Enhanced purchase workflow with allocation preview
+- ✅ WAC calculation with inventory awareness
+- ✅ Business rules across components
+- ✅ Purchase workflow with allocation preview
 
 ### **Core Features 🚧 (40% Complete)**
 
-- ✅ Enhanced Server Actions with smart allocation
-- ✅ Simplified suppliers management (removed AG Grid complexity)
+- ✅ Enhanced Server Actions with allocation functionality
+- ✅ Suppliers management (removed AG Grid complexity)
 - 🚧 Items management with two-mode tracking support
 - 📋 Complete UI implementation for all tracking modes
 
@@ -255,4 +254,4 @@ This app follows a **simplified, business-focused approach** that prioritizes pr
 
 ---
 
-**Built for small business owners who need practical inventory management without the complexity of enterprise solutions.**
+**Built for small business owners who need practical inventory management.**

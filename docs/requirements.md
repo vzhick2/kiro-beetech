@@ -3,7 +3,15 @@ title: 'Requirements'
 description: 'Functional and non-functional requirements for internal inventory management system'
 purpose: 'Reference for feature specifications and business requirements'
 last_updated: 'July 21, 2025'
-doc_type: 'requirements-specification'
+do#### **Data Entry Rules**
+
+#### **Workflow Support**
+
+- **Statement-Based Entry**: Support monthly batch entry from financial statements
+- **Back-Dating**: All transactions support historical effective dates
+- **Corrections**: All records editable with audit trail
+- **Partial Data**: Support incomplete data entry with warnings
+- **Mixed Purchases**: Handle COGS and non-COGS items on same invoicerequirements-specification'
 related: ['data-model.md', 'technical-design.md', 'ui-blueprint.md']
 ---
 
@@ -17,11 +25,11 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 ### **Core Business Objectives**
 
-1. **Streamline COGS Tracking**: Focus on meaningful cost tracking for ingredients and core materials that impact product margins
-2. **Flexible Purchase Workflows**: Support statement-based bookkeeping with monthly inventory detail batching
-3. **Smart Cost Allocation**: Automatically distribute shipping, taxes, and fees proportionally to inventory items
+1. **COGS Tracking**: Focus on cost tracking for ingredients and core materials that impact product margins
+2. **Purchase Workflows**: Support statement-based bookkeeping with monthly inventory detail batching
+3. **Cost Allocation**: Automatically distribute shipping, taxes, and fees proportionally to inventory items
 4. **Multi-Modal Tracking**: Support full tracking for core ingredients, cost-only tracking for packaging, and estimation for consumables
-5. **Real Business Operations**: Accommodate real-world workflows with forgiving data entry and flexible timing
+5. **Business Operations**: Accommodate real-world workflows with flexible data entry and flexible timing
 
 ### **Target Users**
 
@@ -40,15 +48,15 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 ### **1. Flexible Inventory Tracking**
 
-#### **1.1 Simplified Two-Mode Item Management**
+#### **1.1 Two-Mode Item Management**
 
 - **Fully Tracked Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
 - **Cost-Added Mode**: Purchase history alerts, quantities hidden in UI (packaging materials)
-- **Simple Mode Assignment**: Business decision based on cost impact and tracking effort
-- **Flexible Mode Switching**: Change tracking modes with data preservation (no snapshots needed)
+- **Mode Assignment**: Business decision based on cost impact and tracking effort
+- **Mode Switching**: Change tracking modes with data preservation (no snapshots needed)
 - **UI Quantity Hiding**: Cost-only items show "Cost only" instead of quantity values
 
-#### **1.2 Enhanced Items Interface**
+#### **1.2 Items Interface**
 
 - **Mixed Tracking Display**: Show different alert types based on tracking mode
 - **Time-Based Alerts**: "Check supply" alerts for cost-only items based on purchase history
@@ -60,7 +68,7 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 #### **2.1 Proportional Cost Allocation**
 
-- **Smart Allocation Algorithm**: Distribute shipping/taxes proportional to item base costs
+- **Allocation Algorithm**: Distribute shipping/taxes proportional to item base costs
 - **Cost Breakdown Tracking**: Separate base cost from allocated overhead
 - **Non-Inventory Support**: Handle office supplies and equipment purchases
 - **Mixed Invoice Handling**: Support COGS and non-COGS items on same purchase
@@ -74,7 +82,7 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 - **Flexible Entry Timing**: Support for back-dating and delayed entry
 - **Draft Purchase System**: Create and modify purchases before finalizing
 
-#### **2.3 Enhanced Purchase Workflow**
+#### **2.3 Purchase Workflow**
 
 - **Preview Allocation**: See cost distribution before finalizing
 - **Base Cost Entry**: Enter actual item costs before overhead allocation
@@ -82,9 +90,9 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 - **Error Prevention**: Comprehensive validation and variance checking
 - **Audit Trail**: Complete tracking of cost allocation decisions
 
-### **3. Simplified Business Logic**
+### **3. Business Logic**
 
-#### **3.1 Consolidated Alert System**
+#### **3.1 Alert System**
 
 - **Single Source of Truth**: Unified cycle count alert calculation
 - **Mixed Tracking Alerts**: Different alert types for different tracking modes
@@ -92,47 +100,47 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 - **Time-Based Alerts**: Purchase history alerts for cost-only items
 - **Configurable Thresholds**: Adjustable alert sensitivity
 
-#### **3.2 Fixed WAC Calculation**
+#### **3.2 WAC Calculation**
 
-- **Inventory-Aware WAC**: Proper weighted average cost calculation
+- **Inventory-Aware WAC**: Weighted average cost calculation
 - **Allocation Integration**: Include allocated overhead in WAC calculation
 - **Atomic Updates**: Consistent inventory and cost updates
 - **Purchase Integration**: Automatic WAC recalculation on purchase finalization
 - **Cost Breakdown Preservation**: Maintain base cost vs overhead distinction
 
-#### **3.3 Comprehensive Inventory Operations**
+#### **3.3 Inventory Operations**
 
-- **Sales Deduction**: Proper inventory deduction for sales transactions
+- **Sales Deduction**: Inventory deduction for sales transactions
 - **Recipe Consumption**: Ingredient deduction for batch production
 - **Inventory Adjustments**: Manual adjustments with reason tracking
 - **Waste Tracking**: Record and track material waste
 - **Transaction Logging**: Complete audit trail for all inventory changes
 
-### **4. Streamlined Data Entry**
+### **4. Data Entry**
 
 #### **4.1 Bookkeeping Integration**
 
 - **Statement-Based Entry**: Design for monthly inventory sessions
-- **COGS Identification**: Easy flagging of inventory-affecting purchases
-- **Batch Processing**: Efficient entry of multiple purchases
-- **Mixed Purchase Handling**: Clear workflows for COGS/non-COGS splits
+- **COGS Identification**: Flagging of inventory-affecting purchases
+- **Batch Processing**: Entry of multiple purchases
+- **Mixed Purchase Handling**: Workflows for COGS/non-COGS splits
 - **Receipt Reconciliation**: Match inventory details to bookkeeping entries
 
-#### **4.2 Import/Export Enhancements**
+#### **4.2 Import/Export**
 
 - **QBO Sales CSV Import**: Current CSV import functionality
-- **Purchase CSV Templates**: Templates for efficient batch entry
+- **Purchase CSV Templates**: Templates for batch entry
 - **Bookkeeping Export**: Export for tax and accounting purposes
-- **COGS Reporting**: Focused reports for cost analysis
+- **COGS Reporting**: Reports for cost analysis
 - **Cost Allocation Reports**: Breakdown of base costs vs overhead
 
 ### **5. Recipe and Production**
 
-#### **5.1 Flexible Recipe Management**
+#### **5.1 Recipe Management**
 
 - **Mixed Tracking Support**: Recipes using items with different tracking modes
 - **Cost Estimation**: Include estimated costs for consumable items
-- **Real Cost Tracking**: Use allocated costs for accurate product costing
+- **Cost Tracking**: Use allocated costs for product costing
 - **Recipe Scaling**: Proportional scaling with cost updates
 - **Version Control**: Track recipe changes over time
 
@@ -167,7 +175,7 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 #### **Workflow Efficiency**
 
 - **Monthly Sessions**: Complete inventory entry in 1-2 hours monthly
-- **Tracking Mode Clarity**: Clear indicators for different tracking modes
+- **Tracking Mode Clarity**: Indicators for different tracking modes
 - **Cost Allocation Preview**: Understand allocation before committing
 - **Error Prevention**: Prevent common entry mistakes
 - **Mobile Compatibility**: Essential functions work on mobile
@@ -241,8 +249,8 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 #### **Validation Rules**
 
-- **Required Fields**: Minimal required data, focus on meaningful information
-- **Cost Validation**: Reasonable cost ranges with warnings for outliers
+- **Required Fields**: Minimal required data, focus on information
+- **Cost Validation**: Cost ranges with warnings for outliers
 - **Allocation Validation**: Prevent finalization with significant variances
 - **Business Logic**: Validate tracking mode assignments and changes
 - **Cross-Reference**: Ensure supplier and item relationships are valid
@@ -253,18 +261,18 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 #### **Monthly Inventory Session**
 
-- **Efficient Entry**: Complete month's inventory in 1-2 hour session
+- **Entry**: Complete month's inventory in 1-2 hour session
 - **Statement Integration**: Design around existing bookkeeping workflow
-- **Batch Operations**: Process multiple purchases efficiently
-- **Clear Separation**: Obvious distinction between COGS and non-COGS items
+- **Batch Operations**: Process multiple purchases
+- **Separation**: Distinction between COGS and non-COGS items
 - **Progress Tracking**: Show completion status during batch entry
 
 #### **Tracking Mode Clarity**
 
-- **Visual Indicators**: Clear badges or icons for tracking modes
+- **Visual Indicators**: Badges or icons for tracking modes
 - **Contextual Actions**: Different actions based on tracking mode
 - **Mode Explanations**: Help text explaining each tracking mode
-- **Change Workflows**: Clear process for changing tracking modes
+- **Change Workflows**: Process for changing tracking modes
 - **Mixed Displays**: Handle mixed tracking modes in lists and reports
 
 ### **Error Prevention**
@@ -272,20 +280,20 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 #### **Cost Allocation Guidance**
 
 - **Preview Functionality**: Show allocation before committing
-- **Variance Warnings**: Clear alerts when totals don't match
-- **Allocation Breakdown**: Detailed view of how costs are distributed
-- **Manual Adjustment**: Easy correction of allocation issues
-- **Educational Tooltips**: Explain allocation logic to users
+- **Variance Warnings**: Alerts when totals don't match
+- **Allocation Breakdown**: View of how costs are distributed
+- **Manual Adjustment**: Correction of allocation issues
+- **Tooltips**: Explain allocation logic to users
 
 ## 📈 **Success Metrics**
 
 ### **Business Metrics**
 
 - **Data Entry Efficiency**: Complete monthly inventory entry in <2 hours
-- **Cost Accuracy**: Accurate product costing including allocated overhead
-- **Workflow Adoption**: 90%+ usage of simplified tracking modes
+- **Cost Accuracy**: Product costing including allocated overhead
+- **Workflow Adoption**: 90%+ usage of tracking modes
 - **Error Reduction**: <5% variance in cost allocations
-- **Statement Integration**: Seamless workflow with existing bookkeeping
+- **Statement Integration**: Workflow with existing bookkeeping
 
 ### **Technical Metrics**
 
@@ -298,16 +306,16 @@ Comprehensive requirements specification for the internal BTINV inventory manage
 
 ### **Phase 2 Features**
 
-- **Advanced Reporting**: Cost allocation reports and analysis
+- **Reporting**: Cost allocation reports and analysis
 - **Bookkeeping Integration**: Direct export to accounting systems
-- **Recipe Cost Analysis**: True product costing with allocated overhead
+- **Recipe Cost Analysis**: Product costing with allocated overhead
 - **Supplier Analysis**: Cost trends and supplier performance metrics
 
 ### **Phase 3 Features**
 
-- **Automated Allocation Rules**: Customizable allocation formulas
+- **Allocation Rules**: Customizable allocation formulas
 - **Multi-Currency Support**: Handle international suppliers
-- **Advanced Analytics**: Predictive costing and trend analysis
+- **Analytics**: Predictive costing and trend analysis
 - **Mobile App**: Native mobile for production floor use
 
 ---

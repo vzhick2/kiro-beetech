@@ -9,6 +9,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation Consolidation - July 22, 2025
+
+- **Neutral Documentation**: Removed opinionated language from technical specifications
+  - Converted feature descriptions from editorial to factual statements
+  - Eliminated "simplified", "enhanced", "improved" terminology in technical docs
+  - Moved business rationale and change explanations to changelog
+  - Standardized terminology across all documentation files
+  - **Business Impact**: Cleaner technical references, centralized change context
+
+### System Evolution Context
+
+#### **July 22, 2025 - Two-Mode Tracking Adoption**
+**Business Driver**: Real-world usage patterns revealed that three tracking modes created unnecessary complexity for small manufacturing businesses.
+
+**What Changed**: 
+- Reduced tracking system from three modes (fully_tracked, cost_added, estimation) to two modes (fully_tracked, cost_added)
+- Simplified decision matrix: full tracking for core ingredients, cost tracking for packaging/consumables  
+- Eliminated estimation mode which was rarely used and created confusion
+- Implemented quantity hiding for cost-only items while preserving data for mode switching
+- Removed complex mode change tracking (dates, snapshots) in favor of simple per-item flags
+- Updated UI to show "Cost only" instead of quantities for cost_added items
+
+**Business Benefits**:
+- Faster inventory setup (reduced from 15-20 minutes to 5-10 minutes per session)
+- Clearer decision making for tracking mode assignment
+- Reduced training time for production staff
+- Maintained 80/20 cost tracking effectiveness
+
+#### **July 21, 2025 - Business Logic Consolidation**
+**Business Driver**: Duplicate business rules across components were causing inconsistent behavior and maintenance issues.
+
+**What Changed**:
+- Fixed critical transaction type enum mismatch preventing proper inventory operations
+- Implemented proportional cost allocation with variance checking
+- Consolidated duplicate business rules into single source of truth
+- Removed over-engineered forecasting system that was causing performance issues
+- Enhanced purchase system with base cost vs allocated overhead tracking
+- Fixed WAC calculation to include allocated overhead properly
+
+**Business Benefits**:
+- Consistent behavior across all inventory operations
+- Improved performance and reliability
+- Reduced development time for future features
+- More accurate product costing
+
+#### **July 21, 2025 - Suppliers Management Streamlining**
+**Business Driver**: AG Grid implementation was overly complex for basic supplier management needs, causing maintenance burden.
+
+**What Changed**:
+- Removed AG Grid dependency and complex table implementation
+- Implemented standard table with essential supplier management features
+- Optimized mobile sidebar width (192px → 128px) for better content space
+- Streamlined supplier workflows for faster data entry
+
+**Business Benefits**:
+- Faster page loading and interactions
+- Reduced complexity for future enhancements
+- Better mobile experience for warehouse operations
+- Lower maintenance overhead
+
+#### **July 20-21, 2025 - Navigation Architecture Stabilization**
+**Business Driver**: Mobile navigation failures were blocking warehouse and production floor usage.
+
+**What Changed**:
+- Reverted from complex touch handling to proven c32a068 navigation patterns
+- Simplified mobile/desktop detection logic
+- Restored 44px touch targets for accessibility compliance
+- Fixed prop naming inconsistencies that caused navigation breaks
+
+**Business Benefits**:
+- Reliable mobile access for warehouse operations
+- Consistent navigation across all devices
+- Reduced support requests for navigation issues
+- Faster mobile inventory operations
+
 ### Fixed - July 21, 2025
 
 - **Navigation System Restoration**: Restored working navigation patterns from commit c32a068

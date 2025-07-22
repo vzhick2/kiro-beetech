@@ -16,7 +16,7 @@ related:
 
 # Technical Design
 
-Comprehensive technical design documentation for the internal BTINV inventory management system, focusing on simplified COGS tracking, smart cost allocation, and multi-mode inventory management.
+Technical design documentation for the internal BTINV inventory management system, focusing on COGS tracking, cost allocation, and multi-mode inventory management.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
@@ -46,7 +46,7 @@ Comprehensive technical design documentation for the internal BTINV inventory ma
 - **TypeScript 5.8.3** for type safety
 - **Tailwind CSS 4.1.11** for styling
 - **Radix UI** for accessible components
-- **TanStack Table** for data tables (replacing AG Grid)
+- **TanStack Table** for data tables
 
 #### **Backend Layer**
 
@@ -70,7 +70,7 @@ src/
 │   │   ├── csv-import.ts  # CSV import functionality
 │   │   ├── items.ts       # Items CRUD operations
 │   │   ├── purchases.ts   # Purchase management
-│   │   ├── purchases-enhanced.ts # Smart allocation features
+│   │   ├── purchases-enhanced.ts # Allocation features
 │   │   ├── inventory-deductions.ts # Deduction operations
 │   │   └── seed-data.ts   # Sample data generation
 │   ├── components/        # Reusable UI components
@@ -86,7 +86,7 @@ src/
 │   └── types/             # TypeScript type definitions
 ```
 
-## 🧮 **Smart Cost Allocation Architecture**
+## 🧮 **Cost Allocation Architecture**
 
 ### **Allocation Engine Design**
 
@@ -101,11 +101,11 @@ Purchase Entry → Base Cost Calculation → Overhead Distribution → WAC Updat
 
 ### **Core Allocation Functions**
 
-#### **Smart Allocation RPC**
+#### **Allocation RPC**
 
 ```sql
 -- Core allocation logic (in database)
-CREATE OR REPLACE FUNCTION calculate_smart_allocation(
+CREATE OR REPLACE FUNCTION calculate_allocation(
   p_purchase_id UUID,
   p_total_shipping DECIMAL DEFAULT 0,
   p_total_tax DECIMAL DEFAULT 0,
@@ -143,7 +143,7 @@ $$ LANGUAGE plpgsql;
 #### **TypeScript Interface**
 
 ```typescript
-// Smart allocation service
+// Allocation service
 export interface AllocationPreview {
   lineItemId: string;
   itemSku: string;
@@ -170,7 +170,7 @@ export interface AllocationResult {
   warnings: string[];
 }
 
-// Smart allocation action
+// Allocation action
 export async function previewAllocation(
   purchaseId: string,
   overheadCosts: {
@@ -180,7 +180,7 @@ export async function previewAllocation(
   }
 ): Promise<AppResult<AllocationResult>> {
   try {
-    const { data, error } = await supabase.rpc('calculate_smart_allocation', {
+    const { data, error } = await supabase.rpc('calculate_allocation', {
       p_purchase_id: purchaseId,
       p_total_shipping: overheadCosts.shipping || 0,
       p_total_tax: overheadCosts.tax || 0,
@@ -352,7 +352,7 @@ export function ModeSpecificActions({ item }: { item: Item }) {
 }
 ```
 
-## 💱 **Enhanced WAC Calculation**
+## 💱 **WAC Calculation**
 
 ### **Fixed WAC Architecture**
 
@@ -394,7 +394,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ### **WAC Integration with Purchases**
 
 ```typescript
-// Enhanced purchase finalization with WAC
+// Purchase finalization with WAC
 export async function finalizePurchaseWithWAC(
   purchaseId: string,
   allocationData: AllocationResult
@@ -402,7 +402,7 @@ export async function finalizePurchaseWithWAC(
   try {
     // Start transaction
     const { error } = await supabase.rpc(
-      'finalize_purchase_with_smart_allocation',
+      'finalize_purchase_with_allocation',
       {
         p_purchase_id: purchaseId,
         p_allocation_data: JSON.stringify(allocationData),
@@ -430,7 +430,7 @@ export async function finalizePurchaseWithWAC(
 Bank CSV → Supplier Matching → Auto-Draft Creation → Review & Allocation → Finalization
     │            │                    │                    │                │
     │            │                    │                    │                └── WAC Update
-    │            │                    │                    └── Smart Allocation
+    │            │                    │                    └── Allocation
     │            │                    └── Line Item Generation
     │            └── Confidence Scoring
     └── Format Detection
@@ -530,7 +530,7 @@ export async function startMonthlySession(
 }
 ```
 
-## 🎨 **Enhanced UI Architecture**
+## 🎨 **UI Architecture**
 
 ### **Allocation Preview Component**
 
@@ -644,7 +644,7 @@ export function TrackingModeDashboard() {
 
 ### **Database Optimizations for New Features**
 
-#### **Smart Allocation Indexes**
+#### **Allocation Indexes**
 
 ```sql
 -- Optimized indexes for allocation queries
@@ -724,7 +724,7 @@ export function useOptimisticAllocation() {
 }
 ```
 
-## 🛡️ **Enhanced Security Architecture**
+## 🛡️ **Security Architecture**
 
 ### **Allocation Security Policies**
 
@@ -744,10 +744,10 @@ FOR UPDATE USING (user_id = auth.uid())
 WITH CHECK (user_id = auth.uid());
 ```
 
-### **Input Validation for Enhanced Features**
+### **Input Validation**
 
 ```typescript
-// Enhanced validation schemas
+// Validation schemas
 const AllocationSchema = z.object({
   purchaseId: z.string().uuid(),
   overheadCosts: z.object({
@@ -855,7 +855,7 @@ export function useTrackingModeGestures(itemId: string) {
 
 - **Bulk Edit Everywhere:**
   - All major data tables (suppliers, items, purchases, batches, etc.) will support spreadsheet-like bulk editing.
-  - Implementation will use TanStack Table v8 for robust, flexible grid features.
+  - Implementation will use TanStack Table v8 for flexible grid features.
   - Each page will have a bespoke table design, tailored to the workflow and data needs of that domain.
   - Inline editing, multi-row selection, and batch operations will be supported.
   - Master-detail views may be added where appropriate (e.g., purchases with line items), to be decided per page.
@@ -863,4 +863,4 @@ export function useTrackingModeGestures(itemId: string) {
 
 ---
 
-_This technical design reflects the simplified, business-focused approach prioritizing meaningful COGS tracking over perfectionist inventory management. For implementation details, see [development-guide.md](./development-guide.md). For database schema, see [data-model.md](./data-model.md)._
+_This technical design reflects the business-focused design prioritizing COGS tracking for inventory management. For implementation details, see [development-guide.md](./development-guide.md). For database schema, see [data-model.md](./data-model.md)._

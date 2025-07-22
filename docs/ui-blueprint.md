@@ -16,19 +16,19 @@ related:
 
 # UI Blueprint
 
-UI design and workflows for mobile-first internal business app focusing on simplified COGS tracking and statement-based bookkeeping.
+UI design and workflows for mobile-first internal business app focusing on COGS tracking and statement-based bookkeeping.
 
 **This application is designed for internal business use only and is not intended for public distribution or commercial licensing.**
 
 ## Design Philosophy
 
-**Simplified Business Focus**: Following the 80/20 rule, the UI prioritizes meaningful cost tracking over perfectionist inventory management. Support statement-based bookkeeping with monthly inventory sessions aligned with actual business practices.
+**Business Focus**: Following the 80/20 rule, the UI prioritizes cost tracking for inventory management. Support statement-based bookkeeping with monthly inventory sessions aligned with business practices.
 
 **Mixed Tracking Support**: Visual indicators for different tracking modes (Full, Cost-Only, Estimate) allow businesses to balance precision with practicality.
 
 ## Navigation Architecture
 
-Responsive sidebar (persistent on desktop, hamburger on mobile) with primary views. Global "+" button for quick actions. Simplified mobile-first navigation with search bar visible on all screen sizes for quick item/recipe searches.
+Responsive sidebar (persistent on desktop, hamburger on mobile) with primary views. Global "+" button for quick actions. Mobile-first navigation with search bar visible on all screen sizes for quick item/recipe searches.
 
 **Mobile Sidebar Optimization**: Narrower mobile sidebar (w-32, 128px) with balanced padding to maximize content space while maintaining touch-friendly navigation.
 
@@ -58,17 +58,17 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 ## P1 Views (Mobile-First: Workshop Focus)
 
-**Rationale**: These views prioritize mobile because small business owners typically use phones/tablets while working in warehouses, workshops, or production areas - quick inventory checks while walking the floor, logging batches during production runs, and performing cycle counts with items in hand require touch-friendly mobile interfaces.
+These views prioritize mobile because small business owners typically use phones/tablets while working in warehouses, workshops, or production areas - quick inventory checks while walking the floor, logging batches during production runs, and performing cycle counts with items in hand require touch-friendly mobile interfaces.
 
 ### Suppliers
 
-- **Goal**: Simplified supplier management with focus on purchase relationships.
+- **Goal**: Supplier management with focus on purchase relationships.
 - **Features**:
   - **Basic CRUD Operations**: Create, edit, archive suppliers with essential information
   - **Purchase Integration**: Quick supplier selection in purchase workflows
   - **Statement Matching**: Automated supplier identification from bank statements
   - **Contact Management**: Essential contact details and payment terms
-- **Mobile Responsive**: Simplified table layout adapting to narrow mobile screens
+- **Mobile Responsive**: Table layout adapting to narrow mobile screens
 - **Mitigations**: Archived supplier retention for historical purchase data; duplicate prevention.
 
 ### Items
@@ -80,7 +80,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
     - Fully Tracked: Shows current quantity with plus/minus buttons
     - Cost Added: Shows days since last purchase with "Check Supply" button
   - **Quick Reorder**: Smart button using primarySupplierId and reorderPoint
-  - **COGS Focus**: Highlight high-value items for better cost tracking attention
+  - **COGS Focus**: Highlight high-value items for cost tracking attention
 - **Mitigations**: Mode indicators prevent confusion; negative inventory warnings with alert system; history tracking via mutable logs.
 
 ### Recipes
@@ -104,9 +104,9 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 ## P2 Views (Desktop-First: Admin Focus)
 
-**Rationale**: These views require complex data entry and analysis, better suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting.
+These views require complex data entry and analysis, suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting.
 
-### Purchases (Enhanced with Smart Allocation)
+### Purchases (Allocation Features)
 
 - **Goal**: Streamlined purchase logging with intelligent cost distribution.
 - **Features**:
@@ -119,22 +119,22 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
     - "Import Statement" workflow for bulk entry
     - Automated supplier matching with confidence scores
     - Mixed invoice handling (COGS + non-COGS items)
-  - **Enhanced Validation**:
+  - **Validation**:
     - Pre-save allocation preview with approval step
     - Cost variance prompts for review
     - WAC impact preview before finalization
   - **Purchase Review**: Draft management with allocation verification
-- **Mobile Responsive**: Collapses to simplified workflow on mobile
+- **Mobile Responsive**: Collapses to workflow on mobile
 - **Mitigations**: Smart allocation prevents manual calculation errors; statement workflow matches real bookkeeping practices.
 
-### Sales (Simplified)
+### Sales
 
 - **Goal**: Bulk logging aligned with monthly inventory sessions.
 - **Features**:
   - **Period-Based Entry**: Monthly/quarterly sales periods matching business cycles
   - **Channel Tracking**: Revenue by sales channel for basic analytics
   - **Integration Points**: Simple CSV import with validation
-- **Mitigations**: Period-based approach aligns with statement workflow; validation ensures data quality.
+- **Mitigations**: Period-based design aligns with statement workflow; validation ensures data quality.
 
 ### Reports (COGS-Focused)
 
@@ -143,7 +143,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
   - **COGS Analysis**: Monthly COGS trends with variance analysis
   - **Inventory Valuation**: Current inventory value using WAC
   - **Purchase Variance**: Analysis of actual vs budgeted purchase costs
-  - **Tracking Mode Performance**: Insights on different tracking approaches
+  - **Tracking Mode Performance**: Insights on different tracking modes
 - **Export Options**: All reports exportable for external analysis
 
 ### Activity & Audit
@@ -155,7 +155,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
   - **User Action History**: Complete audit trail with timestamps
 - **Mitigations**: Comprehensive logging supports compliance and troubleshooting.
 
-### Settings (Enhanced)
+### Settings
 
 - **Goal**: Configure tracking modes and business rules.
 - **Features**:
@@ -165,9 +165,9 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
   - **Statement Integration**: Configure automated import matching rules
 - **Business Rules**: Labor rates, overhead allocation, variance tolerances
 
-## Key Workflows (Simplified & Enhanced)
+## Key Workflows
 
-1. **Purchase-to-Stock (Enhanced)**:
+1. **Purchase-to-Stock**:
    - **Statement Workflow**: Import → Auto-match suppliers → Review drafts → Apply smart allocation → Finalize with WAC
    - **Manual Entry**: Create purchase → Add line items → Preview allocation → Approve and save
    - **Allocation Intelligence**: Real-time cost distribution with variance warnings
@@ -176,7 +176,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
    - **Full Tracking**: Physical counts with quantity adjustments
    - **Cost-Only**: Time-based reviews and spot checks
    - **Estimate**: Cost validation and fixed-cost updates
-   - **Mixed Approach**: Combine tracking modes based on item importance
+   - **Mixed Design**: Combine tracking modes based on item importance
 
 3. **Production Run (Cost-Aware)**:
    - Recipe selection with cost preview → Batch logging → Yield tracking → Cost variance analysis
@@ -201,7 +201,7 @@ Top-aligned labels with bordered inputs. Direct-edit mode for existing records u
 
 ## Accessibility & Usability
 
-- **High Contrast Mode**: Enhanced visibility for warehouse lighting conditions
+- **High Contrast Mode**: Visibility for warehouse lighting conditions
 - **Large Touch Targets**: Minimum 44px for all interactive elements
 - **Clear Status Indicators**: Color-blind friendly tracking mode indicators
 - **Simplified Language**: Plain English for all business terms and processes
