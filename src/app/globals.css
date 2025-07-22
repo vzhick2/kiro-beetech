@@ -276,7 +276,7 @@ header > div {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Allow proper touch handling for navigation elements */
+/* Enhanced touch handling for navigation elements - Android specific improvements */
 nav *,
 .sidebar *,
 [role="navigation"] * {
@@ -284,6 +284,18 @@ nav *,
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
+  /* Android-specific touch improvements */
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  /* Prevent text selection that can interfere with touch */
+  -webkit-touch-action: manipulation;
+  touch-action: manipulation;
+  /* Ensure proper touch target sizing */
+  min-height: 44px;
+  min-width: 44px;
 }
 
 /* Specific fixes for mobile browsers that ignore user-scalable=no */
