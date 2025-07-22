@@ -15,15 +15,29 @@ import {
   Users,
 } from 'lucide-react';
 
-// Restore c32a068 navigation structure - removed Search and Import/Export
-const navigation = [
+// Type definitions for navigation items
+type NavigationItem = {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+} | {
+  type: 'separator';
+};
+
+// Navigation with logical groupings for better UX
+const navigation: NavigationItem[] = [
+  // Core Operations
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
+  { type: 'separator' }, // Visual break
+  // Production & Sales
   { name: 'Recipes', href: '/recipes', icon: ChefHat },
   { name: 'Batches', href: '/batches', icon: Factory },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
+  { type: 'separator' }, // Visual break
+  // Analytics & Data
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data', href: '/data', icon: Database },
 ];
@@ -67,29 +81,46 @@ export function ResponsiveSidebar({
 
   const NavigationContent = () => (
     <div className="p-4 space-y-1">
-      {navigation.map(item => {
-        const isActive = pathname === item.href;
-        return (
-          <Link
-            key={item.name}
-            href={item.href}
-            onClick={handleMobileNavClick}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-              isActive
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-            style={{
-              // Enhanced touch targets for new requirements while keeping c32a068 simplicity
-              minHeight: '44px', // Meet 44px touch target requirement
-              touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            <item.icon className="h-4 w-4 flex-shrink-0" />
-            <span>{item.name}</span>
-          </Link>
-        );
+      {navigation.map((item, index) => {
+        // Render separator
+        if ('type' in item && item.type === 'separator') {
+          return (
+            <div
+              key={`separator-${index}`}
+              className="my-3 border-t border-slate-700/50"
+            />
+          );
+        }
+
+        // Type guard ensures item is a navigation link
+        if ('name' in item && 'href' in item && 'icon' in item) {
+          const isActive = pathname === item.href;
+          const IconComponent = item.icon;
+          
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              onClick={handleMobileNavClick}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                isActive
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+              style={{
+                // Enhanced touch targets for new requirements while keeping c32a068 simplicity
+                minHeight: '44px', // Meet 44px touch target requirement
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              <IconComponent className="h-4 w-4 flex-shrink-0" />
+              <span>{item.name}</span>
+            </Link>
+          );
+        }
+
+        return null; // Fallback for unknown item types
       })}
     </div>
   );
@@ -125,9 +156,9 @@ export function ResponsiveSidebar({
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
         style={{
-          width: '128px', // Explicit pixel width that mobile browsers respect
-          minWidth: '128px', // Prevent width from shrinking
-          maxWidth: '128px', // Prevent width from expanding
+          width: '180px', // Wider for better text spacing and readability
+          minWidth: '180px', // Prevent width from shrinking
+          maxWidth: '180px', // Prevent width from expanding
           touchAction: 'manipulation',
           WebkitUserSelect: 'none',
           userSelect: 'none',
