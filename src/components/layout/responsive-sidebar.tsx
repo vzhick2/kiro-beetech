@@ -123,9 +123,8 @@ export function ResponsiveSidebar({
               MozUserSelect: 'none',
               msUserSelect: 'none',
               WebkitTouchCallout: 'none',
-              WebkitUserDrag: 'none',
               KhtmlUserSelect: 'none',
-            }}
+            } as React.CSSProperties}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
             <span className="font-medium">{navItem.name}</span>
