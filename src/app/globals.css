@@ -276,6 +276,16 @@ header > div {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Allow proper touch handling for navigation elements */
+nav *,
+.sidebar *,
+[role="navigation"] * {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* Specific fixes for mobile browsers that ignore user-scalable=no */
 @media screen and (max-width: 768px) {
   html {

@@ -70,9 +70,9 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  // Android-optimized touch handling
+  // Simplified touch handling for Android
   const handleTouchStart = (e: React.TouchEvent, href: string) => {
-    console.log('🔍 Android touch start:', href);
+    console.log('🔍 Touch start:', href);
     e.stopPropagation();
     
     const touch = e.touches[0];
@@ -80,15 +80,13 @@ export function ResponsiveSidebar({
       setTouchStart({ x: touch.clientX, y: touch.clientY });
     }
     
-    // Visual feedback for Android
+    // Visual feedback
     const target = e.currentTarget as HTMLElement;
     target.style.backgroundColor = 'rgb(30 41 59 / 0.8)';
   };
 
   const handleTouchEnd = (e: React.TouchEvent, href: string) => {
-    console.log('🔍 Android touch end:', href);
-    e.preventDefault();
-    e.stopPropagation();
+    console.log('🔍 Touch end:', href);
     
     // Reset visual feedback
     const target = e.currentTarget as HTMLElement;
@@ -102,24 +100,25 @@ export function ResponsiveSidebar({
     const deltaX = Math.abs(touch.clientX - touchStart.x);
     const deltaY = Math.abs(touch.clientY - touchStart.y);
     
-    // Only navigate if it's a tap (not a scroll)
-    if (deltaX < 10 && deltaY < 10) {
-      console.log('🔍 Valid Android tap detected, navigating to:', href);
+    // Very lenient tap detection for Android
+    if (deltaX < 30 && deltaY < 30) {
+      console.log('🔍 Valid tap detected, navigating to:', href);
       
-      // Force navigation and close sidebar
+      // Navigate immediately
       router.push(href);
       
+      // Close sidebar on mobile
       if (!isDesktop) {
         setTimeout(() => {
           onCloseAction();
-        }, 50);
+        }, 150);
       }
     }
     
     setTouchStart(null);
   };
 
-  // Fallback click handler for non-touch devices
+  // Click handler for mouse devices
   const handleClick = (e: React.MouseEvent, href: string) => {
     console.log('🔍 Click handler:', href);
     e.preventDefault();
@@ -130,7 +129,7 @@ export function ResponsiveSidebar({
     if (!isDesktop) {
       setTimeout(() => {
         onCloseAction();
-      }, 50);
+      }, 100);
     }
   };
 
@@ -154,6 +153,9 @@ export function ResponsiveSidebar({
             key={navItem.name}
             onTouchStart={(e) => handleTouchStart(e, navItem.href)}
             onTouchEnd={(e) => handleTouchEnd(e, navItem.href)}
+            onTouchCancel={() => {
+              setTouchStart(null);
+            }}
             onClick={(e) => handleClick(e, navItem.href)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 group cursor-pointer select-none ${
               isActive
@@ -164,9 +166,11 @@ export function ResponsiveSidebar({
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
               userSelect: 'none',
-              minHeight: '44px', // Larger touch target for Android
+              minHeight: '48px', // Even larger touch target for Android
+              minWidth: '100%', // Full width touch target
               display: 'flex',
               alignItems: 'center',
+              cursor: 'pointer',
             }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
@@ -182,7 +186,7 @@ export function ResponsiveSidebar({
       return null;
     }
     return (
-      <div className="w-52 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
+      <div className="sidebar w-52 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
         <NavigationContent />
       </div>
     );
@@ -191,7 +195,7 @@ export function ResponsiveSidebar({
   // Mobile: Fixed positioned sidebar with explicit viewport measurements
   return (
     <div
-      className={`fixed top-16 left-0 bottom-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
+      className={`sidebar fixed top-16 left-0 bottom-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
         isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
       }`}
       style={{
