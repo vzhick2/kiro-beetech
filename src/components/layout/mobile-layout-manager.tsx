@@ -130,9 +130,9 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           className={`content-area flex-1 transition-all duration-200 ease-out`}
           style={{
             // Mobile: full width (sidebar overlays), Desktop: adjust for sidebar (sidebar pushes)
-            marginLeft: isDesktop && isSidebarOpen ? '12rem' : '0', // Fixed: sidebar is 12rem wide
-            width: isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100%',
-            maxWidth: isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100vw',
+            marginLeft: isDesktop && isSidebarOpen ? '13rem' : '0', // Fixed: sidebar is 13rem wide (w-52 = 13rem)
+            width: isDesktop && isSidebarOpen ? 'calc(100vw - 13rem)' : '100%',
+            maxWidth: isDesktop && isSidebarOpen ? 'calc(100vw - 13rem)' : '100vw',
           }}
         >
           <main className="p-4 sm:p-6">{children}</main>
