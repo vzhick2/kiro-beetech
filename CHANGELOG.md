@@ -64,91 +64,160 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Context-aware AI assistance with live schema and codebase knowledge
   - Multi-IDE consistency with unified AI instruction system
 
-### Changed - July 19, 2025
-
-- **Simplified User Experience**: Removed command palette system for streamlined navigation
-  - Eliminated CMDK dependency to reduce complexity
-  - Simplified navigation to focus on core business workflows
-  - Improved mobile search bar visibility across all screen sizes
-  - Enhanced mobile-first responsive design
+## [0.7.0] - 2024-12-19
 
 ### Added
 
-- **Complete Supabase Development Environment Setup**
-  - Remote Supabase project integration (`cursor-kiro-beetech`)
-  - Comprehensive npm scripts for database management
-  - TypeScript type generation from database schema
-  - Sample data with 3 suppliers, 7 items, 2 recipes, 2 purchases, 5 transactions, 2 batches, 2 sales periods
+- **Enhanced Activity Feed with Inventory Focus**: Comprehensive activity tracking with business logic
+  - Real-time feed showing all inventory-affecting transactions
+  - Smart activity types: purchases, sales, adjustments, cycle counts, recipe usage
+  - Time-based grouping ("2 minutes ago", "Yesterday") for better workflow understanding
+  - Inventory impact indicators showing quantity changes and cost implications
+  - User-friendly display IDs (P-2024-001, BATCH-20241219-001) replacing internal database IDs
+  - Enhanced recent activity component with proper error handling and loading states
 
-### Database & Infrastructure
+- **Improved Items List with Enhanced Status Indicators**:
+  - Color-coded status indicators for stock levels and inventory health
+  - Enhanced display showing current quantity, reorder points, and last activity
+  - Better visual hierarchy with improved spacing and typography
+  - Real-time updates reflecting latest inventory transactions
 
-- **Supabase CLI Integration**: Available via `npx supabase` with full command support
-- **Database Schema**: Complete schema with all tables, relationships, and business logic functions
-- **Environment Configuration**: Remote Supabase URLs for production-ready development
-- **Sample Data**: Realistic honey production business data for testing
-- **Documentation**: Comprehensive setup guide and troubleshooting
-
-### Development Tools
-
-- **Database Scripts**: npm scripts for remote development
-- **Type Generation**: Automatic TypeScript types from database schema
-- **Migration Management**: Schema versioning and deployment tools
-- **MCP Integration**: Model Context Protocol for enhanced AI development workflow
+- **Transaction Logging and Audit Trail**:
+  - Comprehensive transaction logs for all inventory-affecting operations
+  - Proper user attribution and timestamp tracking
+  - Business-friendly descriptions explaining what happened and why
+  - Integration with all major workflows (purchases, sales, adjustments)
 
 ### Changed
 
-- Enhanced error handling for business workflows
-- Improved mobile interface for workshop use
-- Updated notification system for internal alerts
-- **Supabase Client**: Updated with fallback configuration and proper TypeScript types
+- **Dashboard Performance Optimization**: Improved loading times and data efficiency
+  - Optimized queries for recent activity and inventory summaries
+  - Enhanced error handling with user-friendly fallback states
+  - Better responsive design for mobile inventory management
 
-## [0.1.0] - 2024-12-19
+- **User Experience Enhancements**: Streamlined workflows for daily operations
+  - Consistent navigation patterns across all major sections
+  - Improved form validation and error messaging
+  - Enhanced visual feedback for all user actions
+
+## [0.6.0] - 2024-12-18
 
 ### Added
 
-- Initial internal business application setup
-- Next.js 15.4.1 with React 19.1.0 foundation
-- Modern UI optimized for small business workflows
-- Comprehensive technology stack audit
-- Performance optimizations for internal use
-- React Compiler for automatic optimization
-- Enhanced search for inventory management
-- Server Actions for business operations
+- **Complete Sales Management System**: End-to-end sales tracking with inventory integration
+  - Sales transaction recording with automatic inventory deduction
+  - Multi-item sales support with line-item detail tracking
+  - Integration with recipe-based products for accurate ingredient deduction
+  - Real-time inventory impact calculation and validation
+  - Sales history and reporting with date range filtering
+  - Revenue tracking by product and time period
 
-### Technical Foundation
+- **Advanced Inventory Deduction Logic**: Smart deduction system supporting all business patterns
+  - Recipe-aware deduction: automatically deducts ingredients when selling finished products
+  - Direct item sales: immediate inventory reduction for items sold as-is
+  - Proportional deduction for recipe scaling and partial batch usage
+  - Comprehensive validation preventing overselling and negative inventory
+  - Detailed transaction logging for audit trail and troubleshooting
 
-- **Next.js**: 15.4.1 with Turbopack for faster development
-- **React**: 19.1.0 with enhanced features
-- **TypeScript**: 5.8.3 for type safety
-- **Tailwind CSS**: 4.1.11 for styling
-- **Supabase**: 2.52.0 for database and authentication
-- **TanStack Query**: 5.83.0 for data management
-- **ESLint**: 9.31.0 for code quality
+- **Enhanced Recipe Management**: Production-focused recipe system
+  - Recipe creation and editing with ingredient specification
+  - Yield tracking and batch size configuration
+  - Cost calculation based on current ingredient WAC (Weighted Average Cost)
+  - Recipe scaling for different batch sizes
+  - Integration with sales system for automatic ingredient deduction
 
-### Performance Improvements
+- **Comprehensive Database Functions**: Production-ready PostgreSQL functions
+  - `calculate_wac()`: Weighted Average Cost calculation for accurate product costing
+  - `log_inventory_transaction()`: Centralized transaction logging for audit compliance
+  - `deduct_recipe_ingredients()`: Atomic ingredient deduction for recipe-based sales
+  - `deduct_inventory_item()`: Direct inventory deduction with validation
+  - Comprehensive error handling and data validation
 
-- 76% faster development server with Turbopack
-- Automatic memoization with React Compiler
-- Optimized for internal business workflows
-- Enhanced server-side rendering
+### Enhanced
 
-### Internal Business Features
+- **Purchase System Integration**: Seamless workflow from purchase to sale
+  - Enhanced purchase finalization with automatic WAC updates
+  - Integration with new deduction system for accurate cost tracking
+  - Improved purchase validation and error handling
 
-- Mobile-first design for workshop operations
-- Forgiving data entry workflows
-- Support for back-dating and corrections
-- Cycle count alerts for proactive management
-- Direct-edit workflows for quick updates
+- **Dashboard Enhancements**: Real-time business insights
+  - Sales revenue tracking and trend analysis
+  - Inventory valuation using current WAC
+  - Recent activity feed including sales transactions
+  - Enhanced mobile responsiveness for on-the-go management
 
----
+### Technical Improvements
 
-## Version History Summary
+- **Database Schema Optimization**: Performance and reliability improvements
+  - Enhanced indexes for common query patterns
+  - Improved foreign key relationships and constraints
+  - Optimized transaction logging for high-volume operations
 
-| Version    | Date       | Major Changes                               |
-| ---------- | ---------- | ------------------------------------------- |
-| 0.1.0      | 2024-12-19 | Initial internal business application setup |
-| Unreleased | -          | MCP integration & core inventory features   |
+- **Type Safety and Validation**: Robust error prevention
+  - Enhanced Zod schemas for all new functionality
+  - Comprehensive TypeScript coverage for sales and recipe systems
+  - Runtime validation for all critical business operations
 
----
+- **Error Handling and User Feedback**: Production-ready error management
+  - Comprehensive error boundaries for sales workflows
+  - User-friendly error messages for common business scenarios
+  - Enhanced loading states and progress indicators
 
-_For detailed technical specifications, see [docs/technical-design.md](./docs/technical-design.md)_
+## [0.5.0] - 2024-12-17
+
+### Added
+
+- **Advanced Inventory Management**: Production-ready inventory operations
+  - Comprehensive inventory adjustments with reason tracking and audit trail
+  - Cycle count management with variance detection and approval workflows
+  - Real-time inventory valuation using weighted average cost (WAC)
+  - Enhanced transaction logging for compliance and troubleshooting
+  - Negative inventory handling with warnings and business rule enforcement
+
+- **Enhanced Purchase System with Cost Intelligence**: Smart cost allocation and tracking
+  - Weighted Average Cost (WAC) calculation with automatic updates on purchase finalization
+  - Draft purchase management allowing incremental data entry and review
+  - Purchase finalization workflow with cost validation and inventory updates
+  - Enhanced error handling with detailed validation for business rules
+  - Integration with inventory adjustments for comprehensive cost tracking
+
+- **Supplier Management with Purchase Integration**: Streamlined supplier workflows
+  - Complete supplier CRUD operations with data validation
+  - Purchase history tracking linked to supplier records
+  - Supplier performance insights and contact management
+  - Integration with purchase workflows for efficient data entry
+
+### Enhanced
+
+- **Dashboard with Business Intelligence**: Real-time business insights
+  - Live inventory valuation showing total asset value
+  - Recent activity feed with detailed transaction history
+  - Low stock alerts with reorder recommendations
+  - Enhanced mobile responsiveness for field operations
+
+- **Items Management with Advanced Features**: Professional inventory control
+  - WAC tracking with cost history and trend analysis
+  - Enhanced item editing with validation and error prevention
+  - Bulk operations support for efficient inventory management
+  - Advanced filtering and search capabilities
+
+### Technical Improvements
+
+- **Database Architecture Enhancements**: Scalable and reliable foundation
+  - Comprehensive PostgreSQL functions for business logic
+  - Enhanced database triggers for automatic calculations
+  - Improved indexing for query performance
+  - Foreign key constraints ensuring data integrity
+
+- **TypeScript and Validation**: Robust type safety throughout
+  - Comprehensive Zod schemas for all data operations
+  - Enhanced type definitions matching database schema
+  - Runtime validation preventing data corruption
+  - Improved error handling with typed error responses
+
+- **Performance Optimizations**: Enterprise-grade performance
+  - Optimized queries with proper indexing
+  - Efficient data loading with React Query caching
+  - Streamlined component rendering reducing unnecessary re-renders
+  - Enhanced mobile performance for warehouse operations
+
