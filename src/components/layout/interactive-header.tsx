@@ -160,7 +160,7 @@ export function InteractiveHeader({
                 <Search className="absolute left-3 sm:left-4 w-4 h-4 text-slate-400 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="Global search - items, purchases, suppliers..."
+                  placeholder="Search items, purchases, suppliers..."
                   value={searchValue}
                   onChange={e => setSearchValue(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
@@ -264,7 +264,7 @@ export function InteractiveHeader({
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Global search - items, purchases, suppliers..."
+                  placeholder="Search items, purchases, suppliers..."
                   value={searchValue}
                   onChange={e => setSearchValue(e.target.value)}
                   className="w-full pl-10 pr-10 py-2 bg-slate-800/50 border border-slate-600/30 rounded-lg text-slate-100 placeholder-slate-400 focus:border-blue-500/50 focus:outline-none transition-all duration-200"
