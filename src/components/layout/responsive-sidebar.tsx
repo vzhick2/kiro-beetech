@@ -70,7 +70,7 @@ export function ResponsiveSidebar({
     };
   }, [isOpen, onCloseAction, isDesktop]);
 
-  // Simplified touch handling for Android
+  // Improved touch handling for Android - based on React best practices
   const handleTouchStart = (e: React.TouchEvent, href: string) => {
     console.log('🔍 Touch start:', href);
     e.stopPropagation();
@@ -100,8 +100,8 @@ export function ResponsiveSidebar({
     const deltaX = Math.abs(touch.clientX - touchStart.x);
     const deltaY = Math.abs(touch.clientY - touchStart.y);
     
-    // Very lenient tap detection for Android
-    if (deltaX < 30 && deltaY < 30) {
+    // Very lenient tap detection for Android - increased tolerance
+    if (deltaX < 50 && deltaY < 50) {
       console.log('🔍 Valid tap detected, navigating to:', href);
       
       // Navigate immediately
@@ -111,7 +111,7 @@ export function ResponsiveSidebar({
       if (!isDesktop) {
         setTimeout(() => {
           onCloseAction();
-        }, 150);
+        }, 200); // Increased delay for better UX
       }
     }
     
@@ -166,11 +166,15 @@ export function ResponsiveSidebar({
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
               userSelect: 'none',
-              minHeight: '48px', // Even larger touch target for Android
+              minHeight: '56px', // Even larger touch target for Android
               minWidth: '100%', // Full width touch target
               display: 'flex',
               alignItems: 'center',
               cursor: 'pointer',
+              // Additional Android-specific improvements
+              WebkitUserSelect: 'none',
+              MozUserSelect: 'none',
+              msUserSelect: 'none',
             }}
           >
             <IconComponent className="h-4 w-4 flex-shrink-0" />
@@ -200,7 +204,7 @@ export function ResponsiveSidebar({
       }`}
       style={{
         position: 'fixed',
-        width: '12rem',
+        width: '13rem', // Match the desktop sidebar width
         height: 'calc(100vh - 4rem)',
         top: '4rem',
         left: '0',
