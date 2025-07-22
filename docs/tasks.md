@@ -3,9 +3,8 @@ title: 'Tasks'
 description: 'Development tasks and progress tracking for internal inventory management system'
 purpose: 'Reference for development progress and task management'
 last_updated: 'July 22, 2025'
-doc_type: '- **Phase 3**: ⚠️ **60% Complete** - Advanced Features
-- **Phase 4**: 📋 **0% Complete** - Workflows (Planned)sk-tracking'
-related: ['requirements.md', 'technical-design.md', 'development-guide.md']
+doc_type: 'task-tracking'
+related: ['product-specification.md', 'technical-reference.md', 'developer-guide.md']
 ---
 
 # Tasks
@@ -16,10 +15,10 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 
 ## 📊 **Progress Overview**
 
-- **Total Tasks**: 54
-- **Completed**: 42 (78%)
+- **Total Tasks**: 58
+- **Completed**: 46 (79%)
 - **In Progress**: 0 (0%)
-- **Planned**: 12 (22%)
+- **Planned**: 12 (21%)
 
 ## ✅ **Completed Tasks**
 
@@ -42,6 +41,7 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Transaction logging system** - July 16, 2025
 - ✅ **Row Level Security policies** - July 16, 2025
 - ✅ **Database functions (WAC, cycle count alerts)** - July 16, 2025
+- ✅ **Two-mode tracking system implementation** - July 22, 2025
 
 #### **1.3 Application Layout and Navigation** ✅ **Complete**
 
@@ -57,12 +57,15 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **User menu and notifications** - July 16, 2025
 - ✅ **Mobile sidebar width optimization (180px with logical grouping)** - July 21, 2025
 - ✅ **Navigation visual grouping with separators** - July 21, 2025
+- ✅ **Enhanced mobile UX with improved sidebar styling** - July 22, 2025
+- ✅ **Dashboard redesign with better visual hierarchy** - July 22, 2025
 
 #### **1.4 Core TypeScript Interfaces and Utilities** ✅ **Complete**
 
 - ✅ **Core interfaces defined in types/index.ts** - July 16, 2025
 - ✅ **Utility functions in lib/utils** - July 16, 2025
 - ✅ **Page title hook for navigation** - July 16, 2025
+- ✅ **Two-mode tracking TypeScript interfaces** - July 22, 2025
 
 #### **1.5 Design System Implementation** ✅ **Complete**
 
@@ -94,6 +97,9 @@ Development tasks and progress tracking for the internal BTINV inventory managem
   - ✅ Type filtering and actions
   - ✅ Sample inventory data
   - ✅ Mobile-responsive table design
+  - ✅ Spreadsheet-style interface with TanStack Table
+  - ✅ Inline editing capabilities
+  - ✅ Two-mode tracking support (fully_tracked/cost_added)
 
 #### **2.1 Items Management** ✅ **Complete**
 
@@ -104,14 +110,16 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Bulk operations (delete, archive)** - July 17, 2025
 - ✅ **Visual quantity indicators** - July 17, 2025
 - ✅ **Mobile-responsive design** - July 17, 2025
+- ✅ **Two-mode tracking implementation** - July 22, 2025
+- ✅ **Tracking mode switching UI** - July 22, 2025
 
-#### **2.2 Suppliers Management** ✅ **Complete**
+#### **2.2 Suppliers Management** ⚠️ **Partially Complete**
 
-- ✅ **Suppliers CRUD operations** - July 17, 2025
-- ✅ **Supplier table with inline editing** - July 17, 2025
+- ✅ **Suppliers CRUD actions (backend)** - July 17, 2025
 - ✅ **Supplier-item relationships** - July 17, 2025
 - ✅ **Archive/unarchive functionality** - July 17, 2025
-- ✅ **AG Grid removal** - July 21, 2025
+- ❌ **Suppliers UI (only placeholder page exists)** - Not implemented
+- ❌ **Suppliers table with inline editing** - Not implemented
 
 #### **2.3 Seed Data System** ✅ **Complete**
 
@@ -131,15 +139,17 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Effective date override support** - July 18, 2025
 - ✅ **Import statistics and error reporting** - July 18, 2025
 
-#### **2.5 Purchase Management Foundation** ✅ **Complete**
+#### **2.5 Purchase Management Foundation** ⚠️ **Partially Complete**
 
-- ✅ **Draft purchase creation and management** - July 18, 2025
+- ✅ **Draft purchase creation and management (backend)** - July 18, 2025
 - ✅ **Line item management with cost allocation** - July 18, 2025
 - ✅ **Supplier assignment and tracking** - July 18, 2025
 - ✅ **Draft to final purchase conversion** - July 18, 2025
 - ✅ **Inventory updates on purchase finalization** - July 18, 2025
 - ✅ **Transaction logging for audit trail** - July 18, 2025
 - ✅ **WAC recalculation on purchases** - July 18, 2025
+- ✅ **Smart cost allocation system** - July 21, 2025
+- ❌ **Purchase UI (only placeholder page exists)** - Not implemented
 
 #### **2.6 Error Handling System** ✅ **Complete**
 
@@ -148,24 +158,14 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Validation error handling** - July 18, 2025
 - ✅ **User-friendly error messages** - July 18, 2025
 
-#### **2.7 Purchase Management UI** ✅ **Complete**
-
-- ✅ **Purchase creation form** - July 19, 2025
-- ✅ **Purchase list view** - July 19, 2025
-- ✅ **Draft purchase management** - July 19, 2025
-- ✅ **Purchase line item editor** - July 19, 2025
-- ✅ **Master-detail layout implementation** - July 19, 2025
-- ✅ **React Query integration with mutations** - July 19, 2025
-- ✅ **TypeScript strict mode compatibility** - July 19, 2025
-
-#### **2.8 Dashboard Implementation** ✅ **Complete**
+#### **2.7 Dashboard Implementation** ✅ **Complete**
 
 - ✅ **Cycle count alerts display** - July 19, 2025
 - ✅ **Quick statistics overview** - July 19, 2025
 - ✅ **Recent activity feed** - July 19, 2025
 - ✅ **Action center notifications** - July 19, 2025
 
-### **Phase 3: Business Logic Fixes** ✅ **100% Complete**
+### **Phase 3: Business Logic Enhancements** ✅ **100% Complete**
 
 #### **3.1 WAC Calculation Fixes** ✅ **Complete**
 
@@ -174,15 +174,16 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Purchase finalization with WAC updates** - July 21, 2025
 - ✅ **Database migration for WAC fixes** - July 21, 2025
 
-#### **3.2 Inventory Deduction System** ✅ **Complete**
+#### **3.2 Inventory Deduction System** ⚠️ **Partially Complete**
 
-- ✅ **Sales inventory deduction logic** - July 21, 2025
-- ✅ **Recipe ingredient consumption tracking** - July 21, 2025
-- ✅ **Manual inventory adjustments** - July 21, 2025
-- ✅ **Waste tracking and recording** - July 21, 2025
-- ✅ **TypeScript actions for all deduction types** - July 21, 2025
+- ✅ **Sales inventory deduction logic (backend)** - July 21, 2025
+- ✅ **Recipe ingredient consumption tracking (backend)** - July 21, 2025
+- ✅ **Manual inventory adjustments (backend)** - July 21, 2025
+- ✅ **Waste tracking and recording (backend)** - July 21, 2025
+- ❌ **TypeScript actions for deduction types** - Empty files exist
+- ❌ **UI for inventory deductions** - Not implemented
 
-#### **3.3 Business Logic** ✅ **Complete**
+#### **3.3 Business Logic Optimization** ✅ **Complete**
 
 - ✅ **Removed over-engineered forecasting system** - July 21, 2025
 - ✅ **Consolidated cycle count alert logic** - July 21, 2025
@@ -215,46 +216,73 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 
 ---
 
-## � **Project Overview**
+## 🚧 **Planned Tasks**
 
-**Total Progress: 65%** (Foundation complete, Core Features implemented)
+### **Phase 4: UI Completion** 📋 **0% Complete**
 
-- **Phase 1**: ✅ **100% Complete** - Foundation Infrastructure
-- **Phase 2**: ✅ **100% Complete** - Core Inventory Management
-- **Phase 3**: � **60% Complete** - Advanced Features (Working on supplier enhancements)
-- **Phase 4**: 📋 **0% Complete** - Enhanced Workflows (Planned)
+#### **4.1 Suppliers Management UI** 📋 **Planned**
 
----
+- 📋 **Suppliers table with inline editing**
+- 📋 **Add/edit supplier modal**
+- 📋 **Supplier-item relationship management**
+- 📋 **Archive/unarchive UI controls**
+- 📋 **Last used suppliers optimization display**
 
-## ℹ️ **Documentation Notes**
+#### **4.2 Purchase Management UI** 📋 **Planned**
 
-> **📋 Task Tracking**: This file serves as the **task tracking system** for the BTINV project. All development progress and implementation details are centralized here to provide guidance for AI agents and development teams.
+- 📋 **Purchase creation form**
+- 📋 **Purchase list view with filtering**
+- 📋 **Draft purchase management interface**
+- 📋 **Purchase line item editor**
+- 📋 **Master-detail layout implementation**
+- 📋 **Purchase finalization workflow**
 
-> **🔗 Cross-References**:
->
-> - See `requirements.md` for pure business requirements without completion tracking
-> - See `development-guide.md` for coding standards and architectural patterns
-> - See `technical-design.md` for detailed system architecture
+#### **4.3 Missing Page Implementations** 📋 **Planned**
 
-> **🔄 Last Updated**: January 2025 - Consolidated from multiple documentation sources
+- 📋 **Recipes management page (currently placeholder)**
+- 📋 **Sales tracking page (currently placeholder)**
+- 📋 **Reports page (currently placeholder)**
+- 📋 **Batches page (currently placeholder)**
+
+#### **4.4 Inventory Deduction UI** 📋 **Planned**
+
+- 📋 **Manual inventory adjustment forms**
+- 📋 **Waste tracking interface**
+- 📋 **Recipe ingredient consumption UI**
+- 📋 **Sales inventory deduction display**
 
 ### **Phase 5: Advanced Features** 📋 **0% Complete**
 
-#### **5.1 Bookkeeping Integration** 📋 **Planned**
+#### **5.1 Recipe Management System** 📋 **Planned**
+
+- 📋 **Recipe creation and editing**
+- 📋 **Multi-mode ingredient support (two-mode system)**
+- 📋 **True cost calculation with allocated overhead**
+- 📋 **Recipe templates and scaling**
+- 📋 **Cost variance analysis**
+
+#### **5.2 Statement-Based Purchase Workflow** 📋 **Planned**
+
+- 📋 **Monthly inventory session interface**
+- 📋 **COGS vs non-COGS splitting workflow**
+- 📋 **Batch purchase entry with variance checking**
+- 📋 **Purchase allocation preview functionality**
+
+#### **5.3 Bookkeeping Integration** 📋 **Planned**
 
 - 📋 **Export for accounting systems**
 - 📋 **COGS reporting for tax purposes**
 - 📋 **Statement reconciliation tools**
 - 📋 **Purchase categorization automation**
 
-#### **5.2 Mobile Optimization** 📋 **Planned**
+#### **5.4 Mobile Optimization** 📋 **Planned**
 
 - 📋 **Mobile-first inventory checking**
 - 📋 **Batch entry interface**
 - 📋 **Mobile barcode scanning**
 - 📋 **Offline inventory updates**
 
-#### **5.3 Data Analysis** 📋 **Planned**
+#### **5.5 Data Analysis** 📋 **Planned**
 
 - 📋 **Cost trend analysis**
 - 📋 **Supplier performance metrics**
@@ -263,94 +291,98 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 
 ## 🎯 **Current Sprint Goals**
 
-### **Sprint 4 (July 21-28, 2025)**
+### **Sprint 5 (July 22-29, 2025)**
 
 #### **High Priority**
 
-1. **Statement-Based Purchase Workflow UI** 🚧
-   - Monthly inventory session interface
-   - COGS vs non-COGS splitting workflow
-   - Batch purchase entry with variance checking
-   - Purchase allocation preview functionality
+1. **Suppliers Management UI Implementation** 🚧
+   - Suppliers table with spreadsheet-style editing
+   - Add/edit supplier forms
+   - Supplier-item relationship management
+   - Archive/unarchive functionality
 
-2. **Recipe Management Enhancement** 🚧
-   - Multi-mode ingredient support (updated for two-mode system)
-   - True cost calculation with allocated overhead
-   - Recipe templates and scaling
-   - Cost variance analysis
+2. **Purchase Management UI Implementation** 🚧
+   - Purchase creation and editing forms
+   - Purchase list view with filtering
+   - Draft purchase workflow
+   - Line item management interface
 
 #### **Medium Priority**
 
-3. **Bookkeeping Integration Planning**
-   - Export format specification
-   - COGS reporting design
-   - Statement reconciliation planning
+3. **Inventory Deduction UI**
+   - Manual adjustment forms
+   - Waste tracking interface
+   - Recipe consumption display
+
+4. **Recipe Management Foundation**
+   - Basic recipe creation
+   - Ingredient management with two-mode support
 
 #### **Low Priority**
 
-4. **Documentation Completion**
-   - Updated workflow documentation
-   - Business logic documentation
-   - User training materials
+5. **Placeholder Page Implementations**
+   - Sales tracking page structure
+   - Reports page framework
+   - Batches page layout
 
 ## 📈 **Task Statistics**
 
 ### **Completion by Category**
 
 - **Foundation**: 100% (8/8 tasks)
-- **Core Features**: 100% (16/16 tasks)
-- **Business Logic Fixes**: 100% (14/14 tasks)
-- **Workflows**: 0% (0/14 tasks)
+- **Core Features**: 85% (17/20 tasks)
+- **Business Logic**: 100% (18/18 tasks)
+- **UI Completion**: 0% (0/12 tasks)
 
 ### **Completion by Priority**
 
-- **Critical Business Logic**: 100% (14/14 tasks)
-- **High Priority**: 85% (17/20 tasks)
-- **Medium Priority**: 50% (6/12 tasks)
-- **Low Priority**: 17% (1/6 tasks)
+- **Critical Business Logic**: 100% (18/18 tasks)
+- **High Priority**: 80% (20/25 tasks)
+- **Medium Priority**: 75% (12/16 tasks)
+- **Low Priority**: 50% (3/6 tasks)
 
 ## 🔄 **Task Management Notes**
 
 ### **Key Architectural Decisions**
 
-- **Simplified Workflow**: Focus on 80/20 rule for COGS tracking
-- **Statement-Based Entry**: Monthly inventory sessions vs real-time entry
-- **Two-Mode Tracking**: Simplified to two modes based on user feedback:
-  - `fully_tracked`: Show quantities, alerts, reorder points (core ingredients)
-  - `cost_added`: Hide quantities, show costs only (packaging, consumables)
-- **Data Preservation**: Quantities stay in database when switching to cost-only mode
+- **Two-Mode Tracking**: Simplified to `fully_tracked` and `cost_added` modes only
+- **Data Preservation**: Quantities preserved when switching to cost-only mode
 - **Cost Transparency**: Separate base costs from allocated overhead
 - **Variance Tolerance**: Business-friendly $0.50 variance threshold
+- **Spreadsheet-Style UI**: TanStack Table v8 for bulk editing capabilities
+
+### **Recent Accomplishments**
+
+- ✅ Two-mode tracking system fully implemented with UI support
+- ✅ Mobile navigation and dashboard redesign completed
+- ✅ Items management with spreadsheet-style editing functional
+- ✅ Smart cost allocation system operational
+- ✅ Database schema optimization completed
 
 ### **Next Priority Areas**
 
-1. **Statement-Based Workflow UI**: Design monthly inventory session interface
-2. **Recipe Enhancement**: Two-mode ingredient support with true costing
-3. **Mobile Optimization**: Touch-friendly interfaces for production floor
-4. **Bookkeeping Integration**: Export and reconciliation tools
+1. **Suppliers UI**: Complete the missing suppliers management interface
+2. **Purchase UI**: Implement the purchase management workflow
+3. **Recipe System**: Build recipe management with two-mode ingredient support
+4. **Missing Pages**: Replace placeholder pages with functional implementations
 
-### **Technical Debt Addressed**
+### **Technical Debt Status**
 
 - ✅ Fixed broken WAC calculation algorithm
 - ✅ Eliminated over-engineered forecasting system
 - ✅ Consolidated duplicate business rule implementations
 - ✅ Standardized transaction type handling
 - ✅ Improved error handling and validation
+- ⚠️ Empty action files need implementation (inventory-deductions.ts, purchases-enhanced.ts)
 
 ### **Dependencies Met**
 
-- All core business logic fixes completed ✅
-- Smart cost allocation system ready ✅
+- All core business logic completed ✅
 - Two-mode tracking foundation established ✅
-- Purchase workflow enhanced ✅
-- Ready for advanced UI development ✅
-
-## 2025-07-21: Spreadsheet-Lite Bulk Editing
-
-- [ ] Implement spreadsheet-lite bulk editing for suppliers table using TanStack Table v8
-- [ ] Expand bulk editing to items, purchases, batches, and other major tables
-- [ ] Design bespoke table for each domain, considering master-detail views as needed
+- Smart cost allocation system ready ✅
+- Items management fully functional ✅
+- Ready for UI completion phase ✅
 
 ---
 
-_For detailed requirements, see [requirements.md](./requirements.md). For technical specifications, see [technical-design.md](./technical-design.md)._
+_For detailed requirements, see [product-specification.md](./product-specification.md). For technical specifications, see [technical-reference.md](./technical-reference.md). For development patterns, see [developer-guide.md](./developer-guide.md)._
