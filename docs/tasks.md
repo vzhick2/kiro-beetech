@@ -337,6 +337,7 @@ Development tasks and progress tracking for the internal KIRO inventory manageme
 - Ready for advanced UI development ✅
 
 ## 2025-07-21: Spreadsheet-Lite Bulk Editing
+
 - [ ] Implement spreadsheet-lite bulk editing for suppliers table using TanStack Table v8
 - [ ] Expand bulk editing to items, purchases, batches, and other major tables
 - [ ] Design bespoke table for each domain, considering master-detail views as needed

@@ -279,7 +279,7 @@ header > div {
 /* Simple touch handling for navigation elements */
 nav *,
 .sidebar *,
-[role="navigation"] * {
+[role='navigation'] * {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;

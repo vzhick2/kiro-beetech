@@ -267,6 +267,7 @@ mcp_github_push_files({
 4. **Server Status**: User tells AI if server is running, AI doesn't check
 
 **When User Needs Dev Server:**
+
 - **User opens VS Code terminal** (Ctrl+`)
 - **User runs**: `pnpm dev`
 - **AI continues working** on code while server runs in background
@@ -295,11 +296,13 @@ mcp_github_push_files({
 ### Command Categories
 
 **🚫 FORBIDDEN Commands (Never run in AI terminal):**
+
 - Development servers: `pnpm dev`, `npm start`, `yarn dev` (ALWAYS hang)
 - File watchers: `pnpm build --watch` (long-running)
 - Database operations: `supabase start`, `supabase db reset` (long-running)
 
 **✅ Safe Commands (Can run in AI terminal):**
+
 - Build commands: `pnpm build`, `pnpm type-check`
 - Git operations: `git status`, `git add`, `git commit`
 - Package management: `pnpm add`, `pnpm remove`
@@ -307,6 +310,7 @@ mcp_github_push_files({
 - Quick process checks: `Get-Process node -ErrorAction SilentlyContinue`
 
 **Quick Commands (Safe to run synchronously):**
+
 - Build commands: `pnpm build`, `pnpm type-check`
 - Git operations: `git status`, `git add`, `git commit`
 - Package management: `pnpm add`, `pnpm remove`
@@ -315,18 +319,21 @@ mcp_github_push_files({
 ### Cursor Terminal Best Practices
 
 **For Development Servers:**
+
 1. **Use VS Code's built-in terminal** (Ctrl+`) for long-running processes
 2. **Use AI terminal** only for quick commands and analysis
 3. **Always use background flags** when AI needs to start dev servers
 4. **Check if server is already running** before starting new instances
 
 **For Process Management (Non-Hanging Commands):**
+
 - Check running processes: `Get-Process node -ErrorAction SilentlyContinue`
 - Kill processes: `Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force`
 - Check ports: `Test-NetConnection -ComputerName localhost -Port 3001 -InformationLevel Quiet`
 - Quick git status: `git status --porcelain`
 
 **Commands That Hang (AVOID):**
+
 - `git log --oneline -10` (use `git status` instead)
 - `Get-Process | Where-Object {...}` (use direct process name)
 - `taskkill /F /IM node.exe` (use Stop-Process instead)
@@ -335,6 +342,7 @@ mcp_github_push_files({
 ### MCP Integration with Terminal
 
 **When using MCP tools:**
+
 - **Supabase MCP**: Use for database operations instead of terminal commands
 - **GitHub MCP**: Use for commits instead of git terminal commands
 - **Terminal**: Use only for local development server management and quick checks
@@ -342,6 +350,7 @@ mcp_github_push_files({
 ### Quick Command Reference (Non-Hanging)
 
 **✅ Safe Commands:**
+
 ```powershell
 # Process Management
 Get-Process node -ErrorAction SilentlyContinue
@@ -360,6 +369,7 @@ pnpm type-check
 ```
 
 **❌ Commands That Hang:**
+
 ```powershell
 # Avoid these
 git log --oneline -10

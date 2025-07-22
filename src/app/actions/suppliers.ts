@@ -29,7 +29,11 @@ export async function getSuppliers() {
 export async function createSupplier(supplierData: CreateSupplierRequest) {
   const parseResult = SupplierSchema.safeParse(supplierData);
   if (!parseResult.success) {
-    return { success: false, error: 'Invalid supplier data', details: parseResult.error.flatten() };
+    return {
+      success: false,
+      error: 'Invalid supplier data',
+      details: parseResult.error.flatten(),
+    };
   }
   try {
     const insertData: any = {
@@ -78,7 +82,11 @@ export async function updateSupplier(
 ) {
   const parseResult = SupplierUpdateSchema.safeParse(updates);
   if (!parseResult.success) {
-    return { success: false, error: 'Invalid update data', details: parseResult.error.flatten() };
+    return {
+      success: false,
+      error: 'Invalid update data',
+      details: parseResult.error.flatten(),
+    };
   }
   try {
     const { data, error } = await supabaseAdmin
@@ -120,7 +128,10 @@ export async function deleteSupplier(supplierId: string) {
 }
 
 export async function bulkDeleteSuppliers(supplierIds: string[]) {
-  if (!Array.isArray(supplierIds) || supplierIds.some(id => typeof id !== 'string')) {
+  if (
+    !Array.isArray(supplierIds) ||
+    supplierIds.some(id => typeof id !== 'string')
+  ) {
     return { success: false, error: 'Invalid supplier IDs' };
   }
   try {
@@ -146,7 +157,10 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
 }
 
 export async function bulkArchiveSuppliers(supplierIds: string[]) {
-  if (!Array.isArray(supplierIds) || supplierIds.some(id => typeof id !== 'string')) {
+  if (
+    !Array.isArray(supplierIds) ||
+    supplierIds.some(id => typeof id !== 'string')
+  ) {
     return { success: false, error: 'Invalid supplier IDs' };
   }
   try {
