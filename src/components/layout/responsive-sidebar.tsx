@@ -13,11 +13,9 @@ import {
   BarChart3,
   Database,
   Users,
-  Upload,
-  Search,
 } from 'lucide-react';
 
-// Restore c32a068 navigation structure with current requirements
+// Restore c32a068 navigation structure - removed Search and Import/Export
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
@@ -27,8 +25,6 @@ const navigation = [
   { name: 'Batches', href: '/batches', icon: Factory },
   { name: 'Sales', href: '/sales', icon: TrendingUp },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
-  { name: 'Import/Export', href: '/import-export', icon: Upload },
-  { name: 'Search', href: '/search', icon: Search },
   { name: 'Data', href: '/data', icon: Database },
 ];
 
@@ -123,9 +119,9 @@ export function ResponsiveSidebar({
         aria-hidden="true"
       />
 
-      {/* Sidebar overlay with slide + fade animation */}
+      {/* Sidebar overlay with slide + fade animation - c32a068 width */}
       <div
-        className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
+        className={`fixed top-16 left-0 bottom-0 w-32 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
         style={{
