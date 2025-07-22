@@ -1,175 +1,140 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
+  LayoutDashboard,
   Package,
-  Users,
-  DollarSign,
-  BarChart3,
-  Search,
   ShoppingCart,
-  Upload,
   ChefHat,
-  Menu,
-  X,
-  Plus,
-  FileText,
-  Archive,
+  Factory,
   TrendingUp,
+  BarChart3,
+  Database,
+  Users,
+  Upload,
+  Search,
 } from 'lucide-react';
 
-interface NavItem {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const navigationItems: NavItem[] = [
-  { name: 'Dashboard', href: '/', icon: BarChart3 },
+// Restore c32a068 navigation structure with current requirements
+const navigation = [
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
-  { name: 'Sales', href: '/sales', icon: DollarSign },
   { name: 'Recipes', href: '/recipes', icon: ChefHat },
-  { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Batches', href: '/batches', icon: Archive },
+  { name: 'Batches', href: '/batches', icon: Factory },
+  { name: 'Sales', href: '/sales', icon: TrendingUp },
+  { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Import/Export', href: '/import-export', icon: Upload },
   { name: 'Search', href: '/search', icon: Search },
+  { name: 'Data', href: '/data', icon: Database },
 ];
 
 interface ResponsiveSidebarProps {
   isOpen: boolean;
-  onToggle: () => void;
+  onClose: () => void;
+  isDesktop: boolean;
 }
 
-export default function ResponsiveSidebar({ isOpen, onToggle }: ResponsiveSidebarProps) {
+export function ResponsiveSidebar({
+  isOpen,
+  onClose,
+  isDesktop,
+}: ResponsiveSidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
 
+  // Close sidebar when clicking outside (mobile only) - c32a068 pattern
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Android-specific touch handling
-  const handleTouchStart = (e: React.TouchEvent, href: string) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const startX = touch.clientX;
-    const startY = touch.clientY;
-    const startTime = Date.now();
-
-    const handleTouchEnd = (endEvent: TouchEvent) => {
-      const endTouch = endEvent.changedTouches[0];
-      const endX = endTouch.clientX;
-      const endY = endTouch.clientY;
-      const endTime = Date.now();
-      
-      const deltaX = Math.abs(endX - startX);
-      const deltaY = Math.abs(endY - startY);
-      const deltaTime = endTime - startTime;
-      
-      // Detect tap vs scroll (less than 10px movement and under 300ms)
-      if (deltaX < 10 && deltaY < 10 && deltaTime < 300) {
-        router.push(href);
-        if (isMobile) {
-          onToggle(); // Close sidebar on mobile after navigation
-        }
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
       }
-      
-      // Cleanup
-      document.removeEventListener('touchend', handleTouchEnd);
     };
 
-    document.addEventListener('touchend', handleTouchEnd, { once: true });
+    if (isOpen && !isDesktop) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose, isDesktop]);
+
+  const handleMobileNavClick = () => {
+    // Only close on mobile, not desktop - c32a068 pattern
+    if (!isDesktop) {
+      onClose();
+    }
   };
 
+  const NavigationContent = () => (
+    <div className="p-4 space-y-1">
+      {navigation.map(item => {
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            onClick={handleMobileNavClick}
+            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+              isActive
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            }`}
+            style={{
+              // Enhanced touch targets for new requirements while keeping c32a068 simplicity
+              minHeight: '44px', // Meet 44px touch target requirement
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            <item.icon className="h-4 w-4 flex-shrink-0" />
+            <span>{item.name}</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+
+  if (isDesktop) {
+    // Desktop: Conditionally render sidebar - no space taken when closed (c32a068 pattern)
+    if (!isOpen) {
+      return null;
+    }
+
+    return (
+      <div className="w-48 flex-shrink-0 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out">
+        <NavigationContent />
+      </div>
+    );
+  }
+
+  // Mobile: Overlay sidebar with smooth animations (c32a068 pattern)
   return (
     <>
-      {/* Mobile Backdrop */}
-      {isMobile && isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={onToggle}
-        />
-      )}
-      
-      {/* Sidebar */}
-      <div className={`
-        fixed top-0 left-0 h-full bg-slate-900 text-white z-50 transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        w-64 md:w-72
-      `}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h1 className="text-xl font-bold">KIRO Inventory</h1>
-          <button
-            onClick={onToggle}
-            className="p-2 rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+      {/* Backdrop with fade animation */}
+      <div
+        className={`fixed inset-0 z-30 transition-all duration-200 ease-out ${
+          isOpen ? 'bg-black/50' : 'bg-transparent pointer-events-none'
+        }`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4">
-          <div className="space-y-2">
-            {navigationItems.map((navItem) => {
-              const IconComponent = navItem.icon;
-              const isActive = pathname === navItem.href;
-              
-              return (
-                <button
-                  key={navItem.name}
-                  onTouchStart={(e) => handleTouchStart(e, navItem.href)}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700'
-                  }`}
-                  style={{
-                    touchAction: 'manipulation',
-                    WebkitTapHighlightColor: 'transparent',
-                    userSelect: 'none',
-                    minHeight: '56px',
-                    border: 'none',
-                    background: 'transparent',
-                    textAlign: 'left',
-                    fontFamily: 'inherit',
-                    fontSize: 'inherit',
-                    lineHeight: 'inherit',
-                    cursor: 'pointer',
-                    // Android-specific improvements
-                    WebkitUserSelect: 'none',
-                    MozUserSelect: 'none',
-                    msUserSelect: 'none',
-                    WebkitTouchCallout: 'none',
-                    KhtmlUserSelect: 'none',
-                  } as React.CSSProperties}
-                >
-                  <IconComponent className="h-4 w-4 flex-shrink-0" />
-                  <span className="font-medium">{navItem.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-700">
-          <div className="flex items-center gap-3 text-slate-400 text-sm">
-            <TrendingUp className="h-4 w-4" />
-            <span>BeeTech Systems</span>
-          </div>
-        </div>
+      {/* Sidebar overlay with slide + fade animation */}
+      <div
+        className={`fixed top-16 left-0 bottom-0 w-48 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
+          isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+        }`}
+        style={{
+          touchAction: 'manipulation',
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+        }}
+      >
+        <NavigationContent />
       </div>
     </>
   );
