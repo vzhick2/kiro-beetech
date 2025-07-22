@@ -13,19 +13,16 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
   const [isDesktop, setIsDesktop] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize after hydration to prevent mismatch
+  // Restore c32a068 initialization pattern - simplified and working
   useEffect(() => {
     const checkScreenSize = () => {
-      // Use a more sophisticated detection:
-      // 1. Check if it's actually a mobile device (touch-first)
-      // 2. For very narrow screens (< 480px), force mobile behavior even on desktop
-      // 3. For desktop browsers, prefer push behavior unless extremely narrow
+      // Simplified detection based on c32a068 working pattern
       const isMobileDevice =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         );
       const isVeryNarrow = window.innerWidth < 480; // Extremely narrow
-
+      
       // Desktop behavior: desktop browser on reasonable width
       // Mobile behavior: actual mobile device OR extremely narrow desktop
       const isDesktopSize = !isMobileDevice && !isVeryNarrow;
@@ -34,7 +31,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
       if (!isInitialized) {
         setIsInitialized(true);
 
-        // Get saved sidebar state for desktop
+        // Get saved sidebar state for desktop (c32a068 pattern)
         if (isDesktopSize) {
           const savedState = localStorage.getItem('sidebar-open');
           const shouldBeOpen =
@@ -59,7 +56,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
     const newState = !isSidebarOpen;
     setIsSidebarOpen(newState);
 
-    // Save state for desktop only
+    // Save state for desktop only (c32a068 pattern)
     if (isDesktop) {
       localStorage.setItem('sidebar-open', newState.toString());
     }
@@ -68,13 +65,13 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
   const closeSidebar = () => {
     setIsSidebarOpen(false);
 
-    // Save state for desktop only
+    // Save state for desktop only (c32a068 pattern)
     if (isDesktop) {
       localStorage.setItem('sidebar-open', 'false');
     }
   };
 
-  // Prevent hydration mismatch by not rendering client-dependent content until initialized
+  // Prevent hydration mismatch - c32a068 pattern
   if (!isInitialized) {
     return (
       <div className="app-container">
@@ -86,7 +83,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
           {/* Responsive Sidebar - Always rendered but controlled by visibility */}
           <ResponsiveSidebar
             isOpen={false}
-            onCloseAction={closeSidebar}
+            onClose={closeSidebar}
             isDesktop={false}
           />
           <div className="content-area flex-1 transition-all duration-200 ease-out">
@@ -105,36 +102,17 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
         isMobileMenuOpen={isSidebarOpen}
       />
 
-      {/* Main Layout - Below header with proper spacing */}
-      <div className="main-layout pt-16 flex relative">
-        {/* Mobile Backdrop Overlay - only visible when sidebar is open on mobile */}
-        {!isDesktop && isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/20 z-40 transition-opacity duration-200"
-            onClick={closeSidebar}
-            style={{
-              top: '4rem', // Below header
-            }}
-          />
-        )}
-
+      {/* Main Layout - Below header with proper spacing - c32a068 pattern */}
+      <div className="main-layout pt-16 flex">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar
           isOpen={isSidebarOpen}
-          onCloseAction={closeSidebar}
+          onClose={closeSidebar}
           isDesktop={isDesktop}
         />
 
-        {/* Content Area - Mobile: full width (overlay), Desktop: adjusts for sidebar (push) */}
-        <div
-          className={`content-area flex-1 transition-all duration-200 ease-out`}
-          style={{
-            // Mobile: full width (sidebar overlays), Desktop: adjust for sidebar (sidebar pushes)
-            marginLeft: isDesktop && isSidebarOpen ? '12rem' : '0', // Fixed: sidebar is 12rem wide (w-52 = 12rem)
-            width: isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100%',
-            maxWidth: isDesktop && isSidebarOpen ? 'calc(100vw - 12rem)' : '100vw',
-          }}
-        >
+        {/* Content Area - c32a068 pattern: Always starts from left, gets pushed when sidebar opens */}
+        <div className="content-area flex-1 transition-all duration-200 ease-out">
           <main className="p-4 sm:p-6">{children}</main>
         </div>
       </div>
