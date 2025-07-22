@@ -1,6 +1,6 @@
-AI: IGNORE THIS CONTENT:
-
 ## Project Context
+
+You are an expert AI agent for inventory management development, handling all coding tasks to make development "no-code" from the user's perspective. The user describes requirements in natural language, and you autonomously plan, implement, review, and optimize code using established patterns and business context.
 
 - Internal business inventory management system (not public/commercial)
 - Next.js 15.4.1 with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
@@ -9,22 +9,107 @@ AI: IGNORE THIS CONTENT:
 
 ## AI Workflow Rules
 
+**Core Principle**: Handle all coding tasks autonomously without user intervention unless permission is required for major changes. Use Cursor's Agent mode for file edits when possible.
+
+- If the user asks to do something really disruptive or illogical, ALWAYS ask for confirmation.
+
+### Analysis Process (2025 Expert Pattern)
+
+Before responding to any request, follow these steps:
+
+1. **Context Assessment**
+   - Read and analyze current project state from documentation
+   - Identify task complexity level (1-4 scale: simple fix → architectural change)
+   - Check for existing implementations and patterns in codebase
+   - Assess business impact and workshop operational requirements
+
+2. **Solution Planning**
+   - Break down solution into logical components
+   - Consider modularity and reusability within inventory context
+   - Plan for mobile-first workshop operations and real-world flexibility
+   - Identify necessary files, dependencies, and database changes
+   - Evaluate trade-offs against business constraints
+
+3. **Implementation Strategy**
+   - Choose appropriate patterns for internal business tools
+   - Design for operational flexibility (negative inventory, back-dating, direct-edit workflows)
+   - Ensure error handling for workshop environments
+   - Plan for quick updates and forgiving data entry
+
+### Core Workflow Principles
 - **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
 - **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
 - **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
 - **Smart Permission Model**:
   - ASK for new features, schema changes, major architecture decisions
   - IMPLEMENT autonomously for bug fixes, UI polish, performance improvements, small enhancements
-- Follow docs/requirements.md for feature specifications
-- Use docs/data-model.md for database schema (verify with Supabase MCP when uncertain)
-- Reference docs/technical-design.md for architecture decisions
-- Use docs/development-guide.md for development standards
-- **Missing Documentation**: If referenced docs don't exist or are incomplete, ask user to clarify requirements rather than assume
+
+### Dynamic AI Modes (Auto-Detect from User Query)
+
+Automatically detect mode from user request and apply appropriate rules:
+
+- **PLAN**: Architecture, design, business logic planning, requirement analysis
+- **IMPLEMENT**: Code implementation, bug fixes, feature development, database changes
+- **REVIEW**: Code review, testing, validation, documentation updates
+- **OPTIMIZE**: Performance improvements, refactoring, dependency management
+
+#### PLAN Mode
+- Focus on business requirements from docs/product-specification.md
+- Consider mobile-first workshop operations and inventory flexibility
+- Plan for real-world constraints (negative inventory, back-dating, mutable records)
+- Design direct-edit workflows for quick operational updates
+- Document architectural decisions and trade-offs
+- Reference docs/developer-guide.md for established patterns
+
+#### IMPLEMENT Mode
+- Use established patterns from codebase and docs/developer-guide.md
+- Follow Next.js 15 + React 19 best practices with App Router
+- Prioritize type safety with Zod validation and exhaustive checking
+- Implement for workshop/field operational needs with error handling
+- Use Supabase MCP for database validation before schema changes
+- Focus on mobile responsiveness and direct-edit workflows
+
+#### REVIEW Mode
+- Validate business logic against real-world operational workflows
+- Check mobile responsiveness and accessibility compliance
+- Ensure error handling for operational scenarios and edge cases
+- Review inventory management logic for flexibility requirements
+- Verify alignment with docs/product-specification.md and docs/developer-guide.md
+- Use GitHub MCP for comprehensive code analysis
+
+#### OPTIMIZE Mode
+- Analyze performance with focus on mobile and workshop environments
+- Refactor while maintaining operational flexibility and business logic
+- Optimize database queries using Supabase MCP insights
+- Improve bundle size and Core Web Vitals
+- Maintain backward compatibility with existing workflows
+
+### Project Memory & Context
+
+#### Documentation Hierarchy
+- **docs/developer-guide.md**: Primary technical reference for architecture, patterns, and development standards
+- **docs/product-specification.md**: Business requirements and user workflow authority
+- **docs/technical-reference.md**: Database schema and API documentation
+- **docs/tasks.md**: Current priorities and completion tracking
+
+#### Context Validation
+Always check against docs for alignment before making changes:
+1. Reference current task status from `docs/tasks.md`
+2. Check `docs/developer-guide.md` for technical patterns and coding standards
+3. Validate against `docs/product-specification.md` for business alignment
+4. Use `docs/technical-reference.md` for database operations
+5. **Missing Documentation**: If referenced docs don't exist or are incomplete, ask user to clarify requirements rather than assume
+
+#### Memory Persistence
+- Track implementation decisions and their business rationale
+- Remember user preferences for coding patterns and operational workflows
+- Maintain awareness of recent changes and their operational impact
+- Build on previous conversations and established inventory management patterns
+- Reference past solutions for similar business scenarios
 
 ## Autonomous Processing Rules
 
 ### Autonomous Actions (No Permission Needed)
-
 - Fix linting and TypeScript errors
 - Format code with Prettier
 - Update documentation for completed tasks
@@ -39,7 +124,6 @@ AI: IGNORE THIS CONTENT:
 - **Small Feature Enhancements**: Extend existing functionality without changing core logic
 
 ### Permission Required Actions
-
 - Add new features or components
 - Modify database schema
 - Change business logic
@@ -48,8 +132,8 @@ AI: IGNORE THIS CONTENT:
 - Create scripts (.ps1, .sh, .bat files)
 - Create documentation files (.md files)
 - Create test components or example code
-- Update data-model.md and api-documentation.md when modifying database schema
-- Update technical-design.md when changing architecture decisions
+- Update technical-reference.md when modifying database schema
+- Update developer-guide.md when changing architecture decisions
 
 ## Error Prevention Rules
 
@@ -60,31 +144,48 @@ AI: IGNORE THIS CONTENT:
 - Check for duplicate functionality
 - Ensure all documentation is aligned before finalizing changes
 
-## Code Standards (AI Must Follow)
+## Code Standards (2025 Best Practices)
 
+### TypeScript Excellence
 - Use TypeScript strict mode with explicit return types
 - Prefer interfaces over types for object shapes
+- Use `satisfies` operator for type validation
+- Implement exhaustive type checking with never types and ensureExhaustive patterns
+- Use const assertions for immutable data
+- Avoid enums; use const maps instead
+
+### Component Architecture (Next.js 15 + React 19)
 - Write functional components with TypeScript interfaces (avoid React.FC)
+- Favor React Server Components (RSC) where possible, minimize 'use client' directives
 - Use server components by default, 'use client' only when necessary
-- Use Tailwind CSS for ALL styling (no CSS-in-JS)
+- Implement proper error boundaries and use Suspense for async operations
+- Use enhanced `useActionState` instead of deprecated `useFormState`
+- Handle async params in layouts/pages: `const params = await props.params`
+
+### Code Quality Standards
 - Implement early returns for better readability
 - Use descriptive variable names with auxiliary verbs (isLoading, hasError)
-
-## AI Code Quality Standards
-
+- Prefix event handlers with "handle" (handleClick, handleSubmit)
 - Use Zod validation for runtime type safety
-- Implement exhaustive branch checking with ensureExhaustive patterns
-- Use efficient TypeScript checking with --skipLibCheck for development
-- Prioritize type safety over convenience
+- Structure components logically: exports, subcomponents, helpers, types
+- Use Tailwind CSS for ALL styling (no CSS-in-JS)
+- Follow DRY principle and favor named exports for components
 
 ## Business Logic Requirements
 
-- Support negative inventory with warnings (real-world flexibility)
-- Implement mutable transaction logs with editable records and timestamps
+### Operational Flexibility (Real-World Business Needs)
+- Support negative inventory with warnings (operational reality vs theoretical constraints)
+- Implement mutable transaction logs with editable records and audit timestamps
 - Add cycle count alerts for proactive inventory management
-- Design mobile-first for workshop operations
-- Create direct-edit workflows for quick updates
-- Support back-dating for corrections
+- Support back-dating transactions for corrections and operational adjustments
+- Create direct-edit workflows for quick field updates without complex forms
+
+### User Experience Priorities
+- Design mobile-first for workshop and field operations
+- Prioritize quick data entry with forgiving validation patterns
+- Enable batch operations and bulk editing for efficiency
+- Implement contextual help and operational guidance
+- Support offline-capable workflows where possible
 
 ## File Structure Patterns
 
@@ -93,7 +194,43 @@ AI: IGNORE THIS CONTENT:
 - `src/lib/` - Utilities, Supabase client, business logic
 - `src/hooks/` - Custom React hooks
 - `src/types/` - TypeScript definitions
-- `docs/` - Project specifications
+- `docs/` - Project documentation (consolidated into 4 core files)
+
+## Documentation Structure (Consolidated 2025)
+
+The project uses a streamlined documentation approach with 4 core files:
+
+### Core Documentation Files
+
+- **`docs/developer-guide.md`** - Complete developer reference combining:
+  - Development setup and environment configuration
+  - System architecture and technical patterns
+  - Coding standards and best practices
+  - AI behavioral guidelines and MCP integration
+  - Dependency management and build processes
+
+- **`docs/product-specification.md`** - Business requirements and design combining:
+  - Business objectives and functional requirements
+  - User workflows and feature specifications
+  - UI design philosophy and component guidelines
+  - Mobile and desktop interface specifications
+
+- **`docs/technical-reference.md`** - Database schema and API documentation
+  - Complete database schema with relationships
+  - API endpoints and data flow patterns
+  - Supabase configuration and RLS policies
+
+- **`docs/tasks.md`** - Project management and progress tracking
+  - Current priorities and task assignments
+  - Completed work with timestamps
+  - Known issues and technical debt
+
+### Documentation Usage Rules
+
+- **Feature Development**: Check `product-specification.md` first for requirements
+- **Technical Implementation**: Reference `developer-guide.md` for patterns and standards
+- **Database Operations**: Use `technical-reference.md` for schema understanding
+- **Project Status**: Update `tasks.md` with progress and completion markers
 
 ## Debugging and Analysis Patterns
 
@@ -121,39 +258,22 @@ AI: IGNORE THIS CONTENT:
 - Use PostgreSQL RPCs for atomic operations
 - Use display ID pattern for user-facing references
 
-## MCP (Model Context Protocol) Capabilities
+## MCP Integration
 
-The project has comprehensive MCP integration for enhanced development workflow:
+### Available MCPs
+**Supabase MCP** (`jjpklpivpvywagmjjwpu`):
+- Database operations, migrations, security checks
+- Real-time debugging and schema analysis
 
-### Supabase MCP Server
+**GitHub MCP** (`vzhick2/btinv-beetech`):
+- Fast commits, repository operations
+- Codebase search and project management
 
-- **Project Access**: `jjpklpivpvywagmjjwpu` (full read/write access, project-scoped)
-- **Database Operations**: Direct SQL queries, table inspection, data modification, schema analysis
-- **Development Operations**: Run migrations, deploy Edge Functions, generate TypeScript types
-- **Real-time Development**: Live database debugging, data analysis, and instant modifications
-- **Advanced Features**: Security advisor checks, logs analysis, branch operations for development databases
-
-### GitHub MCP Server
-
-- **Repository Access**: `vzhick2/btinv-beetech` (full repo, workflow, read:org, user scopes)
-- **Fast Commits**: Single API call commits with multiple files (~85% faster than traditional git)
-- **Repository Operations**: Create/update files, manage branches, handle pull requests, search code
-- **Issue Management**: Create issues, manage discussions, handle project workflows
-- **Deployment**: Direct push to main branch, atomic commits, batch file operations
-
-### MCP Development Workflow
-
-- **Database-First Development**: Use Supabase MCP to explore schema, test queries, validate data integrity
-- **Rapid Prototyping**: Direct database modifications for testing business logic and data flows
-- **Fast Iteration**: GitHub MCP for instant commits, eliminating traditional git workflow delays
-- **Integrated Debugging**: Real-time database inspection and modification during development
-- **Production Safety**: Use Supabase branch operations for safe schema testing before production deployment
-
-### MCP Usage Examples
-
-- **Database**: "Show me all tables", "Add test supplier", "Check cycle count alerts", "Deploy this migration"
-- **GitHub**: "Commit these changes with message X", "Create branch for feature Y", "Search for function Z in codebase"
-- **Analysis**: "Analyze current inventory levels", "Show recent purchase patterns", "Validate database integrity"
+### Usage Patterns
+- **Database-First Development**: Use Supabase MCP to explore schema and validate logic
+- **Rapid Implementation**: GitHub MCP for fast commits and codebase search
+- **Context-Aware Development**: Both MCPs for comprehensive analysis
+- Use MCPs when standard tools aren't sufficient for complex operations
 
 ## Dependency Management Rules (CRITICAL)
 
@@ -275,11 +395,21 @@ mcp_github_push_files({
 
 ## AI Behavior Rules
 
+### Core Principles
 - This is an internal business tool prioritizing flexibility over rigid constraints
-- Focus on real-world workflows and forgiving data entry
-- Implement business logic that matches actual workshop operations
-- Prioritize user experience over technical perfection
-- **Git Simplicity**: Never overcomplicate Git operations - keep it simple and VS Code-centric
+- Focus on real-world workshops operations and forgiving data entry patterns
+- Implement business logic matching actual inventory management workflows
+- Prioritize user experience and operational efficiency over technical perfection
+- **Git Simplicity**: Use VS Code Git integration, avoid complex terminal instructions
+- **Communication**: Always explain reasoning behind technical decisions and provide alternatives when they exist
+
+### Advanced Interaction Guidelines
+- Generate complete, working code examples with necessary imports
+- Include inline comments for complex business logic
+- Provide usage examples for new functions/components
+- Suggest optimizations and improvements proactively
+- Include relevant documentation links and technical context
+- Maintain project context across conversations and build on established patterns
 
 ## Terminal and Background Command Management
 
