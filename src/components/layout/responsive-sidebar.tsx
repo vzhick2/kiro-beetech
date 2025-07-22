@@ -119,12 +119,15 @@ export function ResponsiveSidebar({
         aria-hidden="true"
       />
 
-      {/* Sidebar overlay with slide + fade animation - c32a068 width */}
+      {/* Sidebar overlay with slide + fade animation - explicit width for mobile */}
       <div
-        className={`fixed top-16 left-0 bottom-0 w-32 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
+        className={`fixed top-16 left-0 bottom-0 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
         style={{
+          width: '128px', // Explicit pixel width that mobile browsers respect
+          minWidth: '128px', // Prevent width from shrinking
+          maxWidth: '128px', // Prevent width from expanding
           touchAction: 'manipulation',
           WebkitUserSelect: 'none',
           userSelect: 'none',
