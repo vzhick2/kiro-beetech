@@ -251,10 +251,13 @@ mcp_github_push_files({
 
 ## Development Server Rules
 
-- NEVER suggest or ask to run `pnpm dev` or start development servers
-- User manages development server independently
+- **ALWAYS use background flags** when starting development servers: `pnpm dev` with `is_background: true`
+- **Check if server is already running** before starting new instances
+- **Prefer VS Code's built-in terminal** for long-running dev servers
+- **Use AI terminal** only for quick server management (start/stop/restart)
 - Focus on code implementation and testing via build validation
 - Use `pnpm build` to verify functionality instead of running servers
+- **Never run dev servers synchronously** - this causes Cursor to hang
 
 ## AI Behavior Rules
 
@@ -263,6 +266,52 @@ mcp_github_push_files({
 - Implement business logic that matches actual workshop operations
 - Prioritize user experience over technical perfection
 - **Git Simplicity**: Never overcomplicate Git operations - keep it simple and VS Code-centric
+
+## Terminal and Background Command Management
+
+### Long-Running Commands (CRITICAL)
+
+**ALWAYS use background flags for long-running processes to prevent Cursor from hanging:**
+
+- ✅ **CORRECT**: `pnpm dev &` (background flag)
+- ✅ **CORRECT**: `Start-Process pnpm -ArgumentList "dev" -NoNewWindow` (PowerShell background)
+- ✅ **CORRECT**: `pnpm dev` with `is_background: true` in tool calls
+- ❌ **NEVER**: Run `pnpm dev` without background flag in terminal
+- ❌ **NEVER**: Run development servers synchronously
+
+### Command Categories
+
+**Background Commands (Use `is_background: true` or `&` flag):**
+- Development servers: `pnpm dev`, `npm start`, `yarn dev`
+- File watchers: `pnpm build --watch`
+- Long-running processes: `Get-Process`, `netstat -an`
+- Database operations: `supabase start`, `supabase db reset`
+
+**Quick Commands (Safe to run synchronously):**
+- Build commands: `pnpm build`, `pnpm type-check`
+- Git operations: `git status`, `git add`, `git commit`
+- Package management: `pnpm add`, `pnpm remove`
+- File operations: `ls`, `dir`, `cat`, `type`
+
+### Cursor Terminal Best Practices
+
+**For Development Servers:**
+1. **Use VS Code's built-in terminal** (Ctrl+`) for long-running processes
+2. **Use AI terminal** only for quick commands and analysis
+3. **Always use background flags** when AI needs to start dev servers
+4. **Check if server is already running** before starting new instances
+
+**For Process Management:**
+- Check running processes: `Get-Process | Where-Object {$_.ProcessName -like "*node*"}`
+- Kill processes: `taskkill /F /IM node.exe` (Windows) or `pkill node` (Unix)
+- Check ports: `netstat -an | findstr :3001` (Windows) or `lsof -i :3001` (Unix)
+
+### MCP Integration with Terminal
+
+**When using MCP tools:**
+- **Supabase MCP**: Use for database operations instead of terminal commands
+- **GitHub MCP**: Use for commits instead of git terminal commands
+- **Terminal**: Use only for local development server management and quick checks
 
 ## Commit Message Standards
 
