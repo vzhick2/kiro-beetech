@@ -84,9 +84,10 @@ export function usePurchases(draftsOnly = false) {
               supplierId: dbPurchase.supplierid,
               purchaseDate: new Date(dbPurchase.purchasedate),
               effectiveDate: new Date(dbPurchase.effectivedate),
-              grandTotal: Number(dbPurchase.total) || 0, // Convert numeric string to number
+              total: Number(dbPurchase.total) || 0, // Database field
+              grandTotal: Number(dbPurchase.total) || 0, // Convert numeric string to number for UI compatibility
               shipping: Number(dbPurchase.shipping) || 0,
-              taxes: Number(dbPurchase.taxes) || 0,
+              taxes: Number(dbPurchase.othercosts) || 0,
               otherCosts: Number(dbPurchase.othercosts) || 0,
               notes: dbPurchase.notes || '',
               isDraft: Boolean(dbPurchase.isdraft),

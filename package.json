@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.13.1",
-
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-alert-dialog": "^1.1.4",
