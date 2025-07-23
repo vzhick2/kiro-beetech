@@ -1,3 +1,5 @@
+AI: IGNORE THIS DOCUMENT!!!
+
 ---
 title: 'Google Sheets Alternative'
 description: 'Complete Google Sheets implementation as alternative to the Next.js application'

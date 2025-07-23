@@ -116,7 +116,6 @@ Always check against docs for alignment before making changes:
 - Use existing utility functions from src/lib/utils
 - Follow established naming conventions
 - Update tasks.md with ✅ and completion date when marking tasks complete
-- Update CHANGELOG.md with version and description when adding features
 - **Performance Fixes**: Database indexes, query optimization, bundle size improvements
 - **Bug Fixes**: Resolve errors, fix broken functionality, improve error handling
 - **Code Refactoring**: Improve code quality, extract utilities, optimize components

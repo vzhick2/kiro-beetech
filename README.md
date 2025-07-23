@@ -14,8 +14,6 @@
 
 BTINV is a **private, business-focused inventory management system** designed for small businesses that prioritize COGS (Cost of Goods Sold) tracking. Following the 80/20 rule, it focuses on tracking cost drivers for profitability while supporting real-world business workflows like statement-based bookkeeping and monthly inventory sessions.
 
-The system supports both Next.js web application and Google Sheets implementations to accommodate different technical requirements and team preferences.
-
 ## ✨ Key Features
 
 ### 🧮 **Cost Management**
@@ -61,8 +59,6 @@ The system supports both Next.js web application and Google Sheets implementatio
 
 ## Quick Start
 
-### Next.js Application
-
 ```bash
 # Clone and install dependencies
 git clone <repository-url>
@@ -77,11 +73,6 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-### Google Sheets Alternative
-
-For teams preferring spreadsheet workflows, see the archived implementation in:
-- **`docs/.archive/google-sheets-alternative.md`** - Complete spreadsheet implementation with Apps Script
-
 ## Documentation
 
 ### Core Documentation
@@ -93,7 +84,7 @@ For teams preferring spreadsheet workflows, see the archived implementation in:
 
 ## 🚀 Technology Stack
 
-- **Frontend**: Next.js 15.4.1, React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- **Frontend**: Next.js 15.4.1, React 19.1.0, TypeScript 5.5.4, Tailwind CSS 4.1.11
 - **Backend**: Supabase, PostgreSQL, Server Actions
 - **Data**: TanStack Query, Zod validation
 - **UI Components**: Radix UI, TanStack Table
@@ -109,7 +100,7 @@ For teams preferring spreadsheet workflows, see the archived implementation in:
 - pnpm (recommended) or npm
 - Git
 
-### Next.js Application Setup
+### Installation Steps
 
 ```bash
 # Clone and install dependencies
@@ -131,11 +122,6 @@ pnpm dev
 # Open in browser
 # http://localhost:3000
 ```
-
-### Google Sheets Alternative
-
-For teams preferring spreadsheet workflows, see the archived implementation in:
-- **`docs/.archive/google-sheets-alternative.md`** - Complete spreadsheet implementation with Apps Script
 
 ## 🔧 Development
 
@@ -176,7 +162,7 @@ src/
 
 ### Additional Resources
 
-- **Archived Google Sheets Implementation** - See `docs/.archive/google-sheets-alternative.md`
+*See [Developer Guide](./docs/developer-guide.md) for complete command reference and [Technical Reference](./docs/technical-reference.md) for database schema.*
 
 ## 📊 Progress Tracking
 

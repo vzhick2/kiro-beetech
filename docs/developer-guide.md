@@ -33,18 +33,45 @@ Complete developer reference covering setup, architecture, standards, and AI-dri
 - Git with SSH keys configured
 - VS Code or Cursor IDE
 
-### Initial Setup
+### Complete Installation Steps
 ```bash
 # Clone and setup
 git clone git@github.com:vzhick2/kiro-beetech.git
 cd kiro-beetech
 pnpm install
 
+# Setup environment variables
+cp .env.example .env.local
+# Add your Supabase credentials from:
+# https://supabase.com/dashboard/project/[your-project]/settings/api
+
 # Setup symlinks (Windows - run as Administrator)
 .\scripts\setup-symlinks.ps1
 
+# Run database migrations (if needed)
+pnpm supabase:migrate
+
 # Start development
 pnpm dev
+```
+
+### Environment Configuration
+
+#### Supabase Configuration
+- **Project ID**: `jjpklpivpvywagmjjwpu`
+- **Project Name**: `btinv-beetech`
+- **Region**: `us-east-2`
+
+#### Environment Variables
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
+```
+
+#### Available Scripts
+```bash
+# Generate types from remote database
+pnpm supabase:types
 ```
 
 ## 📋 Development Philosophy
@@ -88,7 +115,7 @@ Balance speed and stability for both human and AI developers:
 
 - **Next.js 15.4.1** with App Router and Turbopack
 - **React 19.1.0** with Server Components
-- **TypeScript 5.8.3** for type safety
+- **TypeScript 5.5.4** for type safety
 - **Tailwind CSS 4.1.11** for styling
 - **Radix UI** for accessible components
 - **TanStack Table** for data tables
@@ -139,7 +166,7 @@ src/
 | ----------------- | ------- | ------------- | ----------------------------------- |
 | **Next.js**       | 15.4.1  | ✅ **Latest** | Upgraded from 14.2.x with Turbopack |
 | **React**         | 19.1.0  | ✅ **Latest** | Upgraded from 18.3.x                |
-| **TypeScript**    | 5.8.3   | ✅ **Latest** | Upgraded from 5.4.x                 |
+| **TypeScript**    | 5.5.4   | ✅ **Latest** | Upgraded from 5.4.x                 |
 
 ### UI & Styling
 
@@ -186,25 +213,6 @@ New-Item -ItemType SymbolicLink -Path ".cursorrules" -Target ".vscode\copilot-in
 ```
 
 > **Note**: MCP servers are configured globally in your development environment, not through project-specific configuration files.
-
-### Supabase Configuration
-
-#### Remote Development (Current)
-- **Project ID**: `jjpklpivpvywagmjjwpu`
-- **Project Name**: `btinv-beetech`
-- **Region**: `us-east-2`
-
-#### Available Scripts
-```bash
-# Generate types from remote database
-pnpm supabase:types
-```
-
-#### Environment Variables
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
-```
 
 ## 📝 Coding Standards
 
@@ -262,84 +270,27 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 
 ## 🤖 AI Development Guidelines
 
-### Multi-IDE AI Currency Solution
+### MCP Integration
 
-This project uses a sophisticated AI setup designed to provide current, repository-aware assistance across multiple editors:
+This project uses Model Context Protocol (MCP) servers for AI-driven development:
 
-#### Core Architecture
+- **Supabase MCP**: Live database operations, schema queries, migrations
+- **GitHub MCP**: Repository management, codebase search, automated commits
+- **Context7 MCP**: Up-to-date library documentation and API references
+- **Playwright MCP**: Browser automation and UI testing
 
-- **Primary**: `.cursorrules` - Comprehensive AI behavior rules (works in Cursor + fallback for VS Code)
-- **VS Code Specific**: `.vscode/copilot-instructions.md` - References `.cursorrules` for consistency
-- **Real-time Context**: MCP (Model Context Protocol) servers for live repository/database awareness
+### AI Configuration
 
-#### MCP Integration - The Currency Solution
+- **Primary**: `.cursorrules` - Main AI behavior rules (symlinked to `.vscode/copilot-instructions.md`)
+- **Multi-Editor Support**: Works in both Cursor and VS Code
+- **Real-time Context**: MCP provides live project data vs. static instruction files
 
-- **Supabase MCP Server**: Live database schema, real-time queries, migrations, edge functions, security advisors
-- **GitHub MCP Server**: Repository operations, issues, PRs, file management, codebase search
-- **Context7 MCP Server**: Library documentation, package resolution, up-to-date API references
-- **Playwright MCP Server**: Browser automation, testing, web interaction capabilities
-- **Result**: AI always sees current tech stack (React 19, Next.js 15, etc.) rather than outdated patterns
+### AI Development Workflow
 
-#### Why This Approach Works
-
-1. **Real-time Context**: MCP provides live data vs. static instruction files that become outdated
-2. **Multi-Editor Support**: Same rules work in Cursor and VS Code without conflicts
-3. **Repository Awareness**: AI reads actual `package.json`, project structure, and database schema
-4. **Current Best Practices**: Automatically suggests 2025 patterns, not legacy approaches
-5. **Comprehensive Tooling**: Browser automation, documentation lookup, and database operations all integrated
-
-#### Contextual Prompting Strategy
-
-```bash
-# Force current tech stack awareness
-"@workspace check my package.json and suggest React 19 patterns"
-
-# Repository structure awareness
-"#file:package.json verify my Next.js version and suggest compatible patterns"
-
-# Real-time validation
-"Use my current Supabase schema for this feature"
-
-# Documentation lookup
-"Get the latest documentation for TanStack Query v5"
-
-# Browser testing
-"Test this component in Chrome with mobile viewport"
-```
-
-### AI Behavioral Rules
-
-#### Response Structure
-- Always format clearly (summaries first, details after)
-- For tools/code, explain reasoning before/after
-- If uncertain, ask for clarification
-- Suggest mitigations for risks
-
-#### Development Workflow Rules
-- **ALWAYS** ask "Should I implement this?" before making file changes
-- Provide options first, then wait for explicit approval
-- Follow product-specification.md for feature specifications
-- Use technical-reference.md for database schema (verify with Supabase MCP when uncertain)
-- Reference this developer guide for architecture decisions
-
-#### MCP Usage Guidelines
-
-**Supabase MCP** - Database Operations
-```bash
-# Database exploration
-"Check my current database schema for items table"
-"Generate TypeScript types for my Supabase tables"
-"Apply this migration to add a new column"
-"Run security advisors on my database"
-
-# Query testing
-"Test this SQL query on my database"
-"Check performance of this query"
-```
-
-**GitHub MCP** - Repository Management
-```bash
-# Code search and analysis
+1. **Check Current State**: Use MCP to understand database schema and project structure
+2. **Ask Before Changes**: Always confirm before implementing new features
+3. **Follow Documentation**: Reference product-specification.md for features, technical-reference.md for schema
+4. **Test with MCP**: Use Supabase MCP for database queries, Playwright MCP for UI testing
 "Search for similar implementations of user authentication"
 "Find all files that import the Items component"
 "Create a PR for this feature branch"
@@ -380,135 +331,37 @@ Before finalizing any output for this inventory project:
 
 ### Business Domain Guidelines
 
-#### Inventory Terminology Standards
-- Use "cycle count alerts" not "inventory nudges" or similar
-- "Action Center" for dashboard notifications
-- "Allocation exclusion" for reserved inventory
-- Maintain consistent terminology across all interfaces and documentation
-
-#### Key Business Workflows
-1. **Procure to Stock**: Traditional entry or bank CSV import → review drafts → complete line items → save with WAC
-2. **Production Run**: Select recipe → log batch → analyze yield with stock checks and negative inventory warnings
-3. **Bulk Sales Entry**: CSV import with date ranges → decrement stock with positive validation
-4. **Cycle Count**: Dashboard alerts → adjust quantity → algorithm reduces over-reliance
-5. **Monthly Reconciliation**: Review dashboard → edit missed data → cycle count alerts for corrections
-6. **Recipe Development**: Create/edit → test batch → version on edit → tied to batch validation
+- **Terminology**: Use "cycle count alerts" not "inventory nudges", "Action Center" for dashboard notifications
+- **Key Workflows**: Procure to Stock, Production Run, Bulk Sales Entry, Cycle Count, Monthly Reconciliation
 
 ## 🧮 Technical Patterns
 
-### Cost Allocation Architecture
+### Core Architecture Patterns
+- **Display ID Pattern**: User-facing IDs separate from UUID primary keys
+- **WAC Calculation**: On-demand with caching in items table
+- **Negative Inventory**: Supported with proper alerting
+- **Mutable Transactions**: Allow corrections with audit timestamps
 
-#### Allocation Engine Design
+### Component Architecture
+- **Server Components**: Default choice for Next.js 15
+- **Client Components**: Only when interactivity needed
+- **Error Boundaries**: Comprehensive error handling
+- **Form Handling**: Server Actions for mutations
 
-```
-Purchase Entry → Base Cost Calculation → Overhead Distribution → WAC Update
-      │                    │                       │              │
-      └── Mixed Invoice Handling
-```
+## 📦 Dependency Management
 
-#### Core Allocation Functions
+### Package Manager Rules
+- **Always use pnpm**: Preferred package manager for consistency
+- **Lockfile Integrity**: Never manually edit package.json dependencies
+- **Clean Removal**: Remove unused dependencies when features are removed
+- **Version Alignment**: Keep related packages in sync (React, @types/react, etc.)
 
-```typescript
-// Allocation service
-export interface AllocationPreview {
-  lineItemId: string;
-  allocationPercentage: number;
-}
+### Deployment Validation
+- **Vercel Compatibility**: Test with `--frozen-lockfile` flag locally
+- **Build Verification**: Run `pnpm build` before pushing
+- **Type Safety**: Ensure TypeScript strict mode compliance
 
-export interface AllocationResult {
-  preview: AllocationPreview[];
-  warnings: string[];
-}
-
-// Allocation action
-export async function previewAllocation(
-  purchaseId: string,
-): Promise<AppResult<AllocationResult>> {
-  try {
-    // Implementation details...
-  } catch (error) {
-    return handleError(error, 'previewAllocation');
-  }
-}
-```
-
-#### Variance Detection System
-
-```typescript
-// Allocation variance checking
-interface VarianceCheck {
-  type: 'shipping' | 'tax' | 'fees';
-  warningLevel: 'info' | 'warning' | 'error';
-}
-
-export function calculateVariance(
-  expected: number,
-  allocated: number,
-  tolerance = 0.05 // 5% tolerance
-): VarianceCheck {
-  const variance = Math.abs(expected - allocated) / expected;
-  
-  if (variance > tolerance * 2) {
-    return { type: 'shipping', warningLevel: 'error' };
-  } else if (variance > tolerance) {
-    return { type: 'shipping', warningLevel: 'warning' };
-  }
-  
-  return { type: 'shipping', warningLevel: 'info' };
-}
-```
-
-### Two-Mode Tracking Architecture
-
-#### Tracking Mode Design
-
-```
-Item Setup → Mode Selection → Alert Configuration → Operational Workflow
-     │            │               │                      │
-     └── Business Categorization
-```
-
-#### Mode-Specific Components
-
-```typescript
-// Tracking mode component
-interface TrackingModeIndicatorProps {
-  mode: 'fully_tracked' | 'cost_added';
-  className?: string;
-}
-
-export function TrackingModeIndicator({
-  mode,
-  className
-}: TrackingModeIndicatorProps) {
-  const modeConfig = {
-    fully_tracked: {
-      label: 'Full',
-      color: 'bg-green-100 text-green-800',
-      icon: '🟢'
-    },
-    cost_added: {
-      label: 'Cost Only',
-      color: 'bg-orange-100 text-orange-800',
-      icon: '🟠'
-    }
-  };
-
-  const config = modeConfig[mode];
-  
-  return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color} ${className}`}>
-      {config.icon} {config.label}
-    </span>
-  );
-}
-
-// Mode-specific action buttons
-export function ModeSpecificActions({ item }: { item: Item }) {
-  switch (item.tracking_mode) {
-    case 'fully_tracked':
-      return <QuantityAdjustmentButton item={item} />;
-    case 'cost_added':
+## 🛠️ Troubleshooting
       return <SupplyCheckButton item={item} />;
     default:
       return null;
