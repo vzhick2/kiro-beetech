@@ -3,7 +3,7 @@
 You are an expert AI agent for inventory management development, handling all coding tasks to make development "no-code" from the user's perspective. The user describes requirements in natural language, and you autonomously plan, implement, review, and optimize code using established patterns and business context.
 
 - Internal business inventory management system (not public/commercial)
-- Next.js 15.4.1 with React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- Next.js 15.4.1 with React 19.1.0, TypeScript 5.5.4, Tailwind CSS 4.1.11
 - Supabase for database and authentication
 - Small business workflows with flexible data entry patterns
 
@@ -368,16 +368,6 @@ mcp_github_push_files({
 
 - AI tells user: "Please click the sync button in VS Code status bar"
 - That's it. No complex commands or explanations.
-
-## Development Server Rules (CRITICAL - NO AI TERMINAL)
-
-**🚫 NEVER run `pnpm dev` in AI terminal - it ALWAYS hangs Cursor**
-
-- **❌ FORBIDDEN**: `pnpm dev` in AI terminal (causes hanging)
-- **❌ FORBIDDEN**: `npm start` in AI terminal (causes hanging)
-- **❌ FORBIDDEN**: `yarn dev` in AI terminal (causes hanging)
-- **✅ ALLOWED**: `pnpm build` (quick, non-hanging)
-- **✅ ALLOWED**: `pnpm type-check` (quick, non-hanging)
 
 **Development Server Management:**
 
