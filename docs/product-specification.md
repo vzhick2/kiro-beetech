@@ -58,8 +58,8 @@ Complete product specification covering business requirements, user interface de
 - **Fully Tracked Mode**: Exact quantities with traditional low-stock alerts (core ingredients)
 - **Cost-Added Mode**: Purchase history alerts, quantities hidden in UI (packaging materials)
 - **Mode Assignment**: Business decision based on cost impact and tracking effort
-- **Mode Switching**: Change tracking modes with data preservation (no snapshots needed)
-- **UI Quantity Hiding**: Cost-only items show "Cost only" instead of quantity values
+- **Mode Switching**: Change tracking modes with data preservation (minimal snapshot tracking for historical reference)
+- **UI Quantity Hiding**: Cost-added items show "Cost added" instead of quantity values
 
 #### 1.2 Items Interface
 
@@ -499,7 +499,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Loading States**: Operation in progress
 
 #### Status Indicators
-- **Tracking Mode Badges**: 🟢 Full, 🟠 Cost Only
+- **Tracking Mode Badges**: 🟢 Fully Tracked, � Cost Added
 - **Alert Priorities**: Color-coded importance
 - **Draft Status**: Clear workflow stage
 - **Archive States**: Inactive item indication

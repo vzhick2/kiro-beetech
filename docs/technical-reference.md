@@ -233,7 +233,7 @@ CREATE TYPE data_source AS ENUM ('manual', 'imported');
 -- Items table indexes
 CREATE INDEX idx_items_sku ON items(sku);
 CREATE INDEX idx_items_type ON items(type);
-CREATE INDEX idx_items_archived ON items(is_archived);
+CREATE INDEX idx_items_archived ON items(isArchived);
 
 -- Transactions table indexes
 CREATE INDEX idx_transactions_item_id ON transactions(item_id);
@@ -982,9 +982,17 @@ export function useCycleCountAlerts(limit: number = 5) {
 
 ### Row Level Security (RLS) Policies
 
-#### Items Table Policy
+**Note**: This application is designed for internal business use with single-tenant access. RLS policies would need to be implemented based on the specific authentication requirements.
+
+#### Example Multi-Tenant Implementation
+
+If multi-tenant functionality is required in the future, add a `user_id UUID` column to relevant tables:
 
 ```sql
+-- Add user_id column to items table
+ALTER TABLE items ADD COLUMN user_id UUID REFERENCES auth.users(id);
+
+-- Then apply RLS policies
 CREATE POLICY "Users can view their own items" ON items
 FOR SELECT USING (auth.uid() = user_id);
 
@@ -995,15 +1003,9 @@ CREATE POLICY "Users can update their own items" ON items
 FOR UPDATE USING (auth.uid() = user_id);
 ```
 
-#### Purchases Table Policy
+#### Current Single-Tenant Implementation
 
-```sql
-CREATE POLICY "Users can view their own purchases" ON purchases
-FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own purchases" ON purchases
-FOR INSERT WITH CHECK (auth.uid() = user_id);
-```
+For the current internal business use case, RLS can be simplified or disabled entirely since all users access the same business data.
 
 ## Error Handling
 

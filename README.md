@@ -57,42 +57,7 @@ BTINV is a **private, business-focused inventory management system** designed fo
 - **Cost Impact Preview**: See financial effects before finalizing changes
 - **Complete Audit Trail**: Transaction history for all inventory movements
 
-## Quick Start
-
-```bash
-# Clone and install dependencies
-git clone <repository-url>
-cd KIRO-BEETECH
-pnpm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Configure Supabase credentials
-
-# Run development server
-pnpm dev
-```
-
-## Documentation
-
-### Core Documentation
-
-- **[Developer Guide](./docs/developer-guide.md)** - Setup, architecture, standards, and AI guidelines
-- **[Product Specification](./docs/product-specification.md)** - Business requirements and UI design
-- **[Technical Reference](./docs/technical-reference.md)** - Database schema, APIs, and architecture
-- **[Tasks](./docs/tasks.md)** - Development tasks and roadmap
-
-## 🚀 Technology Stack
-
-- **Frontend**: Next.js 15.4.1, React 19.1.0, TypeScript 5.5.4, Tailwind CSS 4.1.11
-- **Backend**: Supabase, PostgreSQL, Server Actions
-- **Data**: TanStack Query, Zod validation
-- **UI Components**: Radix UI, TanStack Table
-- **Development**: ESLint, Prettier, Husky
-
-*For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack).*
-
-## 📦 Installation
+## 📦 Installation & Setup
 
 ### Prerequisites
 
@@ -100,7 +65,7 @@ pnpm dev
 - pnpm (recommended) or npm
 - Git
 
-### Quick Start
+### Installation Steps
 
 ```bash
 # Clone and install dependencies
@@ -118,6 +83,25 @@ pnpm dev
 ```
 
 *For detailed setup instructions, environment configuration, and database migrations, see [Developer Guide](./docs/developer-guide.md#environment-setup).*
+
+## 📚 Documentation
+
+### Core Documentation
+
+- **[Developer Guide](./docs/developer-guide.md)** - Setup, architecture, standards, and AI guidelines
+- **[Product Specification](./docs/product-specification.md)** - Business requirements and UI design
+- **[Technical Reference](./docs/technical-reference.md)** - Database schema, APIs, and architecture
+- **[Tasks](./docs/tasks.md)** - Development tasks and roadmap
+
+## 🚀 Technology Stack
+
+- **Frontend**: Next.js 15.4.1, React 19.1.0, TypeScript 5.5.4, Tailwind CSS 4.1.11
+- **Backend**: Supabase, PostgreSQL, Server Actions
+- **Data**: TanStack Query, Zod validation
+- **UI Components**: Radix UI, TanStack Table
+- **Development**: ESLint, Prettier, Husky
+
+*For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack).*
 
 ## 🔧 Development
 

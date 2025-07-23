@@ -2,7 +2,7 @@
 title: 'Developer Guide'
 description: 'Complete development setup, architecture, standards, and AI guidelines for internal business application'
 purpose: 'Unified reference for developers covering setup, technical decisions, and development philosophy'
-last_updated: 'July 22, 2025'
+last_updated: 'July 23, 2025'
 doc_type: 'developer-reference'
 related: ['README.md', 'technical-reference.md', 'product-specification.md', 'tasks.md', '.vscode/copilot-instructions.md']
 ---
@@ -89,8 +89,8 @@ Balance speed and stability for both human and AI developers:
 
 - **Forgiving Data Entry**: Allow back-dating, editing, and corrections - small businesses need flexibility
 - **Mobile-First UX**: Workshop/warehouse use requires touch-friendly interface (≥44px targets)
-- **Direct Edit Workflows**: Enable in-place editing rather than complex forms
-- **Risk-Appropriate Security**: Small scale = no complex audit trails needed, focus on usability
+- **Direct Edit Workflows**: Enable in-place editing instead of multi-step forms
+- **Risk-Appropriate Security**: Small scale = streamlined audit trails, focus on usability
 
 ### Technical Approach
 
@@ -286,7 +286,7 @@ This project uses Model Context Protocol (MCP) servers for AI-driven development
 ### AI Development Workflow
 
 1. **Check Current State**: Use MCP to understand database schema and project structure
-2. **Ask Before Changes**: Always confirm before implementing new features
+2. **Ask Before Changes**: Confirm before implementing new features
 3. **Follow Documentation**: Reference product-specification.md for features, technical-reference.md for schema
 4. **Test with MCP**: Use Supabase MCP for database queries, Playwright MCP for UI testing
 "Search for similar implementations of user authentication"
@@ -319,15 +319,15 @@ Before finalizing any output for this inventory project:
 
 ### Component Architecture
 - **Server Components**: Default choice for Next.js 15
-- **Client Components**: Only when interactivity needed
+- **Client Components**: Use when interactivity is needed
 - **Error Boundaries**: Comprehensive error handling
 - **Form Handling**: Server Actions for mutations
 
 ## 📦 Dependency Management
 
 ### Package Manager Rules
-- **Always use pnpm**: Preferred package manager for consistency
-- **Lockfile Integrity**: Never manually edit package.json dependencies
+- **Use pnpm**: Preferred package manager for consistency
+- **Lockfile Integrity**: Avoid manually editing package.json dependencies
 - **Clean Removal**: Remove unused dependencies when features are removed
 - **Version Alignment**: Keep related packages in sync (React, @types/react, etc.)
 
@@ -395,10 +395,8 @@ export async function finalizePurchaseWithWAC(
 }
 ```
 
-## 🔧 Dependency Management
-
 ### Critical Workflow Rules
-⚠️ **NEVER commit package.json changes without updating pnpm-lock.yaml**
+⚠️ **Important: Ensure pnpm-lock.yaml is updated when changing package.json**
 
 #### Adding New Dependencies
 ```bash
@@ -408,7 +406,7 @@ pnpm add package-name
 # Add dev dependency
 pnpm add -D package-name
 
-# Always commit BOTH files together
+# Ensure BOTH files are committed together
 git add package.json pnpm-lock.yaml
 git commit -m "Add package-name dependency"
 ```

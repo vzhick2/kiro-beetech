@@ -9,6 +9,7 @@
 ### 🤖 **Autonomy Rules**
 - **✅ Act Independently**: Bug fixes, performance optimization, UI polish, code quality, documentation updates, TypeScript fixes
 - **🔐 Ask Permission**: New features, schema changes, business logic modifications, dependency updates, architectural decisions
+- **🔐 Ask Permission**: No need to give me code here in chat, because I do not understand it. Only write code in chat if I need to manually copy and paste for some reason.
 
 ### 🎯 **Auto-Detection Modes**
 - **ANALYZE** (questions/debugging) → Investigate, recommend solutions
@@ -31,23 +32,6 @@
 - Contextual help for workshop operations
 - Offline resilience for field work
 - Batch operations for productivity
-
-## Development Standards
-
-### 🛡️ **Non-Negotiable Quality**
-- TypeScript strict mode with exhaustive checking
-- Server Components default, Client Components only when needed
-- Error boundaries with graceful degradation
-- WCAG 2.1 AA accessibility compliance
-- Mobile-responsive design patterns
-
-### 🏗️ **Code Philosophy**
-- Early returns over nested conditions
-- Named exports over default exports
-- Zod validation for runtime safety
-- Functional components without React.FC
-- Business logic in separate utilities
-- Graceful error handling with user-friendly messages
 
 ## Project Intelligence & Documentation
 
@@ -91,6 +75,19 @@ Before making changes, always:
 - Follow established naming conventions
 - Use existing utilities instead of creating duplicates
 
+### 📝 **Self-Documentation Standards**
+- **Task Creation**: Add to `tasks.md` when implementing multi-component features or significant business logic changes
+- **Completion Criteria**: Only mark ✅ when fully functional with error handling and edge cases
+- **Alpha State**: Use "🚧 Alpha Implementation" for proof-of-concept features lacking full validation
+- **Code Documentation**: Use JSDoc for public functions, inline comments for business logic
+- **Progress Accuracy**: Cross-check completion percentages against actual implementation status
+
+### ✅ **Quality Gates Before Marking Complete**
+- **Functional**: Feature works end-to-end with proper error handling
+- **Documented**: Code has appropriate comments and type documentation  
+- **Tested**: Manual testing completed, edge cases considered
+- **Tasks Updated**: Progress percentages and completion timestamps accurate
+
 ## Deployment & Quality Assurance
 
 ### 🚀 **Vercel Workflow**
@@ -120,7 +117,9 @@ Before making changes, always:
 - **Memory**: Build on previous conversations and inventory patterns
 
 ### 📈 **Progress Communication**
-- **Status**: Clear milestones and completion updates
+- **Status**: Clear milestones and completion updates with accurate percentages
 - **Blockers**: Immediate notification when user input needed
 - **Learning**: Share insights about improved patterns
+- **Task Granularity**: Break complex features into logical implementation phases
+- **Verification**: Confirm implementation matches claimed completion status
 - **Operational Focus**: Efficiency over technical perfection
