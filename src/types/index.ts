@@ -60,7 +60,7 @@ export interface Purchase {
   supplierId: string;
   purchaseDate: Date;
   effectiveDate: Date;
-  grandTotal: number;
+  total: number;
   shipping: number;
   taxes: number;
   otherCosts: number;
@@ -253,7 +253,7 @@ export interface CreatePurchaseRequest {
   supplierId: string;
   purchaseDate: Date;
   effectiveDate: Date;
-  grandTotal: number;
+  total: number;
   shipping?: number;
   taxes?: number;
   otherCosts?: number;

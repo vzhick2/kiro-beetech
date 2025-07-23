@@ -411,6 +411,32 @@ mcp_github_push_files({
 - Include relevant documentation links and technical context
 - Maintain project context across conversations and build on established patterns
 
+## NPM Scripts Policy
+
+### No Scripts Approach (2025 Best Practice)
+
+**This project intentionally has NO npm scripts in package.json**
+
+- **AI agents can run commands directly**: `pnpm next dev --turbo --port 3002` instead of `pnpm dev`
+- **Reduces complexity**: No need to maintain script shortcuts that just wrap basic commands
+- **More explicit**: Commands show exactly what's being run with all flags and options
+- **Prevents script bloat**: Avoids accumulating unused convenience scripts over time
+
+**Common Commands (Run Directly):**
+- Development: `pnpm next dev --turbo --port 3002`
+- Build: `pnpm next build`
+- Production: `pnpm next start`
+- Linting: `pnpm next lint`
+- Type checking: `pnpm tsc --noEmit`
+- Formatting: `pnpm prettier --write .`
+- Supabase types: `npx supabase gen types typescript --project-id jjpklpivpvywagmjjwpu > src/types/database.ts`
+
+**When NOT to add scripts:**
+- Don't create convenience scripts for commands that are already short
+- Don't create "ai:*" scripts that just combine other commands
+- Don't create git shortcuts that bypass proper version control workflow
+- Don't create deployment scripts that should be handled by CI/CD
+
 ## Terminal and Background Command Management
 
 ### Long-Running Commands (CRITICAL)

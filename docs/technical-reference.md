@@ -91,7 +91,7 @@ CREATE TABLE purchases (
   supplierId UUID REFERENCES suppliers(supplierId) NOT NULL,
   purchaseDate DATE NOT NULL,
   effectiveDate DATE NOT NULL,
-  grandTotal NUMERIC NOT NULL,
+  total NUMERIC NOT NULL,
   shipping NUMERIC DEFAULT 0,
   taxes NUMERIC DEFAULT 0,
   otherCosts NUMERIC DEFAULT 0,
@@ -260,7 +260,7 @@ interface Purchase {
   supplierId: string;
   purchaseDate: Date;
   effectiveDate: Date;
-  grandTotal: number;
+  total: number;
   shipping: number;
   taxes: number;
   otherCosts: number;
