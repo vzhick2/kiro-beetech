@@ -4,6 +4,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+# MCP Configuration (contains secrets)
+.kiro/settings/mcp.json
+
 # Testing
 /coverage
 
