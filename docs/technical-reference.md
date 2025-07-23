@@ -48,6 +48,16 @@ Complete technical documentation for the internal BTINV inventory management sys
 - **Optional Field Strategy**: Capture data fields for future analysis (laborCost, expiryDate) without implementing complex behaviors in MVP
 - **Logic Strategy**: Store data now, add complex system behaviors in Phase 2 to protect MVP timeline
 - **Two-Mode Tracking**: Inventory management with 'fully_tracked' and 'cost_added' modes based on business impact
+- **Simple Audit Strategy**: Use existing transaction logs and item notes for tracking important changes rather than dedicated audit fields
+
+### Tracking Mode Change Mitigations
+
+Since we removed the `mode_changed_date` field for simplicity, we use these alternatives for audit trail needs:
+
+1. **Transaction Log Entries**: Mode changes can be documented in the `transactions` table with type 'adjustment' and descriptive notes
+2. **Item Notes Field**: Critical mode changes can be documented in the item's notes field with timestamp and reason
+3. **Updated_at Timestamp**: The `updated_at` field provides a general indicator of when the item was last modified
+4. **Inventory Snapshot**: The `lastInventorySnapshot` field preserves the quantity at the time of mode change for historical reference
 
 ## Database Schema
 
@@ -68,6 +78,8 @@ CREATE TABLE items (
   lastCountedDate DATE,
   primarySupplierId UUID REFERENCES suppliers(supplierId),
   leadTimeDays INTEGER DEFAULT 7,
+  trackingMode TEXT DEFAULT 'fully_tracked' CHECK (trackingMode IN ('fully_tracked', 'cost_added')),
+  lastInventorySnapshot NUMERIC,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ
 );
@@ -682,6 +694,86 @@ BEGIN
     WHERE purchase_id = finalize_draft_purchase.purchase_id;
 
     RETURN true;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### `change_item_tracking_mode(item_id UUID, new_mode TEXT, inventory_snapshot NUMERIC, reason TEXT)`
+
+**Purpose**: Change an item's tracking mode between 'fully_tracked' and 'cost_added'
+**Parameters**: 
+- `item_id` - UUID of the item to change
+- `new_mode` - Target tracking mode ('fully_tracked' or 'cost_added')  
+- `inventory_snapshot` - Current inventory count (required when switching TO fully_tracked)
+- `reason` - Optional reason for the change (for business documentation)
+**Returns**: `JSON` - Success status and change details
+**Logic**: Validates transition, updates tracking mode, preserves inventory snapshot
+
+```sql
+CREATE OR REPLACE FUNCTION change_item_tracking_mode(
+  item_id UUID, 
+  new_mode TEXT, 
+  inventory_snapshot NUMERIC DEFAULT NULL,
+  reason TEXT DEFAULT NULL
+)
+RETURNS JSON AS $$
+DECLARE
+  current_mode TEXT;
+  current_quantity NUMERIC;
+  result JSON;
+BEGIN
+  -- Get current item state
+  SELECT trackingMode, currentQuantity 
+  INTO current_mode, current_quantity
+  FROM items 
+  WHERE itemId = item_id;
+  
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Item not found: %', item_id;
+  END IF;
+  
+  -- Validate transition
+  IF current_mode = new_mode THEN
+    RAISE EXCEPTION 'Item is already in % mode', new_mode;
+  END IF;
+  
+  -- Handle transition logic
+  IF new_mode = 'fully_tracked' THEN
+    -- Switching TO fully tracked - requires inventory snapshot
+    IF inventory_snapshot IS NULL THEN
+      RAISE EXCEPTION 'Inventory snapshot required when switching to fully tracked mode';
+    END IF;
+    
+    UPDATE items 
+    SET trackingMode = new_mode,
+        currentQuantity = inventory_snapshot,
+        lastInventorySnapshot = current_quantity,
+        updated_at = NOW()
+    WHERE itemId = item_id;
+    
+  ELSIF new_mode = 'cost_added' THEN
+    -- Switching TO cost added - preserve current quantity as snapshot
+    UPDATE items 
+    SET trackingMode = new_mode,
+        lastInventorySnapshot = current_quantity,
+        updated_at = NOW()
+    WHERE itemId = item_id;
+    
+  ELSE
+    RAISE EXCEPTION 'Invalid tracking mode: %', new_mode;
+  END IF;
+  
+  -- Return success result
+  result := json_build_object(
+    'success', true,
+    'itemId', item_id,
+    'oldMode', current_mode,
+    'newMode', new_mode,
+    'snapshotTaken', inventory_snapshot,
+    'reason', reason
+  );
+  
+  RETURN result;
 END;
 $$ LANGUAGE plpgsql;
 ```
