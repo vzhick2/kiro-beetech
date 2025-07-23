@@ -92,8 +92,6 @@ pnpm dev
 
 *For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack).*
 
-*See [Developer Guide](./docs/developer-guide.md) for detailed version information and architecture.*
-
 ## 📦 Installation
 
 ### Prerequisites
@@ -102,7 +100,7 @@ pnpm dev
 - pnpm (recommended) or npm
 - Git
 
-### Installation Steps
+### Quick Start
 
 ```bash
 # Clone and install dependencies
@@ -115,15 +113,11 @@ cp .env.example .env.local
 # Add your Supabase credentials from:
 # https://supabase.com/dashboard/project/[your-project]/settings/api
 
-# Run database migrations
-pnpm supabase:migrate
-
 # Run development server
 pnpm dev
-
-# Open in browser
-# http://localhost:3000
 ```
+
+*For detailed setup instructions, environment configuration, and database migrations, see [Developer Guide](./docs/developer-guide.md#environment-setup).*
 
 ## 🔧 Development
 

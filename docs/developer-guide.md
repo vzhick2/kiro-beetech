@@ -158,7 +158,7 @@ src/
 │   └── types/             # TypeScript type definitions
 ```
 
-## 🛠️ Technology Stack
+## 🚀 Technology Stack
 
 ### Core Framework & Runtime
 
@@ -205,7 +205,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 ```
 
-*Note: For quick reference badges, see the README.md technology stack section. This comprehensive breakdown serves as the authoritative source for version management and development tooling.*
+*Note: For quick reference badges, see the README.md Technology Stack section. This comprehensive breakdown serves as the authoritative source for version management and development tooling.*
 
 ## 🔧 Environment Setup
 
