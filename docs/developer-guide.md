@@ -4,7 +4,7 @@ description: 'Complete development setup, architecture, standards, and AI guidel
 purpose: 'Unified reference for developers covering setup, technical decisions, and development philosophy'
 last_updated: 'July 22, 2025'
 doc_type: 'developer-reference'
-related: ['README.md', 'technical-reference.md', 'product-specification.md', 'tasks.md']
+related: ['README.md', 'technical-reference.md', 'product-specification.md', 'tasks.md', '.vscode/copilot-instructions.md']
 ---
 
 # Developer Guide
@@ -192,6 +192,21 @@ src/
 | **Husky**         | 9.1.6   | Git hooks                  |
 | **Lint Staged**   | 15.2.10 | Pre-commit linting         |
 
+### Environment Configuration
+
+#### Supabase Configuration
+- **Project ID**: `jjpklpivpvywagmjjwpu`
+- **Project Name**: `btinv-beetech`
+- **Region**: `us-east-2`
+
+#### Environment Variables
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
+```
+
+*Note: For quick reference badges, see the README.md technology stack section. This comprehensive breakdown serves as the authoritative source for version management and development tooling.*
+
 ## 🔧 Environment Setup
 
 ### Symbolic Links Configuration
@@ -255,9 +270,11 @@ This project uses symbolic links to eliminate duplicate configuration files:
 - **File Security**: CSV imports processed server-side with validation
 - **Future**: Any analytics must be privacy-focused, opt-in only, and avoid PII
 
-## 🤖 AI Development Guidelines
+### AI Development Guidelines
 
-### MCP Integration
+This project uses Model Context Protocol (MCP) servers for AI-driven development. For comprehensive AI development guidelines and behavioral rules, see [.vscode/copilot-instructions.md](../.vscode/copilot-instructions.md).
+
+#### MCP Integration
 
 This project uses Model Context Protocol (MCP) servers for AI-driven development:
 

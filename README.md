@@ -4,7 +4,7 @@
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.4.1-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-blue?style=flat-square&logo=typescript)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.11-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-2.52.0-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
 
@@ -89,6 +89,8 @@ pnpm dev
 - **Data**: TanStack Query, Zod validation
 - **UI Components**: Radix UI, TanStack Table
 - **Development**: ESLint, Prettier, Husky
+
+*For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack).*
 
 *See [Developer Guide](./docs/developer-guide.md) for detailed version information and architecture.*
 
