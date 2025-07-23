@@ -173,7 +173,6 @@ This project uses symbolic links to eliminate duplicate configuration files:
 
 #### Current Symlinks
 - **AI Instructions**: `.cursorrules` → `.vscode/copilot-instructions.md`
-- **MCP Configuration**: `.cursor/mcp.json` → `../mcp.json`
 
 #### Creating Symlinks (Windows)
 Run as Administrator in PowerShell:
@@ -184,11 +183,9 @@ cd "C:\BeeTech VSCODE PROJECTS\KIRO-BEETECH"
 # Create AI instructions symlink
 Remove-Item ".cursorrules" -Force -ErrorAction SilentlyContinue
 New-Item -ItemType SymbolicLink -Path ".cursorrules" -Target ".vscode\copilot-instructions.md"
-
-# Create MCP configuration symlink
-Remove-Item ".cursor\mcp.json" -Force -ErrorAction SilentlyContinue
-New-Item -ItemType SymbolicLink -Path ".cursor\mcp.json" -Target "..\mcp.json"
 ```
+
+> **Note**: MCP servers are configured globally in your development environment, not through project-specific configuration files.
 
 ### Supabase Configuration
 
@@ -229,6 +226,40 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 - Standardized error types from technical-reference.md
 - Translate technical errors into plain, actionable language in UI toasts
 
+## 🎨 Design System Reference
+
+### Colors (from globals.css)
+```css
+--app-sidebar: 220 46% 13%; /* #1e293b - Dark blue */
+--app-header: 220 46% 13%; /* Same as sidebar */
+--app-background: 210 20% 98%; /* #f8fafc - Light gray */
+--app-hover: 220 46% 16%; /* #34455a - Hover state */
+```
+
+### Typography
+- **Headers**: text-2xl font-semibold text-gray-800
+- **Body**: text-sm text-gray-900
+- **Muted**: text-gray-500, text-gray-600
+- **Navigation**: text-gray-300 with hover:text-white
+
+### Spacing
+- **Cards**: p-6 for padding
+- **Sections**: space-y-6, mb-6
+- **Buttons**: px-3 py-2 for normal, px-4 py-2 for larger
+- **Tables**: px-6 py-4 for cells
+
+### Design Guidelines
+- **Colors**: Use the BigCommerce-inspired palette
+- **Typography**: System fonts with proper hierarchy
+- **Spacing**: 4px/8px/16px/24px system
+- **Components**: Mobile-first, accessible, consistent
+
+## 🔒 Privacy & Security
+
+- **No Analytics (MVP)**: Rely on Vercel/Supabase logs for essential monitoring
+- **File Security**: CSV imports processed server-side with validation
+- **Future**: Any analytics must be privacy-focused, opt-in only, and avoid PII
+
 ## 🤖 AI Development Guidelines
 
 ### Multi-IDE AI Currency Solution
@@ -243,8 +274,10 @@ This project uses a sophisticated AI setup designed to provide current, reposito
 
 #### MCP Integration - The Currency Solution
 
-- **Supabase MCP Server**: Live database schema, real-time queries, current dependency awareness
-- **GitHub MCP Server**: Repository structure analysis, current branch context, file relationships
+- **Supabase MCP Server**: Live database schema, real-time queries, migrations, edge functions, security advisors
+- **GitHub MCP Server**: Repository operations, issues, PRs, file management, codebase search
+- **Context7 MCP Server**: Library documentation, package resolution, up-to-date API references
+- **Playwright MCP Server**: Browser automation, testing, web interaction capabilities
 - **Result**: AI always sees current tech stack (React 19, Next.js 15, etc.) rather than outdated patterns
 
 #### Why This Approach Works
@@ -253,6 +286,7 @@ This project uses a sophisticated AI setup designed to provide current, reposito
 2. **Multi-Editor Support**: Same rules work in Cursor and VS Code without conflicts
 3. **Repository Awareness**: AI reads actual `package.json`, project structure, and database schema
 4. **Current Best Practices**: Automatically suggests 2025 patterns, not legacy approaches
+5. **Comprehensive Tooling**: Browser automation, documentation lookup, and database operations all integrated
 
 #### Contextual Prompting Strategy
 
@@ -265,6 +299,12 @@ This project uses a sophisticated AI setup designed to provide current, reposito
 
 # Real-time validation
 "Use my current Supabase schema for this feature"
+
+# Documentation lookup
+"Get the latest documentation for TanStack Query v5"
+
+# Browser testing
+"Test this component in Chrome with mobile viewport"
 ```
 
 ### AI Behavioral Rules
@@ -281,6 +321,52 @@ This project uses a sophisticated AI setup designed to provide current, reposito
 - Follow product-specification.md for feature specifications
 - Use technical-reference.md for database schema (verify with Supabase MCP when uncertain)
 - Reference this developer guide for architecture decisions
+
+#### MCP Usage Guidelines
+
+**Supabase MCP** - Database Operations
+```bash
+# Database exploration
+"Check my current database schema for items table"
+"Generate TypeScript types for my Supabase tables"
+"Apply this migration to add a new column"
+"Run security advisors on my database"
+
+# Query testing
+"Test this SQL query on my database"
+"Check performance of this query"
+```
+
+**GitHub MCP** - Repository Management
+```bash
+# Code search and analysis
+"Search for similar implementations of user authentication"
+"Find all files that import the Items component"
+"Create a PR for this feature branch"
+"Review the changes in the last commit"
+
+# Issue management
+"Create an issue for the navigation bug"
+"List all open issues with 'bug' label"
+```
+
+**Context7 MCP** - Documentation Lookup
+```bash
+# Library documentation
+"Get the latest Next.js 15 documentation for Server Actions"
+"Show me TanStack Query v5 mutation patterns"
+"Find React 19 best practices for useActionState"
+"Get Tailwind CSS 4.x documentation for container queries"
+```
+
+**Playwright MCP** - Browser Testing
+```bash
+# UI testing
+"Test the login form in Chrome"
+"Take a screenshot of the dashboard on mobile"
+"Automate clicking through the purchase workflow"
+"Check accessibility of the items table"
+```
 
 #### Iteration Mindset
 - Propose evolutions aligned with tasks.md workflows
@@ -557,7 +643,65 @@ pnpm ai:type-check        # Fast type-check only
 # Git Sync (Post-MCP)
 pnpm sync:after-mcp       # Automated stash/pull/pop after MCP operations
 pnpm sync:force           # Quick pull when no local changes
+
+# Version Control & Releases
+# Create version tags for releases
+git tag -a v1.0.0 -m "Initial production release"
+git tag -a v1.1.0 -m "Enhanced documentation and development workflow"
+git push origin --tags
+
+# View version history
+git tag -l --sort=-version:refname
+
+# Production Analysis
+pnpm build:analyze         # Bundle size analysis
 ```
+
+## 🚀 Deployment & Production
+
+### Vercel Auto-Deployment
+
+The project uses Vercel for automatic deployments:
+
+```bash
+# Standard deployment workflow
+git add .
+git commit -m "descriptive message"
+git push origin main
+# Vercel automatically deploys and provides preview URL
+```
+
+### Pre-Deployment Checklist
+
+Before pushing to production:
+
+- ✅ **Code Quality**: `pnpm ai:validate` passes
+- ✅ **Build Success**: `pnpm build` completes without errors
+- ✅ **Environment Variables**: Configured in Vercel dashboard
+- ✅ **Database**: Connections tested via Supabase MCP
+- ✅ **Bundle Size**: Analyzed with `pnpm build:analyze`
+
+### Environment Variables (Vercel Dashboard)
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
+```
+
+### Post-Deployment Verification
+
+- **Functional**: Homepage, navigation, forms, API endpoints
+- **Performance**: Core Web Vitals, mobile responsiveness
+- **Monitoring**: Vercel analytics, Supabase logs
+
+### Rollback Strategy
+
+If deployment issues occur:
+
+1. **Vercel Dashboard**: One-click rollback to previous deployment
+2. **Git Revert**: Use standard Git workflows for code rollbacks
+3. **Database**: Supabase handles data persistence independently
+4. **Quick Fix**: Test locally with `pnpm build && pnpm start`
 
 ## 🐛 Troubleshooting
 
@@ -567,21 +711,25 @@ pnpm sync:force           # Quick pull when no local changes
 - Check TypeScript errors: `pnpm type-check`
 - Verify all imports are correct
 - Ensure environment variables are available
+- Run bundle analysis: `pnpm build:analyze`
 
 #### Runtime Errors
 - Check Supabase function logs
 - Verify API endpoints are accessible
 - Confirm database connections
+- Check Vercel function logs for deployment issues
 
 #### Performance Issues
 - Run bundle analysis: `pnpm build:analyze`
-- Optimize images and assets
+- Optimize images and assets (use Next.js Image component)
 - Review code splitting strategy
+- Monitor Core Web Vitals in Vercel dashboard
 
 #### Development Environment
 - Clear Next.js cache: `rm -rf .next`
 - Reinstall dependencies: `rm -rf node_modules && pnpm install`
 - Check Node.js version compatibility
+- Verify environment variables in `.env.local`
 
 ### Database Troubleshooting
 
@@ -589,6 +737,12 @@ pnpm sync:force           # Quick pull when no local changes
 ```bash
 # Test Supabase connection
 pnpm supabase:types
+
+# Re-link to remote project
+npx supabase link --project-ref jjpklpivpvywagmjjwpu
+
+# Force pull latest schema
+npx supabase db pull --force
 ```
 
 #### Schema Changes
@@ -605,6 +759,34 @@ pnpm supabase db push
 # Force regenerate types
 pnpm supabase:types --force
 ```
+
+#### Performance Issues
+```bash
+# Run bundle analysis
+pnpm build:analyze
+
+# Check for console errors
+pnpm dev
+# Open browser dev tools
+
+# Optimize images and assets
+# Review code splitting strategy
+```
+
+### Production Troubleshooting
+
+#### Deployment Failures
+1. Check Vercel dashboard for error details
+2. Review deployment logs in Vercel
+3. Test locally with `pnpm build && pnpm start`
+4. Verify environment variables are set in Vercel
+5. Check for TypeScript or build errors
+
+#### Post-Deployment Issues
+1. **Performance**: Use Vercel analytics and Core Web Vitals
+2. **Errors**: Check Vercel function logs and Supabase logs
+3. **Database**: Use Supabase dashboard for query performance
+4. **Rollback**: Use Vercel dashboard for one-click rollback
 
 ---
 

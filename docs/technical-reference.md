@@ -4,7 +4,7 @@ description: 'Complete database schema, APIs, and technical architecture for int
 purpose: 'Unified technical reference combining data model and API documentation'
 last_updated: 'July 22, 2025'
 doc_type: 'technical-reference'
-related: ['README.md', 'development.md', 'technical-design.md']
+related: ['README.md', 'developer-guide.md', 'product-specification.md', 'tasks.md']
 ---
 
 # Technical Reference
@@ -1147,4 +1147,4 @@ export async function processQBOImport(formData: FormData) {
 
 ---
 
-This technical reference provides complete documentation for the database schema, API endpoints, business logic functions, and architectural patterns used in the BTINV inventory management system. For implementation details and setup instructions, see [development.md](./development.md).
+This technical reference provides complete documentation for the database schema, API endpoints, business logic functions, and architectural patterns used in the BTINV inventory management system. For implementation details and setup instructions, see [developer-guide.md](./developer-guide.md).

@@ -79,48 +79,27 @@ pnpm dev
 
 ### Google Sheets Alternative
 
-For teams preferring spreadsheet workflows, see:
-- **[Google Sheets Alternative](./docs/google-sheets-alternative.md)** - Complete implementation with Apps Script
+For teams preferring spreadsheet workflows, see the archived implementation in:
+- **`docs/.archive/google-sheets-alternative.md`** - Complete spreadsheet implementation with Apps Script
 
 ## Documentation
 
 ### Core Documentation
 
-- **[Development Guide](./docs/development.md)** - Setup, standards, and troubleshooting
+- **[Developer Guide](./docs/developer-guide.md)** - Setup, architecture, standards, and AI guidelines
+- **[Product Specification](./docs/product-specification.md)** - Business requirements and UI design
 - **[Technical Reference](./docs/technical-reference.md)** - Database schema, APIs, and architecture
-- **[Requirements](./docs/requirements.md)** - Functional and business requirements
-- **[Technical Design](./docs/technical-design.md)** - Architecture and implementation details
-
-### Additional Resources
-
-- **[UI Blueprint](./docs/ui-blueprint.md)** - User interface design and workflows
-- **[Deployment Guide](./docs/deployment.md)** - Production deployment instructions
 - **[Tasks](./docs/tasks.md)** - Development tasks and roadmap
 
 ## 🚀 Technology Stack
 
-### **Frontend**
+- **Frontend**: Next.js 15.4.1, React 19.1.0, TypeScript 5.8.3, Tailwind CSS 4.1.11
+- **Backend**: Supabase, PostgreSQL, Server Actions
+- **Data**: TanStack Query, Zod validation
+- **UI Components**: Radix UI, TanStack Table
+- **Development**: ESLint, Prettier, Husky
 
-- **Next.js 15.4.1** with App Router and Turbopack
-- **React 19.1.0** with Server Components
-- **TypeScript 5.8.3** for type safety
-- **Tailwind CSS 4.1.11** for styling
-- **Radix UI** for accessible components
-- **TanStack Table** for data tables
-
-### **Backend & Database**
-
-- **Supabase** for database and authentication
-- **Enhanced Server Actions** for smart allocation and business logic
-- **PostgreSQL** with advanced stored procedures for cost calculations
-- **TanStack Query** for optimistic updates and caching
-
-### **Business Logic**
-
-- **Allocation Engine** for proportional cost distribution
-- **Two-Mode Tracking System** with fully tracked and cost-added modes
-- **WAC Calculation** with inventory awareness
-- **Statement-Based Import** with automated supplier matching
+*See [Developer Guide](./docs/developer-guide.md) for detailed version information and architecture.*
 
 ## 📦 Installation
 
@@ -155,62 +134,36 @@ pnpm dev
 
 ### Google Sheets Alternative
 
-For teams preferring spreadsheet workflows, see:
-- **[Google Sheets Alternative](./docs/google-sheets-alternative.md)** - Complete implementation with Apps Script
+For teams preferring spreadsheet workflows, see the archived implementation in:
+- **`docs/.archive/google-sheets-alternative.md`** - Complete spreadsheet implementation with Apps Script
 
 ## 🔧 Development
 
 ### Commands
 
 ```bash
-# Development
+# Essential commands
 pnpm dev                    # Start development server
 pnpm build                  # Build for production
-pnpm start                  # Start production server
-
-# Code Quality
 pnpm lint                   # Run ESLint
-pnpm lint:fix              # Fix ESLint errors
 pnpm type-check            # Run TypeScript checks
-pnpm format                # Format with Prettier
-
-# Database
 pnpm supabase:types        # Generate TypeScript types
-pnpm supabase:migrate      # Run migrations
-pnpm supabase:reset        # Reset database
-
-# AI Development (Optimized)
-pnpm ai:validate           # Fast validation (type-check, lint, format)
-pnpm ai:validate:full      # Full type-check for production
-pnpm ai:fix               # Auto-fix common issues
-pnpm ai:type-check        # Fast type-check only
-
-# Git Sync (Post-MCP)
-pnpm sync:after-mcp       # Automated stash/pull/pop after MCP operations
-pnpm sync:force           # Quick pull when no local changes
 ```
+
+*See [Developer Guide](./docs/developer-guide.md) for complete command reference.*
 
 ### Project Structure
 
 ```
 src/
 ├── app/                   # Next.js 15 App Router
-│   ├── actions/          # Server Actions
-│   ├── api/              # API routes
-│   └── [pages]/          # Application pages
-├── components/           # React components
-│   ├── dashboard/        # Dashboard components
-│   ├── items/           # Items management
-│   ├── layout/          # Layout components
-│   ├── purchases/       # Purchase management
-│   └── ui/              # Base UI components
+├── components/           # React components  
 ├── hooks/               # Custom React hooks
 ├── lib/                 # Utilities and configurations
-│   ├── supabase/        # Supabase client
-│   ├── utils/           # Business logic utilities
-│   └── validations/     # Zod schemas
 └── types/               # TypeScript definitions
 ```
+
+*See [Developer Guide](./docs/developer-guide.md) for detailed project structure and [Technical Reference](./docs/technical-reference.md) for database schema.*
 
 ## 📚 Documentation
 
@@ -223,8 +176,7 @@ src/
 
 ### Additional Resources
 
-- **[Deployment Guide](./docs/deployment.md)** - Production deployment instructions
-- **[Google Sheets Alternative](./docs/google-sheets-alternative.md)** - Complete spreadsheet implementation
+- **Archived Google Sheets Implementation** - See `docs/.archive/google-sheets-alternative.md`
 
 ## 📊 Progress Tracking
 
@@ -237,6 +189,7 @@ This app follows a **business-focused design** that prioritizes practical invent
 - ✅ Tailwind CSS 4.1.11 design system
 - ✅ Mobile-first responsive layout
 - ✅ Authentication and security setup
+- ✅ **4-file documentation structure** established
 
 ### **Phase 2: Core Database** ✅ **100% Complete**
 

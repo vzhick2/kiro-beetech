@@ -188,6 +188,35 @@ Always check against docs for alignment before making changes:
 - `src/types/` - TypeScript definitions
 - `docs/` - Project documentation (consolidated into 4 core files)
 
+## Deployment
+
+### Vercel Auto-Deployment
+- **Primary**: Push to `main` branch triggers automatic deployment
+- **Preview**: Feature branches create preview deployments
+- **Environment**: Variables configured once in Vercel dashboard
+- **Build Command**: `pnpm build` (standard Next.js)
+- **Zero-Config**: Vercel handles optimization, caching, and scaling
+
+### Pre-Deployment Validation
+- **Git Hooks**: Pre-commit hooks ensure code quality
+- **TypeScript**: Strict type checking prevents runtime errors
+- **Build Verification**: Local `pnpm build` before pushing
+- **Environment**: Verify `.env.local` variables match Vercel config
+
+### Deployment Process
+```bash
+# Standard deployment workflow
+git add .
+git commit -m "descriptive message"
+git push origin main
+# Vercel automatically deploys and provides preview URL
+```
+
+### Rollback Strategy
+- **Vercel Dashboard**: One-click rollback to previous deployment
+- **Git Revert**: Standard Git workflows for code rollbacks
+- **Database**: Supabase handles data persistence independently
+
 ## Documentation Structure (Consolidated 2025)
 
 The project uses a streamlined documentation approach with 4 core files:
@@ -200,6 +229,8 @@ The project uses a streamlined documentation approach with 4 core files:
   - Coding standards and best practices
   - AI behavioral guidelines and MCP integration
   - Dependency management and build processes
+  - Design system reference and privacy guidelines
+  - Deployment procedures and troubleshooting
 
 - **`docs/product-specification.md`** - Business requirements and design combining:
   - Business objectives and functional requirements
@@ -256,15 +287,29 @@ The project uses a streamlined documentation approach with 4 core files:
 **Supabase MCP** (`jjpklpivpvywagmjjwpu`):
 - Database operations, migrations, security checks
 - Real-time debugging and schema analysis
+- Edge function deployment and management
 
-**GitHub MCP** (`vzhick2/btinv-beetech`):
-- Fast commits, repository operations
-- Codebase search and project management
+**GitHub MCP** (`vzhick2/kiro-beetech`):
+- Repository operations, issue management
+- Fast commits, codebase search and analysis
+- Pull request and branch management
+
+**Context7 MCP**:
+- Library documentation lookup and resolution
+- Up-to-date API references and best practices
+- Package compatibility checking
+
+**Playwright MCP**:
+- Browser automation and UI testing
+- Screenshot capture and accessibility testing
+- Web interaction simulation
 
 ### Usage Patterns
 - **Database-First Development**: Use Supabase MCP to explore schema and validate logic
 - **Rapid Implementation**: GitHub MCP for fast commits and codebase search
-- **Context-Aware Development**: Both MCPs for comprehensive analysis
+- **Documentation-Driven**: Context7 MCP for current library patterns and best practices
+- **UI Testing**: Playwright MCP for automated browser testing and accessibility validation
+- **Context-Aware Development**: All MCPs for comprehensive analysis
 - Use MCPs when standard tools aren't sufficient for complex operations
 
 ## Dependency Management Rules (CRITICAL)

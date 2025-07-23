@@ -1,2 +1,1 @@
 placeholder
-Look through my app and documentation with github mcp. what do you think, could 90% of what i want to achieve be done with just one or two google sheets workbooks? Could I remove one or two overly complicated systems and have a much easier to maintain system than a next.js web app?
