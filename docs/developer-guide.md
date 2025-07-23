@@ -164,33 +164,33 @@ src/
 
 | Package           | Version | Status        | Notes                               |
 | ----------------- | ------- | ------------- | ----------------------------------- |
-| **Next.js**       | 15.4.1  | ✅ **Latest** | Upgraded from 14.2.x with Turbopack |
-| **React**         | 19.1.0  | ✅ **Latest** | Upgraded from 18.3.x                |
-| **TypeScript**    | 5.5.4   | ✅ **Latest** | Upgraded from 5.4.x                 |
+| **Next.js**       | 15.4.1  | ✅ **Current** | Upgraded from 14.2.x with Turbopack |
+| **React**         | 19.1.0  | ✅ **Current** | Upgraded from 18.3.x                |
+| **TypeScript**    | 5.5.4   | ✅ **Current** | Upgraded from 5.4.x                 |
 
 ### UI & Styling
 
 | Package              | Version | Status        | Notes                               |
 | -------------------- | ------- | ------------- | ----------------------------------- |
-| **Tailwind CSS**     | 4.1.11  | ✅ **Latest** | Upgraded to 4.x for latest features |
-| **Radix UI**         | Latest  | ✅ **Latest** | Headless accessible components       |
-| **Lucide React**     | 0.525.0 | ✅ **Latest** | Icon library                        |
+| **Tailwind CSS**     | 4.1.11  | ✅ **Current** | Upgraded to 4.x for latest features |
+| **Radix UI**         | Latest  | ✅ **Current** | Headless accessible components       |
+| **Lucide React**     | 0.525.0 | ✅ **Current** | Icon library                        |
 
 ### Data Management
 
 | Package            | Version | Status        | Notes                               |
 | ------------------ | ------- | ------------- | ----------------------------------- |
-| **Supabase JS**    | 2.52.0  | ✅ **Latest** | Backend and database                |
-| **TanStack Query** | 5.83.0  | ✅ **Latest** | Server state management             |
+| **Supabase JS**    | 2.52.0  | ✅ **Current** | Backend and database                |
+| **TanStack Query** | 5.83.0  | ✅ **Current** | Server state management             |
 
 ### Development Tools
 
 | Package           | Version | Purpose                    |
 | ----------------- | ------- | -------------------------- |
-| **ESLint**        | Latest  | Code linting               |
-| **Prettier**      | Latest  | Code formatting            |
-| **Husky**         | Latest  | Git hooks                  |
-| **Lint Staged**   | Latest  | Pre-commit linting         |
+| **ESLint**        | 8.57.1  | Code linting               |
+| **Prettier**      | 3.0.0   | Code formatting            |
+| **Husky**         | 9.1.6   | Git hooks                  |
+| **Lint Staged**   | 15.2.10 | Pre-commit linting         |
 
 ## 🔧 Environment Setup
 
@@ -200,19 +200,6 @@ This project uses symbolic links to eliminate duplicate configuration files:
 
 #### Current Symlinks
 - **AI Instructions**: `.cursorrules` → `.vscode/copilot-instructions.md`
-
-#### Creating Symlinks (Windows)
-Run as Administrator in PowerShell:
-```powershell
-# Navigate to project root
-cd "C:\BeeTech VSCODE PROJECTS\KIRO-BEETECH"
-
-# Create AI instructions symlink
-Remove-Item ".cursorrules" -Force -ErrorAction SilentlyContinue
-New-Item -ItemType SymbolicLink -Path ".cursorrules" -Target ".vscode\copilot-instructions.md"
-```
-
-> **Note**: MCP servers are configured globally in your development environment, not through project-specific configuration files.
 
 ## 📝 Coding Standards
 
@@ -279,12 +266,6 @@ This project uses Model Context Protocol (MCP) servers for AI-driven development
 - **Context7 MCP**: Up-to-date library documentation and API references
 - **Playwright MCP**: Browser automation and UI testing
 
-### AI Configuration
-
-- **Primary**: `.cursorrules` - Main AI behavior rules (symlinked to `.vscode/copilot-instructions.md`)
-- **Multi-Editor Support**: Works in both Cursor and VS Code
-- **Real-time Context**: MCP provides live project data vs. static instruction files
-
 ### AI Development Workflow
 
 1. **Check Current State**: Use MCP to understand database schema and project structure
@@ -295,29 +276,6 @@ This project uses Model Context Protocol (MCP) servers for AI-driven development
 "Find all files that import the Items component"
 "Create a PR for this feature branch"
 "Review the changes in the last commit"
-
-# Issue management
-"Create an issue for the navigation bug"
-"List all open issues with 'bug' label"
-```
-
-**Context7 MCP** - Documentation Lookup
-```bash
-# Library documentation
-"Get the latest Next.js 15 documentation for Server Actions"
-"Show me TanStack Query v5 mutation patterns"
-"Find React 19 best practices for useActionState"
-"Get Tailwind CSS 4.x documentation for container queries"
-```
-
-**Playwright MCP** - Browser Testing
-```bash
-# UI testing
-"Test the login form in Chrome"
-"Take a screenshot of the dashboard on mobile"
-"Automate clicking through the purchase workflow"
-"Check accessibility of the items table"
-```
 
 #### Iteration Mindset
 - Propose evolutions aligned with tasks.md workflows
@@ -355,19 +313,6 @@ Before finalizing any output for this inventory project:
 - **Lockfile Integrity**: Never manually edit package.json dependencies
 - **Clean Removal**: Remove unused dependencies when features are removed
 - **Version Alignment**: Keep related packages in sync (React, @types/react, etc.)
-
-### Deployment Validation
-- **Vercel Compatibility**: Test with `--frozen-lockfile` flag locally
-- **Build Verification**: Run `pnpm build` before pushing
-- **Type Safety**: Ensure TypeScript strict mode compliance
-
-## 🛠️ Troubleshooting
-      return <SupplyCheckButton item={item} />;
-    default:
-      return null;
-  }
-}
-```
 
 ### WAC Calculation
 
@@ -625,22 +570,5 @@ pnpm dev
 # Optimize images and assets
 # Review code splitting strategy
 ```
-
-### Production Troubleshooting
-
-#### Deployment Failures
-1. Check Vercel dashboard for error details
-2. Review deployment logs in Vercel
-3. Test locally with `pnpm build && pnpm start`
-4. Verify environment variables are set in Vercel
-5. Check for TypeScript or build errors
-
-#### Post-Deployment Issues
-1. **Performance**: Use Vercel analytics and Core Web Vitals
-2. **Errors**: Check Vercel function logs and Supabase logs
-3. **Database**: Use Supabase dashboard for query performance
-4. **Rollback**: Use Vercel dashboard for one-click rollback
-
----
 
 This developer guide provides comprehensive coverage of setup, architecture, standards, and AI-driven development practices. For database schema details, see [technical-reference.md](./technical-reference.md). For business requirements, see [product-specification.md](./product-specification.md).
