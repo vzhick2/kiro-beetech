@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { InteractiveHeader } from './interactive-header';
 import { ResponsiveSidebar } from './responsive-sidebar';
 
@@ -71,49 +71,33 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
     }
   };
 
-  // Prevent hydration mismatch - c32a068 pattern
-  if (!isInitialized) {
-    return (
-      <div className="app-container">
-        <InteractiveHeader
-          onMobileMenuToggle={toggleSidebar}
-          isMobileMenuOpen={false}
-        />
-        <div className="main-layout pt-16 flex">
-          {/* Responsive Sidebar - Always rendered but controlled by visibility */}
-          <ResponsiveSidebar
-            isOpen={false}
-            onClose={closeSidebar}
-            isDesktop={false}
-          />
-          <div className="content-area flex-1 transition-all duration-200 ease-out">
-            <main className="p-6">{children}</main>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Memoize the children to prevent unnecessary re-renders
+  const memoizedChildren = useMemo(() => children, [children]);
+
+  // Use consistent layout structure to prevent remounting
+  const effectiveSidebarOpen = isInitialized ? isSidebarOpen : false;
+  const effectiveDesktop = isInitialized ? isDesktop : false;
 
   return (
     <div className="app-container">
       {/* Header - Fixed positioning handled by InteractiveHeader itself */}
       <InteractiveHeader
         onMobileMenuToggle={toggleSidebar}
-        isMobileMenuOpen={isSidebarOpen}
+        isMobileMenuOpen={effectiveSidebarOpen}
       />
 
       {/* Main Layout - Below header with proper spacing - c32a068 pattern */}
       <div className="main-layout pt-16 flex">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar
-          isOpen={isSidebarOpen}
+          isOpen={effectiveSidebarOpen}
           onClose={closeSidebar}
-          isDesktop={isDesktop}
+          isDesktop={effectiveDesktop}
         />
 
         {/* Content Area - c32a068 pattern: Always starts from left, gets pushed when sidebar opens */}
         <div className="content-area flex-1 transition-all duration-200 ease-out">
-          <main className="p-4 sm:p-6">{children}</main>
+          <main className="p-4 sm:p-6">{memoizedChildren}</main>
         </div>
       </div>
     </div>
