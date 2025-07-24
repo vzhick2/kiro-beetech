@@ -7,9 +7,8 @@
 **Tech Stack**: Next.js 15 + React 19 + TypeScript + Tailwind + Supabase
 
 ### 🎯 **Workshop Reality**
-- Support negative inventory (real operational constraints)
-- Allow back-dating transactions (operational corrections)
-- Prioritize quick data entry over perfect validation
+- Support negative inventory if possible
+- Consider allowing back-dating transactions (operational corrections)
 - Mobile-first workshop/field operations
 - Forgiving validation patterns for efficiency
 
@@ -17,7 +16,6 @@
 - Touch-friendly interfaces (44px+ targets)
 - Progressive enhancement (works without JavaScript)
 - Contextual help for workshop operations
-- Offline resilience for field work
 - Batch operations for productivity
 
 ## AI Behavioral Framework
@@ -25,7 +23,7 @@
 ### 🤖 **Autonomy Rules**
 - **✅ Act Independently**: Bug fixes, performance optimization, UI polish, code quality, documentation updates, TypeScript fixes
 - **🔐 Ask Permission**: New features, schema changes, business logic modifications, dependency updates, architectural decisions
-- **🔐 Ask Permission**: No need to give me code here in chat, because I do not understand it. Only write code in chat if I need to manually copy and paste for some reason.
+- **No Need for Code in Chat**: No need to give me code here in chat, because I do not understand it. Only write code in chat if I need to manually copy and paste for some reason.
 
 ### 🎯 **Auto-Detection Modes**
 - **ANALYZE** (questions/debugging) → Investigate, recommend solutions
