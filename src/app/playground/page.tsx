@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'neon' | 'minimal' | 'corporate';
+  variant: 'original' | 'glassmorphism' | 'minimal' | 'corporate' | 'gradient' | 'outline';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -34,13 +34,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
-    neon: {
-      container: "bg-black border-2 border-cyan-400 text-cyan-400 rounded-lg shadow-cyan-400/50 shadow-lg",
-      button: "hover:bg-cyan-400/20 rounded border border-cyan-400/50 px-3 py-2",
-      deleteButton: "bg-red-500 border-red-400 text-red-100 hover:bg-red-600",
-      minimal: "px-3 py-2",
-      expanded: "px-4 py-2"
-    },
     minimal: {
       container: "bg-gray-800 text-gray-100 rounded-md border border-gray-600",
       button: "hover:bg-gray-700 px-3 py-1.5 text-sm",
@@ -54,6 +47,20 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       deleteButton: "bg-red-600 hover:bg-red-700",
       minimal: "px-3 py-2.5",
       expanded: "px-4 py-2.5"
+    },
+    gradient: {
+      container: "bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl shadow-lg",
+      button: "hover:bg-white/20 rounded-xl px-3 py-2 transition-all",
+      deleteButton: "bg-red-500 hover:bg-red-600 text-white",
+      minimal: "px-3 py-2.5",
+      expanded: "px-4 py-2.5"
+    },
+    outline: {
+      container: "bg-white border-2 border-gray-300 text-gray-800 rounded-lg shadow-md",
+      button: "hover:bg-gray-50 border border-gray-200 rounded px-3 py-2",
+      deleteButton: "bg-red-50 border-red-300 text-red-700 hover:bg-red-100",
+      minimal: "px-2 py-2",
+      expanded: "px-3 py-2"
     }
   };
 
@@ -122,9 +129,10 @@ export default function PlaygroundPage() {
   const variants = [
     { key: 'original', name: 'Original Blue', description: 'Current design with blue theme' },
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
-    { key: 'neon', name: 'Neon Cyber', description: 'Cyberpunk-inspired neon borders' },
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
-    { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' }
+    { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
+    { key: 'gradient', name: 'Gradient Modern', description: 'Colorful gradient with rounded design' },
+    { key: 'outline', name: 'Outline Style', description: 'Clean borders with subtle backgrounds' }
   ] as const;
 
   const states = [
@@ -189,13 +197,29 @@ export default function PlaygroundPage() {
               </div>
               
               <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 h-64 overflow-hidden">
-                {/* Background pattern to simulate page content */}
-                <div className="absolute inset-0 opacity-20">
-                  <div className="grid grid-cols-12 gap-4 p-6">
-                    {Array.from({ length: 24 }).map((_, i) => (
-                      <div key={i} className="h-6 bg-gray-400 rounded"></div>
-                    ))}
+                {/* Simulated table content with headers and data rows */}
+                <div className="absolute inset-0 p-4">
+                  {/* Table header */}
+                  <div className="grid grid-cols-5 gap-4 mb-2 text-xs font-semibold text-gray-600">
+                    <div className="bg-gray-300 h-6 rounded flex items-center px-2">Supplier Name</div>
+                    <div className="bg-gray-300 h-6 rounded flex items-center px-2">Contact</div>
+                    <div className="bg-gray-300 h-6 rounded flex items-center px-2">Location</div>
+                    <div className="bg-gray-300 h-6 rounded flex items-center px-2">Items</div>
+                    <div className="bg-gray-300 h-6 rounded flex items-center px-2">Status</div>
                   </div>
+                  
+                  {/* Table rows */}
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="grid grid-cols-5 gap-4 mb-2 text-xs">
+                      <div className="bg-white h-6 rounded opacity-60 flex items-center px-2">
+                        {['Acme Corp', 'Fresh Supplies', 'Global Foods', 'Local Farm', 'Premium Goods', 'Quick Supply', 'Bulk Mart', 'Specialty Co'][i]}
+                      </div>
+                      <div className="bg-white h-6 rounded opacity-40"></div>
+                      <div className="bg-white h-6 rounded opacity-50"></div>
+                      <div className="bg-white h-6 rounded opacity-30"></div>
+                      <div className="bg-green-200 h-6 rounded opacity-70 flex items-center px-2">Active</div>
+                    </div>
+                  ))}
                 </div>
                 
                 {/* Floating Controls */}
