@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'modern-flat' | 'gradient-subtle' | 'monochrome' | 'warm-accent';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'monochrome' | 'ai-assistant' | 'neumorphism' | 'glass-elevated' | 'micro-interactions' | 'spatial-depth';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -62,20 +62,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'modern-flat': {
-      container: "bg-gray-900 text-white rounded-lg border-l-4 border-blue-400",
-      button: "hover:bg-gray-800 px-4 py-2 font-medium",
-      deleteButton: "bg-red-600 hover:bg-red-700",
-      minimal: "px-4 py-2.5",
-      expanded: "px-5 py-2.5"
-    },
-    'gradient-subtle': {
-      container: "bg-gradient-to-r from-blue-50 to-indigo-50 text-gray-800 rounded-xl border border-blue-200 shadow-sm",
-      button: "hover:bg-blue-100/50 rounded-lg px-4 py-2 font-medium",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
     'monochrome': {
       container: "bg-gray-100 text-gray-900 rounded border border-gray-300 shadow-sm",
       button: "hover:bg-gray-200 px-3 py-2 font-medium border border-gray-300 rounded",
@@ -83,12 +69,40 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-2",
       expanded: "px-4 py-2"
     },
-    'warm-accent': {
-      container: "bg-orange-50 text-orange-900 rounded-lg border border-orange-200 shadow-md",
-      button: "hover:bg-orange-100 rounded-md px-4 py-2 font-medium",
-      deleteButton: "bg-red-100 hover:bg-red-200 text-red-700",
-      minimal: "px-4 py-2.5",
-      expanded: "px-5 py-2.5"
+    'ai-assistant': {
+      container: "bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl shadow-lg ring-1 ring-purple-300/20",
+      button: "hover:bg-white/20 rounded-lg px-4 py-2 font-medium backdrop-blur-sm border border-white/30",
+      deleteButton: "bg-pink-500 hover:bg-pink-600 text-white",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'neumorphism': {
+      container: "bg-gray-200 text-gray-800 rounded-2xl shadow-[inset_2px_2px_5px_#babecc,inset_-2px_-2px_5px_#ffffff]",
+      button: "hover:shadow-[2px_2px_5px_#babecc,-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 font-medium transition-all duration-200",
+      deleteButton: "bg-red-200 hover:bg-red-300 text-red-800 shadow-[inset_1px_1px_3px_#babecc]",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'glass-elevated': {
+      container: "bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl shadow-2xl ring-1 ring-black/5",
+      button: "hover:bg-white/20 rounded-xl px-4 py-2 font-medium border border-white/30 backdrop-blur-sm",
+      deleteButton: "bg-red-500/80 hover:bg-red-500 text-white border border-red-300/30",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'micro-interactions': {
+      container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
+      button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:scale-105",
+      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 hover:scale-105 transition-transform",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'spatial-depth': {
+      container: "bg-slate-800 text-white rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-slate-700/50 transform hover:translate-y-[-2px] transition-transform duration-200",
+      button: "hover:bg-slate-700 rounded-lg px-4 py-2 font-medium border border-slate-600/50 hover:border-slate-500 transition-all",
+      deleteButton: "bg-red-600 hover:bg-red-500 text-white hover:shadow-lg",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
     }
   };
 
@@ -99,15 +113,15 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   // Get variant-specific icons and content
   const getVariantContent = () => {
     switch (variant) {
-      case 'soft-rounded':
+      case 'ai-assistant':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'modern-flat':
+      case 'neumorphism':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'gradient-subtle':
+      case 'glass-elevated':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'monochrome':
+      case 'micro-interactions':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'warm-accent':
+      case 'spatial-depth':
         return { icon: Edit, text: 'Edit All Rows' };
       default:
         return { icon: Edit, text: 'Edit All Rows' };
@@ -181,10 +195,12 @@ export default function PlaygroundPage() {
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
     { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
-    { key: 'modern-flat', name: 'Modern Flat', description: 'Dark flat design with accent border' },
-    { key: 'gradient-subtle', name: 'Gradient Subtle', description: 'Light gradient background with soft colors' },
     { key: 'monochrome', name: 'Monochrome', description: 'Simple grayscale design' },
-    { key: 'warm-accent', name: 'Warm Accent', description: 'Orange-toned warm and inviting design' }
+    { key: 'ai-assistant', name: 'AI Assistant', description: '2025 trend: AI-powered interface with violet gradients' },
+    { key: 'neumorphism', name: 'Neumorphism', description: '2025 trend: Soft inset/outset shadow effects' },
+    { key: 'glass-elevated', name: 'Glass Elevated', description: '2025 trend: Enhanced glass with elevated depth' },
+    { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
+    { key: 'spatial-depth', name: 'Spatial Depth', description: '2025 trend: 3D-inspired layering and shadows' }
   ] as const;
 
   const states = [
