@@ -39,9 +39,12 @@ export const BatchActionsBar = ({
   }
 
   return (
-    <div className="fixed bottom-6 left-[5%] right-[5%] z-50 bg-blue-600 rounded-full shadow-lg px-4 py-3 flex items-center justify-center gap-3 transition-all duration-300 hover:shadow-xl max-w-md mx-auto">
+    <div
+      className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 rounded-full shadow-lg px-4 py-3 flex items-center justify-center gap-4 transition-all duration-300 hover:shadow-xl w-[90vw] max-w-md"
+      style={{ minWidth: '320px', maxWidth: '90vw' }}
+    >
       {/* Selected count - compact display */}
-      <div className="bg-blue-500 rounded-full px-3 py-1 text-white font-medium text-sm min-w-[2rem] text-center">
+  <div className="bg-blue-500 rounded-full px-3 py-1 text-white font-medium text-base min-w-[2.5rem] text-center">
         {selectedCount}
       </div>
 
@@ -51,10 +54,10 @@ export const BatchActionsBar = ({
         variant="ghost"
         onClick={onBulkExport}
         disabled={loading}
-        className="h-8 w-8 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
+        className="h-10 w-10 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
         title="Export selected"
       >
-        <Download className="h-4 w-4" />
+        <Download className="h-5 w-5" />
       </Button>
 
       {hasInactiveSelected ? (
@@ -63,10 +66,10 @@ export const BatchActionsBar = ({
           variant="ghost"
           onClick={onBulkUnarchive}
           disabled={loading}
-          className="h-8 w-8 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
+          className="h-10 w-10 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
           title="Restore selected"
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw className="h-5 w-5" />
         </Button>
       ) : (
         <Button
@@ -74,10 +77,10 @@ export const BatchActionsBar = ({
           variant="ghost"
           onClick={onBulkArchive}
           disabled={loading}
-          className="h-8 w-8 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
+          className="h-10 w-10 p-0 text-white hover:bg-blue-500 rounded-full touch-feedback"
           title="Archive selected"
         >
-          <Archive className="h-4 w-4" />
+          <Archive className="h-5 w-5" />
         </Button>
       )}
 
@@ -86,10 +89,10 @@ export const BatchActionsBar = ({
         variant="ghost"
         onClick={onBulkDelete}
         disabled={loading}
-        className="h-8 w-8 p-0 text-white hover:bg-red-500 rounded-full touch-feedback"
+        className="h-10 w-10 p-0 text-white hover:bg-red-500 rounded-full touch-feedback"
         title="Delete selected"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-5 w-5" />
       </Button>
 
       {/* Clear selection */}
@@ -99,10 +102,10 @@ export const BatchActionsBar = ({
           variant="ghost"
           onClick={onClearSelection}
           disabled={loading}
-          className="h-8 w-8 p-0 text-white hover:bg-gray-500 rounded-full touch-feedback ml-1"
+          className="h-10 w-10 p-0 text-white hover:bg-gray-500 rounded-full touch-feedback ml-1"
           title="Clear selection"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </Button>
       )}
     </div>
