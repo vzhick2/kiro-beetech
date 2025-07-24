@@ -123,16 +123,23 @@ export const useKeyboardNavigation = ({
     (event: MouseEvent) => {
       const target = event.target as Element
       
-      // Don't reset selection if clicking on sidebar, header, or other layout elements
-      if (
-        !target.closest("[data-table-container]") &&
-        !target.closest("[data-navigation-content]") &&
-        !target.closest("[data-interactive-header]") &&
-        !target.closest("[data-sidebar-backdrop]") &&
-        !target.closest("[data-sidebar-overlay]") &&
-        !target.closest("header") &&
-        !target.closest("nav")
-      ) {
+      // Only reset selections if clicking in the main content area
+      // This approach is more conservative - we only clear selections when
+      // clicking on specific content elements that should deselect
+      const isMainContentClick = 
+        target.closest("main") &&           // Must be in main content area
+        !target.closest("table") &&        // But not in the table itself
+        !target.closest("form") &&         // Not in forms
+        !target.closest("button") &&       // Not on buttons
+        !target.closest("input") &&        // Not on inputs
+        !target.closest("select") &&       // Not on selects
+        !target.closest("textarea") &&     // Not on textareas
+        !target.closest("[role='button']") && // Not on ARIA buttons
+        !target.closest("[data-table-container]") && // Not in table container
+        !target.closest(".batch-actions") // Not in batch actions area
+      
+      // Only clear selections when clicking empty space in main content
+      if (isMainContentClick) {
         setRowSelection({})
         setFocusedRowIndex(-1)
       }
