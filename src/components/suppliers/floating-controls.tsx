@@ -6,6 +6,18 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
 
+// Shared styling constants for consistency
+const PILL_STYLES = {
+  base: "fixed z-50 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl",
+  blue: "bg-blue-600 hover:scale-105",
+  green: "bg-green-600",
+  button: {
+    white: "bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110",
+    red: "bg-red-500/80 hover:bg-red-500 border-0 text-white transition-all duration-150 hover:scale-110",
+    save: "bg-white text-green-700 hover:bg-white/90 transition-all duration-150 hover:scale-105"
+  }
+}
+
 interface FloatingControlsProps {
   isSpreadsheetMode: boolean
   hasUnsavedChanges: boolean
@@ -47,7 +59,7 @@ export const FloatingControls = ({
   if (isSpreadsheetMode) {
     return (
       <div 
-        className="fixed bottom-6 right-6 z-50 bg-green-600 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl" 
+        className={`${PILL_STYLES.base} ${PILL_STYLES.green} bottom-6 right-6`}
         style={{ width: 'auto', maxWidth: 'fit-content' }}
       >
         <div className="px-4 py-3 flex items-center gap-3 whitespace-nowrap">
@@ -60,7 +72,7 @@ export const FloatingControls = ({
               size="sm"
               onClick={onSaveChanges}
               disabled={!hasUnsavedChanges || isSaving}
-              className="bg-white text-green-700 hover:bg-white/90 h-8 px-3 text-xs font-medium transition-all duration-150 hover:scale-105"
+              className={`${PILL_STYLES.button.save} h-8 px-3 text-xs font-medium`}
             >
               {isSaving ? (
                 <>
@@ -78,7 +90,7 @@ export const FloatingControls = ({
               size="sm"
               onClick={onCancelChanges}
               disabled={isSaving}
-              className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
+              className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -91,7 +103,7 @@ export const FloatingControls = ({
   // Regular mode controls - Pill-based design inspired by mobile
   return (
     <div 
-      className="fixed bottom-6 right-6 z-50 bg-blue-600 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl hover:scale-105" 
+      className={`${PILL_STYLES.base} ${PILL_STYLES.blue} bottom-6 right-6`}
       style={{ width: 'auto', maxWidth: 'fit-content' }}
     >
       <div className="px-4 py-2 flex items-center gap-2 whitespace-nowrap">
@@ -104,7 +116,7 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkExport}
                 disabled={loading}
-                className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
+                className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
                 title="Export selected"
               >
                 <Download className="h-4 w-4" />
@@ -115,7 +127,7 @@ export const FloatingControls = ({
                   size="sm"
                   onClick={onBulkUnarchive}
                   disabled={loading}
-                  className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
+                  className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
                   title="Unarchive selected"
                 >
                   <RotateCcw className="h-4 w-4" />
@@ -126,7 +138,7 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkArchive}
                 disabled={loading}
-                className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
+                className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
                 title="Archive selected"
               >
                 <Archive className="h-4 w-4" />
@@ -136,7 +148,7 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkDelete}
                 disabled={loading}
-                className="h-8 w-8 p-0 bg-red-500/80 hover:bg-red-500 border-0 text-white transition-all duration-150 hover:scale-110"
+                className={`${PILL_STYLES.button.red} h-8 w-8 p-0`}
                 title="Delete selected"
               >
                 <Trash2 className="h-4 w-4" />
@@ -150,7 +162,7 @@ export const FloatingControls = ({
               <Button
                 size="sm"
                 onClick={onEnterSpreadsheetMode}
-                className="h-8 px-3 bg-white/20 hover:bg-white/30 border-0 text-white text-xs transition-all duration-150 hover:scale-105"
+                className={`${PILL_STYLES.button.white} h-8 px-3 text-xs transition-all duration-150 hover:scale-105`}
               >
                 <Edit3 className="h-4 w-4 mr-1" />
                 Edit All Rows
@@ -160,7 +172,7 @@ export const FloatingControls = ({
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
+              className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
               title="Collapse all rows"
             >
               <ChevronUp className="h-4 w-4" />
