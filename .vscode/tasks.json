@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Run Playwright MCP UI test for suppliers page",
+			"command": "npx playwright test --project=chromium src/components/suppliers/modern-data-table.tsx",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": [
+				"$mocha"
+			]
+		}
+	]
+}

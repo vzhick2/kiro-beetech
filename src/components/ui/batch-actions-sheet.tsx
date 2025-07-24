@@ -40,8 +40,8 @@ export const BatchActionsBar = ({
 
   return (
     <div
-      className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 rounded-full shadow-lg px-4 py-3 flex items-center justify-center gap-4 transition-all duration-300 hover:shadow-xl w-[90vw] max-w-md"
-      style={{ minWidth: '320px', maxWidth: '90vw' }}
+      className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 rounded-full shadow-lg px-2 py-2 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-xl w-[81vw] max-w-md"
+      style={{ minWidth: '280px', maxWidth: '81vw' }}
     >
       {/* Selected count - compact display */}
   <div className="bg-blue-500 rounded-full px-3 py-1 text-white font-medium text-base min-w-[2.5rem] text-center">
