@@ -293,12 +293,14 @@ Development tasks and progress tracking for the internal BTINV inventory managem
    - Add/edit supplier forms
    - Supplier-item relationship management
    - Archive/unarchive functionality
+   - 🧪 **Test Suppliers UI with Playwright MCP** (forms, table editing, search, mobile)
 
 2. **Purchase Management UI Implementation** 🚧
    - Purchase creation and editing forms
    - Purchase list view with filtering
    - Draft purchase workflow
    - Line item management interface
+   - 🧪 **Test Purchase UI with Playwright MCP** (workflows, calculations, state changes)
 
 #### **Medium Priority**
 

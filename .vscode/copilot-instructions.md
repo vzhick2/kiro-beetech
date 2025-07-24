@@ -68,6 +68,16 @@ Before making changes, always:
 - **Codebase Search**: Find existing patterns before creating new
 - **Pull Requests**: Feature branches with clear descriptions
 - **Context7 MCP**: Current library documentation and API patterns
+- **GitHub MCP Sync**: After GitHub MCP operations, ask user if they want local pull instead of auto-pulling
+
+### 🎭 **Playwright MCP Testing**
+- **Auto-Test Triggers**: Use Playwright MCP after major UI changes, new features, or debugging user-reported issues
+- **Critical Path Testing**: Test inventory workflows (add item → purchase → receive → adjust → sell)
+- **Visual Validation**: Take screenshots for layout changes, form validation, error states
+- **Bug Reproduction**: Reproduce user issues step-by-step with screenshots and console logs
+- **Feature Verification**: Test new components end-to-end before marking tasks complete
+- **Responsive Testing**: Verify mobile touch targets and responsive behavior
+- **Data Flow Testing**: Validate forms, search, filtering, and data synchronization
 
 ### 🔄 **Autonomous Maintenance**
 - Update `tasks.md` with completion timestamps
@@ -86,6 +96,8 @@ Before making changes, always:
 - **Functional**: Feature works end-to-end with proper error handling
 - **Documented**: Code has appropriate comments and type documentation  
 - **Tested**: Manual testing completed, edge cases considered
+- **Playwright Verified**: Use Playwright MCP for UI features, forms, workflows, or user-reported bugs
+- **Testing Subtask**: Add "🧪 Test [Feature] with Playwright MCP" subtask to tasks.md for major UI changes
 - **Tasks Updated**: Progress percentages and completion timestamps accurate
 
 ## Deployment & Quality Assurance
