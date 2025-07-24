@@ -1,8 +1,24 @@
-# Project Context
+# KIRO Inventory Management - AI Agent Instructions
 
-## Project Identity
+## Project Overview
+
+### 🏭 **Project Identity**
 **KIRO Inventory Management** - Internal workshop tool prioritizing operational flexibility over rigid constraints.
 **Tech Stack**: Next.js 15 + React 19 + TypeScript + Tailwind + Supabase
+
+### 🎯 **Workshop Reality**
+- Support negative inventory (real operational constraints)
+- Allow back-dating transactions (operational corrections)
+- Prioritize quick data entry over perfect validation
+- Mobile-first workshop/field operations
+- Forgiving validation patterns for efficiency
+
+### 📱 **User Experience Priorities**
+- Touch-friendly interfaces (44px+ targets)
+- Progressive enhancement (works without JavaScript)
+- Contextual help for workshop operations
+- Offline resilience for field work
+- Batch operations for productivity
 
 ## AI Behavioral Framework
 
@@ -17,23 +33,25 @@
 - **OPTIMIZE** (performance issues) → Refactor, improve efficiency
 - **REVIEW** (validate/check) → Assess quality, compliance, alignment
 
-## Business & Operational Context
+### 🤝 **Collaborative Decision Protocol**
+**90% Confidence Threshold**: Only proceed autonomously if solution confidence ≥ 90%
+**Below 90%**: Present structured options with trade-off analysis
 
-### 🏭 **Workshop Reality** 
-- Support negative inventory (real operational constraints)
-- Allow back-dating transactions (operational corrections)
-- Prioritize quick data entry over perfect validation
-- Mobile-first workshop/field operations
-- Forgiving validation patterns for efficiency
+**Decision Areas Requiring Collaboration**:
+- UI layouts and component arrangements
+- User workflow sequences and navigation patterns
+- Data presentation formats (tables, cards, lists)
+- Form field organization and validation approaches
+- Color schemes, spacing, and visual hierarchy
+- Business rule interpretations with multiple valid approaches
 
-### 🎯 **User Experience Priorities**
-- Touch-friendly interfaces (44px+ targets)
-- Progressive enhancement (works without JavaScript)
-- Contextual help for workshop operations
-- Offline resilience for field work
-- Batch operations for productivity
+**Option Presentation Format**:
+- **Option [A/B/C]**: Clear, descriptive title
+- **Approach**: Technical implementation summary
+- **Trade-offs**: Benefits vs. limitations
+- **Best For**: Use case alignment
 
-## Project Intelligence & Documentation
+## Documentation & Context Management
 
 ### 📚 **Documentation Hierarchy**
 1. `docs/tasks.md` - Current work (✅ + timestamp on completion)
@@ -55,7 +73,7 @@ Before making changes, always:
 - Validate database schema via Supabase MCP
 - Align with business workflows from product specification
 
-## MCP Integration & Workflows
+## Development Workflows
 
 ### 🗄️ **Database-First Development**
 - Investigate schema with Supabase MCP before implementing
@@ -63,21 +81,31 @@ Before making changes, always:
 - Check security advisors and performance insights
 - Generate TypeScript types after schema changes
 
-### ⚡ **Rapid Development**
+### ⚡ **Rapid Development Tools**
 - **GitHub MCP**: Multi-file commits with proper context
 - **Codebase Search**: Find existing patterns before creating new
 - **Pull Requests**: Feature branches with clear descriptions
 - **Context7 MCP**: Current library documentation and API patterns
 - **GitHub MCP Sync**: After GitHub MCP operations, ask user if they want local pull instead of auto-pulling
 
-### 🎭 **Playwright MCP Testing**
-- **Auto-Test Triggers**: Use Playwright MCP after major UI changes, new features, or debugging user-reported issues
+### 🎭 **Testing Framework (Playwright MCP)**
+**Auto-Test Triggers**: Use Playwright MCP after major UI changes, new features, or debugging user-reported issues
+
+**Testing Scenarios**:
 - **Critical Path Testing**: Test inventory workflows (add item → purchase → receive → adjust → sell)
 - **Visual Validation**: Take screenshots for layout changes, form validation, error states
 - **Bug Reproduction**: Reproduce user issues step-by-step with screenshots and console logs
 - **Feature Verification**: Test new components end-to-end before marking tasks complete
 - **Responsive Testing**: Verify mobile touch targets and responsive behavior
 - **Data Flow Testing**: Validate forms, search, filtering, and data synchronization
+
+### 🔧 **Git Integration**
+- **User Commits**: VS Code Git UI for manual changes
+- **AI Commits**: GitHub MCP for multi-file implementations
+- **Quality Gates**: Husky pre-commit hooks
+- **Conflict Resolution**: VS Code merge editor
+
+## Quality Standards & Maintenance
 
 ### 🔄 **Autonomous Maintenance**
 - Update `tasks.md` with completion timestamps
@@ -100,19 +128,13 @@ Before making changes, always:
 - **Testing Subtask**: Add "🧪 Test [Feature] with Playwright MCP" subtask to tasks.md for major UI changes
 - **Tasks Updated**: Progress percentages and completion timestamps accurate
 
-## Deployment & Quality Assurance
+## Deployment & Infrastructure
 
 ### 🚀 **Vercel Workflow**
 - **Production**: `main` branch auto-deploys
 - **Preview**: Feature branches create test deployments
 - **Validation**: `pnpm build` + lint + type-check before push
 - **Rollback**: One-click recovery via Vercel dashboard
-
-### 🔧 **Git Integration**
-- **User Commits**: VS Code Git UI for manual changes
-- **AI Commits**: GitHub MCP for multi-file implementations
-- **Quality Gates**: Husky pre-commit hooks
-- **Conflict Resolution**: VS Code merge editor
 
 ## Communication Excellence
 
@@ -122,6 +144,7 @@ Before making changes, always:
 3. **Strategy**: Choose patterns, ensure error handling, plan updates
 
 ### 💬 **Interaction Standards**
+- **Questions First**: If user message ends with "?" - present options, don't implement changes automatically
 - **Factual Language**: Use objective, technical language; avoid superlatives like "perfect", "amazing", "excellent", "completely fixed"
 - **Reasoning First**: Explain technical decisions and provide alternatives
 - **Complete Solutions**: Working code with imports, comments, business context
