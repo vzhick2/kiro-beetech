@@ -13,6 +13,7 @@ import {
   BarChart3,
   Database,
   Users,
+  Palette,
 } from 'lucide-react';
 
 // Type definitions for navigation items
@@ -42,6 +43,7 @@ const navigation: NavigationItem[] = [
   // Analytics & Data
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data', href: '/data', icon: Database },
+  { name: 'Playground', href: '/playground', icon: Palette },
 ];
 
 interface ResponsiveSidebarProps {
