@@ -82,7 +82,7 @@ export function ResponsiveSidebar({
   };
 
   const NavigationContent = () => (
-    <div className="p-4 space-y-1">
+    <div className="p-4 space-y-1" data-navigation-content>
       {navigation.map((item, index) => {
         // Render separator
         if ('type' in item && item.type === 'separator') {
@@ -150,6 +150,7 @@ export function ResponsiveSidebar({
         }`}
         onClick={onClose}
         aria-hidden="true"
+        data-sidebar-backdrop
       />
 
       {/* Sidebar overlay with slide + fade animation - explicit width for mobile */}
@@ -157,6 +158,7 @@ export function ResponsiveSidebar({
         className={`fixed top-16 left-0 bottom-0 z-40 bg-slate-900 border-r border-slate-700/50 transition-all duration-200 ease-out ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
+        data-sidebar-overlay
         style={{
           width: '180px', // Wider for better text spacing and readability
           minWidth: '180px', // Prevent width from shrinking

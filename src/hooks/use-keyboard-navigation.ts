@@ -122,7 +122,17 @@ export const useKeyboardNavigation = ({
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
       const target = event.target as Element
-      if (!target.closest("[data-table-container]")) {
+      
+      // Don't reset selection if clicking on sidebar, header, or other layout elements
+      if (
+        !target.closest("[data-table-container]") &&
+        !target.closest("[data-navigation-content]") &&
+        !target.closest("[data-interactive-header]") &&
+        !target.closest("[data-sidebar-backdrop]") &&
+        !target.closest("[data-sidebar-overlay]") &&
+        !target.closest("header") &&
+        !target.closest("nav")
+      ) {
         setRowSelection({})
         setFocusedRowIndex(-1)
       }
