@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronUp, Download, Trash2, Edit, Save, X, Settings, Terminal, Layers, Zap, Copy } from 'lucide-react';
+import { ChevronUp, Download, Trash2, Edit, Save, X } from 'lucide-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'floating-pill' | 'corner-stack' | 'command-bar' | 'dock-style' | 'contextual-hover';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'modern-flat' | 'gradient-subtle' | 'monochrome' | 'warm-accent';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -55,40 +55,40 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-2.5",
       expanded: "px-4 py-2.5"
     },
-    'floating-pill': {
-      container: "bg-white text-gray-900 rounded-full shadow-2xl border border-gray-200",
-      button: "hover:bg-gray-100 rounded-full px-4 py-2 font-medium",
+    'soft-rounded': {
+      container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
+      button: "hover:bg-gray-50 rounded-xl px-4 py-2 font-medium transition-colors",
+      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'modern-flat': {
+      container: "bg-gray-900 text-white rounded-lg border-l-4 border-blue-400",
+      button: "hover:bg-gray-800 px-4 py-2 font-medium",
+      deleteButton: "bg-red-600 hover:bg-red-700",
+      minimal: "px-4 py-2.5",
+      expanded: "px-5 py-2.5"
+    },
+    'gradient-subtle': {
+      container: "bg-gradient-to-r from-blue-50 to-indigo-50 text-gray-800 rounded-xl border border-blue-200 shadow-sm",
+      button: "hover:bg-blue-100/50 rounded-lg px-4 py-2 font-medium",
       deleteButton: "bg-red-50 hover:bg-red-100 text-red-600",
       minimal: "px-4 py-3",
-      expanded: "px-6 py-3"
+      expanded: "px-5 py-3"
     },
-    'corner-stack': {
-      container: "bg-amber-500 text-white rounded-tl-2xl rounded-br-none shadow-lg transform rotate-3",
-      button: "hover:bg-amber-600 rounded-md px-3 py-2 font-semibold",
-      deleteButton: "bg-red-500 hover:bg-red-600",
+    'monochrome': {
+      container: "bg-gray-100 text-gray-900 rounded border border-gray-300 shadow-sm",
+      button: "hover:bg-gray-200 px-3 py-2 font-medium border border-gray-300 rounded",
+      deleteButton: "bg-gray-800 hover:bg-black text-white",
       minimal: "px-3 py-2",
       expanded: "px-4 py-2"
     },
-    'command-bar': {
-      container: "bg-black text-green-400 rounded-sm border border-green-500/30 font-mono text-sm",
-      button: "hover:bg-green-900/20 px-2 py-1 text-xs border border-green-500/50 rounded-sm",
-      deleteButton: "bg-red-900/50 hover:bg-red-800/50 text-red-300 border-red-500/50",
-      minimal: "px-2 py-2",
-      expanded: "px-3 py-2"
-    },
-    'dock-style': {
-      container: "bg-gray-900/95 backdrop-blur-xl text-white rounded-2xl border border-white/10",
-      button: "hover:bg-white/10 rounded-xl px-2 py-2 transition-transform hover:scale-110",
-      deleteButton: "bg-red-500/20 hover:bg-red-500/40 text-red-300",
-      minimal: "px-1 py-2",
-      expanded: "px-2 py-2"
-    },
-    'contextual-hover': {
-      container: "bg-purple-600 text-white rounded-lg shadow-purple-500/25 shadow-lg",
-      button: "hover:bg-purple-700 rounded-md px-3 py-2 transition-all hover:shadow-lg",
-      deleteButton: "bg-pink-500 hover:bg-pink-600",
-      minimal: "px-3 py-2",
-      expanded: "px-4 py-2"
+    'warm-accent': {
+      container: "bg-orange-50 text-orange-900 rounded-lg border border-orange-200 shadow-md",
+      button: "hover:bg-orange-100 rounded-md px-4 py-2 font-medium",
+      deleteButton: "bg-red-100 hover:bg-red-200 text-red-700",
+      minimal: "px-4 py-2.5",
+      expanded: "px-5 py-2.5"
     }
   };
 
@@ -99,16 +99,16 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   // Get variant-specific icons and content
   const getVariantContent = () => {
     switch (variant) {
-      case 'floating-pill':
-        return { icon: Settings, text: 'Configure' };
-      case 'corner-stack':
-        return { icon: Layers, text: 'Stack Edit' };
-      case 'command-bar':
-        return { icon: Terminal, text: '> edit-all' };
-      case 'dock-style':
-        return { icon: Zap, text: '' }; // Icon only for dock
-      case 'contextual-hover':
-        return { icon: Copy, text: 'Batch Edit' };
+      case 'soft-rounded':
+        return { icon: Edit, text: 'Edit All Rows' };
+      case 'modern-flat':
+        return { icon: Edit, text: 'Edit All Rows' };
+      case 'gradient-subtle':
+        return { icon: Edit, text: 'Edit All Rows' };
+      case 'monochrome':
+        return { icon: Edit, text: 'Edit All Rows' };
+      case 'warm-accent':
+        return { icon: Edit, text: 'Edit All Rows' };
       default:
         return { icon: Edit, text: 'Edit All Rows' };
     }
@@ -119,34 +119,13 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   if (state === 'minimal') {
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
-        {variant === 'dock-style' ? (
-          // Dock-style: Icons only, larger
-          <>
-            <button className={`${styles.button} p-3`}>
-              <VariantIcon className="h-5 w-5" />
-            </button>
-            <button className={`${styles.button} p-3`}>
-              <ChevronUp className="h-5 w-5" />
-            </button>
-          </>
-        ) : variant === 'command-bar' ? (
-          // Command-bar: Terminal style
-          <button className={`${styles.button} flex items-center gap-1`}>
-            <VariantIcon className="h-3 w-3" />
-            <span>{variantText}</span>
-          </button>
-        ) : (
-          // Standard layout
-          <>
-            <button className={`${styles.button} flex items-center gap-2`}>
-              <VariantIcon className="h-4 w-4" />
-              {variantText}
-            </button>
-            <button className={`${styles.button} p-2`}>
-              <ChevronUp className="h-4 w-4" />
-            </button>
-          </>
-        )}
+        <button className={`${styles.button} flex items-center gap-2`}>
+          <VariantIcon className="h-4 w-4" />
+          {variantText}
+        </button>
+        <button className={`${styles.button} p-2`}>
+          <ChevronUp className="h-4 w-4" />
+        </button>
       </div>
     );
   }
@@ -201,11 +180,11 @@ export default function PlaygroundPage() {
     { key: 'glassmorphism-enhanced', name: 'Glassmorphism Enhanced', description: 'Enhanced contrast with blue accents' },
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
     { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
-    { key: 'floating-pill', name: 'Floating Pill', description: 'Clean white pill with shadows' },
-    { key: 'corner-stack', name: 'Corner Stack', description: 'Rotated amber card with personality' },
-    { key: 'command-bar', name: 'Command Bar', description: 'Terminal-inspired monospace design' },
-    { key: 'dock-style', name: 'Dock Style', description: 'macOS dock-inspired with scaling effects' },
-    { key: 'contextual-hover', name: 'Contextual Hover', description: 'Purple theme with enhanced shadows' }
+    { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
+    { key: 'modern-flat', name: 'Modern Flat', description: 'Dark flat design with accent border' },
+    { key: 'gradient-subtle', name: 'Gradient Subtle', description: 'Light gradient background with soft colors' },
+    { key: 'monochrome', name: 'Monochrome', description: 'Simple grayscale design' },
+    { key: 'warm-accent', name: 'Warm Accent', description: 'Orange-toned warm and inviting design' }
   ] as const;
 
   const states = [
