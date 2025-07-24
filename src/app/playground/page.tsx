@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'minimal' | 'corporate' | 'gradient' | 'outline';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'glassmorphism-pure' | 'minimal' | 'corporate' | 'gradient' | 'outline';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -31,6 +31,20 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       container: "bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl",
       button: "hover:bg-white/20 rounded-xl px-3 py-2 backdrop-blur-sm",
       deleteButton: "bg-red-500/80 hover:bg-red-500",
+      minimal: "px-3 py-3",
+      expanded: "px-5 py-3"
+    },
+    'glassmorphism-enhanced': {
+      container: "bg-white/20 backdrop-blur-lg border border-white/30 text-white rounded-2xl shadow-xl",
+      button: "hover:bg-blue-500/30 rounded-xl px-3 py-2 backdrop-blur-sm border border-white/10 transition-all",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 border border-red-400/30",
+      minimal: "px-3 py-3",
+      expanded: "px-5 py-3"
+    },
+    'glassmorphism-pure': {
+      container: "bg-white/15 backdrop-blur-xl border-2 border-white/40 text-white rounded-2xl shadow-2xl",
+      button: "hover:bg-white/25 rounded-xl px-3 py-2 backdrop-blur-sm border border-white/30 transition-all duration-300",
+      deleteButton: "bg-white/20 hover:bg-white/30 text-red-400 border border-white/40",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
@@ -129,6 +143,8 @@ export default function PlaygroundPage() {
   const variants = [
     { key: 'original', name: 'Original Blue', description: 'Current design with blue theme' },
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
+    { key: 'glassmorphism-enhanced', name: 'Glassmorphism Enhanced', description: 'Enhanced contrast with blue accents' },
+    { key: 'glassmorphism-pure', name: 'Glassmorphism Pure', description: 'Pure monochrome glass with strong contrast' },
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
     { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
     { key: 'gradient', name: 'Gradient Modern', description: 'Colorful gradient with rounded design' },
