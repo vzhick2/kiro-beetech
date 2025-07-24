@@ -16,7 +16,7 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Base classes for all variants
-  const baseClasses = "fixed bottom-6 right-6 flex items-center gap-2 transition-all duration-200 shadow-lg";
+  const baseClasses = "absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200 shadow-lg";
   
   // Variant-specific styling
   const variantStyles = {
@@ -213,7 +213,7 @@ export default function PlaygroundPage() {
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-2">Implementation Notes</h3>
           <ul className="text-blue-800 text-sm space-y-1">
-            <li>• All variants use the same positioning logic (fixed bottom-6 right-6)</li>
+            <li>• All variants use the same positioning logic (absolute bottom-6 right-6)</li>
             <li>• Responsive width adjustments based on content state</li>
             <li>• Consistent icon usage across all designs</li>
             <li>• Touch-friendly button sizing (minimum 44px targets)</li>
