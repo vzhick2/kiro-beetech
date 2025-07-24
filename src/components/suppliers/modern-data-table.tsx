@@ -409,8 +409,8 @@ export const ModernDataTable = () => {
         {/* Search and Filters - Mobile-optimized layout */}
         <div className="py-4 space-y-4">
           {/* Search Bar - Full width on mobile */}
-          <div className="px-4">
-            <div className="relative w-full sm:max-w-sm">
+          <div>
+            <div className="relative w-full sm:max-w-sm mx-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search suppliers..."
@@ -432,8 +432,8 @@ export const ModernDataTable = () => {
           </div>
           
           {/* Status Filters - Improved mobile spacing */}
-          <div className="px-4">
-            <div className="overflow-x-auto pb-2">
+          <div>
+            <div className="overflow-x-auto pb-2 mx-4">
               <StatusFilters activeFilter={statusFilter} onFilterChange={setStatusFilter} counts={statusCounts} />
             </div>
           </div>
@@ -607,19 +607,21 @@ export const ModernDataTable = () => {
           </div>
 
         {/* Pagination */}
-        <div className="px-4">
-          <PaginationControls
-            pageIndex={pagination.pageIndex}
-            pageSize={pagination.pageSize}
-            pageCount={pageCount}
-            totalItems={data.length}
-            canPreviousPage={canPreviousPage}
-            canNextPage={canNextPage}
-            goToPage={goToPage}
-            nextPage={nextPage}
-            previousPage={previousPage}
-            setPageSize={setPageSize}
-          />
+        <div>
+          <div className="mx-4">
+            <PaginationControls
+              pageIndex={pagination.pageIndex}
+              pageSize={pagination.pageSize}
+              pageCount={pageCount}
+              totalItems={data.length}
+              canPreviousPage={canPreviousPage}
+              canNextPage={canNextPage}
+              goToPage={goToPage}
+              nextPage={nextPage}
+              previousPage={previousPage}
+              setPageSize={setPageSize}
+            />
+          </div>
         </div>
       </div>
 

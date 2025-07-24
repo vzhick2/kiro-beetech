@@ -57,18 +57,22 @@ export const FloatingControls = ({
 }: FloatingControlsProps) => {
   const { isMobile } = useMobileDetection()
 
+  // Determine if we're showing only the collapse button (minimal mode)
+  const isMinimalMode = !isSpreadsheetMode && selectedCount === 0
+
   // Mobile positioning: center-bottom, Desktop positioning: right-bottom
   const positionClasses = isMobile 
     ? "bottom-6 left-1/2 transform -translate-x-1/2" 
     : "bottom-6 right-6"
   
   // Mobile sizing: responsive width, Desktop sizing: auto
+  // In minimal mode, we use minimal width instead of full width
   const sizeClasses = isMobile 
-    ? "w-[90vw] max-w-md" 
+    ? (isMinimalMode ? "w-auto" : "w-[90vw] max-w-md")
     : ""
   
   const sizeStyles = isMobile 
-    ? { minWidth: '280px', maxWidth: '90vw' } 
+    ? (isMinimalMode ? { width: 'auto' } : { minWidth: '280px', maxWidth: '90vw' })
     : { width: 'auto', maxWidth: 'fit-content' }
 
   // Spreadsheet mode controls with enhanced pill design
@@ -131,7 +135,7 @@ export const FloatingControls = ({
       className={`${PILL_STYLES.base} ${PILL_STYLES.blue} ${positionClasses} ${sizeClasses}`}
       style={sizeStyles}
     >
-      <div className={`px-4 py-2 flex items-center gap-2 ${isMobile ? 'justify-center' : 'whitespace-nowrap'}`}>
+      <div className={`${isMinimalMode ? 'px-2 py-2' : 'px-4 py-2'} flex items-center gap-2 ${isMobile ? 'justify-center' : 'whitespace-nowrap'}`}>
         {selectedCount > 0 ? (
           // Batch action controls with pill design
           <>
