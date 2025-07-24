@@ -73,6 +73,74 @@
     outline: none !important;
   }
 
+  /* Interactive microanimations for better UX feedback */
+  .micro-bounce {
+    transition: transform 0.15s ease-out;
+  }
+  
+  .micro-bounce:hover {
+    transform: translateY(-1px);
+  }
+  
+  .micro-bounce:active {
+    transform: translateY(0);
+  }
+
+  .micro-scale {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .micro-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .micro-scale:active {
+    transform: scale(0.98);
+  }
+
+  .micro-pulse {
+    transition: all 0.2s ease-out;
+  }
+  
+  .micro-pulse:hover {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .micro-fade {
+    transition: opacity 0.2s ease-out;
+  }
+  
+  .micro-fade:hover {
+    opacity: 0.8;
+  }
+
+  /* Loading state animations */
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Touch feedback for mobile */
+  .touch-feedback {
+    transition: all 0.1s ease-out;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .touch-feedback:active {
+    transform: scale(0.96);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
   .no-flash::-moz-focus-inner {
     border: 0;
   }

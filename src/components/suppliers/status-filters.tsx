@@ -15,15 +15,15 @@ interface StatusFiltersProps {
 
 export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFiltersProps) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-3 overflow-x-auto min-w-0">
       <Button
         variant={activeFilter === "all" ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange("all")}
-        className="h-7 text-xs"
+        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-200 hover:scale-105 active:scale-95"
       >
         All
-        <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
           {counts.total}
         </Badge>
       </Button>
@@ -31,10 +31,10 @@ export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFi
         variant={activeFilter === "active" ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange("active")}
-        className="h-7 text-xs"
+        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-200 hover:scale-105 active:scale-95"
       >
         Active
-        <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
           {counts.active}
         </Badge>
       </Button>
@@ -42,10 +42,10 @@ export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFi
         variant={activeFilter === "inactive" ? "default" : "outline"}
         size="sm"
         onClick={() => onFilterChange("inactive")}
-        className="h-7 text-xs"
+        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-200 hover:scale-105 active:scale-95"
       >
         Inactive
-        <Badge variant="secondary" className="ml-2 h-4 px-1.5 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
           {counts.inactive}
         </Badge>
       </Button>

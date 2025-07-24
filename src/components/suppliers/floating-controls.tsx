@@ -89,10 +89,10 @@ export const FloatingControls = ({
 
   // Regular mode controls - Always visible
   return (
-    <Card className="fixed bottom-6 right-6 z-50 shadow-lg border bg-white" style={{ width: 'auto', maxWidth: 'fit-content' }}>
+    <Card className="fixed bottom-6 right-6 z-50 shadow-lg border bg-white micro-scale" style={{ width: 'auto', maxWidth: 'fit-content' }}>
       <div className="p-2 flex items-center gap-1 whitespace-nowrap">
         {selectedCount > 0 ? (
-          // Bulk action controls
+          // Bulk action controls with enhanced micro-interactions
           <>
             {!isMobile && <span className="text-xs text-gray-600 mr-1">{selectedCount} selected</span>}
             <div className="flex gap-1">
@@ -101,7 +101,7 @@ export const FloatingControls = ({
                 variant="outline"
                 onClick={onBulkExport}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs`}
+                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs micro-bounce touch-feedback`}
                 title="Export selected"
               >
                 <Download className="h-3 w-3" />
@@ -114,7 +114,7 @@ export const FloatingControls = ({
                   variant="outline"
                   onClick={onBulkUnarchive}
                   disabled={loading}
-                  className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs`}
+                  className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs micro-bounce touch-feedback`}
                   title="Unarchive selected"
                 >
                   <RotateCcw className="h-3 w-3" />
@@ -127,7 +127,7 @@ export const FloatingControls = ({
                 variant="outline"
                 onClick={onBulkArchive}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-orange-600 hover:text-orange-700 text-xs`}
+                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-orange-600 hover:text-orange-700 text-xs micro-bounce touch-feedback`}
                 title="Archive selected"
               >
                 <Archive className="h-3 w-3" />
@@ -139,7 +139,7 @@ export const FloatingControls = ({
                 variant="outline"
                 onClick={onBulkDelete}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-red-600 hover:text-red-700 text-xs`}
+                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-red-600 hover:text-red-700 text-xs micro-bounce touch-feedback`}
                 title="Delete selected"
               >
                 <Trash2 className="h-3 w-3" />

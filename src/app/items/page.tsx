@@ -51,12 +51,12 @@ export default function ItemsPage() {
                 value={searchQuery}
                 onChange={e => handleSearch(e.target.value)}
                 placeholder="Filter items by name, SKU, or type..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent micro-pulse transition-all duration-200"
               />
               {searchQuery && (
                 <button
                   onClick={() => handleSearch('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 micro-scale touch-feedback transition-all duration-200"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -64,7 +64,7 @@ export default function ItemsPage() {
             </div>
             <Button
               variant="outline"
-              className="flex items-center border-amber-200 hover:bg-amber-50"
+              className="flex items-center border-amber-200 hover:bg-amber-50 micro-bounce touch-feedback transition-all duration-200"
               onClick={() => setShowFilters(!showFilters)}
             >
               <Filter className="h-4 w-4 mr-2" />

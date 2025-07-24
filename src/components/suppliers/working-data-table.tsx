@@ -231,19 +231,19 @@ export const ModernDataTable = () => {
     <div className="w-full space-y-4">
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search suppliers..."
             value={searchValue}
             onChange={(e) => updateSearch(e.target.value)}
-            className="pl-10 pr-10"
+            className="pl-10 pr-10 micro-pulse transition-all duration-200 focus:ring-2 focus:ring-blue-500"
           />
           {searchValue && (
             <Button
               variant="ghost"
               size="sm"
-              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 micro-scale touch-feedback"
               onClick={clearSearch}
             >
               <X className="h-3 w-3" />
@@ -253,10 +253,14 @@ export const ModernDataTable = () => {
         
         {selectedRows.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 micro-fade">
               {selectedRows.length} selected
             </span>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="micro-bounce touch-feedback transition-all duration-200 hover:bg-blue-50"
+            >
               Actions
             </Button>
           </div>
@@ -309,14 +313,37 @@ export const ModernDataTable = () => {
 
           <TableBody>
             {isLoading && !table.getRowModel().rows?.length ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">Loading suppliers...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
+              // Enhanced skeleton loading state
+              [...Array(6)].map((_, index) => (
+                <TableRow key={index} className="animate-pulse">
+                  <TableCell className="py-4">
+                    <div className="flex items-center justify-center">
+                      <div className="h-4 w-4 bg-gray-200 rounded loading-shimmer"></div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded-md w-3/4 loading-shimmer"></div>
+                      <div className="h-3 bg-gray-100 rounded w-1/2 loading-shimmer"></div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="h-4 bg-gray-200 rounded w-24 loading-shimmer"></div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="h-4 bg-gray-200 rounded w-20 loading-shimmer"></div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="h-6 bg-gray-200 rounded-full w-16 loading-shimmer"></div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex gap-1">
+                      <div className="h-6 w-6 bg-gray-200 rounded loading-shimmer"></div>
+                      <div className="h-6 w-6 bg-gray-200 rounded loading-shimmer"></div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

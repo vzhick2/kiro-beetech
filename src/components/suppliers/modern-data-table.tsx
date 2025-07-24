@@ -56,6 +56,7 @@ import { useSpreadsheetMode } from "@/hooks/use-spreadsheet-mode"
 import { useSpreadsheetNavigation } from "@/hooks/use-spreadsheet-navigation"
 import { FloatingControls } from "./floating-controls"
 import { PurchaseHistoryModal } from "./purchase-history-modal"
+import { BatchActionsSheet } from "@/components/ui/batch-actions-sheet"
 
 const columnHelper = createColumnHelper<Supplier>()
 
@@ -406,31 +407,36 @@ export const ModernDataTable = () => {
   return (
     <>
       <div data-table-container className="responsive-table w-full full-width-table">
-        {/* Search and Filters - No card wrapper */}
-        <div className="py-4 space-y-3">
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between px-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+        {/* Search and Filters - Mobile-optimized layout */}
+        <div className="py-4 space-y-4">
+          {/* Search Bar - Full width on mobile */}
+          <div className="px-4">
+            <div className="relative w-full sm:max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search suppliers... (try: 2024 or 01/2024)"
+                placeholder="Search suppliers..."
                 value={searchValue}
                 onChange={(e) => updateSearch(e.target.value)}
-                className="pl-9 pr-9 h-8 text-xs"
+                className="pl-10 pr-10 h-10 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {searchValue && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-5 w-5 p-0"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 rounded-full transition-colors"
                   onClick={clearSearch}
                 >
-                  <X className="h-2 w-2" />
+                  <X className="h-3 w-3" />
                 </Button>
               )}
             </div>
           </div>
+          
+          {/* Status Filters - Improved mobile spacing */}
           <div className="px-4">
-            <StatusFilters activeFilter={statusFilter} onFilterChange={setStatusFilter} counts={statusCounts} />
+            <div className="overflow-x-auto pb-2">
+              <StatusFilters activeFilter={statusFilter} onFilterChange={setStatusFilter} counts={statusCounts} />
+            </div>
           </div>
         </div>
 
@@ -634,6 +640,18 @@ export const ModernDataTable = () => {
         onBulkUnarchive={handleBulkUnarchive}
         onBulkDelete={handleBulkDelete}
         isSaving={isSavingSpreadsheet}
+        loading={loading}
+      />
+
+      {/* Mobile Batch Actions Sheet */}
+      <BatchActionsSheet
+        selectedCount={selectedIds.length}
+        hasInactiveSelected={hasInactiveSelected}
+        onBulkExport={handleBulkExport}
+        onBulkArchive={handleBulkArchive}
+        onBulkUnarchive={handleBulkUnarchive}
+        onBulkDelete={handleBulkDelete}
+        onClearSelection={() => setRowSelection({})}
         loading={loading}
       />
 
