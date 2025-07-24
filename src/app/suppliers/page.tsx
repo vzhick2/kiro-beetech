@@ -1,18 +1,19 @@
+import { ModernDataTable } from "@/components/suppliers/modern-data-table"
+import { ErrorBoundary } from "@/components/error-boundary"
+
 export default function SuppliersPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Suppliers</h1>
+    <div className="w-full pb-24">
+      <div className="px-4 py-6 bg-gray-50 border-b">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Supplier Management</h1>
         <p className="text-gray-600">
-          Manage your supplier contacts and information
+          Manage your suppliers with inline editing, keyboard navigation, and bulk operations.
         </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <p className="text-gray-600">
-          Supplier management will be implemented here.
-        </p>
-      </div>
+      <ErrorBoundary>
+        <ModernDataTable />
+      </ErrorBoundary>
     </div>
-  );
+  )
 }

@@ -10,6 +10,11 @@ export interface Supplier {
   createdAt: Date
 }
 
+export interface EditingRow {
+  rowId: string
+  data: Partial<Supplier>
+}
+
 export interface NewSupplier {
   name: string
   website: string
@@ -18,9 +23,15 @@ export interface NewSupplier {
   status: "active" | "inactive"
 }
 
-export interface EditingRow {
+export interface PaginationState {
+  pageIndex: number
+  pageSize: number
+}
+
+export interface EditingCell {
   rowId: string
-  data: Partial<Supplier>
+  columnId: string
+  value: string
 }
 
 export interface ValidationError {
