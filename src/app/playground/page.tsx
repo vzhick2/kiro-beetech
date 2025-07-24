@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronUp, Download, Trash2, Edit, Save, X } from 'lucide-react';
+import { ChevronUp, Download, Trash2, Edit, Save, X, Zap, Shapes, TreePine, Rocket } from 'lucide-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'monochrome' | 'ai-assistant' | 'neumorphism' | 'glass-elevated' | 'micro-interactions' | 'spatial-depth';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'brutalist-bold' | 'organic-curves' | 'electric-neon' | 'warm-earth' | 'retro-future';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -62,34 +62,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'monochrome': {
-      container: "bg-gray-100 text-gray-900 rounded border border-gray-300 shadow-sm",
-      button: "hover:bg-gray-200 px-3 py-2 font-medium border border-gray-300 rounded",
-      deleteButton: "bg-gray-800 hover:bg-black text-white",
-      minimal: "px-3 py-2",
-      expanded: "px-4 py-2"
-    },
-    'ai-assistant': {
-      container: "bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl shadow-lg ring-1 ring-purple-300/20",
-      button: "hover:bg-white/20 rounded-lg px-4 py-2 font-medium backdrop-blur-sm border border-white/30",
-      deleteButton: "bg-pink-500 hover:bg-pink-600 text-white",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'neumorphism': {
-      container: "bg-gray-200 text-gray-800 rounded-2xl shadow-[inset_2px_2px_5px_#babecc,inset_-2px_-2px_5px_#ffffff]",
-      button: "hover:shadow-[2px_2px_5px_#babecc,-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 font-medium transition-all duration-200",
-      deleteButton: "bg-red-200 hover:bg-red-300 text-red-800 shadow-[inset_1px_1px_3px_#babecc]",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'glass-elevated': {
-      container: "bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl shadow-2xl ring-1 ring-black/5",
-      button: "hover:bg-white/20 rounded-xl px-4 py-2 font-medium border border-white/30 backdrop-blur-sm",
-      deleteButton: "bg-red-500/80 hover:bg-red-500 text-white border border-red-300/30",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
     'micro-interactions': {
       container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
       button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:scale-105",
@@ -97,10 +69,38 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'spatial-depth': {
-      container: "bg-slate-800 text-white rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-slate-700/50 transform hover:translate-y-[-2px] transition-transform duration-200",
-      button: "hover:bg-slate-700 rounded-lg px-4 py-2 font-medium border border-slate-600/50 hover:border-slate-500 transition-all",
-      deleteButton: "bg-red-600 hover:bg-red-500 text-white hover:shadow-lg",
+    'brutalist-bold': {
+      container: "bg-black text-yellow-400 rounded-none border-4 border-yellow-400 shadow-[8px_8px_0px_#000000] font-bold transform hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform",
+      button: "hover:bg-yellow-400 hover:text-black rounded-none px-6 py-3 font-black border-2 border-yellow-400 uppercase tracking-wider",
+      deleteButton: "bg-red-500 hover:bg-red-600 text-white border-2 border-red-500 font-black",
+      minimal: "px-4 py-3",
+      expanded: "px-6 py-3"
+    },
+    'organic-curves': {
+      container: "bg-gradient-to-br from-emerald-100 to-teal-50 text-emerald-900 rounded-[2rem_1rem_2rem_1rem] shadow-lg border border-emerald-200/50",
+      button: "hover:bg-emerald-200/60 rounded-[1.5rem_0.75rem_1.5rem_0.75rem] px-5 py-3 font-medium transition-all duration-300 border border-emerald-300/30",
+      deleteButton: "bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-300 rounded-[1rem_2rem_1rem_2rem]",
+      minimal: "px-5 py-3",
+      expanded: "px-6 py-3"
+    },
+    'electric-neon': {
+      container: "bg-black text-cyan-400 rounded-lg border border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.5)] ring-1 ring-cyan-400/30",
+      button: "hover:bg-cyan-400/10 hover:shadow-[0_0_15px_rgba(34,211,238,0.8)] rounded-lg px-4 py-2 font-bold border border-cyan-400/50 transition-all duration-200",
+      deleteButton: "bg-pink-500 hover:bg-pink-400 text-black border border-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.5)]",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'warm-earth': {
+      container: "bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900 rounded-2xl shadow-lg border border-amber-200",
+      button: "hover:bg-amber-100 rounded-xl px-5 py-3 font-medium transition-colors border border-amber-300/50 text-amber-800",
+      deleteButton: "bg-red-100 hover:bg-red-200 text-red-800 border border-red-300",
+      minimal: "px-5 py-3",
+      expanded: "px-6 py-3"
+    },
+    'retro-future': {
+      container: "bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-cyan-300 rounded-lg border border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.3)]",
+      button: "hover:bg-cyan-500/20 hover:border-cyan-400 rounded-lg px-4 py-2 font-mono border border-cyan-500/50 transition-all duration-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.6)]",
+      deleteButton: "bg-pink-600 hover:bg-pink-500 text-white border border-pink-400",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     }
@@ -113,16 +113,18 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   // Get variant-specific icons and content
   const getVariantContent = () => {
     switch (variant) {
-      case 'ai-assistant':
-        return { icon: Edit, text: 'Edit All Rows' };
-      case 'neumorphism':
-        return { icon: Edit, text: 'Edit All Rows' };
-      case 'glass-elevated':
-        return { icon: Edit, text: 'Edit All Rows' };
       case 'micro-interactions':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'spatial-depth':
-        return { icon: Edit, text: 'Edit All Rows' };
+      case 'brutalist-bold':
+        return { icon: Zap, text: 'EDIT ALL' };
+      case 'organic-curves':
+        return { icon: Shapes, text: 'Edit All Items' };
+      case 'electric-neon':
+        return { icon: Zap, text: 'EDIT ALL' };
+      case 'warm-earth':
+        return { icon: TreePine, text: 'Edit All' };
+      case 'retro-future':
+        return { icon: Rocket, text: 'EDIT_ALL_ROWS' };
       default:
         return { icon: Edit, text: 'Edit All Rows' };
     }
@@ -195,12 +197,12 @@ export default function PlaygroundPage() {
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
     { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
-    { key: 'monochrome', name: 'Monochrome', description: 'Simple grayscale design' },
-    { key: 'ai-assistant', name: 'AI Assistant', description: '2025 trend: AI-powered interface with violet gradients' },
-    { key: 'neumorphism', name: 'Neumorphism', description: '2025 trend: Soft inset/outset shadow effects' },
-    { key: 'glass-elevated', name: 'Glass Elevated', description: '2025 trend: Enhanced glass with elevated depth' },
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
-    { key: 'spatial-depth', name: 'Spatial Depth', description: '2025 trend: 3D-inspired layering and shadows' }
+    { key: 'brutalist-bold', name: 'Brutalist Bold', description: '2025 trend: Bold, raw design with stark contrasts' },
+    { key: 'organic-curves', name: 'Organic Curves', description: '2025 trend: Natural, flowing shapes and soft gradients' },
+    { key: 'electric-neon', name: 'Electric Neon', description: '2025 trend: Vibrant cyber-inspired glow effects' },
+    { key: 'warm-earth', name: 'Warm Earth', description: '2025 trend: Natural, sustainable color palette' },
+    { key: 'retro-future', name: 'Retro Future', description: '2025 trend: 80s-inspired sci-fi aesthetic' }
   ] as const;
 
   const states = [
