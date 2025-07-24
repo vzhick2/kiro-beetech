@@ -43,138 +43,131 @@ export const FloatingControls = ({
 }: FloatingControlsProps) => {
   const { isMobile } = useMobileDetection()
 
-  // Spreadsheet mode controls
+  // Spreadsheet mode controls with enhanced pill design
   if (isSpreadsheetMode) {
     return (
-      <Card className="fixed bottom-6 right-6 z-50 shadow-lg border-2 border-blue-200 bg-white" style={{ width: 'auto', maxWidth: 'fit-content' }}>
-        <div className="p-3 flex items-center gap-2 whitespace-nowrap">
-          <div className="text-xs font-medium text-blue-700">
+      <div 
+        className="fixed bottom-6 right-6 z-50 bg-green-600 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl" 
+        style={{ width: 'auto', maxWidth: 'fit-content' }}
+      >
+        <div className="px-4 py-3 flex items-center gap-3 whitespace-nowrap">
+          <div className="text-xs font-medium text-white">
             Spreadsheet Mode {changedRowsCount > 0 && `• ${changedRowsCount} rows modified`}
           </div>
-          {!isMobile && <div className="text-xs text-gray-500">Tab: Next field • ↑↓: Navigate rows • Esc: Exit</div>}
-          <div className="flex gap-1">
+          {!isMobile && <div className="text-xs text-white/80">Tab: Next field • ↑↓: Navigate rows • Esc: Exit</div>}
+          <div className="flex gap-2">
             <Button
               size="sm"
               onClick={onSaveChanges}
               disabled={!hasUnsavedChanges || isSaving}
-              className="bg-green-600 hover:bg-green-700 h-7 text-xs"
+              className="bg-white text-green-700 hover:bg-white/90 h-8 px-3 text-xs font-medium transition-all duration-150 hover:scale-105"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="h-2 w-2 animate-spin mr-1" />
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
                   {isMobile ? "" : "Saving..."}
                 </>
               ) : (
                 <>
-                  <Save className="h-2 w-2 mr-1" />
+                  <Save className="h-4 w-4 mr-1" />
                   {isMobile ? "" : "Apply Changes"}
                 </>
               )}
             </Button>
             <Button
               size="sm"
-              variant="outline"
               onClick={onCancelChanges}
               disabled={isSaving}
-              className="h-7 text-xs bg-transparent"
+              className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
             >
-              <X className="h-2 w-2 mr-1" />
-              {isMobile ? "" : "Cancel"}
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
     )
   }
 
-  // Regular mode controls - Always visible
+  // Regular mode controls - Pill-based design inspired by mobile
   return (
-    <Card className="fixed bottom-6 right-6 z-50 shadow-lg border bg-white micro-scale" style={{ width: 'auto', maxWidth: 'fit-content' }}>
-      <div className="p-2 flex items-center gap-1 whitespace-nowrap">
+    <div 
+      className="fixed bottom-6 right-6 z-50 bg-blue-600 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl hover:scale-105" 
+      style={{ width: 'auto', maxWidth: 'fit-content' }}
+    >
+      <div className="px-4 py-2 flex items-center gap-2 whitespace-nowrap">
         {selectedCount > 0 ? (
-          // Bulk action controls with enhanced micro-interactions
+          // Bulk action controls with pill design
           <>
-            {!isMobile && <span className="text-xs text-gray-600 mr-1">{selectedCount} selected</span>}
+            {!isMobile && <span className="text-xs text-white/90 mr-1">{selectedCount} selected</span>}
             <div className="flex gap-1">
               <Button
                 size="sm"
-                variant="outline"
                 onClick={onBulkExport}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs micro-bounce touch-feedback`}
+                className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
                 title="Export selected"
               >
-                <Download className="h-3 w-3" />
-                {!isMobile && <span className="ml-1">Export</span>}
+                <Download className="h-4 w-4" />
               </Button>
 
               {hasInactiveSelected && (
                 <Button
                   size="sm"
-                  variant="outline"
                   onClick={onBulkUnarchive}
                   disabled={loading}
-                  className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-blue-600 hover:text-blue-700 text-xs micro-bounce touch-feedback`}
+                  className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
                   title="Unarchive selected"
                 >
-                  <RotateCcw className="h-3 w-3" />
-                  {!isMobile && <span className="ml-1">Unarchive</span>}
+                  <RotateCcw className="h-4 w-4" />
                 </Button>
               )}
 
               <Button
                 size="sm"
-                variant="outline"
                 onClick={onBulkArchive}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-orange-600 hover:text-orange-700 text-xs micro-bounce touch-feedback`}
+                className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
                 title="Archive selected"
               >
-                <Archive className="h-3 w-3" />
-                {!isMobile && <span className="ml-1">Archive</span>}
+                <Archive className="h-4 w-4" />
               </Button>
 
               <Button
                 size="sm"
-                variant="outline"
                 onClick={onBulkDelete}
                 disabled={loading}
-                className={`${isMobile ? "h-6 w-6 p-0" : "px-2 h-6"} text-red-600 hover:text-red-700 text-xs micro-bounce touch-feedback`}
+                className="h-8 w-8 p-0 bg-red-500/80 hover:bg-red-500 border-0 text-white transition-all duration-150 hover:scale-110"
                 title="Delete selected"
               >
-                <Trash2 className="h-3 w-3" />
-                {!isMobile && <span className="ml-1">Delete</span>}
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </>
         ) : (
-          // Default controls
+          // Default controls with pill design
           <div className="flex gap-1">
             {!isMobile && (
               <Button
                 size="sm"
-                variant="outline"
                 onClick={onEnterSpreadsheetMode}
-                className="px-2 h-6 bg-transparent text-xs"
+                className="h-8 px-3 bg-white/20 hover:bg-white/30 border-0 text-white text-xs transition-all duration-150 hover:scale-105"
               >
-                <Edit3 className="h-3 w-3 mr-1" />
+                <Edit3 className="h-4 w-4 mr-1" />
                 Edit All Rows
               </Button>
             )}
 
             <Button
               size="sm"
-              variant="outline"
               onClick={onCollapseAll}
-              className={isMobile ? "h-6 w-6 p-0" : "px-2 h-6"}
+              className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110"
               title="Collapse all rows"
             >
-              <ChevronUp className="h-3 w-3" />
-              {!isMobile && <span className="ml-1 text-xs">Collapse All</span>}
+              <ChevronUp className="h-4 w-4" />
             </Button>
           </div>
         )}
       </div>
-    </Card>
+    </div>
   )
 }
