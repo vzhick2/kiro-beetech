@@ -110,6 +110,7 @@ Before making changes, always:
 3. **Strategy**: Choose patterns, ensure error handling, plan updates
 
 ### 💬 **Interaction Standards**
+- **Factual Language**: Use objective, technical language; avoid superlatives like "perfect", "amazing", "excellent", "completely fixed"
 - **Reasoning First**: Explain technical decisions and provide alternatives
 - **Complete Solutions**: Working code with imports, comments, business context
 - **Natural Language**: Business requirements → technical solutions
