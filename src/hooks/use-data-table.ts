@@ -46,18 +46,20 @@ const generateMockData = (): Supplier[] => {
     const hasNotes = seededRandom(seed * 11000) > 0.7
     const daysAgo = Math.floor(seededRandom(seed * 12000) * 365)
 
+    const company = companies[i % companies.length]!
+
     return {
       id: `supplier-${seed}`,
-      name: `${companies[i % companies.length]} ${Math.floor(i / companies.length) + 1}`,
-      website: `https://${companies[i % companies.length].toLowerCase().replace(/\s+/g, "")}.com`,
-      email: `contact${seed}@${companies[i % companies.length].toLowerCase().replace(/\s+/g, "")}.com`,
+      name: `${company} ${Math.floor(i / companies.length) + 1}`,
+      website: `https://${company.toLowerCase().replace(/\s+/g, "")}.com`,
+      email: `contact${seed}@${company.toLowerCase().replace(/\s+/g, "")}.com`,
       phone: `+1 (555) ${String(phoneNum1).padStart(3, '0')}-${String(phoneNum2).padStart(4, '0')}`,
-      address: `${addressNum} ${streets[streetIndex]}, ${cities[cityIndex]}, ${states[stateIndex]} ${zipCode}`,
-      notes: hasNotes ? `Reliable supplier since ${2015 + yearOffset}. ${notes[noteIndex]}` : "",
-      status: statuses[statusIndex],
+      address: `${addressNum} ${streets[streetIndex]!}, ${cities[cityIndex]!}, ${states[stateIndex]!} ${zipCode}`,
+      notes: hasNotes ? `Reliable supplier since ${2015 + yearOffset}. ${notes[noteIndex]!}` : "",
+      status: statuses[statusIndex]! as "active" | "inactive",
       createdAt: new Date(new Date('2024-01-01').getTime() + (daysAgo * 24 * 60 * 60 * 1000)),
     }
-  })
+  }) as Supplier[]
 }
 
 // Mock purchase history data
@@ -76,7 +78,8 @@ const generatePurchaseHistory = (supplierId: string) => {
   ]
 
   // Use supplier ID to create a deterministic seed
-  const seed = supplierId.split('-')[1] ? parseInt(supplierId.split('-')[1]) : 1
+  const seedPart = supplierId.split('-')[1]
+  const seed = seedPart ? parseInt(seedPart) : 1
   const historyLength = Math.floor(seededRandom(seed * 100) * 20) + 5
 
   return Array.from({ length: historyLength }, (_, i) => {
@@ -86,7 +89,7 @@ const generatePurchaseHistory = (supplierId: string) => {
 
     return {
       id: `purchase-${supplierId}-${i + 1}`,
-      item: items[itemIndex],
+      item: items[itemIndex]!,
       cost,
       date: new Date(new Date('2024-01-01').getTime() + (daysAgo * 24 * 60 * 60 * 1000)),
     }

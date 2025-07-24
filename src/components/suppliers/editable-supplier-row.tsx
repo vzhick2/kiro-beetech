@@ -99,6 +99,8 @@ export const EditableSupplierRow = ({
       document.addEventListener("keydown", handleKeyDown)
       return () => document.removeEventListener("keydown", handleKeyDown)
     }
+    
+    return () => {} // Explicit return for when not editing
   }, [isEditing, onCancel])
 
   const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement | null>) => {
@@ -241,7 +243,7 @@ export const EditableSupplierRow = ({
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
-            value={formData.status}
+            value={formData.status || "active"}
             onValueChange={(value: "active" | "inactive") => setFormData({ ...formData, status: value })}
             disabled={isSaving}
           >

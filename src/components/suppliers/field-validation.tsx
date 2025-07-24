@@ -5,7 +5,7 @@ import type React from "react"
 import { AlertTriangle } from "lucide-react"
 
 interface FieldValidationProps {
-  error?: string
+  error?: string | undefined
   children: React.ReactNode
 }
 

@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import type { RowSelectionState } from "@tanstack/react-table"
+
+type RowSelectionState = Record<string, boolean>
 
 interface KeyboardNavigationProps {
   totalRows: number
   rowSelection: RowSelectionState
-  setRowSelection: (selection: RowSelectionState) => void
+  setRowSelection: (selection: RowSelectionState | ((prev: RowSelectionState) => RowSelectionState)) => void
   onNewSupplier: () => void
   onBulkDelete: () => void
   selectedCount: number
@@ -94,7 +95,7 @@ export const useKeyboardNavigation = ({
             // Toggle selection of focused row
             if (focusedRowIndex >= 0) {
               const rowId = getRowId(focusedRowIndex)
-              setRowSelection((prev) => ({
+              setRowSelection((prev: RowSelectionState) => ({
                 ...prev,
                 [rowId]: !prev[rowId],
               }))

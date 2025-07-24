@@ -36,7 +36,7 @@ export const useSpreadsheetNavigation = ({
           }
         }
       }
-      setCurrentCell({ row: initialRow, col: editableColumns[0] })
+      setCurrentCell({ row: initialRow, col: editableColumns[0]! })
       setNavigationActive(true)
     } else if (!isSpreadsheetMode) {
       setCurrentCell(null)
@@ -52,10 +52,10 @@ export const useSpreadsheetNavigation = ({
 
     if (currentColIndex < editableColumns.length - 1) {
       // Next column in same row
-      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex + 1] })
+      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex + 1]! })
     } else if (currentRow < totalRows - 1) {
       // First column of next row
-      setCurrentCell({ row: currentRow + 1, col: editableColumns[0] })
+      setCurrentCell({ row: currentRow + 1, col: editableColumns[0]! })
     }
   }, [currentCell, totalRows, editableColumns])
 
@@ -67,10 +67,10 @@ export const useSpreadsheetNavigation = ({
 
     if (currentColIndex > 0) {
       // Previous column in same row
-      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex - 1] })
+      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex - 1]! })
     } else if (currentRow > 0) {
       // Last column of previous row
-      setCurrentCell({ row: currentRow - 1, col: editableColumns[editableColumns.length - 1] })
+      setCurrentCell({ row: currentRow - 1, col: editableColumns[editableColumns.length - 1]! })
     }
   }, [currentCell, editableColumns])
 

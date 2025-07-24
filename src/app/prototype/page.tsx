@@ -18,7 +18,7 @@ export default function PrototypePage() {
             <li><strong>Validation display:</strong> Better space for showing validation errors</li>
           </ul>
           <p className="mt-2 text-sm text-blue-700">
-            The button next to checkboxes (like "View Purchase History") in a modal actually provides:
+            The button next to checkboxes (like &quot;View Purchase History&quot;) in a modal actually provides:
             better context switching, focused workflows, and cleaner table interface!
           </p>
         </div>
