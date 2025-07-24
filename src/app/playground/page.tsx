@@ -28,23 +28,23 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       expanded: "px-4 py-2"
     },
     glassmorphism: {
-      container: "bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl",
-      button: "hover:bg-white/20 rounded-xl px-3 py-2 backdrop-blur-sm",
-      deleteButton: "bg-red-500/80 hover:bg-red-500",
+      container: "bg-black/40 backdrop-blur-md border border-white/30 text-white rounded-2xl shadow-lg",
+      button: "hover:bg-white/20 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 text-white",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
     'glassmorphism-enhanced': {
-      container: "bg-white/20 backdrop-blur-lg border border-white/30 text-white rounded-2xl shadow-xl",
-      button: "hover:bg-blue-500/30 rounded-xl px-3 py-2 backdrop-blur-sm border border-white/10 transition-all",
-      deleteButton: "bg-red-500/90 hover:bg-red-600 border border-red-400/30",
+      container: "bg-black/50 backdrop-blur-lg border border-blue-400/40 text-white rounded-2xl shadow-xl",
+      button: "hover:bg-blue-500/40 rounded-xl px-3 py-2 backdrop-blur-sm border border-blue-300/20 transition-all text-white font-medium",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 border border-red-400/30 text-white",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
     'glassmorphism-pure': {
-      container: "bg-white/15 backdrop-blur-xl border-2 border-white/40 text-white rounded-2xl shadow-2xl",
-      button: "hover:bg-white/25 rounded-xl px-3 py-2 backdrop-blur-sm border border-white/30 transition-all duration-300",
-      deleteButton: "bg-white/20 hover:bg-white/30 text-red-400 border border-white/40",
+      container: "bg-black/60 backdrop-blur-xl border-2 border-white/50 text-white rounded-2xl shadow-2xl",
+      button: "hover:bg-white/25 rounded-xl px-3 py-2 backdrop-blur-sm border border-white/30 transition-all duration-300 text-white font-semibold",
+      deleteButton: "bg-white/25 hover:bg-white/35 text-red-300 border border-white/40 font-medium",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
