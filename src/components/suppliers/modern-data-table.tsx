@@ -56,7 +56,6 @@ import { useSpreadsheetMode } from "@/hooks/use-spreadsheet-mode"
 import { useSpreadsheetNavigation } from "@/hooks/use-spreadsheet-navigation"
 import { FloatingControls } from "./floating-controls"
 import { PurchaseHistoryModal } from "./purchase-history-modal"
-import { BatchActionsBar } from "@/components/ui/batch-actions-sheet"
 
 const columnHelper = createColumnHelper<Supplier>()
 
@@ -639,19 +638,8 @@ export const ModernDataTable = () => {
         onBulkArchive={handleBulkArchive}
         onBulkUnarchive={handleBulkUnarchive}
         onBulkDelete={handleBulkDelete}
-        isSaving={isSavingSpreadsheet}
-        loading={loading}
-      />
-
-      {/* Mobile Batch Actions Bar */}
-      <BatchActionsBar
-        selectedCount={selectedIds.length}
-        hasInactiveSelected={hasInactiveSelected}
-        onBulkExport={handleBulkExport}
-        onBulkArchive={handleBulkArchive}
-        onBulkUnarchive={handleBulkUnarchive}
-        onBulkDelete={handleBulkDelete}
         onClearSelection={() => setRowSelection({})}
+        isSaving={isSavingSpreadsheet}
         loading={loading}
       />
 
