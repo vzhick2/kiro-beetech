@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
-  // Build performance improvements
+  // Exclude prototype directory from build
   experimental: {
     optimizePackageImports: [
       'ag-grid-community',
@@ -26,6 +26,15 @@ const nextConfig: NextConfig = {
         'https://your-production-domain.com',
       ],
     },
+  },
+
+  // Exclude prototype from compilation
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.tsx?$/,
+      exclude: /prototype-features-pages/,
+    });
+    return config;
   },
 
   // Image optimization
