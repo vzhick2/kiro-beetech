@@ -88,25 +88,18 @@ export const FloatingControls = ({
   if (isSpreadsheetMode) {
     return (
       <div 
-        className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
+        className={`${NOTION_STYLES.base} ${containerStyle} ${isMobile ? 'bottom-6 left-4 right-4' : 'bottom-6 right-6'} ${NOTION_STYLES.animation.slideUp}`}
+        style={{ width: 'auto', maxWidth: 'fit-content' }}
       >
-        <div className={`px-4 py-3 flex items-center justify-between ${isMobile ? 'flex-col gap-3' : 'gap-4'}`}>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className={`${NOTION_STYLES.text.primary} text-sm`}>
-                Spreadsheet Mode
-              </span>
+        <div className="px-4 py-3 flex items-center gap-3">
+          {changedRowsCount > 0 && (
+            <div className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-md">
+              {changedRowsCount} modified
             </div>
-            {changedRowsCount > 0 && (
-              <div className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-md">
-                {changedRowsCount} modified
-              </div>
-            )}
-          </div>
+          )}
           
           {!isMobile && (
-            <div className={`${NOTION_STYLES.text.secondary} flex items-center gap-4`}>
+            <div className={`${NOTION_STYLES.text.secondary} flex items-center gap-3 text-xs`}>
               <span>Tab: Next field</span>
               <span>↑↓: Navigate</span>
               <span>Esc: Exit</span>
@@ -158,12 +151,12 @@ export const FloatingControls = ({
   return (
     <div 
       className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
-      style={{ maxWidth: isMobile ? 'none' : '600px' }}
+      style={{ width: 'auto', maxWidth: 'fit-content' }}
     >
-      <div className={`px-4 py-3 flex items-center ${selectedCount > 0 ? 'justify-between' : 'justify-end'}`}>
+      <div className="px-4 py-3 flex items-center">
         {selectedCount > 0 ? (
           // Selection state with batch actions
-          <>
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className={`w-6 h-6 bg-gray-600 text-white text-xs font-semibold rounded-md flex items-center justify-center ${NOTION_STYLES.animation.scaleIn}`}>
@@ -175,7 +168,7 @@ export const FloatingControls = ({
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-6">
               <Button
                 size="sm"
                 onClick={onBulkExport}
@@ -241,7 +234,7 @@ export const FloatingControls = ({
                 </Button>
               )}
             </div>
-          </>
+          </div>
         ) : (
           // Default state with minimal controls
           <div className="flex items-center gap-2">
