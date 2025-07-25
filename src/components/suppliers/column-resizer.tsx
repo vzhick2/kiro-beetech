@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 interface ColumnResizerProps {
   columnId: string
   onResize: (columnId: string, width: number) => void
-  onStartResize: (columnId: string) => void
+  onStartResize: (columnId: string, startWidth: number) => void
   onStopResize: () => void
 }
 
@@ -25,7 +25,7 @@ export const ColumnResizer = ({ columnId, onResize, onStartResize, onStopResize 
       if (th) {
         startWidthRef.current = th.offsetWidth
       }
-      onStartResize(columnId)
+      onStartResize(columnId, startWidthRef.current)
 
       const handleMouseMove = (e: MouseEvent) => {
         const diff = e.clientX - startXRef.current

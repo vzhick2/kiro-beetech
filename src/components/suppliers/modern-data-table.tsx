@@ -132,7 +132,7 @@ export const ModernDataTable = () => {
     getAllChanges,
   } = useSpreadsheetMode()
 
-  const { columnWidths, resetColumnWidths, updateColumnWidth, startResize, stopResize } = useColumnWidths()
+  const { columnWidths, dragStartWidth, resetColumnWidths, updateColumnWidth, startResize, stopResize } = useColumnWidths()
 
   const [isSavingSpreadsheet, setIsSavingSpreadsheet] = useState(false)
 
@@ -147,6 +147,12 @@ export const ModernDataTable = () => {
       })
     }
   }, [isSpreadsheetMode])
+
+  // Clear selection when filter or search changes
+  useEffect(() => {
+    setRowSelection({})
+    resetSelection()
+  }, [statusFilter, debouncedSearchValue, resetSelection])
 
   const columns = useMemo(
     () => [

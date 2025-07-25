@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import type { Supplier, EditingRow, NewSupplier, ValidationError } from "@/types/data-table"
 import { formatPhoneNumber, cleanEmail, formatWebsite, detectDuplicates } from "@/utils/formatting"
+import { useToast } from "@/providers/toast-provider"
 
 // Deterministic pseudo-random function to avoid hydration mismatches
 const seededRandom = (seed: number) => {
@@ -150,6 +151,7 @@ const matchesSearchQuery = (item: Supplier, query: string): boolean => {
 }
 
 export const useDataTable = () => {
+  const { showToast } = useToast()
   const [data, setData] = useState<Supplier[]>(generateMockData())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -219,8 +221,21 @@ export const useDataTable = () => {
 
       setData((prev) => prev.map((item) => (item.id === id ? { ...item, ...formattedData } : item)))
       setEditingRow(null)
+      
+      // Success toast
+      showToast({
+        title: 'Supplier updated',
+        message: 'Changes saved successfully',
+        type: 'success'
+      })
     } catch (err) {
       setError("Failed to update supplier")
+      // Error toast
+      showToast({
+        title: 'Update failed',
+        message: 'Unable to save changes. Please try again.',
+        type: 'error'
+      })
     } finally {
       setSavingRows((prev) => {
         const newSet = new Set(prev)
@@ -257,8 +272,21 @@ export const useDataTable = () => {
           return update ? { ...item, ...update.formattedData } : item
         }),
       )
+      
+      // Success toast
+      showToast({
+        title: 'Bulk changes saved',
+        message: `${updates.length} supplier${updates.length === 1 ? '' : 's'} updated successfully`,
+        type: 'success'
+      })
     } catch (err) {
       setError("Failed to update suppliers")
+      // Error toast
+      showToast({
+        title: 'Bulk update failed',
+        message: 'Unable to save all changes. Please try again.',
+        type: 'error'
+      })
       throw err
     } finally {
       setLoading(false)
@@ -318,8 +346,21 @@ export const useDataTable = () => {
 
       setData((prev) => [newSupplier, ...prev])
       setValidationErrors([])
+      
+      // Success toast
+      showToast({
+        title: 'New supplier added',
+        message: `${supplierData.name} has been added to your suppliers`,
+        type: 'success'
+      })
     } catch (err) {
       setError("Failed to add supplier")
+      // Error toast
+      showToast({
+        title: 'Add supplier failed',
+        message: 'Unable to add the new supplier. Please try again.',
+        type: 'error'
+      })
       throw err
     } finally {
       setLoading(false)
@@ -331,8 +372,21 @@ export const useDataTable = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500))
       setData((prev) => prev.filter((item) => !ids.includes(item.id)))
+      
+      // Success toast
+      showToast({
+        title: `${ids.length} supplier${ids.length === 1 ? '' : 's'} deleted`,
+        message: 'Selected suppliers have been permanently removed',
+        type: 'success'
+      })
     } catch (err) {
       setError("Failed to delete suppliers")
+      // Error toast
+      showToast({
+        title: 'Delete failed',
+        message: 'Unable to delete the selected suppliers. Please try again.',
+        type: 'error'
+      })
     } finally {
       setLoading(false)
     }
@@ -343,8 +397,25 @@ export const useDataTable = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500))
       setData((prev) => prev.map((item) => (ids.includes(item.id) ? { ...item, status: "inactive" as const } : item)))
+      
+      // Success toast
+      showToast({
+        title: `${ids.length} supplier${ids.length === 1 ? '' : 's'} archived`,
+        message: 'Suppliers moved to inactive status',
+        type: 'info',
+        action: {
+          label: 'Undo',
+          onClick: () => unarchiveSuppliers(ids)
+        }
+      })
     } catch (err) {
       setError("Failed to archive suppliers")
+      // Error toast
+      showToast({
+        title: 'Archive failed',
+        message: 'Unable to archive the selected suppliers. Please try again.',
+        type: 'error'
+      })
     } finally {
       setLoading(false)
     }
@@ -355,8 +426,21 @@ export const useDataTable = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500))
       setData((prev) => prev.map((item) => (ids.includes(item.id) ? { ...item, status: "active" as const } : item)))
+      
+      // Success toast
+      showToast({
+        title: `${ids.length} supplier${ids.length === 1 ? '' : 's'} restored`,
+        message: 'Suppliers moved back to active status',
+        type: 'success'
+      })
     } catch (err) {
       setError("Failed to unarchive suppliers")
+      // Error toast
+      showToast({
+        title: 'Restore failed',
+        message: 'Unable to restore the selected suppliers. Please try again.',
+        type: 'error'
+      })
     } finally {
       setLoading(false)
     }
@@ -368,8 +452,25 @@ export const useDataTable = () => {
       await new Promise((resolve) => setTimeout(resolve, 500))
       const suppliersToExport = data.filter((item) => ids.includes(item.id))
       console.log(`Exporting ${suppliersToExport.length} suppliers as ${format}`)
+      
+      // Success toast
+      showToast({
+        title: `${suppliersToExport.length} supplier${suppliersToExport.length === 1 ? '' : 's'} exported`,
+        message: `${format.toUpperCase()} file downloaded to your device`,
+        type: 'success',
+        action: {
+          label: 'Open File',
+          onClick: () => console.log('Open exported file')
+        }
+      })
     } catch (err) {
       setError("Failed to export suppliers")
+      // Error toast
+      showToast({
+        title: 'Export failed',
+        message: 'Unable to export the selected suppliers. Please try again.',
+        type: 'error'
+      })
     } finally {
       setLoading(false)
     }

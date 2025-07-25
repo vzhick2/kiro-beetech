@@ -211,15 +211,6 @@ export const FloatingControls = ({
 
               <div className="w-px h-6 bg-gray-200 mx-1"></div>
 
-              <Button
-                size="sm"
-                onClick={onCollapseAll}
-                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
-                title="Collapse all rows"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-
               {onClearSelection && (
                 <Button
                   size="sm"
@@ -231,29 +222,42 @@ export const FloatingControls = ({
                   <X className="h-4 w-4" />
                 </Button>
               )}
+
+              <Button
+                size="sm"
+                onClick={onCollapseAll}
+                className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'}`}
+                title="Collapse all rows"
+              >
+                <ChevronUp className="h-4 w-4" />
+                {!isMobile && <span className="ml-1 text-xs">Collapse All</span>}
+              </Button>
             </div>
           </div>
         ) : (
           // Default state with minimal controls
-          <div className="flex items-center gap-2">
-            {!isMobile && (
-              <Button
-                size="sm"
-                onClick={onEnterSpreadsheetMode}
-                className={`${NOTION_STYLES.button.primary} h-9 px-4 text-sm font-medium`}
-              >
-                <Edit3 className="h-4 w-4 mr-2" />
-                Edit All Rows
-              </Button>
-            )}
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              {!isMobile && (
+                <Button
+                  size="sm"
+                  onClick={onEnterSpreadsheetMode}
+                  className={`${NOTION_STYLES.button.primary} h-9 px-4 text-sm font-medium`}
+                >
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit All Rows
+                </Button>
+              )}
+            </div>
 
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
+              className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'}`}
               title="Collapse all rows"
             >
               <ChevronUp className="h-4 w-4" />
+              {!isMobile && <span className="ml-1 text-xs">Collapse All</span>}
             </Button>
           </div>
         )}

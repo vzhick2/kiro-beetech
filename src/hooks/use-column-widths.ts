@@ -35,17 +35,22 @@ export const useColumnWidths = () => {
   const { isMobile } = useMobileDetection()
   const [columnWidths, setColumnWidths] = useState<ColumnWidths>(DEFAULT_WIDTHS)
   const [isResizing, setIsResizing] = useState<string | null>(null)
+  const [dragStartWidth, setDragStartWidth] = useState<number>(0)
 
-  // Update column widths based on screen size
+  // Update column widths based on screen size, but only when not resizing
   useEffect(() => {
-    setColumnWidths(isMobile ? MOBILE_WIDTHS : DEFAULT_WIDTHS)
-  }, [isMobile])
+    if (!isResizing) {
+      setColumnWidths(isMobile ? MOBILE_WIDTHS : DEFAULT_WIDTHS)
+    }
+  }, [isMobile, isResizing])
 
   const resetColumnWidths = useCallback(() => {
     setColumnWidths(isMobile ? MOBILE_WIDTHS : DEFAULT_WIDTHS)
   }, [isMobile])
 
   const updateColumnWidth = useCallback((columnId: string, width: number) => {
+    if (!isResizing) return // Only update when actively resizing
+    
     const minWidth = isMobile ? 
       (columnId === "actions" ? 100 : 40) : 
       (columnId === "actions" ? 140 : 60)
@@ -54,19 +59,22 @@ export const useColumnWidths = () => {
       ...prev,
       [columnId]: Math.max(minWidth, width),
     }))
-  }, [isMobile])
+  }, [isMobile, isResizing])
 
-  const startResize = useCallback((columnId: string) => {
+  const startResize = useCallback((columnId: string, startWidth: number) => {
     setIsResizing(columnId)
+    setDragStartWidth(startWidth)
   }, [])
 
   const stopResize = useCallback(() => {
     setIsResizing(null)
+    setDragStartWidth(0)
   }, [])
 
   return {
     columnWidths,
     isResizing,
+    dragStartWidth,
     resetColumnWidths,
     updateColumnWidth,
     startResize,
