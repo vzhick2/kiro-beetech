@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { AlertTriangle, Clock, Package, Calculator } from 'lucide-react';
 import { getTwoModeAlerts } from '@/app/actions/items';
 import { TwoModeAlert } from '@/types';
@@ -68,7 +74,11 @@ export function TwoModeAlertsWidget() {
   };
 
   const getModeIcon = (mode: string) => {
-    return mode === 'fully_tracked' ? <Package className="h-3 w-3" /> : <Calculator className="h-3 w-3" />;
+    return mode === 'fully_tracked' ? (
+      <Package className="h-3 w-3" />
+    ) : (
+      <Calculator className="h-3 w-3" />
+    );
   };
 
   return (
@@ -79,12 +89,13 @@ export function TwoModeAlertsWidget() {
           Inventory Alerts ({alerts.length})
         </CardTitle>
         <CardDescription>
-          Low stock alerts for fully tracked items and cost review reminders for cost-added items
+          Low stock alerts for fully tracked items and cost review reminders for
+          cost-added items
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {alerts.map((alert) => (
+          {alerts.map(alert => (
             <div
               key={alert.itemid}
               className="flex items-center justify-between p-3 border rounded-lg"
@@ -97,9 +108,14 @@ export function TwoModeAlertsWidget() {
                     <Badge variant="outline" className="text-xs">
                       {alert.sku}
                     </Badge>
-                    <Badge variant="outline" className="flex items-center gap-1 text-xs">
+                    <Badge
+                      variant="outline"
+                      className="flex items-center gap-1 text-xs"
+                    >
                       {getModeIcon(alert.tracking_mode)}
-                      {alert.tracking_mode === 'fully_tracked' ? 'Tracked' : 'Cost Only'}
+                      {alert.tracking_mode === 'fully_tracked'
+                        ? 'Tracked'
+                        : 'Cost Only'}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">

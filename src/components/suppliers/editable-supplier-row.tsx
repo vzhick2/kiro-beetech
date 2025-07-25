@@ -1,38 +1,56 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { SpreadsheetCell } from "./spreadsheet-cell"
+import type React from 'react';
+import { SpreadsheetCell } from './spreadsheet-cell';
 
-import { useState, useRef, useEffect } from "react"
-import { Check, X, Loader2, Edit, ExternalLink, Undo2, BarChart3 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TableCell, TableRow } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import type { Supplier, EditingRow } from "@/types/data-table"
-import { StatusBadge } from "./status-badge"
+import { useState, useRef, useEffect } from 'react';
+import {
+  Check,
+  X,
+  Loader2,
+  Edit,
+  ExternalLink,
+  Undo2,
+  BarChart3,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import type { Supplier, EditingRow } from '@/types/data-table';
+import { StatusBadge } from './status-badge';
 
 interface EditableSupplierRowProps {
-  supplier: Supplier
-  isSelected: boolean
-  isFocused: boolean
-  onSelect: (selected: boolean, event?: React.MouseEvent) => void
-  editingRow: EditingRow | null
-  isSaving: boolean
-  onEdit: (rowId: string, data: Partial<Supplier>) => void
-  onSave: (data: Partial<Supplier>) => void
-  onCancel: () => void
-  onToggleExpand: () => void
-  isExpanded: boolean
-  isSpreadsheetMode?: boolean
-  hasRowChanges?: boolean
-  onSpreadsheetChange?: (rowId: string, field: keyof Supplier, value: any) => void
-  onUndoRowChanges?: () => void
-  onShowPurchaseHistory?: () => void
-  onCellClick?: (row: number, col: number) => void
-  rowIndex: number
-  columnWidths: any
+  supplier: Supplier;
+  isSelected: boolean;
+  isFocused: boolean;
+  onSelect: (selected: boolean, event?: React.MouseEvent) => void;
+  editingRow: EditingRow | null;
+  isSaving: boolean;
+  onEdit: (rowId: string, data: Partial<Supplier>) => void;
+  onSave: (data: Partial<Supplier>) => void;
+  onCancel: () => void;
+  onToggleExpand: () => void;
+  isExpanded: boolean;
+  isSpreadsheetMode?: boolean;
+  hasRowChanges?: boolean;
+  onSpreadsheetChange?: (
+    rowId: string,
+    field: keyof Supplier,
+    value: any
+  ) => void;
+  onUndoRowChanges?: () => void;
+  onShowPurchaseHistory?: () => void;
+  onCellClick?: (row: number, col: number) => void;
+  rowIndex: number;
+  columnWidths: any;
 }
 
 export const EditableSupplierRow = ({
@@ -56,153 +74,167 @@ export const EditableSupplierRow = ({
   rowIndex,
   columnWidths,
 }: EditableSupplierRowProps) => {
-  const isEditing = editingRow?.rowId === supplier.id
+  const isEditing = editingRow?.rowId === supplier.id;
   const [formData, setFormData] = useState<Partial<Supplier>>({
     name: supplier.name,
-    website: supplier.website || "",
-    phone: supplier.phone || "",
+    website: supplier.website || '',
+    phone: supplier.phone || '',
     status: supplier.status,
-  })
+  });
 
-  const nameInputRef = useRef<HTMLInputElement>(null)
-  const websiteInputRef = useRef<HTMLInputElement>(null)
-  const phoneInputRef = useRef<HTMLInputElement>(null)
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const websiteInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isEditing && nameInputRef.current) {
-      nameInputRef.current.focus()
-      nameInputRef.current.select()
+      nameInputRef.current.focus();
+      nameInputRef.current.select();
     }
-  }, [isEditing])
+  }, [isEditing]);
 
   useEffect(() => {
     if (isEditing) {
       setFormData({
         name: supplier.name,
-        website: supplier.website || "",
-        phone: supplier.phone || "",
+        website: supplier.website || '',
+        phone: supplier.phone || '',
         status: supplier.status,
-      })
+      });
     }
-  }, [isEditing, supplier])
+  }, [isEditing, supplier]);
 
   // Handle escape key in edit mode
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isEditing && e.key === "Escape") {
-        e.preventDefault()
-        onCancel()
+      if (isEditing && e.key === 'Escape') {
+        e.preventDefault();
+        onCancel();
       }
-    }
+    };
 
     if (isEditing) {
-      document.addEventListener("keydown", handleKeyDown)
-      return () => document.removeEventListener("keydown", handleKeyDown)
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
     }
-    
-    return () => {} // Explicit return for when not editing
-  }, [isEditing, onCancel])
+
+    return () => {}; // Explicit return for when not editing
+  }, [isEditing, onCancel]);
 
   // Handle click outside to exit edit mode if no changes
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (isEditing) {
-        const target = e.target as HTMLElement
-        const row = target.closest(`[data-supplier-id="${supplier.id}"]`)
-        
+        const target = e.target as HTMLElement;
+        const row = target.closest(`[data-supplier-id="${supplier.id}"]`);
+
         // If click is outside this row and no changes have been made, exit edit mode
         if (!row) {
-          const hasChanges = 
+          const hasChanges =
             formData.name !== supplier.name ||
-            formData.website !== (supplier.website || "") ||
-            formData.phone !== (supplier.phone || "") ||
-            formData.status !== supplier.status
-          
+            formData.website !== (supplier.website || '') ||
+            formData.phone !== (supplier.phone || '') ||
+            formData.status !== supplier.status;
+
           if (!hasChanges) {
-            onCancel()
+            onCancel();
           }
         }
       }
-    }
+    };
 
     if (isEditing) {
-      document.addEventListener("mousedown", handleClickOutside)
-      return () => document.removeEventListener("mousedown", handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
     }
-    
-    return () => {}
-  }, [isEditing, onCancel, formData, supplier])
 
-  const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement | null>) => {
-    if (e.key === "Tab" && nextRef?.current) {
-      e.preventDefault()
-      nextRef.current.focus()
-    } else if (e.key === "Enter") {
-      e.preventDefault()
+    return () => {};
+  }, [isEditing, onCancel, formData, supplier]);
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent,
+    nextRef?: React.RefObject<HTMLInputElement | null>
+  ) => {
+    if (e.key === 'Tab' && nextRef?.current) {
+      e.preventDefault();
+      nextRef.current.focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
       if (isFormValid()) {
-        onSave(formData)
+        onSave(formData);
       }
     }
-  }
+  };
 
   const handleDoubleClickEdit = () => {
     if (!isEditing && !isSpreadsheetMode) {
-      onEdit(supplier.id, {})
+      onEdit(supplier.id, {});
     }
-  }
+  };
 
   const isFormValid = () => {
-    return formData.name?.trim() !== "" && formData.website?.trim() !== ""
-  }
+    return formData.name?.trim() !== '' && formData.website?.trim() !== '';
+  };
 
   const handleStartEdit = () => {
-    onEdit(supplier.id, formData)
-  }
+    onEdit(supplier.id, formData);
+  };
 
   const handleUndoRowChanges = () => {
     if (onUndoRowChanges) {
-      onUndoRowChanges()
+      onUndoRowChanges();
     }
-  }
+  };
 
   const handleCheckboxClick = (event: React.MouseEvent) => {
-    onSelect(!isSelected, event)
-  }
+    onSelect(!isSelected, event);
+  };
 
   const handleRowClick = (e: React.MouseEvent) => {
     // Don't expand if clicking on interactive elements
-    const target = e.target as HTMLElement
+    const target = e.target as HTMLElement;
     if (
-      target.closest("input") ||
-      target.closest("select") ||
-      target.closest("button") ||
-      target.closest("a") ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('button') ||
+      target.closest('a') ||
       target.closest('[role="checkbox"]')
     ) {
-      return
+      return;
     }
 
     if (!isSpreadsheetMode) {
-      onToggleExpand()
+      onToggleExpand();
     }
-  }
+  };
 
   const handleSpreadsheetChange = (field: keyof Supplier, value: any) => {
     if (onSpreadsheetChange) {
-      onSpreadsheetChange(supplier.id, field, value)
+      onSpreadsheetChange(supplier.id, field, value);
     }
-  }
+  };
 
   const handleCellClick = (colIndex: number) => {
     if (onCellClick && isSpreadsheetMode) {
-      onCellClick(rowIndex, colIndex)
+      onCellClick(rowIndex, colIndex);
     }
-  }
+  };
 
   // Standard button container component for consistent alignment
-  const ButtonContainer = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-    <div className={`flex items-center justify-center h-12 w-full ${className}`}>{children}</div>
-  )
+  const ButtonContainer = ({
+    children,
+    className = '',
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <div
+      className={`flex items-center justify-center h-12 w-full ${className}`}
+    >
+      {children}
+    </div>
+  );
 
   if (isEditing) {
     return (
@@ -211,7 +243,7 @@ export const EditableSupplierRow = ({
           <div className="flex items-center justify-center gap-3 h-12 px-2">
             <Checkbox
               checked={isSelected}
-              onCheckedChange={(checked) => onSelect(!!checked)}
+              onCheckedChange={checked => onSelect(!!checked)}
               aria-label="Select row"
               className="h-4 w-4 checkbox-action"
               disabled={isSaving}
@@ -224,7 +256,11 @@ export const EditableSupplierRow = ({
               disabled={isSaving || !isFormValid()}
               title="Save changes (Enter)"
             >
-              {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+              {isSaving ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
             </Button>
             <Button
               size="sm"
@@ -241,9 +277,9 @@ export const EditableSupplierRow = ({
         <TableCell className="p-1 h-12" style={{ width: columnWidths.name }}>
           <Input
             ref={nameInputRef}
-            value={formData.name || ""}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            onKeyDown={(e) => handleKeyDown(e, websiteInputRef)}
+            value={formData.name || ''}
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            onKeyDown={e => handleKeyDown(e, websiteInputRef)}
             className="h-8 text-xs"
             disabled={isSaving}
             placeholder="Supplier name *"
@@ -252,9 +288,11 @@ export const EditableSupplierRow = ({
         <TableCell className="p-1 h-12" style={{ width: columnWidths.website }}>
           <Input
             ref={websiteInputRef}
-            value={formData.website || ""}
-            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-            onKeyDown={(e) => handleKeyDown(e, phoneInputRef)}
+            value={formData.website || ''}
+            onChange={e =>
+              setFormData({ ...formData, website: e.target.value })
+            }
+            onKeyDown={e => handleKeyDown(e, phoneInputRef)}
             className="h-8 text-xs"
             disabled={isSaving}
             placeholder="Website *"
@@ -263,9 +301,9 @@ export const EditableSupplierRow = ({
         <TableCell className="p-1 h-12" style={{ width: columnWidths.phone }}>
           <Input
             ref={phoneInputRef}
-            value={formData.phone || ""}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            onKeyDown={(e) => handleKeyDown(e)}
+            value={formData.phone || ''}
+            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+            onKeyDown={e => handleKeyDown(e)}
             className="h-8 text-xs"
             disabled={isSaving}
             placeholder="Phone number"
@@ -273,8 +311,10 @@ export const EditableSupplierRow = ({
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
-            value={formData.status || "active"}
-            onValueChange={(value: "active" | "inactive") => setFormData({ ...formData, status: value })}
+            value={formData.status || 'active'}
+            onValueChange={(value: 'active' | 'inactive') =>
+              setFormData({ ...formData, status: value })
+            }
             disabled={isSaving}
           >
             <SelectTrigger className="h-8 text-xs">
@@ -290,15 +330,15 @@ export const EditableSupplierRow = ({
           <div className="text-sm text-gray-400 text-center">-</div>
         </TableCell>
       </TableRow>
-    )
+    );
   }
 
   return (
     <TableRow
       className={`hover:bg-gray-50 transition-colors group cursor-pointer border-b border-gray-200 h-12 ${
-        isFocused ? "ring-2 ring-blue-200" : ""
-      } ${isExpanded ? "bg-blue-25" : ""} ${hasRowChanges ? "bg-yellow-25 border-l-4 border-yellow-400" : ""}`}
-      data-state={isSelected && "selected"}
+        isFocused ? 'ring-2 ring-blue-200' : ''
+      } ${isExpanded ? 'bg-blue-25' : ''} ${hasRowChanges ? 'bg-yellow-25 border-l-4 border-yellow-400' : ''}`}
+      data-state={isSelected && 'selected'}
       data-supplier-id={supplier.id}
       onClick={handleRowClick}
     >
@@ -307,7 +347,7 @@ export const EditableSupplierRow = ({
           <div className="flex items-center justify-center gap-2 h-12 px-2">
             <Checkbox
               checked={isSelected}
-              onCheckedChange={(checked) => onSelect(!!checked)}
+              onCheckedChange={checked => onSelect(!!checked)}
               onClick={handleCheckboxClick}
               aria-label="Select row"
               className="h-4 w-4 hover:bg-gray-100 checkbox-action"
@@ -354,7 +394,10 @@ export const EditableSupplierRow = ({
         style={{ width: columnWidths.name, maxWidth: columnWidths.name }}
       >
         {isSpreadsheetMode ? (
-          <div onClick={() => handleCellClick(0)} className="h-full flex items-center">
+          <div
+            onClick={() => handleCellClick(0)}
+            className="h-full flex items-center"
+          >
             <SpreadsheetCell
               value={supplier.name}
               field="name"
@@ -367,8 +410,8 @@ export const EditableSupplierRow = ({
             />
           </div>
         ) : (
-          <div 
-            className="h-full flex items-center cursor-pointer" 
+          <div
+            className="h-full flex items-center cursor-pointer"
             onDoubleClick={handleDoubleClickEdit}
             title="Double-click to edit"
           >
@@ -378,9 +421,15 @@ export const EditableSupplierRow = ({
           </div>
         )}
       </TableCell>
-      <TableCell className="text-xs p-1 h-12" style={{ width: columnWidths.website, maxWidth: columnWidths.website }}>
+      <TableCell
+        className="text-xs p-1 h-12"
+        style={{ width: columnWidths.website, maxWidth: columnWidths.website }}
+      >
         {isSpreadsheetMode ? (
-          <div onClick={() => handleCellClick(1)} className="h-full flex items-center">
+          <div
+            onClick={() => handleCellClick(1)}
+            className="h-full flex items-center"
+          >
             <SpreadsheetCell
               value={supplier.website}
               field="website"
@@ -393,8 +442,8 @@ export const EditableSupplierRow = ({
             />
           </div>
         ) : (
-          <div 
-            className="h-full flex items-center cursor-pointer" 
+          <div
+            className="h-full flex items-center cursor-pointer"
             onDoubleClick={handleDoubleClickEdit}
             title="Double-click to edit"
           >
@@ -406,7 +455,9 @@ export const EditableSupplierRow = ({
                 className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
                 title={supplier.website}
               >
-                <span className="cell-content">{supplier.website.replace(/^https?:\/\//, "")}</span>
+                <span className="cell-content">
+                  {supplier.website.replace(/^https?:\/\//, '')}
+                </span>
                 <ExternalLink className="h-3 w-3 flex-shrink-0" />
               </a>
             ) : (
@@ -415,9 +466,15 @@ export const EditableSupplierRow = ({
           </div>
         )}
       </TableCell>
-      <TableCell className="text-xs p-1 h-12" style={{ width: columnWidths.phone, maxWidth: columnWidths.phone }}>
+      <TableCell
+        className="text-xs p-1 h-12"
+        style={{ width: columnWidths.phone, maxWidth: columnWidths.phone }}
+      >
         {isSpreadsheetMode ? (
-          <div onClick={() => handleCellClick(2)} className="h-full flex items-center">
+          <div
+            onClick={() => handleCellClick(2)}
+            className="h-full flex items-center"
+          >
             <SpreadsheetCell
               value={supplier.phone}
               field="phone"
@@ -430,8 +487,8 @@ export const EditableSupplierRow = ({
             />
           </div>
         ) : (
-          <div 
-            className="h-full flex items-center cursor-pointer" 
+          <div
+            className="h-full flex items-center cursor-pointer"
             onDoubleClick={handleDoubleClickEdit}
             title="Double-click to edit"
           >
@@ -449,9 +506,15 @@ export const EditableSupplierRow = ({
           </div>
         )}
       </TableCell>
-      <TableCell className="text-xs p-1 h-12" style={{ width: columnWidths.status }}>
+      <TableCell
+        className="text-xs p-1 h-12"
+        style={{ width: columnWidths.status }}
+      >
         {isSpreadsheetMode ? (
-          <div onClick={() => handleCellClick(3)} className="h-full flex items-center">
+          <div
+            onClick={() => handleCellClick(3)}
+            className="h-full flex items-center"
+          >
             <SpreadsheetCell
               value={supplier.status}
               field="status"
@@ -469,11 +532,16 @@ export const EditableSupplierRow = ({
           </div>
         )}
       </TableCell>
-      <TableCell className="text-xs p-1 h-12" style={{ width: columnWidths.created }}>
+      <TableCell
+        className="text-xs p-1 h-12"
+        style={{ width: columnWidths.created }}
+      >
         <div className="h-full flex items-center">
-          <span title={supplier.createdAt.toLocaleString()}>{supplier.createdAt.toLocaleDateString()}</span>
+          <span title={supplier.createdAt.toLocaleString()}>
+            {supplier.createdAt.toLocaleDateString()}
+          </span>
         </div>
       </TableCell>
     </TableRow>
-  )
-}
+  );
+};

@@ -1,39 +1,42 @@
-"use client"
+'use client';
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback } from 'react';
 
 export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+      setDebouncedValue(value);
+    }, delay);
 
     return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
 
-  return debouncedValue
-}
+  return debouncedValue;
+};
 
-export const useDebouncedSearch = (initialValue: string = "", delay: number = 200) => {
-  const [searchValue, setSearchValue] = useState(initialValue)
-  const debouncedSearchValue = useDebounce(searchValue, delay)
+export const useDebouncedSearch = (
+  initialValue: string = '',
+  delay: number = 200
+) => {
+  const [searchValue, setSearchValue] = useState(initialValue);
+  const debouncedSearchValue = useDebounce(searchValue, delay);
 
   const updateSearch = useCallback((value: string) => {
-    setSearchValue(value)
-  }, [])
+    setSearchValue(value);
+  }, []);
 
   const clearSearch = useCallback(() => {
-    setSearchValue("")
-  }, [])
+    setSearchValue('');
+  }, []);
 
   return {
     searchValue,
     debouncedSearchValue,
     updateSearch,
-    clearSearch
-  }
-}
+    clearSearch,
+  };
+};

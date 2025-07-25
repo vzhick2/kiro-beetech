@@ -37,6 +37,7 @@ Before responding to any request, follow these steps:
    - Plan for quick updates and forgiving data entry
 
 ### Core Workflow Principles
+
 - **MCP-First Approach**: Use MCP tools for deep analysis, database operations, and rapid commits
 - **Database Investigation**: Use Supabase MCP to understand schema, test queries, and validate data before coding
 - **Rapid Iteration**: Use GitHub MCP for fast commits when implementing multiple related changes
@@ -54,6 +55,7 @@ Automatically detect mode from user request and apply appropriate rules:
 - **OPTIMIZE**: Performance improvements, refactoring, dependency management
 
 #### PLAN Mode
+
 - Focus on business requirements from docs/product-specification.md
 - Consider mobile-first workshop operations and inventory flexibility
 - Plan for real-world constraints (negative inventory, back-dating, mutable records)
@@ -62,6 +64,7 @@ Automatically detect mode from user request and apply appropriate rules:
 - Reference docs/developer-guide.md for established patterns
 
 #### IMPLEMENT Mode
+
 - Use established patterns from codebase and docs/developer-guide.md
 - Follow Next.js 15 + React 19 best practices with App Router
 - Prioritize type safety with Zod validation and exhaustive checking
@@ -70,6 +73,7 @@ Automatically detect mode from user request and apply appropriate rules:
 - Focus on mobile responsiveness and direct-edit workflows
 
 #### REVIEW Mode
+
 - Validate business logic against real-world operational workflows
 - Check mobile responsiveness and accessibility compliance
 - Ensure error handling for operational scenarios and edge cases
@@ -78,6 +82,7 @@ Automatically detect mode from user request and apply appropriate rules:
 - Use GitHub MCP for comprehensive code analysis
 
 #### OPTIMIZE Mode
+
 - Analyze performance with focus on mobile and workshop environments
 - Refactor while maintaining operational flexibility and business logic
 - Optimize database queries using Supabase MCP insights
@@ -87,13 +92,16 @@ Automatically detect mode from user request and apply appropriate rules:
 ### Project Memory & Context
 
 #### Documentation Hierarchy
+
 - **docs/developer-guide.md**: Primary technical reference for architecture, patterns, and development standards
 - **docs/product-specification.md**: Business requirements and user workflow authority
 - **docs/technical-reference.md**: Database schema and API documentation
 - **docs/tasks.md**: Current priorities and completion tracking
 
 #### Context Validation
+
 Always check against docs for alignment before making changes:
+
 1. Reference current task status from `docs/tasks.md`
 2. Check `docs/developer-guide.md` for technical patterns and coding standards
 3. Validate against `docs/product-specification.md` for business alignment
@@ -101,6 +109,7 @@ Always check against docs for alignment before making changes:
 5. **Missing Documentation**: If referenced docs don't exist or are incomplete, ask user to clarify requirements rather than assume
 
 #### Memory Persistence
+
 - Track implementation decisions and their business rationale
 - Remember user preferences for coding patterns and operational workflows
 - Maintain awareness of recent changes and their operational impact
@@ -110,6 +119,7 @@ Always check against docs for alignment before making changes:
 ## Autonomous Processing Rules
 
 ### Autonomous Actions (No Permission Needed)
+
 - Fix linting and TypeScript errors
 - Format code with Prettier
 - Update documentation for completed tasks
@@ -122,6 +132,7 @@ Always check against docs for alignment before making changes:
 - **Code Refactoring**: Improve code quality, extract utilities, optimize components
 
 ### Permission Required Actions
+
 - Add new features or components
 - Modify database schema
 - Change business logic
@@ -143,12 +154,14 @@ Always check against docs for alignment before making changes:
 ## Code Standards
 
 ### TypeScript Excellence
+
 - Use TypeScript strict mode with explicit return types
 - Prefer interfaces over types for object shapes
 - Use `satisfies` operator for type validation
 - Implement exhaustive type checking with never types and ensureExhaustive patterns
 
 ### Component Architecture (Next.js 15 + React 19)
+
 - Write functional components with TypeScript interfaces (avoid React.FC)
 - Favor React Server Components (RSC) where possible, minimize 'use client' directives
 - Use server components by default, 'use client' only when necessary
@@ -157,6 +170,7 @@ Always check against docs for alignment before making changes:
 - Handle async params in layouts/pages: `const params = await props.params`
 
 ### Code Quality Standards
+
 - Implement early returns for better readability
 - Use descriptive variable names with auxiliary verbs (isLoading, hasError)
 - Prefix event handlers with "handle" (handleClick, handleSubmit)
@@ -168,6 +182,7 @@ Always check against docs for alignment before making changes:
 ## Business Logic Requirements
 
 ### Operational Flexibility (Real-World Business Needs)
+
 - Support negative inventory with warnings (operational reality vs theoretical constraints)
 - Implement mutable transaction logs with editable records and audit timestamps
 - Add cycle count alerts for proactive inventory management
@@ -175,6 +190,7 @@ Always check against docs for alignment before making changes:
 - Create direct-edit workflows for quick field updates without complex forms
 
 ### User Experience Priorities
+
 - Prioritize quick data entry with forgiving validation patterns
 - Enable batch operations and bulk editing for efficiency
 - Implement contextual help and operational guidance
@@ -253,15 +269,19 @@ The project uses a streamlined documentation approach with 4 core files:
 ## MCP Integration
 
 ### Available MCPs
+
 **Supabase MCP** (`jjpklpivpvywagmjjwpu`):
+
 - Database operations, migrations, security checks
 - Real-time debugging and schema analysis
 
 **GitHub MCP** (`vzhick2/btinv-beetech`):
+
 - Fast commits, repository operations
 - Codebase search and project management
 
 ### Usage Patterns
+
 - **Database-First Development**: Use Supabase MCP to explore schema and validate logic
 - **Rapid Implementation**: GitHub MCP for fast commits and codebase search
 - **Context-Aware Development**: Both MCPs for comprehensive analysis
@@ -342,6 +362,7 @@ The project uses a streamlined documentation approach with 4 core files:
 ## AI Behavior Rules
 
 ### Core Principles
+
 - This is an internal business tool prioritizing flexibility over rigid constraints
 - Focus on real-world workshops operations and forgiving data entry patterns
 - Implement business logic matching actual inventory management workflows
@@ -349,6 +370,7 @@ The project uses a streamlined documentation approach with 4 core files:
 - **Communication**: Always explain reasoning behind technical decisions and provide alternatives when they exist
 
 ### Advanced Interaction Guidelines
+
 - Generate complete, working code examples with necessary imports
 - Include inline comments for complex business logic
 - Provide usage examples for new functions/components
@@ -361,6 +383,7 @@ The project uses a streamlined documentation approach with 4 core files:
 **This project intentionally has NO npm scripts in package.json**
 
 **Common Commands (Run Directly):**
+
 - Development: `pnpm next dev --turbo --port 3002`
 - Build: `pnpm next build`
 - Production: `pnpm next start`
@@ -370,8 +393,9 @@ The project uses a streamlined documentation approach with 4 core files:
 - Supabase types: `npx supabase gen types typescript --project-id jjpklpivpvywagmjjwpu > src/types/database.ts`
 
 **When NOT to add scripts:**
+
 - Don't create convenience scripts for commands that are already short
-- Don't create "ai:*" scripts that just combine other commands
+- Don't create "ai:\*" scripts that just combine other commands
 - Don't create git shortcuts that bypass proper version control workflow
 - Don't create deployment scripts that should be handled by CI/CD
 
@@ -390,3 +414,4 @@ The project uses a streamlined documentation approach with 4 core files:
 - **VS Code Integration**: Use GitHub Copilot commit message generation when available
 - **MCP Commits**: Include context about MCP operations in commit messages
 - **Batch Changes**: Clearly describe scope of multi-file operations
+```

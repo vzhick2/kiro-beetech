@@ -53,7 +53,8 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
               : new Date(),
             primarySupplierId: dbItem.primarysupplierid || undefined,
             leadTimeDays: dbItem.leadtimedays || 7,
-            trackingMode: (dbItem.tracking_mode || 'fully_tracked') as TrackingMode,
+            trackingMode: (dbItem.tracking_mode ||
+              'fully_tracked') as TrackingMode,
             isArchived: dbItem.isarchived || false,
             created_at: new Date(dbItem.created_at || new Date()),
             updated_at: dbItem.updated_at

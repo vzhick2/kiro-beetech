@@ -79,4 +79,6 @@ export type CreateItemRequest = z.infer<typeof CreateItemSchema>;
 export type UpdateItemRequest = z.infer<typeof UpdateItemSchema>;
 export type ItemValidation = z.infer<typeof ItemSchema>;
 export type BulkItemIdsRequest = z.infer<typeof BulkItemIdsSchema>;
-export type TrackingModeChangeRequest = z.infer<typeof TrackingModeChangeSchema>;
+export type TrackingModeChangeRequest = z.infer<
+  typeof TrackingModeChangeSchema
+>;

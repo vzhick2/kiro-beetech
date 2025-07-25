@@ -30,6 +30,7 @@ pnpm test:ui              # Run with visual UI
 ## Project Context
 
 **Business Domain**: Workshop-focused inventory management system with two-mode tracking:
+
 - **Fully Tracked** 🟢: Complete inventory with WAC calculations
 - **Cost Added** 🟡: Simple cost allocation without quantity tracking
 
@@ -37,10 +38,12 @@ pnpm test:ui              # Run with visual UI
 **Focus**: Mobile-first, workshop/field operations, operational flexibility over rigid constraints
 
 **Database clients**:
+
 - `supabase` (browser/RLS)
 - `supabaseAdmin` (server actions)
 
 **Key business logic**:
+
 - WAC calculations handled by PostgreSQL functions
 - All inventory changes create audit logs
 - Cost allocation distributes overhead proportionally
@@ -48,6 +51,7 @@ pnpm test:ui              # Run with visual UI
 - Allow back-dating transactions for operational corrections
 
 **Workshop Reality Considerations**:
+
 - Touch-friendly interfaces for mobile operations (44px+ touch targets)
 - Forgiving validation patterns for efficiency
 - Batch operations for productivity
@@ -58,6 +62,7 @@ pnpm test:ui              # Run with visual UI
 ### MCP Tool Integration
 
 **Available MCP servers**:
+
 - **GitHub MCP**: Use for multi-file implementations and PR creation
 - **Playwright MCP**: Auto-trigger after UI changes for testing
 - **Supabase MCP**: Validate schema and test queries before code changes
@@ -74,6 +79,7 @@ pnpm test:ui              # Run with visual UI
 ### Testing Guidelines
 
 **Auto-test triggers** (use Playwright MCP):
+
 - Major UI changes or new features
 - User-reported bugs
 - Critical inventory workflows: add item → purchase → receive → adjust → sell
@@ -84,11 +90,13 @@ pnpm test:ui              # Run with visual UI
 ### Autonomy Rules
 
 **✅ Act Independently:**
+
 - Bug fixes, performance optimization, UI polish
 - Code quality improvements, TypeScript fixes
 - Documentation updates, lint fixes
 
 **🔐 Ask Permission:**
+
 - New features, schema changes, business logic modifications
 - Dependency updates, architectural decisions
 - UI layouts and workflow sequences
@@ -121,13 +129,15 @@ pnpm test:ui              # Run with visual UI
 ## Documentation References
 
 **Primary References**:
+
 - `docs/tasks.md` - Current development work and roadmap
 - `docs/developer-guide.md` - Complete technical patterns and standards
 - `docs/product-specification.md` - Business requirements authority
 - `docs/technical-reference.md` - Database schema and API reference
 
 **Context Validation Process**:
-1. Check current task status in `docs/tasks.md`  
+
+1. Check current task status in `docs/tasks.md`
 2. Reference technical patterns in `docs/developer-guide.md`
 3. Validate business alignment with `docs/product-specification.md`
 4. Use `docs/technical-reference.md` for database operations

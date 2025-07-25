@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
   },
 
   // Exclude prototype from compilation
-  webpack: (config) => {
+  webpack: config => {
     config.module.rules.push({
       test: /\.tsx?$/,
       exclude: /prototype-features-pages/,

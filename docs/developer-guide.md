@@ -4,7 +4,14 @@ description: 'Complete development setup, architecture, standards, and AI guidel
 purpose: 'Unified reference for developers covering setup, technical decisions, and development philosophy'
 last_updated: 'July 23, 2025'
 doc_type: 'developer-reference'
-related: ['README.md', 'technical-reference.md', 'product-specification.md', 'tasks.md', '.vscode/copilot-instructions.md']
+related:
+  [
+    'README.md',
+    'technical-reference.md',
+    'product-specification.md',
+    'tasks.md',
+    '.vscode/copilot-instructions.md',
+  ]
 ---
 
 # Developer Guide
@@ -29,11 +36,13 @@ Complete developer reference covering setup, architecture, standards, and AI-dri
 ## 🚀 Quick Setup
 
 ### Prerequisites
+
 - Node.js 18+ and pnpm
 - Git with SSH keys configured
 - VS Code or Cursor IDE
 
 ### Complete Installation Steps
+
 ```bash
 # Clone and setup
 git clone git@github.com:vzhick2/kiro-beetech.git
@@ -58,17 +67,20 @@ pnpm dev
 ### Environment Configuration
 
 #### Supabase Configuration
+
 - **Project ID**: `jjpklpivpvywagmjjwpu`
 - **Project Name**: `btinv-beetech`
 - **Region**: `us-east-2`
 
 #### Environment Variables
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 ```
 
 #### Available Scripts
+
 ```bash
 # Generate types from remote database
 pnpm supabase:types
@@ -162,50 +174,52 @@ src/
 
 ### Core Framework & Runtime
 
-| Package           | Version | Status        | Notes                               |
-| ----------------- | ------- | ------------- | ----------------------------------- |
-| **Next.js**       | 15.4.1  | ✅ **Current** | Upgraded from 14.2.x with Turbopack |
-| **React**         | 19.1.0  | ✅ **Current** | Upgraded from 18.3.x                |
-| **TypeScript**    | 5.5.4   | ✅ **Current** | Upgraded from 5.4.x                 |
+| Package        | Version | Status         | Notes                               |
+| -------------- | ------- | -------------- | ----------------------------------- |
+| **Next.js**    | 15.4.1  | ✅ **Current** | Upgraded from 14.2.x with Turbopack |
+| **React**      | 19.1.0  | ✅ **Current** | Upgraded from 18.3.x                |
+| **TypeScript** | 5.5.4   | ✅ **Current** | Upgraded from 5.4.x                 |
 
 ### UI & Styling
 
-| Package              | Version | Status        | Notes                               |
-| -------------------- | ------- | ------------- | ----------------------------------- |
-| **Tailwind CSS**     | 4.1.11  | ✅ **Current** | Upgraded to 4.x for latest features |
-| **Radix UI**         | Latest  | ✅ **Current** | Headless accessible components       |
-| **Lucide React**     | 0.525.0 | ✅ **Current** | Icon library                        |
+| Package          | Version | Status         | Notes                               |
+| ---------------- | ------- | -------------- | ----------------------------------- |
+| **Tailwind CSS** | 4.1.11  | ✅ **Current** | Upgraded to 4.x for latest features |
+| **Radix UI**     | Latest  | ✅ **Current** | Headless accessible components      |
+| **Lucide React** | 0.525.0 | ✅ **Current** | Icon library                        |
 
 ### Data Management
 
-| Package            | Version | Status        | Notes                               |
-| ------------------ | ------- | ------------- | ----------------------------------- |
-| **Supabase JS**    | 2.52.0  | ✅ **Current** | Backend and database                |
-| **TanStack Query** | 5.83.0  | ✅ **Current** | Server state management             |
+| Package            | Version | Status         | Notes                   |
+| ------------------ | ------- | -------------- | ----------------------- |
+| **Supabase JS**    | 2.52.0  | ✅ **Current** | Backend and database    |
+| **TanStack Query** | 5.83.0  | ✅ **Current** | Server state management |
 
 ### Development Tools
 
-| Package           | Version | Purpose                    |
-| ----------------- | ------- | -------------------------- |
-| **ESLint**        | 8.57.1  | Code linting               |
-| **Prettier**      | 3.0.0   | Code formatting            |
-| **Husky**         | 9.1.6   | Git hooks                  |
-| **Lint Staged**   | 15.2.10 | Pre-commit linting         |
+| Package         | Version | Purpose            |
+| --------------- | ------- | ------------------ |
+| **ESLint**      | 8.57.1  | Code linting       |
+| **Prettier**    | 3.0.0   | Code formatting    |
+| **Husky**       | 9.1.6   | Git hooks          |
+| **Lint Staged** | 15.2.10 | Pre-commit linting |
 
 ### Environment Configuration
 
 #### Supabase Configuration
+
 - **Project ID**: `jjpklpivpvywagmjjwpu`
 - **Project Name**: `btinv-beetech`
 - **Region**: `us-east-2`
 
 #### Environment Variables
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 ```
 
-*Note: For quick reference badges, see the README.md Technology Stack section. This comprehensive breakdown serves as the authoritative source for version management and development tooling.*
+_Note: For quick reference badges, see the README.md Technology Stack section. This comprehensive breakdown serves as the authoritative source for version management and development tooling._
 
 ## 🔧 Environment Setup
 
@@ -214,24 +228,29 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 This project uses symbolic links to eliminate duplicate configuration files:
 
 #### Current Symlinks
+
 - **AI Instructions**: `.cursorrules` → `.vscode/copilot-instructions.md`
 
 ## 📝 Coding Standards
 
 ### Constants & Enums
+
 - Use central `constants.ts` for shared values (e.g., `ITEM_TYPES`, `TRANSACTION_TYPES`)
 - Database enforces this with PostgreSQL `ENUM` types as documented in technical-reference.md
 
 ### Display ID Pattern
+
 - Apply consistently across entities - use auto-generated displayId for user references
 - Maintain UUID primary keys for performance
 - Format: 'PO-YYYYMMDD-XXX' for purchases, 'BATCH-YYYYMMDD-XXX' for batches
 
 ### Component Naming
+
 - Use `[View/Context][ComponentName]` structure (e.g., `ItemsTable`, `PurchaseForm`)
 - Self-documenting codebase with clear naming conventions
 
 ### Error & Feedback Handling
+
 - Inline validation for immediate user feedback
 - Standardized error types from technical-reference.md
 - Translate technical errors into plain, actionable language in UI toasts
@@ -239,6 +258,7 @@ This project uses symbolic links to eliminate duplicate configuration files:
 ## 🎨 Design System Reference
 
 ### Colors (from globals.css)
+
 ```css
 --app-sidebar: 220 46% 13%; /* #1e293b - Dark blue */
 --app-header: 220 46% 13%; /* Same as sidebar */
@@ -247,18 +267,21 @@ This project uses symbolic links to eliminate duplicate configuration files:
 ```
 
 ### Typography
+
 - **Headers**: text-2xl font-semibold text-gray-800
 - **Body**: text-sm text-gray-900
 - **Muted**: text-gray-500, text-gray-600
 - **Navigation**: text-gray-300 with hover:text-white
 
 ### Spacing
+
 - **Cards**: p-6 for padding
 - **Sections**: space-y-6, mb-6
 - **Buttons**: px-3 py-2 for normal, px-4 py-2 for larger
 - **Tables**: px-6 py-4 for cells
 
 ### Design Guidelines
+
 - **Colors**: Use the BigCommerce-inspired palette
 - **Typography**: System fonts with proper hierarchy
 - **Spacing**: 4px/8px/16px/24px system
@@ -289,19 +312,22 @@ This project uses Model Context Protocol (MCP) servers for AI-driven development
 2. **Ask Before Changes**: Confirm before implementing new features
 3. **Follow Documentation**: Reference product-specification.md for features, technical-reference.md for schema
 4. **Test with MCP**: Use Supabase MCP for database queries, Playwright MCP for UI testing
-"Search for similar implementations of user authentication"
-"Find all files that import the Items component"
-"Create a PR for this feature branch"
-"Review the changes in the last commit"
+   "Search for similar implementations of user authentication"
+   "Find all files that import the Items component"
+   "Create a PR for this feature branch"
+   "Review the changes in the last commit"
 
 #### Iteration Mindset
+
 - Propose evolutions aligned with tasks.md workflows
 - When updating/generating docs, ensure:
   - YAML frontmatter (purpose, last_updated, doc_type, related)
   - Vision Support: Embed flexibility (e.g., back-dating support in schemas)
 
 #### Self-Audit Steps
+
 Before finalizing any output for this inventory project:
+
 1. **Approval Check**: Have I asked for explicit approval before making any changes?
 
 ### Business Domain Guidelines
@@ -312,12 +338,14 @@ Before finalizing any output for this inventory project:
 ## 🧮 Technical Patterns
 
 ### Core Architecture Patterns
+
 - **Display ID Pattern**: User-facing IDs separate from UUID primary keys
 - **WAC Calculation**: On-demand with caching in items table
 - **Negative Inventory**: Supported with proper alerting
 - **Mutable Transactions**: Allow corrections with audit timestamps
 
 ### Component Architecture
+
 - **Server Components**: Default choice for Next.js 15
 - **Client Components**: Use when interactivity is needed
 - **Error Boundaries**: Comprehensive error handling
@@ -326,6 +354,7 @@ Before finalizing any output for this inventory project:
 ## 📦 Dependency Management
 
 ### Package Manager Rules
+
 - **Use pnpm**: Preferred package manager for consistency
 - **Lockfile Integrity**: Avoid manually editing package.json dependencies
 - **Clean Removal**: Remove unused dependencies when features are removed
@@ -356,7 +385,7 @@ BEGIN
   -- Calculate new WAC
   IF (v_current_quantity + p_new_quantity) > 0 THEN
     v_new_wac := (
-      (v_current_quantity * v_current_wac) + 
+      (v_current_quantity * v_current_wac) +
       (p_new_quantity * p_new_unit_cost)
     ) / (v_current_quantity + p_new_quantity);
   ELSE
@@ -378,16 +407,16 @@ export async function finalizePurchaseWithWAC(
 ): Promise<AppResult<void>> {
   try {
     // Implementation details...
-    
+
     // Update WAC for each line item
     for (const lineItem of lineItems) {
       await supabase.rpc('calculate_weighted_average_cost', {
         p_item_id: lineItem.itemId,
         p_new_quantity: lineItem.quantity,
-        p_new_unit_cost: lineItem.allocatedUnitCost
+        p_new_unit_cost: lineItem.allocatedUnitCost,
       });
     }
-    
+
     return { success: true };
   } catch (error) {
     return handleError(error, 'finalizePurchaseWithWAC');
@@ -396,9 +425,11 @@ export async function finalizePurchaseWithWAC(
 ```
 
 ### Critical Workflow Rules
+
 ⚠️ **Important: Ensure pnpm-lock.yaml is updated when changing package.json**
 
 #### Adding New Dependencies
+
 ```bash
 # Add runtime dependency
 pnpm add package-name
@@ -412,6 +443,7 @@ git commit -m "Add package-name dependency"
 ```
 
 #### Dependency Updates
+
 ```bash
 # Update specific package
 pnpm update package-name
@@ -424,12 +456,14 @@ pnpm outdated
 ```
 
 #### Package Management Best Practices
+
 - **Semantic Versioning**: Use exact versions for critical dependencies
 - **Security Updates**: Regularly run `pnpm audit` and address vulnerabilities
 - **Bundle Analysis**: Monitor bundle size with `pnpm build:analyze`
 - **Dependency Cleanup**: Remove unused dependencies regularly
 
 ### Available Scripts
+
 ```bash
 # Development
 pnpm dev                    # Start development server
@@ -521,24 +555,28 @@ If deployment issues occur:
 ### Common Issues
 
 #### Build Failures
+
 - Check TypeScript errors: `pnpm type-check`
 - Verify all imports are correct
 - Ensure environment variables are available
 - Run bundle analysis: `pnpm build:analyze`
 
 #### Runtime Errors
+
 - Check Supabase function logs
 - Verify API endpoints are accessible
 - Confirm database connections
 - Check Vercel function logs for deployment issues
 
 #### Performance Issues
+
 - Run bundle analysis: `pnpm build:analyze`
 - Optimize images and assets (use Next.js Image component)
 - Review code splitting strategy
 - Monitor Core Web Vitals in Vercel dashboard
 
 #### Development Environment
+
 - Clear Next.js cache: `rm -rf .next`
 - Reinstall dependencies: `rm -rf node_modules && pnpm install`
 - Check Node.js version compatibility
@@ -547,6 +585,7 @@ If deployment issues occur:
 ### Database Troubleshooting
 
 #### Connection Issues
+
 ```bash
 # Test Supabase connection
 pnpm supabase:types
@@ -559,6 +598,7 @@ npx supabase db pull --force
 ```
 
 #### Schema Changes
+
 ```bash
 # Reset local database
 pnpm supabase:reset
@@ -568,12 +608,14 @@ pnpm supabase db push
 ```
 
 #### Type Generation
+
 ```bash
 # Force regenerate types
 pnpm supabase:types --force
 ```
 
 #### Performance Issues
+
 ```bash
 # Run bundle analysis
 pnpm build:analyze

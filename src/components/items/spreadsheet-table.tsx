@@ -115,7 +115,8 @@ export function SpreadsheetTable({
           updated_at: 'updated_at',
           lastUsedSupplier: 'lastUsedSupplier',
           primarySupplierName: 'primarySupplierName',
-        };        const dbField = dbFieldMap[field];
+        };
+        const dbField = dbFieldMap[field];
         const dbValue =
           field === 'lastCountedDate' && value && typeof value !== 'boolean'
             ? new Date(value).toISOString()
@@ -344,7 +345,9 @@ export function SpreadsheetTable({
                     handleCellCancel();
                   }
                 }}
-                onChange={e => handleCellSave(item.itemId, field, e.target.value)}
+                onChange={e =>
+                  handleCellSave(item.itemId, field, e.target.value)
+                }
                 autoFocus
               >
                 <option value="fully_tracked">Full Tracking</option>
@@ -434,7 +437,13 @@ export function SpreadsheetTable({
       }
 
       // Make key fields clickable for editing
-      const editableFields = ['name', 'SKU', 'reorderPoint', 'type', 'trackingMode'];
+      const editableFields = [
+        'name',
+        'SKU',
+        'reorderPoint',
+        'type',
+        'trackingMode',
+      ];
       if (editableFields.includes(field)) {
         return (
           <div className="group flex items-center space-x-1">
@@ -826,7 +835,9 @@ export function SpreadsheetTable({
             <span className="text-orange-600 font-semibold">
               {
                 filteredItems.filter(
-                  i => i.trackingMode === 'fully_tracked' && i.currentQuantity <= (i.reorderPoint || 0)
+                  i =>
+                    i.trackingMode === 'fully_tracked' &&
+                    i.currentQuantity <= (i.reorderPoint || 0)
                 ).length
               }{' '}
               tracked items below reorder point

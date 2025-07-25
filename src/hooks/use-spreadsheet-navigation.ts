@@ -1,13 +1,13 @@
-"use client"
+'use client';
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect } from 'react';
 
 interface SpreadsheetNavigationProps {
-  totalRows: number
-  isSpreadsheetMode: boolean
-  onExitSpreadsheetMode: () => void
-  expandedRows: Set<string>
-  getRowId: (index: number) => string
+  totalRows: number;
+  isSpreadsheetMode: boolean;
+  onExitSpreadsheetMode: () => void;
+  expandedRows: Set<string>;
+  getRowId: (index: number) => string;
 }
 
 export const useSpreadsheetNavigation = ({
@@ -17,83 +17,95 @@ export const useSpreadsheetNavigation = ({
   expandedRows,
   getRowId,
 }: SpreadsheetNavigationProps) => {
-  const [currentCell, setCurrentCell] = useState<{ row: number; col: number } | null>(null)
-  const [navigationActive, setNavigationActive] = useState(false)
+  const [currentCell, setCurrentCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+  const [navigationActive, setNavigationActive] = useState(false);
 
   // Editable columns: name(0), website(1), phone(2), status(3)
-  const editableColumns = [0, 1, 2, 3]
+  const editableColumns = [0, 1, 2, 3];
 
   // Initialize cursor position when entering spreadsheet mode
   useEffect(() => {
     if (isSpreadsheetMode && !currentCell) {
-      let initialRow = 0
+      let initialRow = 0;
       if (expandedRows.size > 0) {
         for (let i = 0; i < totalRows; i++) {
-          const rowId = getRowId(i)
+          const rowId = getRowId(i);
           if (expandedRows.has(rowId)) {
-            initialRow = i
-            break
+            initialRow = i;
+            break;
           }
         }
       }
-      setCurrentCell({ row: initialRow, col: editableColumns[0]! })
-      setNavigationActive(true)
+      setCurrentCell({ row: initialRow, col: editableColumns[0]! });
+      setNavigationActive(true);
     } else if (!isSpreadsheetMode) {
-      setCurrentCell(null)
-      setNavigationActive(false)
+      setCurrentCell(null);
+      setNavigationActive(false);
     }
-  }, [isSpreadsheetMode, expandedRows, totalRows, getRowId, currentCell])
+  }, [isSpreadsheetMode, expandedRows, totalRows, getRowId, currentCell]);
 
   const moveToNextCell = useCallback(() => {
-    if (!currentCell) return
+    if (!currentCell) return;
 
-    const currentRow = currentCell.row
-    const currentColIndex = editableColumns.indexOf(currentCell.col)
+    const currentRow = currentCell.row;
+    const currentColIndex = editableColumns.indexOf(currentCell.col);
 
     if (currentColIndex < editableColumns.length - 1) {
       // Next column in same row
-      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex + 1]! })
+      setCurrentCell({
+        row: currentRow,
+        col: editableColumns[currentColIndex + 1]!,
+      });
     } else if (currentRow < totalRows - 1) {
       // First column of next row
-      setCurrentCell({ row: currentRow + 1, col: editableColumns[0]! })
+      setCurrentCell({ row: currentRow + 1, col: editableColumns[0]! });
     }
-  }, [currentCell, totalRows, editableColumns])
+  }, [currentCell, totalRows, editableColumns]);
 
   const moveToPrevCell = useCallback(() => {
-    if (!currentCell) return
+    if (!currentCell) return;
 
-    const currentRow = currentCell.row
-    const currentColIndex = editableColumns.indexOf(currentCell.col)
+    const currentRow = currentCell.row;
+    const currentColIndex = editableColumns.indexOf(currentCell.col);
 
     if (currentColIndex > 0) {
       // Previous column in same row
-      setCurrentCell({ row: currentRow, col: editableColumns[currentColIndex - 1]! })
+      setCurrentCell({
+        row: currentRow,
+        col: editableColumns[currentColIndex - 1]!,
+      });
     } else if (currentRow > 0) {
       // Last column of previous row
-      setCurrentCell({ row: currentRow - 1, col: editableColumns[editableColumns.length - 1]! })
+      setCurrentCell({
+        row: currentRow - 1,
+        col: editableColumns[editableColumns.length - 1]!,
+      });
     }
-  }, [currentCell, editableColumns])
+  }, [currentCell, editableColumns]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (!isSpreadsheetMode || !navigationActive) return
+      if (!isSpreadsheetMode || !navigationActive) return;
 
-      const activeElement = document.activeElement
+      const activeElement = document.activeElement;
       const isSelectOpen =
-        activeElement?.getAttribute("aria-expanded") === "true" ||
+        activeElement?.getAttribute('aria-expanded') === 'true' ||
         activeElement?.closest('[role="listbox"]') !== null ||
-        document.querySelector('[data-state="open"]') !== null
+        document.querySelector('[data-state="open"]') !== null;
 
       // Handle escape key - only exit spreadsheet if no dropdown is open
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         if (isSelectOpen) {
           // Let the select handle closing itself, don't exit spreadsheet mode
-          return
+          return;
         } else {
           // No dropdown open, exit spreadsheet mode
-          event.preventDefault()
-          onExitSpreadsheetMode()
-          return
+          event.preventDefault();
+          onExitSpreadsheetMode();
+          return;
         }
       }
 
@@ -102,38 +114,38 @@ export const useSpreadsheetNavigation = ({
         activeElement instanceof HTMLInputElement ||
         activeElement instanceof HTMLTextAreaElement ||
         activeElement instanceof HTMLSelectElement ||
-        activeElement?.getAttribute("role") === "combobox"
+        activeElement?.getAttribute('role') === 'combobox';
 
-      if (!isInputFocused) return
+      if (!isInputFocused) return;
 
       // Don't handle navigation if dropdown is open
-      if (isSelectOpen) return
+      if (isSelectOpen) return;
 
       // Handle tab navigation within spreadsheet
-      if (event.key === "Tab") {
-        event.preventDefault()
+      if (event.key === 'Tab') {
+        event.preventDefault();
         if (event.shiftKey) {
-          moveToPrevCell()
+          moveToPrevCell();
         } else {
-          moveToNextCell()
+          moveToNextCell();
         }
-        return
+        return;
       }
 
       // Handle up/down arrows to move between rows (keeping same column)
-      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-        if (!currentCell) return
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        if (!currentCell) return;
 
-        event.preventDefault()
-        const currentRow = currentCell.row
-        const currentCol = currentCell.col
+        event.preventDefault();
+        const currentRow = currentCell.row;
+        const currentCol = currentCell.col;
 
-        if (event.key === "ArrowUp" && currentRow > 0) {
-          setCurrentCell({ row: currentRow - 1, col: currentCol })
-        } else if (event.key === "ArrowDown" && currentRow < totalRows - 1) {
-          setCurrentCell({ row: currentRow + 1, col: currentCol })
+        if (event.key === 'ArrowUp' && currentRow > 0) {
+          setCurrentCell({ row: currentRow - 1, col: currentCol });
+        } else if (event.key === 'ArrowDown' && currentRow < totalRows - 1) {
+          setCurrentCell({ row: currentRow + 1, col: currentCol });
         }
-        return
+        return;
       }
     },
     [
@@ -144,46 +156,48 @@ export const useSpreadsheetNavigation = ({
       onExitSpreadsheetMode,
       moveToNextCell,
       moveToPrevCell,
-    ],
-  )
+    ]
+  );
 
   // Reset navigation when clicking on a cell
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       if (isSpreadsheetMode) {
-        setCurrentCell({ row, col })
-        setNavigationActive(true)
+        setCurrentCell({ row, col });
+        setNavigationActive(true);
       }
     },
-    [isSpreadsheetMode],
-  )
+    [isSpreadsheetMode]
+  );
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown, true)
-    return () => document.removeEventListener("keydown", handleKeyDown, true)
-  }, [handleKeyDown])
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [handleKeyDown]);
 
   // Focus the appropriate input when cell changes
   useEffect(() => {
     if (currentCell && isSpreadsheetMode && navigationActive) {
       setTimeout(() => {
-        const cellSelector = `[data-cell="${currentCell.row}-${currentCell.col}"] input, [data-cell="${currentCell.row}-${currentCell.col}"] button[role="combobox"]`
-        const element = document.querySelector(cellSelector) as HTMLInputElement | HTMLButtonElement
+        const cellSelector = `[data-cell="${currentCell.row}-${currentCell.col}"] input, [data-cell="${currentCell.row}-${currentCell.col}"] button[role="combobox"]`;
+        const element = document.querySelector(cellSelector) as
+          | HTMLInputElement
+          | HTMLButtonElement;
         if (element) {
-          element.focus()
+          element.focus();
           if (element instanceof HTMLInputElement) {
             // Don't select all text, just position cursor at end
-            const length = element.value.length
-            element.setSelectionRange(length, length)
+            const length = element.value.length;
+            element.setSelectionRange(length, length);
           }
         }
-      }, 10)
+      }, 10);
     }
-  }, [currentCell, isSpreadsheetMode, navigationActive])
+  }, [currentCell, isSpreadsheetMode, navigationActive]);
 
   return {
     currentCell,
     setCurrentCell,
     handleCellClick,
-  }
-}
+  };
+};

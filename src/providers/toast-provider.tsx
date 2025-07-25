@@ -27,19 +27,25 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | null>(null);
 
 // Toast component with Notion-inspired styling
-const ToastComponent = ({ toast, onClose }: { toast: Toast; onClose: () => void }) => {
+const ToastComponent = ({
+  toast,
+  onClose,
+}: {
+  toast: Toast;
+  onClose: () => void;
+}) => {
   const icons = {
     success: <Check className="h-5 w-5" />,
     error: <X className="h-5 w-5" />,
     warning: <AlertTriangle className="h-5 w-5" />,
-    info: <Info className="h-5 w-5" />
+    info: <Info className="h-5 w-5" />,
   };
 
   const iconColors = {
-    success: "text-green-600",
-    error: "text-red-600",
-    warning: "text-yellow-600",
-    info: "text-blue-600"
+    success: 'text-green-600',
+    error: 'text-red-600',
+    warning: 'text-yellow-600',
+    info: 'text-blue-600',
   };
 
   return (
@@ -53,9 +59,7 @@ const ToastComponent = ({ toast, onClose }: { toast: Toast; onClose: () => void 
             <div className="font-semibold text-sm text-gray-800">
               {toast.title}
             </div>
-            <div className="text-sm mt-1 text-gray-600">
-              {toast.message}
-            </div>
+            <div className="text-sm mt-1 text-gray-600">{toast.message}</div>
             {toast.action && (
               <div className="mt-3">
                 <button
@@ -111,17 +115,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toasts, showToast, hideToast, clearAllToasts }}>
+    <ToastContext.Provider
+      value={{ toasts, showToast, hideToast, clearAllToasts }}
+    >
       {children}
-      
+
       {/* Toast Container - Fixed top-right, below navbar */}
       <div className="fixed top-20 right-4 z-50 space-y-3 max-w-md pointer-events-none">
         {toasts.map(toast => (
           <div key={toast.id} className="pointer-events-auto">
-            <ToastComponent
-              toast={toast}
-              onClose={() => hideToast(toast.id)}
-            />
+            <ToastComponent toast={toast} onClose={() => hideToast(toast.id)} />
           </div>
         ))}
       </div>

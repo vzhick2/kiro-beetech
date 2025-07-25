@@ -1,22 +1,22 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState, useEffect, useRef } from "react"
-import { Check, X, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import type { EditingCell } from "@/types/data-table"
+import { useState, useEffect, useRef } from 'react';
+import { Check, X, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import type { EditingCell } from '@/types/data-table';
 
 interface EditableCellProps {
-  value: string
-  rowId: string
-  columnId: string
-  editingCell: EditingCell | null
-  isSaving: boolean
-  onEdit: (cell: EditingCell) => void
-  onSave: (value: string) => void
-  onCancel: () => void
+  value: string;
+  rowId: string;
+  columnId: string;
+  editingCell: EditingCell | null;
+  isSaving: boolean;
+  onEdit: (cell: EditingCell) => void;
+  onSave: (value: string) => void;
+  onCancel: () => void;
 }
 
 export const EditableCell = ({
@@ -29,28 +29,29 @@ export const EditableCell = ({
   onSave,
   onCancel,
 }: EditableCellProps) => {
-  const [editValue, setEditValue] = useState(value)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const isEditing = editingCell?.rowId === rowId && editingCell?.columnId === columnId
+  const [editValue, setEditValue] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isEditing =
+    editingCell?.rowId === rowId && editingCell?.columnId === columnId;
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [isEditing])
+  }, [isEditing]);
 
   useEffect(() => {
-    setEditValue(value)
-  }, [value])
+    setEditValue(value);
+  }, [value]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      onSave(editValue)
-    } else if (e.key === "Escape") {
-      onCancel()
+    if (e.key === 'Enter') {
+      onSave(editValue);
+    } else if (e.key === 'Escape') {
+      onCancel();
     }
-  }
+  };
 
   if (isEditing) {
     return (
@@ -58,7 +59,7 @@ export const EditableCell = ({
         <Input
           ref={inputRef}
           value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
+          onChange={e => setEditValue(e.target.value)}
           onKeyDown={handleKeyDown}
           className="h-8 text-sm"
           disabled={isSaving}
@@ -71,7 +72,11 @@ export const EditableCell = ({
             onClick={() => onSave(editValue)}
             disabled={isSaving}
           >
-            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+            {isSaving ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Check className="h-3 w-3" />
+            )}
           </Button>
           <Button
             size="sm"
@@ -84,7 +89,7 @@ export const EditableCell = ({
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -94,5 +99,5 @@ export const EditableCell = ({
     >
       {value || <span className="text-gray-400 italic">Click to edit</span>}
     </div>
-  )
-}
+  );
+};

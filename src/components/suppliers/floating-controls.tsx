@@ -1,52 +1,70 @@
-"use client"
+'use client';
 
-import { Edit3, Save, X, Loader2, ChevronUp, Download, Archive, Trash2, RotateCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useMobileDetection } from "@/hooks/use-mobile-detection"
+import {
+  Edit3,
+  Save,
+  X,
+  Loader2,
+  ChevronUp,
+  Download,
+  Archive,
+  Trash2,
+  RotateCcw,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useMobileDetection } from '@/hooks/use-mobile-detection';
 
 // Notion-inspired styling constants for clean, minimal design
 const NOTION_STYLES = {
-  base: "fixed z-50 transition-all duration-200 ease-in-out",
+  base: 'fixed z-50 transition-all duration-200 ease-in-out',
   container: {
-    default: "bg-white/95 backdrop-blur-md border border-gray-200/60 shadow-lg shadow-gray-900/[0.08] rounded-lg",
-    editing: "bg-blue-50/95 backdrop-blur-md border border-blue-200/60 shadow-lg shadow-blue-900/[0.08] rounded-lg",
-    selected: "bg-gray-50/95 backdrop-blur-md border border-gray-300/60 shadow-lg shadow-gray-900/[0.08] rounded-lg"
+    default:
+      'bg-white/95 backdrop-blur-md border border-gray-200/60 shadow-lg shadow-gray-900/[0.08] rounded-lg',
+    editing:
+      'bg-blue-50/95 backdrop-blur-md border border-blue-200/60 shadow-lg shadow-blue-900/[0.08] rounded-lg',
+    selected:
+      'bg-gray-50/95 backdrop-blur-md border border-gray-300/60 shadow-lg shadow-gray-900/[0.08] rounded-lg',
   },
   text: {
-    primary: "text-gray-700 font-medium",
-    secondary: "text-gray-500 text-sm",
-    count: "text-gray-600 font-semibold"
+    primary: 'text-gray-700 font-medium',
+    secondary: 'text-gray-500 text-sm',
+    count: 'text-gray-600 font-semibold',
   },
   button: {
-    default: "bg-gray-100/80 hover:bg-gray-200/80 border border-gray-200/40 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm",
-    primary: "bg-blue-500 hover:bg-blue-600 border border-blue-500 text-white transition-all duration-150 hover:shadow-sm",
-    success: "bg-green-500 hover:bg-green-600 border border-green-500 text-white transition-all duration-150 hover:shadow-sm",
-    danger: "bg-red-500 hover:bg-red-600 border border-red-500 text-white transition-all duration-150 hover:shadow-sm",
-    secondary: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm"
+    default:
+      'bg-gray-100/80 hover:bg-gray-200/80 border border-gray-200/40 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm',
+    primary:
+      'bg-blue-500 hover:bg-blue-600 border border-blue-500 text-white transition-all duration-150 hover:shadow-sm',
+    success:
+      'bg-green-500 hover:bg-green-600 border border-green-500 text-white transition-all duration-150 hover:shadow-sm',
+    danger:
+      'bg-red-500 hover:bg-red-600 border border-red-500 text-white transition-all duration-150 hover:shadow-sm',
+    secondary:
+      'bg-white hover:bg-gray-50 border border-gray-200 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm',
   },
   animation: {
-    slideUp: "animate-in slide-in-from-bottom-2 fade-in-0 duration-200",
-    scaleIn: "animate-in zoom-in-95 fade-in-0 duration-150"
-  }
-}
+    slideUp: 'animate-in slide-in-from-bottom-2 fade-in-0 duration-200',
+    scaleIn: 'animate-in zoom-in-95 fade-in-0 duration-150',
+  },
+};
 
 interface FloatingControlsProps {
-  isSpreadsheetMode: boolean
-  hasUnsavedChanges: boolean
-  changedRowsCount: number
-  selectedCount: number
-  hasInactiveSelected: boolean
-  onEnterSpreadsheetMode: () => void
-  onSaveChanges: () => Promise<void>
-  onCancelChanges: () => void
-  onCollapseAll: () => void
-  onBulkExport: () => void
-  onBulkArchive: () => void
-  onBulkUnarchive: () => void
-  onBulkDelete: () => void
-  onClearSelection?: () => void
-  isSaving: boolean
-  loading: boolean
+  isSpreadsheetMode: boolean;
+  hasUnsavedChanges: boolean;
+  changedRowsCount: number;
+  selectedCount: number;
+  hasInactiveSelected: boolean;
+  onEnterSpreadsheetMode: () => void;
+  onSaveChanges: () => Promise<void>;
+  onCancelChanges: () => void;
+  onCollapseAll: () => void;
+  onBulkExport: () => void;
+  onBulkArchive: () => void;
+  onBulkUnarchive: () => void;
+  onBulkDelete: () => void;
+  onClearSelection?: () => void;
+  isSaving: boolean;
+  loading: boolean;
 }
 
 export const FloatingControls = ({
@@ -67,25 +85,25 @@ export const FloatingControls = ({
   isSaving,
   loading,
 }: FloatingControlsProps) => {
-  const { isMobile } = useMobileDetection()
+  const { isMobile } = useMobileDetection();
 
   // Determine current state for styling
-  const isMinimalMode = !isSpreadsheetMode && selectedCount === 0
-  const containerStyle = isSpreadsheetMode 
-    ? NOTION_STYLES.container.editing 
-    : selectedCount > 0 
-      ? NOTION_STYLES.container.selected 
-      : NOTION_STYLES.container.default
+  const isMinimalMode = !isSpreadsheetMode && selectedCount === 0;
+  const containerStyle = isSpreadsheetMode
+    ? NOTION_STYLES.container.editing
+    : selectedCount > 0
+      ? NOTION_STYLES.container.selected
+      : NOTION_STYLES.container.default;
 
   // Notion-style positioning: floating above content
-  const positionClasses = isMobile 
-    ? "bottom-6 left-4 right-4" 
-    : "bottom-6 right-6"
+  const positionClasses = isMobile
+    ? 'bottom-6 left-4 right-4'
+    : 'bottom-6 right-6';
 
   // Spreadsheet mode controls with Notion aesthetic
   if (isSpreadsheetMode) {
     return (
-      <div 
+      <div
         className={`${NOTION_STYLES.base} ${containerStyle} ${isMobile ? 'bottom-6 left-4 right-4' : 'bottom-6 right-6'} ${NOTION_STYLES.animation.slideUp}`}
         style={{ width: 'auto', maxWidth: 'fit-content' }}
       >
@@ -95,15 +113,17 @@ export const FloatingControls = ({
               {changedRowsCount} modified
             </div>
           )}
-          
+
           {!isMobile && (
-            <div className={`${NOTION_STYLES.text.secondary} flex items-center gap-3 text-xs`}>
+            <div
+              className={`${NOTION_STYLES.text.secondary} flex items-center gap-3 text-xs`}
+            >
               <span>Tab: Next field</span>
               <span>↑↓: Navigate</span>
               <span>Esc: Exit</span>
             </div>
           )}
-          
+
           <div className="flex items-center gap-2">
             <Button
               size="sm"
@@ -142,12 +162,12 @@ export const FloatingControls = ({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Regular mode controls with Notion aesthetic
   return (
-    <div 
+    <div
       className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
       style={{ width: 'auto', maxWidth: 'fit-content' }}
     >
@@ -157,7 +177,9 @@ export const FloatingControls = ({
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className={`w-6 h-6 bg-gray-600 text-white text-xs font-semibold rounded-md flex items-center justify-center ${NOTION_STYLES.animation.scaleIn}`}>
+                <div
+                  className={`w-6 h-6 bg-gray-600 text-white text-xs font-semibold rounded-md flex items-center justify-center ${NOTION_STYLES.animation.scaleIn}`}
+                >
                   {selectedCount}
                 </div>
                 <span className={`${NOTION_STYLES.text.count} text-sm`}>
@@ -165,7 +187,7 @@ export const FloatingControls = ({
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 ml-6">
               <Button
                 size="sm"
@@ -230,7 +252,9 @@ export const FloatingControls = ({
                 title="Collapse all rows"
               >
                 <ChevronUp className="h-4 w-4" />
-                {!isMobile && <span className="ml-1 text-xs">Collapse All</span>}
+                {!isMobile && (
+                  <span className="ml-1 text-xs">Collapse All</span>
+                )}
               </Button>
             </div>
           </div>
@@ -263,5 +287,5 @@ export const FloatingControls = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};

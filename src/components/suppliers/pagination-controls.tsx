@@ -1,20 +1,31 @@
-"use client"
+'use client';
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface PaginationControlsProps {
-  pageIndex: number
-  pageSize: number
-  pageCount: number
-  totalItems: number
-  canPreviousPage: boolean
-  canNextPage: boolean
-  goToPage: (page: number) => void
-  nextPage: () => void
-  previousPage: () => void
-  setPageSize: (size: number) => void
+  pageIndex: number;
+  pageSize: number;
+  pageCount: number;
+  totalItems: number;
+  canPreviousPage: boolean;
+  canNextPage: boolean;
+  goToPage: (page: number) => void;
+  nextPage: () => void;
+  previousPage: () => void;
+  setPageSize: (size: number) => void;
 }
 
 export const PaginationControls = ({
@@ -29,8 +40,8 @@ export const PaginationControls = ({
   previousPage,
   setPageSize,
 }: PaginationControlsProps) => {
-  const startItem = pageIndex * pageSize + 1
-  const endItem = Math.min((pageIndex + 1) * pageSize, totalItems)
+  const startItem = pageIndex * pageSize + 1;
+  const endItem = Math.min((pageIndex + 1) * pageSize, totalItems);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3">
@@ -40,7 +51,10 @@ export const PaginationControls = ({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-600">Rows per page:</span>
-          <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
+          <Select
+            value={String(pageSize)}
+            onValueChange={value => setPageSize(Number(value))}
+          >
             <SelectTrigger className="w-16 h-7 text-xs">
               <SelectValue />
             </SelectTrigger>
@@ -98,5 +112,5 @@ export const PaginationControls = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

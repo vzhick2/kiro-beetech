@@ -1,97 +1,137 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
-import { Plus, Check, X, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TableCell, TableRow } from "@/components/ui/table"
-import type { NewSupplier, ValidationError } from "@/types/data-table"
-import { FieldValidation } from "./field-validation"
+import type React from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
+import { Plus, Check, X, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { TableCell, TableRow } from '@/components/ui/table';
+import type { NewSupplier, ValidationError } from '@/types/data-table';
+import { FieldValidation } from './field-validation';
 
 interface AddSupplierRowProps {
-  onAdd: (supplier: NewSupplier) => Promise<void>
-  loading: boolean
-  validationErrors: ValidationError[]
-  onValidationChange: (errors: ValidationError[]) => void
-  isSpreadsheetMode?: boolean
-  columnWidths: any
+  onAdd: (supplier: NewSupplier) => Promise<void>;
+  loading: boolean;
+  validationErrors: ValidationError[];
+  onValidationChange: (errors: ValidationError[]) => void;
+  isSpreadsheetMode?: boolean;
+  columnWidths: any;
 }
 
-export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplierRowProps>(
-  ({ onAdd, loading, validationErrors, onValidationChange, isSpreadsheetMode, columnWidths }, ref) => {
-    const [isAdding, setIsAdding] = useState(false)
+export const AddSupplierRow = forwardRef<
+  { startAdding: () => void },
+  AddSupplierRowProps
+>(
+  (
+    {
+      onAdd,
+      loading,
+      validationErrors,
+      onValidationChange,
+      isSpreadsheetMode,
+      columnWidths,
+    },
+    ref
+  ) => {
+    const [isAdding, setIsAdding] = useState(false);
     const [formData, setFormData] = useState<NewSupplier>({
-      name: "",
-      website: "",
-      email: "",
-      phone: "",
-      status: "active",
-    })
+      name: '',
+      website: '',
+      email: '',
+      phone: '',
+      status: 'active',
+    });
 
-    const nameInputRef = useRef<HTMLInputElement>(null)
-    const websiteInputRef = useRef<HTMLInputElement>(null)
-    const phoneInputRef = useRef<HTMLInputElement>(null)
+    const nameInputRef = useRef<HTMLInputElement>(null);
+    const websiteInputRef = useRef<HTMLInputElement>(null);
+    const phoneInputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => ({
       startAdding: () => setIsAdding(true),
-    }))
+    }));
 
     useEffect(() => {
       if (isAdding && nameInputRef.current) {
-        nameInputRef.current.focus()
+        nameInputRef.current.focus();
       }
-    }, [isAdding])
+    }, [isAdding]);
 
-    const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement | null>) => {
-      if (e.key === "Tab" && nextRef?.current) {
-        e.preventDefault()
-        nextRef.current.focus()
-      } else if (e.key === "Enter") {
-        e.preventDefault()
+    const handleKeyDown = (
+      e: React.KeyboardEvent,
+      nextRef?: React.RefObject<HTMLInputElement | null>
+    ) => {
+      if (e.key === 'Tab' && nextRef?.current) {
+        e.preventDefault();
+        nextRef.current.focus();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
         if (isFormValid()) {
-          handleSave()
+          handleSave();
         }
-      } else if (e.key === "Escape") {
-        handleCancel()
+      } else if (e.key === 'Escape') {
+        handleCancel();
       }
-    }
+    };
 
     const isFormValid = () => {
-      return formData.name.trim() !== "" && formData.website.trim() !== ""
-    }
+      return formData.name.trim() !== '' && formData.website.trim() !== '';
+    };
 
     const handleSave = async () => {
-      if (!isFormValid()) return
+      if (!isFormValid()) return;
 
       try {
-        await onAdd(formData)
-        setFormData({ name: "", website: "", email: "", phone: "", status: "active" })
-        onValidationChange([])
+        await onAdd(formData);
+        setFormData({
+          name: '',
+          website: '',
+          email: '',
+          phone: '',
+          status: 'active',
+        });
+        onValidationChange([]);
         setTimeout(() => {
           if (nameInputRef.current) {
-            nameInputRef.current.focus()
+            nameInputRef.current.focus();
           }
-        }, 100)
+        }, 100);
       } catch (error) {
         // Error handling is done in the parent component
       }
-    }
+    };
 
     const handleCancel = () => {
-      setFormData({ name: "", website: "", email: "", phone: "", status: "active" })
-      onValidationChange([])
-      setIsAdding(false)
-    }
+      setFormData({
+        name: '',
+        website: '',
+        email: '',
+        phone: '',
+        status: 'active',
+      });
+      onValidationChange([]);
+      setIsAdding(false);
+    };
 
     const handleStartAdding = () => {
-      setIsAdding(true)
-    }
+      setIsAdding(true);
+    };
 
     const getFieldError = (field: string) => {
-      return validationErrors.find((error) => error.field === field)?.message
-    }
+      return validationErrors.find(error => error.field === field)?.message;
+    };
 
     if (!isAdding) {
       return (
@@ -107,7 +147,7 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
             </Button>
           </TableCell>
         </TableRow>
-      )
+      );
     }
 
     return (
@@ -123,7 +163,11 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
               disabled={loading || !isFormValid()}
               title="Save supplier"
             >
-              {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+              {loading ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Check className="h-3 w-3" />
+              )}
             </Button>
             <Button
               size="sm"
@@ -138,19 +182,21 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
           </div>
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.name }}>
-          <FieldValidation error={getFieldError("name")}>
+          <FieldValidation error={getFieldError('name')}>
             <Input
               ref={nameInputRef}
               placeholder="Supplier name *"
               value={formData.name}
-              onChange={(e) => {
-                setFormData({ ...formData, name: e.target.value })
-                if (getFieldError("name")) {
-                  onValidationChange(validationErrors.filter((error) => error.field !== "name"))
+              onChange={e => {
+                setFormData({ ...formData, name: e.target.value });
+                if (getFieldError('name')) {
+                  onValidationChange(
+                    validationErrors.filter(error => error.field !== 'name')
+                  );
                 }
               }}
-              onKeyDown={(e) => handleKeyDown(e, websiteInputRef)}
-              className={`h-8 text-sm ${getFieldError("name") ? "border-red-500" : ""}`}
+              onKeyDown={e => handleKeyDown(e, websiteInputRef)}
+              className={`h-8 text-sm ${getFieldError('name') ? 'border-red-500' : ''}`}
               disabled={loading}
             />
           </FieldValidation>
@@ -160,8 +206,10 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
             ref={websiteInputRef}
             placeholder="Website *"
             value={formData.website}
-            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-            onKeyDown={(e) => handleKeyDown(e, phoneInputRef)}
+            onChange={e =>
+              setFormData({ ...formData, website: e.target.value })
+            }
+            onKeyDown={e => handleKeyDown(e, phoneInputRef)}
             className="h-8 text-sm"
             disabled={loading}
           />
@@ -171,8 +219,8 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
             ref={phoneInputRef}
             placeholder="Phone number"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            onKeyDown={(e) => handleKeyDown(e)}
+            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+            onKeyDown={e => handleKeyDown(e)}
             className="h-8 text-sm"
             disabled={loading}
           />
@@ -180,7 +228,9 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
             value={formData.status}
-            onValueChange={(value: "active" | "inactive") => setFormData({ ...formData, status: value })}
+            onValueChange={(value: 'active' | 'inactive') =>
+              setFormData({ ...formData, status: value })
+            }
             disabled={loading}
           >
             <SelectTrigger className="h-8 text-sm">
@@ -196,8 +246,8 @@ export const AddSupplierRow = forwardRef<{ startAdding: () => void }, AddSupplie
           <div className="text-sm text-gray-400 text-center">-</div>
         </TableCell>
       </TableRow>
-    )
-  },
-)
+    );
+  }
+);
 
-AddSupplierRow.displayName = "AddSupplierRow"
+AddSupplierRow.displayName = 'AddSupplierRow';

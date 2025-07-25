@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import React from "react"
-import { useState, useMemo, useEffect } from "react"
+import React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -12,7 +12,7 @@ import {
   createColumnHelper,
   type SortingState,
   type RowSelectionState,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table';
 import {
   Search,
   X,
@@ -22,50 +22,58 @@ import {
   AlertCircle,
   RefreshCw,
   ExternalLink,
-} from "lucide-react"
+} from 'lucide-react';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCell,
+} from '@/components/ui/table';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import { Supplier } from "@/types"
-import { useSuppliers } from "@/hooks/use-suppliers"
-import { usePagination } from "@/hooks/use-pagination"
-import { useMobileDetection } from "@/hooks/use-mobile-detection"
-import { useDebouncedSearch } from "@/hooks/use-debounce"
-import { StatusBadge } from "@/components/status-badge"
+import { Supplier } from '@/types';
+import { useSuppliers } from '@/hooks/use-suppliers';
+import { usePagination } from '@/hooks/use-pagination';
+import { useMobileDetection } from '@/hooks/use-mobile-detection';
+import { useDebouncedSearch } from '@/hooks/use-debounce';
+import { StatusBadge } from '@/components/status-badge';
 
-// Map database supplier to display format  
+// Map database supplier to display format
 interface DisplaySupplier extends Supplier {
-  id: string
-  status: 'active' | 'inactive' | 'pending' | 'archived'
+  id: string;
+  status: 'active' | 'inactive' | 'pending' | 'archived';
 }
 
-const columnHelper = createColumnHelper<DisplaySupplier>()
+const columnHelper = createColumnHelper<DisplaySupplier>();
 
 export const ModernDataTable = () => {
-  const { isMobile } = useMobileDetection()
-  const { searchValue, debouncedSearchValue, updateSearch, clearSearch } = useDebouncedSearch("", 300)
-  
+  const { isMobile } = useMobileDetection();
+  const { searchValue, debouncedSearchValue, updateSearch, clearSearch } =
+    useDebouncedSearch('', 300);
+
   // Use your existing suppliers hook
-  const queryResult = useSuppliers()
-  const { data: rawSuppliers, isLoading, error, refetch } = queryResult
-  
+  const queryResult = useSuppliers();
+  const { data: rawSuppliers, isLoading, error, refetch } = queryResult;
+
   // Transform database suppliers to display format
   const data = useMemo((): DisplaySupplier[] => {
-    if (!rawSuppliers) return []
+    if (!rawSuppliers) return [];
     return rawSuppliers.map(supplier => ({
       ...supplier,
       id: supplier.supplierId,
       status: supplier.isArchived ? 'archived' : 'active',
-    }))
-  }, [rawSuppliers])
+    }));
+  }, [rawSuppliers]);
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [globalFilter, setGlobalFilter] = useState("")
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const {
     pagination,
@@ -77,24 +85,24 @@ export const ModernDataTable = () => {
     nextPage,
     previousPage,
     setPageSize,
-  } = usePagination(data.length)
+  } = usePagination(data.length);
 
   // Sync debounced search value with global filter
   useEffect(() => {
-    setGlobalFilter(debouncedSearchValue)
-  }, [debouncedSearchValue])
+    setGlobalFilter(debouncedSearchValue);
+  }, [debouncedSearchValue]);
 
   const columns = useMemo(
     () => [
       // Selection checkbox column
       columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
           <div className="flex items-center justify-center h-8 w-full">
             <Checkbox
               checked={table.getIsAllPageRowsSelected()}
-              onCheckedChange={(value) => {
-                table.toggleAllPageRowsSelected(!!value)
+              onCheckedChange={value => {
+                table.toggleAllPageRowsSelected(!!value);
               }}
               aria-label="Select all"
               className="h-4 w-4"
@@ -105,7 +113,7 @@ export const ModernDataTable = () => {
           <div className="flex items-center justify-center">
             <Checkbox
               checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              onCheckedChange={value => row.toggleSelected(!!value)}
               aria-label="Select row"
               className="h-4 w-4"
             />
@@ -115,21 +123,17 @@ export const ModernDataTable = () => {
         enableHiding: false,
         size: 50,
       }),
-      
-      columnHelper.accessor("name", {
-        header: "Supplier Name",
-        cell: ({ getValue }) => (
-          <div className="font-medium">
-            {getValue()}
-          </div>
-        ),
+
+      columnHelper.accessor('name', {
+        header: 'Supplier Name',
+        cell: ({ getValue }) => <div className="font-medium">{getValue()}</div>,
         size: 200,
       }),
-      
-      columnHelper.accessor("website", {
-        header: "Website",
+
+      columnHelper.accessor('website', {
+        header: 'Website',
         cell: ({ getValue }) => {
-          const website = getValue()
+          const website = getValue();
           return website ? (
             <a
               href={website.startsWith('http') ? website : `https://${website}`}
@@ -137,53 +141,54 @@ export const ModernDataTable = () => {
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 text-sm"
             >
-              {website.replace(/^https?:\/\//, "")}
+              {website.replace(/^https?:\/\//, '')}
               <ExternalLink className="h-3 w-3" />
             </a>
           ) : (
             <span className="text-gray-400 italic text-sm">No website</span>
-          )
+          );
         },
         size: 180,
       }),
-      
-      columnHelper.accessor("contactPhone", {
-        header: "Phone",
+
+      columnHelper.accessor('contactPhone', {
+        header: 'Phone',
         cell: ({ getValue }) => {
-          const phone = getValue()
+          const phone = getValue();
           return phone ? (
             <span className="text-sm">{phone}</span>
           ) : (
             <span className="text-gray-400 italic text-sm">No phone</span>
-          )
+          );
         },
         size: 140,
       }),
-      
+
       columnHelper.display({
-        id: "status",
-        header: "Status",
-        cell: ({ row }) => (
-          <StatusBadge status={row.original.status} />
-        ),
+        id: 'status',
+        header: 'Status',
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
         size: 100,
       }),
-      
-      columnHelper.accessor("created_at", {
-        header: "Created",
+
+      columnHelper.accessor('created_at', {
+        header: 'Created',
         cell: ({ getValue }) => {
-          const date = getValue()
+          const date = getValue();
           return date ? (
-            <span className="text-sm text-gray-600" title={new Date(date).toLocaleString()}>
+            <span
+              className="text-sm text-gray-600"
+              title={new Date(date).toLocaleString()}
+            >
               {new Date(date).toLocaleDateString()}
             </span>
-          ) : null
+          ) : null;
         },
         size: 100,
       }),
     ],
-    [],
-  )
+    []
+  );
 
   const table = useReactTable({
     data,
@@ -206,9 +211,9 @@ export const ModernDataTable = () => {
     manualPagination: false,
     pageCount,
     globalFilterFn: 'includesString',
-  })
+  });
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
 
   if (error) {
     return (
@@ -216,7 +221,9 @@ export const ModernDataTable = () => {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
-            <span className="text-sm">{error?.message || 'An error occurred'}</span>
+            <span className="text-sm">
+              {error?.message || 'An error occurred'}
+            </span>
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="h-4 w-4 mr-2" />
               <span className="text-sm">Retry</span>
@@ -224,7 +231,7 @@ export const ModernDataTable = () => {
           </AlertDescription>
         </Alert>
       </div>
-    )
+    );
   }
 
   return (
@@ -236,7 +243,7 @@ export const ModernDataTable = () => {
           <Input
             placeholder="Search suppliers..."
             value={searchValue}
-            onChange={(e) => updateSearch(e.target.value)}
+            onChange={e => updateSearch(e.target.value)}
             className="pl-10 pr-10 micro-pulse transition-all duration-200 focus:ring-2 focus:ring-blue-500"
           />
           {searchValue && (
@@ -250,14 +257,14 @@ export const ModernDataTable = () => {
             </Button>
           )}
         </div>
-        
+
         {selectedRows.length > 0 && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600 micro-fade">
               {selectedRows.length} selected
             </span>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               className="micro-bounce touch-feedback transition-all duration-200 hover:bg-blue-50"
             >
@@ -271,9 +278,9 @@ export const ModernDataTable = () => {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
                     className="text-left"
@@ -282,24 +289,31 @@ export const ModernDataTable = () => {
                     <div
                       className={`flex items-center gap-2 ${
                         header.column.getCanSort()
-                          ? "cursor-pointer select-none hover:bg-gray-50 rounded p-1"
-                          : ""
+                          ? 'cursor-pointer select-none hover:bg-gray-50 rounded p-1'
+                          : ''
                       }`}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       {header.column.getCanSort() && (
                         <div className="flex flex-col">
                           <ChevronUp
                             className={`h-3 w-3 ${
-                              header.column.getIsSorted() === "asc" ? "text-blue-600" : "text-gray-400"
+                              header.column.getIsSorted() === 'asc'
+                                ? 'text-blue-600'
+                                : 'text-gray-400'
                             }`}
                           />
                           <ChevronDown
                             className={`h-3 w-3 -mt-1 ${
-                              header.column.getIsSorted() === "desc" ? "text-blue-600" : "text-gray-400"
+                              header.column.getIsSorted() === 'desc'
+                                ? 'text-blue-600'
+                                : 'text-gray-400'
                             }`}
                           />
                         </div>
@@ -345,21 +359,29 @@ export const ModernDataTable = () => {
                 </TableRow>
               ))
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  className={row.getIsSelected() ? "bg-muted/50" : "hover:bg-muted/30"}
+                  className={
+                    row.getIsSelected() ? 'bg-muted/50' : 'hover:bg-muted/30'
+                  }
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id} className="py-2">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   <div className="flex flex-col items-center gap-2 text-gray-500">
                     <AlertCircle className="h-6 w-6" />
                     <p className="text-sm">No suppliers found</p>
@@ -381,8 +403,8 @@ export const ModernDataTable = () => {
         <div className="flex-1 text-sm text-muted-foreground">
           {selectedRows.length > 0 && (
             <span>
-              {selectedRows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
+              {selectedRows.length} of {table.getFilteredRowModel().rows.length}{' '}
+              row(s) selected.
             </span>
           )}
         </div>
@@ -391,10 +413,10 @@ export const ModernDataTable = () => {
             <p className="text-sm font-medium">Rows per page</p>
             <select
               value={pagination.pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
+              onChange={e => setPageSize(Number(e.target.value))}
               className="h-8 w-16 rounded border border-input bg-background px-2 text-sm"
             >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[10, 20, 30, 40, 50].map(pageSize => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize}
                 </option>
@@ -412,7 +434,7 @@ export const ModernDataTable = () => {
               disabled={!canPreviousPage}
             >
               <span className="sr-only">Go to first page</span>
-              {"<<"}
+              {'<<'}
             </Button>
             <Button
               variant="outline"
@@ -421,7 +443,7 @@ export const ModernDataTable = () => {
               disabled={!canPreviousPage}
             >
               <span className="sr-only">Go to previous page</span>
-              {"<"}
+              {'<'}
             </Button>
             <Button
               variant="outline"
@@ -430,7 +452,7 @@ export const ModernDataTable = () => {
               disabled={!canNextPage}
             >
               <span className="sr-only">Go to next page</span>
-              {">"}
+              {'>'}
             </Button>
             <Button
               variant="outline"
@@ -439,11 +461,11 @@ export const ModernDataTable = () => {
               disabled={!canNextPage}
             >
               <span className="sr-only">Go to last page</span>
-              {">>"}
+              {'>>'}
             </Button>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

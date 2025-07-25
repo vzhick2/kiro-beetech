@@ -1,7 +1,7 @@
 'use client';
 
-import { ModernDataTable } from "@/components/suppliers/modern-data-table"
-import { ErrorBoundary } from "@/components/error-boundary"
+import { ModernDataTable } from '@/components/suppliers/modern-data-table';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 export default function SuppliersPage() {
   return (
@@ -16,5 +16,5 @@ export default function SuppliersPage() {
         <ModernDataTable />
       </ErrorBoundary>
     </div>
-  )
+  );
 }

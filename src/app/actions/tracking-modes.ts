@@ -26,9 +26,9 @@ export async function changeItemTrackingMode(
     return { success: true, data };
   } catch (error) {
     console.error('Error changing tracking mode:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -59,9 +59,9 @@ export async function getTwoModeAlerts(): Promise<{
     return { success: true, data: data || [] };
   } catch (error) {
     console.error('Error fetching two-mode alerts:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -81,14 +81,16 @@ export async function getRecipeCostTwoMode(recipeId: string): Promise<{
     // This can be enhanced later if needed
     const { data, error } = await supabase
       .from('recipe_ingredients')
-      .select(`
+      .select(
+        `
         quantity,
         items (
           name,
           weightedaveragecost,
           tracking_mode
         )
-      `)
+      `
+      )
       .eq('recipeid', recipeId);
 
     if (error) throw error;
@@ -97,30 +99,31 @@ export async function getRecipeCostTwoMode(recipeId: string): Promise<{
     const costBreakdown: any[] = [];
 
     data?.forEach((ingredient: any) => {
-      const cost = ingredient.quantity * (ingredient.items?.weightedaveragecost || 0);
+      const cost =
+        ingredient.quantity * (ingredient.items?.weightedaveragecost || 0);
       totalCost += cost;
-      
+
       costBreakdown.push({
         name: ingredient.items?.name || 'Unknown',
         quantity: ingredient.quantity,
         unit_cost: ingredient.items?.weightedaveragecost || 0,
         total_cost: cost,
-        tracking_mode: ingredient.items?.tracking_mode || 'fully_tracked'
+        tracking_mode: ingredient.items?.tracking_mode || 'fully_tracked',
       });
     });
 
-    return { 
-      success: true, 
-      data: { 
-        total_cost: totalCost, 
-        cost_breakdown: costBreakdown 
-      } 
+    return {
+      success: true,
+      data: {
+        total_cost: totalCost,
+        cost_breakdown: costBreakdown,
+      },
     };
   } catch (error) {
     console.error('Error calculating recipe cost:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }

@@ -1,14 +1,18 @@
-"use client"
+'use client';
 
-import { useEffect } from "react"
+import { useEffect } from 'react';
 
 interface KeyboardShortcutsProps {
-  onNewSupplier: () => void
-  onBulkDelete: () => void
-  selectedCount: number
+  onNewSupplier: () => void;
+  onBulkDelete: () => void;
+  selectedCount: number;
 }
 
-export const useKeyboardShortcuts = ({ onNewSupplier, onBulkDelete, selectedCount }: KeyboardShortcutsProps) => {
+export const useKeyboardShortcuts = ({
+  onNewSupplier,
+  onBulkDelete,
+  selectedCount,
+}: KeyboardShortcutsProps) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ignore if user is typing in an input
@@ -17,29 +21,29 @@ export const useKeyboardShortcuts = ({ onNewSupplier, onBulkDelete, selectedCoun
         event.target instanceof HTMLTextAreaElement ||
         event.target instanceof HTMLSelectElement
       ) {
-        return
+        return;
       }
 
       if (event.ctrlKey || event.metaKey) {
         switch (event.key.toLowerCase()) {
-          case "n":
-            event.preventDefault()
-            onNewSupplier()
-            break
+          case 'n':
+            event.preventDefault();
+            onNewSupplier();
+            break;
         }
       } else {
         switch (event.key) {
-          case "Delete":
+          case 'Delete':
             if (selectedCount > 0) {
-              event.preventDefault()
-              onBulkDelete()
+              event.preventDefault();
+              onBulkDelete();
             }
-            break
+            break;
         }
       }
-    }
+    };
 
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [onNewSupplier, onBulkDelete, selectedCount])
-}
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onNewSupplier, onBulkDelete, selectedCount]);
+};

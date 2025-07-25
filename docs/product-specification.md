@@ -4,7 +4,8 @@ description: 'Complete business requirements and UI design for internal inventor
 purpose: 'Unified reference for product requirements, business rules, and user interface specifications'
 last_updated: 'July 22, 2025'
 doc_type: 'product-specification'
-related: ['README.md', 'developer-guide.md', 'technical-reference.md', 'tasks.md']
+related:
+  ['README.md', 'developer-guide.md', 'technical-reference.md', 'tasks.md']
 ---
 
 # Product Specification
@@ -292,7 +293,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 
 ## 📱 Mobile-First Views
 
-*These views prioritize mobile because small business owners typically use phones/tablets while working in warehouses, workshops, or production areas - quick inventory checks while walking the floor, logging batches during production runs, and performing cycle counts with items in hand require touch-friendly mobile interfaces.*
+_These views prioritize mobile because small business owners typically use phones/tablets while working in warehouses, workshops, or production areas - quick inventory checks while walking the floor, logging batches during production runs, and performing cycle counts with items in hand require touch-friendly mobile interfaces._
 
 ### Items Management
 
@@ -347,7 +348,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 
 ## 🖥️ Desktop-First Views
 
-*These views require complex data entry and analysis, suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting.*
+_These views require complex data entry and analysis, suited for desktop/laptop screens where users can handle multi-line forms, CSV imports, and detailed reporting._
 
 ### Purchases with Allocation
 
@@ -358,7 +359,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
   - **Drag & Drop**: File uploads for receipts/documents
   - **Keyboard Shortcuts**: Power user efficiency
   - **Advanced Filtering**: Complex purchase searches
-- **Smart Allocation Engine**: 
+- **Smart Allocation Engine**:
   - **Proportional Distribution**: Automatic overhead allocation
   - **Variance Detection**: Highlight unusual cost distributions
   - **Preview Mode**: See allocation before finalizing
@@ -445,6 +446,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 ### System States
 
 #### Loading States
+
 - **Skeleton Loaders**: Content-shaped placeholders
 - **Progressive Loading**: Load critical content first
 - **Spinner Indicators**: For quick operations
@@ -452,6 +454,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Timeout Handling**: Graceful failure recovery
 
 #### Empty States
+
 - **Encouraging Messages**: "Add your first item!"
 - **Action Prompts**: Clear next steps
 - **Visual Elements**: Helpful illustrations
@@ -459,6 +462,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Import Options**: Alternative data entry paths
 
 #### Error States
+
 - **Inline Validation**: Field-level error messages
 - **Toast Notifications**: System-level alerts
 - **Error Pages**: Graceful failure handling
@@ -468,6 +472,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 ### Error Handling Standards
 
 #### User-Friendly Messages
+
 - **Plain Language**: Avoid technical jargon
 - **Actionable Guidance**: Tell users what to do
 - **Context Aware**: Relevant to current task
@@ -475,6 +480,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Dismissible**: User control over messages
 
 #### Business Rule Validation
+
 - **Negative Inventory**: Allow with warnings
 - **Cost Allocation**: Prevent invalid distributions
 - **Duplicate Prevention**: SKU and display ID uniqueness
@@ -492,6 +498,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 ### Visual Feedback
 
 #### Interactive States
+
 - **Hover Effects**: Clear interaction feedback
 - **Focus Indicators**: Accessibility compliance
 - **Active States**: Current selection clarity
@@ -499,6 +506,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 - **Loading States**: Operation in progress
 
 #### Status Indicators
+
 - **Tracking Mode Badges**: 🟢 Fully Tracked, � Cost Added
 - **Alert Priorities**: Color-coded importance
 - **Draft Status**: Clear workflow stage

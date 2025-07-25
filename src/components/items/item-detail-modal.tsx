@@ -52,7 +52,8 @@ export function ItemDetailModal({
               : new Date(),
             primarySupplierId: result.data.item.primarysupplierid || '',
             leadTimeDays: result.data.item.leadtimedays || 7,
-            trackingMode: (result.data.item.tracking_mode || 'fully_tracked') as TrackingMode,
+            trackingMode: (result.data.item.tracking_mode ||
+              'fully_tracked') as TrackingMode,
             isArchived: result.data.item.isarchived || false,
             created_at: new Date(result.data.item.created_at || Date.now()),
             updated_at: new Date(result.data.item.updated_at || Date.now()),

@@ -4,7 +4,8 @@ description: 'Complete database schema, APIs, and technical architecture for int
 purpose: 'Unified technical reference combining data model and API documentation'
 last_updated: 'July 22, 2025'
 doc_type: 'technical-reference'
-related: ['README.md', 'developer-guide.md', 'product-specification.md', 'tasks.md']
+related:
+  ['README.md', 'developer-guide.md', 'product-specification.md', 'tasks.md']
 ---
 
 # Technical Reference
@@ -701,18 +702,19 @@ $$ LANGUAGE plpgsql;
 #### `change_item_tracking_mode(item_id UUID, new_mode TEXT, inventory_snapshot NUMERIC, reason TEXT)`
 
 **Purpose**: Change an item's tracking mode between 'fully_tracked' and 'cost_added'
-**Parameters**: 
+**Parameters**:
+
 - `item_id` - UUID of the item to change
-- `new_mode` - Target tracking mode ('fully_tracked' or 'cost_added')  
+- `new_mode` - Target tracking mode ('fully_tracked' or 'cost_added')
 - `inventory_snapshot` - Current inventory count (required when switching TO fully_tracked)
 - `reason` - Optional reason for the change (for business documentation)
-**Returns**: `JSON` - Success status and change details
-**Logic**: Validates transition, updates tracking mode, preserves inventory snapshot
+  **Returns**: `JSON` - Success status and change details
+  **Logic**: Validates transition, updates tracking mode, preserves inventory snapshot
 
 ```sql
 CREATE OR REPLACE FUNCTION change_item_tracking_mode(
-  item_id UUID, 
-  new_mode TEXT, 
+  item_id UUID,
+  new_mode TEXT,
   inventory_snapshot NUMERIC DEFAULT NULL,
   reason TEXT DEFAULT NULL
 )
@@ -723,46 +725,46 @@ DECLARE
   result JSON;
 BEGIN
   -- Get current item state
-  SELECT trackingMode, currentQuantity 
+  SELECT trackingMode, currentQuantity
   INTO current_mode, current_quantity
-  FROM items 
+  FROM items
   WHERE itemId = item_id;
-  
+
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Item not found: %', item_id;
   END IF;
-  
+
   -- Validate transition
   IF current_mode = new_mode THEN
     RAISE EXCEPTION 'Item is already in % mode', new_mode;
   END IF;
-  
+
   -- Handle transition logic
   IF new_mode = 'fully_tracked' THEN
     -- Switching TO fully tracked - requires inventory snapshot
     IF inventory_snapshot IS NULL THEN
       RAISE EXCEPTION 'Inventory snapshot required when switching to fully tracked mode';
     END IF;
-    
-    UPDATE items 
+
+    UPDATE items
     SET trackingMode = new_mode,
         currentQuantity = inventory_snapshot,
         lastInventorySnapshot = current_quantity,
         updated_at = NOW()
     WHERE itemId = item_id;
-    
+
   ELSIF new_mode = 'cost_added' THEN
     -- Switching TO cost added - preserve current quantity as snapshot
-    UPDATE items 
+    UPDATE items
     SET trackingMode = new_mode,
         lastInventorySnapshot = current_quantity,
         updated_at = NOW()
     WHERE itemId = item_id;
-    
+
   ELSE
     RAISE EXCEPTION 'Invalid tracking mode: %', new_mode;
   END IF;
-  
+
   -- Return success result
   result := json_build_object(
     'success', true,
@@ -772,7 +774,7 @@ BEGIN
     'snapshotTaken', inventory_snapshot,
     'reason', reason
   );
-  
+
   RETURN result;
 END;
 $$ LANGUAGE plpgsql;
@@ -866,7 +868,7 @@ export async function updateItemQuantity(
 export async function finalizeDraftPurchase(purchaseId: string) {
   try {
     const { error } = await supabase.rpc('finalize_draft_purchase', {
-      purchase_id: purchaseId
+      purchase_id: purchaseId,
     });
 
     if (error) throw error;
@@ -1056,6 +1058,7 @@ export function handleError(error: unknown, context: string): AppError {
 ### QBO Sales CSV Format
 
 **Required Headers:**
+
 - `Date` - Transaction date
 - `Transaction Type` - Must be "Sale" or "Invoice"
 - `Product/Service` - Item name
@@ -1063,6 +1066,7 @@ export function handleError(error: unknown, context: string): AppError {
 - `Amount` - Revenue amount
 
 **Optional Headers:**
+
 - `Description` - Alternative item name
 - `Rate` - Unit price
 - `Customer` - Customer name

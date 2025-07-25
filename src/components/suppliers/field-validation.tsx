@@ -1,16 +1,16 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle } from 'lucide-react';
 
 interface FieldValidationProps {
-  error?: string | undefined
-  children: React.ReactNode
+  error?: string | undefined;
+  children: React.ReactNode;
 }
 
 export const FieldValidation = ({ error, children }: FieldValidationProps) => {
-  if (!error) return <>{children}</>
+  if (!error) return <>{children}</>;
 
   return (
     <div className="relative">
@@ -20,5 +20,5 @@ export const FieldValidation = ({ error, children }: FieldValidationProps) => {
         {error}
       </div>
     </div>
-  )
-}
+  );
+};

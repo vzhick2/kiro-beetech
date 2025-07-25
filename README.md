@@ -82,7 +82,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-*For detailed setup instructions, environment configuration, and database migrations, see [Developer Guide](./docs/developer-guide.md#environment-setup).*
+_For detailed setup instructions, environment configuration, and database migrations, see [Developer Guide](./docs/developer-guide.md#environment-setup)._
 
 ## 📚 Documentation
 
@@ -101,7 +101,7 @@ pnpm dev
 - **UI Components**: Radix UI, TanStack Table
 - **Development**: ESLint, Prettier, Husky
 
-*For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack).*
+_For comprehensive technology stack details, version management, and environment configuration, see [Developer Guide](./docs/developer-guide.md#technology-stack)._
 
 ## 🔧 Development
 
@@ -116,20 +116,20 @@ pnpm type-check            # Run TypeScript checks
 pnpm supabase:types        # Generate TypeScript types
 ```
 
-*See [Developer Guide](./docs/developer-guide.md) for complete command reference.*
+_See [Developer Guide](./docs/developer-guide.md) for complete command reference._
 
 ### Project Structure
 
 ```
 src/
 ├── app/                   # Next.js 15 App Router
-├── components/           # React components  
+├── components/           # React components
 ├── hooks/               # Custom React hooks
 ├── lib/                 # Utilities and configurations
 └── types/               # TypeScript definitions
 ```
 
-*See [Developer Guide](./docs/developer-guide.md) for detailed project structure and [Technical Reference](./docs/technical-reference.md) for database schema.*
+_See [Developer Guide](./docs/developer-guide.md) for detailed project structure and [Technical Reference](./docs/technical-reference.md) for database schema._
 
 ## 📚 Documentation
 
@@ -142,7 +142,7 @@ src/
 
 ### Additional Resources
 
-*See [Developer Guide](./docs/developer-guide.md) for complete command reference and [Technical Reference](./docs/technical-reference.md) for database schema.*
+_See [Developer Guide](./docs/developer-guide.md) for complete command reference and [Technical Reference](./docs/technical-reference.md) for database schema._
 
 ## 📊 Progress Tracking
 

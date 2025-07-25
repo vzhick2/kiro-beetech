@@ -17,8 +17,9 @@ export function ZoomPrevention() {
     // Detect if user is in desktop mode on a mobile device
     const detectDesktopMode = (): boolean => {
       // Check if it's a touch device
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      
+      const isTouchDevice =
+        'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
       // If not a touch device, it's probably actual desktop
       if (!isTouchDevice) return true;
 
@@ -32,16 +33,18 @@ export function ZoomPrevention() {
       // 1. Viewport is much smaller than screen (browser chrome visible)
       // 2. High pixel density with large viewport
       // 3. User agent contains desktop indicators
-      const viewportRatio = (viewportWidth * viewportHeight) / (screenWidth * screenHeight);
+      const viewportRatio =
+        (viewportWidth * viewportHeight) / (screenWidth * screenHeight);
       const isLargeViewport = viewportWidth >= 1024; // Desktop-like width
       const userAgent = navigator.userAgent.toLowerCase();
-      const hasDesktopUA = userAgent.includes('desktop') || 
-                          userAgent.includes('x11') || 
-                          (userAgent.includes('chrome') && !userAgent.includes('mobile'));
+      const hasDesktopUA =
+        userAgent.includes('desktop') ||
+        userAgent.includes('x11') ||
+        (userAgent.includes('chrome') && !userAgent.includes('mobile'));
 
       // Consider it desktop mode if:
       // - Large viewport width (>= 1024px) OR
-      // - User agent suggests desktop mode OR  
+      // - User agent suggests desktop mode OR
       // - Viewport ratio < 0.8 (significant browser chrome)
       return isLargeViewport || hasDesktopUA || viewportRatio < 0.8;
     };
@@ -74,7 +77,7 @@ export function ZoomPrevention() {
     // Prevent double-tap zoom (only in mobile mode)
     const preventDoubleTapZoom = (e: TouchEvent) => {
       if (isDesktopMode) return; // Allow in desktop mode
-      
+
       const now = new Date().getTime();
       if (now - lastTouchEnd <= 300) {
         e.preventDefault();
@@ -85,7 +88,7 @@ export function ZoomPrevention() {
     // Prevent pinch-to-zoom (only in mobile mode)
     const preventPinchZoom = (e: TouchEvent) => {
       if (isDesktopMode) return; // Allow in desktop mode
-      
+
       if (e.touches.length > 1) {
         e.preventDefault();
       }
@@ -113,7 +116,7 @@ export function ZoomPrevention() {
         // In desktop mode, allow zoom shortcuts
         return;
       }
-      
+
       // In mobile mode, prevent zoom shortcuts
       if (
         e.ctrlKey &&

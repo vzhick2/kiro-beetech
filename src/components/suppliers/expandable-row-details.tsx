@@ -1,19 +1,19 @@
-"use client"
+'use client';
 
-import React, { useState, useRef, useEffect } from "react"
-import { Mail, MapPin, FileText } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { TableCell, TableRow } from "@/components/ui/table"
-import type { Supplier } from "@/types/data-table"
+import React, { useState, useRef, useEffect } from 'react';
+import { Mail, MapPin, FileText } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { TableCell, TableRow } from '@/components/ui/table';
+import type { Supplier } from '@/types/data-table';
 
 interface ExpandableRowDetailsProps {
-  supplier: Supplier
-  isExpanded: boolean
-  onToggle: () => void
-  onUpdate: (field: keyof Supplier, value: any) => void
-  isEditing: boolean
-  columnWidths: any
+  supplier: Supplier;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onUpdate: (field: keyof Supplier, value: any) => void;
+  isEditing: boolean;
+  columnWidths: any;
 }
 
 export const ExpandableRowDetails = ({
@@ -25,40 +25,40 @@ export const ExpandableRowDetails = ({
   columnWidths,
 }: ExpandableRowDetailsProps) => {
   const [localData, setLocalData] = useState({
-    email: supplier.email || "",
-    address: supplier.address || "",
-    notes: supplier.notes || "",
-  })
+    email: supplier.email || '',
+    address: supplier.address || '',
+    notes: supplier.notes || '',
+  });
 
   const [hasChanges, setHasChanges] = useState({
     email: false,
     address: false,
     notes: false,
-  })
+  });
 
   const handleChange = (field: keyof typeof localData, value: string) => {
-    setLocalData(prev => ({ ...prev, [field]: value }))
-    setHasChanges(prev => ({ ...prev, [field]: true }))
-  }
+    setLocalData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(prev => ({ ...prev, [field]: true }));
+  };
 
   const handleSave = (field: keyof typeof localData) => {
     if (hasChanges[field]) {
-      onUpdate(field as keyof Supplier, localData[field])
-      setHasChanges(prev => ({ ...prev, [field]: false }))
+      onUpdate(field as keyof Supplier, localData[field]);
+      setHasChanges(prev => ({ ...prev, [field]: false }));
     }
-  }
+  };
 
   // Update local data when supplier prop changes
   useEffect(() => {
     setLocalData({
-      email: supplier.email || "",
-      address: supplier.address || "",
-      notes: supplier.notes || "",
-    })
-    setHasChanges({ email: false, address: false, notes: false })
-  }, [supplier])
+      email: supplier.email || '',
+      address: supplier.address || '',
+      notes: supplier.notes || '',
+    });
+    setHasChanges({ email: false, address: false, notes: false });
+  }, [supplier]);
 
-  if (!isExpanded) return null
+  if (!isExpanded) return null;
 
   return (
     <TableRow className="bg-gray-25 border-b border-gray-200">
@@ -70,12 +70,12 @@ export const ExpandableRowDetails = ({
               Email Address
             </div>
             {isEditing ? (
-              <div onClick={(e) => e.stopPropagation()}>
+              <div onClick={e => e.stopPropagation()}>
                 <Input
                   type="email"
                   value={localData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  onBlur={() => handleSave("email")}
+                  onChange={e => handleChange('email', e.target.value)}
+                  onBlur={() => handleSave('email')}
                   placeholder="supplier@company.com"
                   className="h-8"
                 />
@@ -83,7 +83,10 @@ export const ExpandableRowDetails = ({
             ) : (
               <div className="text-sm pl-1">
                 {supplier.email ? (
-                  <a href={`mailto:${supplier.email}`} className="text-blue-600 hover:underline">
+                  <a
+                    href={`mailto:${supplier.email}`}
+                    className="text-blue-600 hover:underline"
+                  >
                     {supplier.email}
                   </a>
                 ) : (
@@ -98,18 +101,20 @@ export const ExpandableRowDetails = ({
               Address
             </div>
             {isEditing ? (
-              <div onClick={(e) => e.stopPropagation()}>
+              <div onClick={e => e.stopPropagation()}>
                 <Input
                   value={localData.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  onBlur={() => handleSave("address")}
+                  onChange={e => handleChange('address', e.target.value)}
+                  onBlur={() => handleSave('address')}
                   placeholder="123 Main St, City, State 12345"
                   className="h-8"
                 />
               </div>
             ) : (
               <div className="text-sm pl-1">
-                {supplier.address || <span className="text-gray-400 italic">No address</span>}
+                {supplier.address || (
+                  <span className="text-gray-400 italic">No address</span>
+                )}
               </div>
             )}
           </div>
@@ -118,11 +123,11 @@ export const ExpandableRowDetails = ({
               <FileText className="h-4 w-4" />
               Notes
             </div>
-            <div onClick={(e) => e.stopPropagation()}>
+            <div onClick={e => e.stopPropagation()}>
               <Textarea
                 value={localData.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
-                onBlur={() => handleSave("notes")}
+                onChange={e => handleChange('notes', e.target.value)}
+                onBlur={() => handleSave('notes')}
                 placeholder="Click to add notes about this supplier..."
                 className="min-h-[80px] resize-none"
               />
@@ -131,5 +136,5 @@ export const ExpandableRowDetails = ({
         </div>
       </TableCell>
     </TableRow>
-  )
-}
+  );
+};

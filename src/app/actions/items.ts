@@ -313,7 +313,10 @@ export async function changeTrackingMode(changeData: unknown) {
       params.p_reason = validatedData.reason;
     }
 
-    const { data, error } = await supabaseAdmin.rpc('change_item_tracking_mode', params);
+    const { data, error } = await supabaseAdmin.rpc(
+      'change_item_tracking_mode',
+      params
+    );
 
     if (error) {
       return handleError(error, 'changeTrackingMode');
@@ -344,9 +347,12 @@ export async function getTwoModeAlerts() {
 
 export async function getRecipeCostTwoMode(recipeId: string) {
   try {
-    const { data, error } = await supabaseAdmin.rpc('calculate_recipe_cost_two_mode', {
-      p_recipe_id: recipeId,
-    });
+    const { data, error } = await supabaseAdmin.rpc(
+      'calculate_recipe_cost_two_mode',
+      {
+        p_recipe_id: recipeId,
+      }
+    );
 
     if (error) {
       return handleError(error, 'getRecipeCostTwoMode');

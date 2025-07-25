@@ -1,25 +1,29 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface StatusFiltersProps {
-  activeFilter: "all" | "active" | "inactive"
-  onFilterChange: (filter: "all" | "active" | "inactive") => void
+  activeFilter: 'all' | 'active' | 'inactive';
+  onFilterChange: (filter: 'all' | 'active' | 'inactive') => void;
   counts: {
-    total: number
-    active: number
-    inactive: number
-  }
+    total: number;
+    active: number;
+    inactive: number;
+  };
 }
 
-export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFiltersProps) => {
+export const StatusFilters = ({
+  activeFilter,
+  onFilterChange,
+  counts,
+}: StatusFiltersProps) => {
   return (
     <div className="flex gap-3 overflow-x-auto min-w-0 bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200/60 shadow-sm">
       <Button
-        variant={activeFilter === "all" ? "default" : "outline"}
+        variant={activeFilter === 'all' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onFilterChange("all")}
+        onClick={() => onFilterChange('all')}
         className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         All
@@ -28,9 +32,9 @@ export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFi
         </Badge>
       </Button>
       <Button
-        variant={activeFilter === "active" ? "default" : "outline"}
+        variant={activeFilter === 'active' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onFilterChange("active")}
+        onClick={() => onFilterChange('active')}
         className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         Active
@@ -39,9 +43,9 @@ export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFi
         </Badge>
       </Button>
       <Button
-        variant={activeFilter === "inactive" ? "default" : "outline"}
+        variant={activeFilter === 'inactive' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onFilterChange("inactive")}
+        onClick={() => onFilterChange('inactive')}
         className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         Inactive
@@ -50,5 +54,5 @@ export const StatusFilters = ({ activeFilter, onFilterChange, counts }: StatusFi
         </Badge>
       </Button>
     </div>
-  )
-}
+  );
+};

@@ -108,7 +108,7 @@ export function InteractiveHeader({
                   type="text"
                   placeholder="Search items, purchases, suppliers..."
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={e => setSearchValue(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className={`w-full pl-9 sm:pl-11 pr-10 py-2 sm:py-3 bg-slate-800/50 border rounded-lg transition-all duration-300 placeholder-slate-400 text-slate-100 text-sm sm:text-base ${
@@ -139,7 +139,7 @@ export function InteractiveHeader({
                   type="text"
                   placeholder="Search..."
                   value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
+                  onChange={e => setSearchValue(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className={`w-full pl-10 pr-10 py-2 bg-slate-800/50 border rounded-lg text-slate-100 placeholder-slate-400 transition-all duration-200 ${
