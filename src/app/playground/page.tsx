@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'glassmorphism' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'clean-minimal' | 'rounded-glass' | 'modern-card' | 'zen-mode' | 'elegant-shadow' | 'ai-presence' | 'progressive-blur' | 'spatial-glass' | 'motion-physics' | 'adaptive-container';
+  variant: 'glassmorphism' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'clean-minimal' | 'zen-mode' | 'elegant-shadow' | 'spatial-glass';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -53,20 +53,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'rounded-glass': {
-      container: "bg-white/80 backdrop-blur-xl border border-white/50 text-gray-900 rounded-3xl shadow-lg",
-      button: "hover:bg-white/60 active:bg-white/80 active:scale-95 rounded-2xl px-4 py-2.5 font-medium transition-all duration-150",
-      deleteButton: "bg-red-100/80 hover:bg-red-200/90 active:bg-red-300/90 active:scale-95 text-red-700 transition-all duration-150",
-      minimal: "px-4 py-3.5",
-      expanded: "px-6 py-3.5"
-    },
-    'modern-card': {
-      container: "bg-gray-900 text-white rounded-xl shadow-2xl border border-gray-700/50",
-      button: "hover:bg-gray-700 active:bg-gray-600 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150",
-      deleteButton: "bg-red-900/80 hover:bg-red-800 active:bg-red-700 active:scale-95 text-red-200 transition-all duration-150",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
     'zen-mode': {
       container: "bg-gray-50 text-gray-700 rounded-xl shadow-inner border border-gray-200/50",
       button: "hover:bg-white hover:shadow-sm active:bg-gray-100 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150",
@@ -81,38 +67,10 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3.5",
       expanded: "px-6 py-3.5"
     },
-    'ai-presence': {
-      container: "bg-gradient-to-br from-violet-50/90 to-blue-50/90 backdrop-blur-lg border border-violet-200/50 text-gray-900 rounded-2xl shadow-lg ring-1 ring-violet-100/50",
-      button: "hover:bg-gradient-to-r hover:from-violet-100 hover:to-blue-100 hover:text-violet-700 active:bg-gradient-to-r active:from-violet-200 active:to-blue-200 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-200",
-      deleteButton: "bg-gradient-to-r from-red-50 to-pink-50 hover:from-red-100 hover:to-pink-100 active:from-red-200 active:to-pink-200 active:scale-95 text-red-600 border border-red-200/50 transition-all duration-200",
-      minimal: "px-4 py-3.5",
-      expanded: "px-6 py-3.5"
-    },
-    'progressive-blur': {
-      container: "bg-white/60 backdrop-blur-2xl border border-white/40 text-gray-900 rounded-3xl shadow-2xl ring-1 ring-black/5",
-      button: "hover:bg-white/70 hover:backdrop-blur-3xl hover:shadow-lg active:bg-white/80 active:scale-95 rounded-2xl px-4 py-3 font-medium transition-all duration-300 border border-transparent hover:border-white/30",
-      deleteButton: "bg-red-100/70 hover:bg-red-200/80 hover:backdrop-blur-3xl active:bg-red-300/80 active:scale-95 text-red-700 border border-red-200/30 transition-all duration-300",
-      minimal: "px-5 py-4",
-      expanded: "px-7 py-4"
-    },
     'spatial-glass': {
       container: "bg-white/20 backdrop-blur-3xl border border-white/30 text-gray-900 rounded-2xl shadow-2xl transform-gpu perspective-1000 preserve-3d hover:shadow-3xl transition-all duration-500",
       button: "hover:bg-white/30 hover:shadow-xl hover:translate-y-[-1px] active:bg-white/40 active:scale-95 active:translate-y-0 rounded-xl px-4 py-2.5 font-medium transition-all duration-200 transform-gpu",
       deleteButton: "bg-red-200/60 hover:bg-red-300/70 hover:shadow-xl hover:translate-y-[-1px] active:bg-red-400/70 active:scale-95 active:translate-y-0 text-red-800 transition-all duration-200 transform-gpu",
-      minimal: "px-4 py-3.5",
-      expanded: "px-6 py-3.5"
-    },
-    'motion-physics': {
-      container: "bg-slate-900/95 backdrop-blur-sm border border-slate-700/50 text-white rounded-xl shadow-2xl transition-all duration-300 hover:shadow-slate-900/50",
-      button: "hover:bg-slate-700 hover:shadow-lg hover:scale-[1.02] active:bg-slate-600 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 will-change-transform",
-      deleteButton: "bg-red-900/80 hover:bg-red-800 hover:shadow-lg hover:scale-[1.02] active:bg-red-700 active:scale-95 text-red-200 transition-all duration-200 will-change-transform",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'adaptive-container': {
-      container: "bg-gradient-to-br from-emerald-50/90 to-teal-50/90 backdrop-blur-md border border-emerald-200/60 text-gray-800 rounded-2xl shadow-lg ring-1 ring-emerald-100/40 transition-all duration-400",
-      button: "hover:bg-gradient-to-r hover:from-emerald-100/80 hover:to-teal-100/80 hover:text-emerald-800 hover:ring-2 hover:ring-emerald-200/50 active:bg-gradient-to-r active:from-emerald-200/80 active:to-teal-200/80 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-250",
-      deleteButton: "bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 hover:ring-2 hover:ring-red-200/50 active:from-orange-200 active:to-red-200 active:scale-95 text-red-600 border border-red-200/50 transition-all duration-250",
       minimal: "px-4 py-3.5",
       expanded: "px-6 py-3.5"
     }
@@ -130,7 +88,7 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
           Edit All Rows
         </button>
         <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10 group`}>
-          <ChevronUp className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+          <ChevronUp className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
         </button>
       </div>
     );
@@ -152,7 +110,7 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
               Apply Changes
             </button>
             <button className={`${styles.button} p-2 group`}>
-              <X className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+              <X className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
             </button>
           </div>
         </div>
@@ -190,15 +148,9 @@ export default function PlaygroundPage() {
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Subtle meaningful animations and feedback' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
     { key: 'clean-minimal', name: 'Clean Minimal', description: 'Pure minimal design with subtle backdrop blur' },
-    { key: 'rounded-glass', name: 'Rounded Glass', description: 'Ultra-rounded glass morphism with enhanced depth' },
-    { key: 'modern-card', name: 'Modern Card', description: 'Professional dark theme with elegant shadows' },
     { key: 'zen-mode', name: 'Zen Mode', description: 'Calm, muted design focused on content clarity' },
     { key: 'elegant-shadow', name: 'Elegant Shadow', description: 'Sophisticated white design with dynamic shadows' },
-    { key: 'ai-presence', name: 'AI Presence', description: '2025 Trend: AI-inspired gradients with presence indicators' },
-    { key: 'progressive-blur', name: 'Progressive Blur', description: '2025 Innovation: Advanced depth perception with layered blur' },
-    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' },
-    { key: 'motion-physics', name: 'Motion Physics', description: '2025 Premium: Physics-based interactions with fluid motion' },
-    { key: 'adaptive-container', name: 'Adaptive Container', description: '2025 Smart: Context-aware responsive design system' }
+    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' }
   ] as const;
 
   const states = [
@@ -306,28 +258,13 @@ export default function PlaygroundPage() {
             <li>• All variants use the same positioning logic (absolute bottom-6 right-6)</li>
             <li>• Responsive width adjustments based on content state</li>
             <li>• Consistent icon usage across all designs (5x5 icons for uniformity)</li>
+            <li>• Enhanced stroke-width (2.5) for collapse/close icons for better visual weight</li>
             <li>• Touch-friendly button sizing (minimum 44px targets)</li>
             <li>• Smooth transitions between states with expanding hover animations</li>
             <li>• Click feedback with scale-down effect (active:scale-95) for modern SaaS feel</li>
             <li>• All animations use duration-150-400 for responsive, contextual interactions</li>
-            <li>• <strong>2025 Features:</strong> AI gradients, progressive blur, spatial transforms, physics motion</li>
+            <li>• <strong>8 Total Variants:</strong> Curated selection of proven design patterns</li>
           </ul>
-        </div>
-
-        {/* 2025 Design Trends */}
-        <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-purple-900 mb-2">2025 Design Trend Analysis</h3>
-          <div className="text-purple-800 text-sm space-y-2">
-            <p><strong>AI Presence:</strong> Subtle AI-inspired gradients and indicators reflecting AI integration in modern applications.</p>
-            <p><strong>Progressive Blur:</strong> Advanced backdrop filters creating enhanced depth perception and layered visual hierarchy.</p>
-            <p><strong>Spatial Glass:</strong> 3D spatial design with perspective transforms creating floating, dimensional interfaces.</p>
-            <p><strong>Motion Physics:</strong> Physics-based animations with realistic spring curves and momentum-based interactions.</p>
-            <p><strong>Adaptive Container:</strong> Context-aware designs that respond intelligently to user state and environmental factors.</p>
-            <div className="mt-3 p-3 bg-purple-100 rounded-lg">
-              <p className="font-medium">Research Source: 10+ modern 2025 websites analyzed for floating UI patterns</p>
-              <p className="text-xs mt-1">Based on Material 3 Expressive principles, Dribbble trends, and leading SaaS platforms</p>
-            </div>
-          </div>
         </div>
 
         {/* Click Interaction Guidelines */}
