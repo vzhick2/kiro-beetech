@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'linear-modern' | 'notion-inspired' | 'stripe-clean' | 'figma-professional' | 'vercel-minimal';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'linear-modern' | 'notion-inspired' | 'figma-professional';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -83,26 +83,12 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-2.5",
       expanded: "px-4 py-2.5"
     },
-    'stripe-clean': {
-      container: "bg-white text-slate-900 rounded-xl shadow-lg border border-slate-200 ring-1 ring-slate-100",
-      button: "hover:bg-slate-50 rounded-lg px-4 py-2.5 font-semibold transition-all duration-150 text-slate-700",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 border border-red-100",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
     'figma-professional': {
       container: "bg-gray-900 text-white rounded-xl shadow-xl border border-gray-700",
       button: "hover:bg-gray-700 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 text-gray-100",
       deleteButton: "bg-red-900 hover:bg-red-800 text-red-100 border border-red-700",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
-    },
-    'vercel-minimal': {
-      container: "bg-black text-white rounded-lg border border-gray-800 shadow-2xl",
-      button: "hover:bg-gray-900 rounded-md px-3 py-2 font-medium transition-colors text-gray-100",
-      deleteButton: "bg-red-950 hover:bg-red-900 text-red-200 border border-red-800",
-      minimal: "px-3 py-2.5",
-      expanded: "px-4 py-2.5"
     }
   };
 
@@ -119,12 +105,8 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
         return { icon: Layers, text: 'Edit All Rows' };
       case 'notion-inspired':
         return { icon: Edit, text: 'Edit All' };
-      case 'stripe-clean':
-        return { icon: Settings, text: 'Edit All Rows' };
       case 'figma-professional':
         return { icon: Sparkles, text: 'Edit All Rows' };
-      case 'vercel-minimal':
-        return { icon: Shield, text: 'Edit All' };
       default:
         return { icon: Edit, text: 'Edit All Rows' };
     }
@@ -153,7 +135,11 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
           <span className="font-semibold">Spreadsheet Mode</span>
           <span className="text-sm opacity-75">Tab: Next field • ↑↓: Navigate rows • Esc: Exit</span>
           <div className="ml-auto flex items-center gap-2">
-            <button className={`${styles.button} bg-green-600 hover:bg-green-700 flex items-center gap-2`}>
+            <button className={`${styles.button} ${
+              variant === 'notion-inspired' 
+                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                : 'bg-green-600 hover:bg-green-700'
+            } flex items-center gap-2`}>
               <Save className="h-4 w-4" />
               Apply Changes
             </button>
@@ -200,9 +186,7 @@ export default function PlaygroundPage() {
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
     { key: 'linear-modern', name: 'Linear Modern', description: '2025 SaaS: Linear app inspired dark elegance' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
-    { key: 'stripe-clean', name: 'Stripe Clean', description: '2025 SaaS: Professional payment interface style' },
-    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' },
-    { key: 'vercel-minimal', name: 'Vercel Minimal', description: '2025 SaaS: Developer-focused minimal black design' }
+    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' }
   ] as const;
 
   const states = [
