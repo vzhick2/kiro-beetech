@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronUp, Download, Trash2, Edit, Save, X, Zap, Shapes, TreePine, Rocket } from 'lucide-react';
+import { ChevronUp, Download, Trash2, Edit, Save, X, Zap, Layers, Settings, Sparkles, Shield } from 'lucide-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'brutalist-bold' | 'organic-curves' | 'electric-neon' | 'warm-earth' | 'retro-future';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'linear-modern' | 'notion-inspired' | 'stripe-clean' | 'figma-professional' | 'vercel-minimal';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -69,40 +69,40 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'brutalist-bold': {
-      container: "bg-black text-yellow-400 rounded-none border-4 border-yellow-400 shadow-[8px_8px_0px_#000000] font-bold transform hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform",
-      button: "hover:bg-yellow-400 hover:text-black rounded-none px-6 py-3 font-black border-2 border-yellow-400 uppercase tracking-wider",
-      deleteButton: "bg-red-500 hover:bg-red-600 text-white border-2 border-red-500 font-black",
-      minimal: "px-4 py-3",
-      expanded: "px-6 py-3"
-    },
-    'organic-curves': {
-      container: "bg-gradient-to-br from-emerald-100 to-teal-50 text-emerald-900 rounded-[2rem_1rem_2rem_1rem] shadow-lg border border-emerald-200/50",
-      button: "hover:bg-emerald-200/60 rounded-[1.5rem_0.75rem_1.5rem_0.75rem] px-5 py-3 font-medium transition-all duration-300 border border-emerald-300/30",
-      deleteButton: "bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-300 rounded-[1rem_2rem_1rem_2rem]",
-      minimal: "px-5 py-3",
-      expanded: "px-6 py-3"
-    },
-    'electric-neon': {
-      container: "bg-black text-cyan-400 rounded-lg border border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.5)] ring-1 ring-cyan-400/30",
-      button: "hover:bg-cyan-400/10 hover:shadow-[0_0_15px_rgba(34,211,238,0.8)] rounded-lg px-4 py-2 font-bold border border-cyan-400/50 transition-all duration-200",
-      deleteButton: "bg-pink-500 hover:bg-pink-400 text-black border border-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.5)]",
+    'linear-modern': {
+      container: "bg-zinc-950 text-zinc-100 rounded-lg border border-zinc-800 shadow-2xl ring-1 ring-zinc-700/50",
+      button: "hover:bg-zinc-800 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 border border-zinc-700/50",
+      deleteButton: "bg-red-950 hover:bg-red-900 text-red-100 border border-red-800",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
-    'warm-earth': {
-      container: "bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900 rounded-2xl shadow-lg border border-amber-200",
-      button: "hover:bg-amber-100 rounded-xl px-5 py-3 font-medium transition-colors border border-amber-300/50 text-amber-800",
-      deleteButton: "bg-red-100 hover:bg-red-200 text-red-800 border border-red-300",
-      minimal: "px-5 py-3",
-      expanded: "px-6 py-3"
+    'notion-inspired': {
+      container: "bg-white text-gray-900 rounded-lg shadow-sm border border-gray-200 ring-1 ring-gray-100",
+      button: "hover:bg-gray-100 rounded-md px-3 py-2 font-medium transition-colors text-gray-700",
+      deleteButton: "bg-gray-50 hover:bg-red-50 text-red-600 border border-gray-200 hover:border-red-200",
+      minimal: "px-3 py-2.5",
+      expanded: "px-4 py-2.5"
     },
-    'retro-future': {
-      container: "bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-cyan-300 rounded-lg border border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.3)]",
-      button: "hover:bg-cyan-500/20 hover:border-cyan-400 rounded-lg px-4 py-2 font-mono border border-cyan-500/50 transition-all duration-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.6)]",
-      deleteButton: "bg-pink-600 hover:bg-pink-500 text-white border border-pink-400",
+    'stripe-clean': {
+      container: "bg-white text-slate-900 rounded-xl shadow-lg border border-slate-200 ring-1 ring-slate-100",
+      button: "hover:bg-slate-50 rounded-lg px-4 py-2.5 font-semibold transition-all duration-150 text-slate-700",
+      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 border border-red-100",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
+    },
+    'figma-professional': {
+      container: "bg-gray-900 text-white rounded-xl shadow-xl border border-gray-700",
+      button: "hover:bg-gray-700 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 text-gray-100",
+      deleteButton: "bg-red-900 hover:bg-red-800 text-red-100 border border-red-700",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'vercel-minimal': {
+      container: "bg-black text-white rounded-lg border border-gray-800 shadow-2xl",
+      button: "hover:bg-gray-900 rounded-md px-3 py-2 font-medium transition-colors text-gray-100",
+      deleteButton: "bg-red-950 hover:bg-red-900 text-red-200 border border-red-800",
+      minimal: "px-3 py-2.5",
+      expanded: "px-4 py-2.5"
     }
   };
 
@@ -115,16 +115,16 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     switch (variant) {
       case 'micro-interactions':
         return { icon: Edit, text: 'Edit All Rows' };
-      case 'brutalist-bold':
-        return { icon: Zap, text: 'EDIT ALL' };
-      case 'organic-curves':
-        return { icon: Shapes, text: 'Edit All Items' };
-      case 'electric-neon':
-        return { icon: Zap, text: 'EDIT ALL' };
-      case 'warm-earth':
-        return { icon: TreePine, text: 'Edit All' };
-      case 'retro-future':
-        return { icon: Rocket, text: 'EDIT_ALL_ROWS' };
+      case 'linear-modern':
+        return { icon: Layers, text: 'Edit All Rows' };
+      case 'notion-inspired':
+        return { icon: Edit, text: 'Edit All' };
+      case 'stripe-clean':
+        return { icon: Settings, text: 'Edit All Rows' };
+      case 'figma-professional':
+        return { icon: Sparkles, text: 'Edit All Rows' };
+      case 'vercel-minimal':
+        return { icon: Shield, text: 'Edit All' };
       default:
         return { icon: Edit, text: 'Edit All Rows' };
     }
@@ -198,11 +198,11 @@ export default function PlaygroundPage() {
     { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
-    { key: 'brutalist-bold', name: 'Brutalist Bold', description: '2025 trend: Bold, raw design with stark contrasts' },
-    { key: 'organic-curves', name: 'Organic Curves', description: '2025 trend: Natural, flowing shapes and soft gradients' },
-    { key: 'electric-neon', name: 'Electric Neon', description: '2025 trend: Vibrant cyber-inspired glow effects' },
-    { key: 'warm-earth', name: 'Warm Earth', description: '2025 trend: Natural, sustainable color palette' },
-    { key: 'retro-future', name: 'Retro Future', description: '2025 trend: 80s-inspired sci-fi aesthetic' }
+    { key: 'linear-modern', name: 'Linear Modern', description: '2025 SaaS: Linear app inspired dark elegance' },
+    { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
+    { key: 'stripe-clean', name: 'Stripe Clean', description: '2025 SaaS: Professional payment interface style' },
+    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' },
+    { key: 'vercel-minimal', name: 'Vercel Minimal', description: '2025 SaaS: Developer-focused minimal black design' }
   ] as const;
 
   const states = [
