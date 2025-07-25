@@ -430,34 +430,32 @@ export const ModernDataTable = () => {
         data-table-container
         className="responsive-table w-full full-width-table"
       >
-        {/* Search and Filters - Mobile-optimized layout */}
-        <div className="py-4 space-y-4">
-          {/* Search Bar - Full width on mobile */}
-          <div>
-            <div className="relative w-full sm:max-w-sm mx-4">
+        {/* Search and Filters - Notion-inspired layout */}
+        <div className="px-6 py-5 border-b border-gray-100/80 bg-gray-50/20">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Search Bar */}
+            <div className="relative w-full sm:max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search suppliers..."
                 value={searchValue}
                 onChange={e => updateSearch(e.target.value)}
-                className="pl-10 pr-10 h-10 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="pl-10 pr-10 h-9 text-sm border-gray-200/60 bg-white/80 backdrop-blur-sm"
               />
               {searchValue && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 rounded-full transition-colors"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 p-0 hover:bg-gray-100 rounded-full transition-colors"
                   onClick={clearSearch}
                 >
                   <X className="h-3 w-3" />
                 </Button>
               )}
             </div>
-          </div>
 
-          {/* Status Filters - Improved mobile spacing */}
-          <div>
-            <div className="overflow-x-auto pb-2 mx-4">
+            {/* Status Filters */}
+            <div className="flex-shrink-0">
               <StatusFilters
                 activeFilter={statusFilter}
                 onFilterChange={setStatusFilter}
@@ -485,7 +483,7 @@ export const ModernDataTable = () => {
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow
                   key={headerGroup.id}
-                  className="border-b border-gray-200 h-8"
+                  className="border-b border-gray-100/80 h-10 bg-gray-50/20"
                 >
                   {headerGroup.headers.map((header, index) => {
                     const isLastColumn =
@@ -497,7 +495,7 @@ export const ModernDataTable = () => {
                     return (
                       <TableHead
                         key={header.id}
-                        className="relative border-0 text-xs font-medium p-0 h-8"
+                        className="relative border-0 text-xs font-semibold text-gray-600 p-0 h-10"
                         style={{ width: header.getSize() }}
                       >
                         <div

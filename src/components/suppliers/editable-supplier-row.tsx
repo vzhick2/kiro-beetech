@@ -238,7 +238,7 @@ export const EditableSupplierRow = ({
 
   if (isEditing) {
     return (
-      <TableRow className="bg-gray-50 border-b border-gray-200 h-12">
+      <TableRow className="bg-gray-50/30 border-b border-gray-100/60 h-12">
         <TableCell className="p-0 h-12" style={{ width: columnWidths.actions }}>
           <div className="flex items-center justify-center gap-3 h-12 px-2">
             <Checkbox
@@ -335,9 +335,9 @@ export const EditableSupplierRow = ({
 
   return (
     <TableRow
-      className={`hover:bg-gray-50 transition-colors group cursor-pointer border-b border-gray-200 h-12 ${
-        isFocused ? 'ring-2 ring-blue-200' : ''
-      } ${isExpanded ? 'bg-blue-25' : ''} ${hasRowChanges ? 'bg-yellow-25 border-l-4 border-yellow-400' : ''}`}
+      className={`hover:bg-gray-50/40 transition-all duration-200 group cursor-pointer border-b border-gray-100/60 h-12 ${
+        isFocused ? 'ring-2 ring-blue-200/40' : ''
+      } ${isExpanded ? 'bg-blue-50/30' : ''} ${hasRowChanges ? 'bg-yellow-50/40 border-l-4 border-yellow-400/60' : ''}`}
       data-state={isSelected && 'selected'}
       data-supplier-id={supplier.id}
       onClick={handleRowClick}
