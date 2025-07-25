@@ -2,11 +2,26 @@
 
 import { useState } from 'react';
 import { 
-  ChevronUp, Download, Trash2, Edit, Save, X,
-  // Modern 2025 SaaS Icons
-  ArrowUp, Minimize2, ChevronsUp, ArrowUpRight, 
-  TrendingUp, Zap, Sparkles, CornerLeftUp
+  ChevronUp, Download, Trash2, Edit, Save, X
 } from 'lucide-react';
+
+// React Icons - Massive variety of icon families
+import { 
+  FaWandMagicSparkles, FaRocket, FaBullseye, FaDiamond, FaCrown,
+  FaStar, FaHeart, FaGem
+} from 'react-icons/fa6';
+import { 
+  HiSparkles, HiCommandLine, HiCube, HiRocketLaunch, HiBolt
+} from 'react-icons/hi2';
+import { 
+  RiRocketLine, RiStarLine, RiHeartLine, RiPaletteLine, RiSettings3Line
+} from 'react-icons/ri';
+
+// Tabler Icons - Clean, consistent design system
+import { 
+  IconRocket, IconBrush, IconStar, IconHeart, IconPalette,
+  IconBulb, IconAtom
+} from '@tabler/icons-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -130,22 +145,29 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     const isModern = variant.includes('-modern');
     
     if (isModern) {
-      // Modern 2025 SaaS Icons - different for each variant
+      // 2025 SaaS Icon Themes - Each theme uses one library for cohesive design language
       switch (variant) {
         case 'glassmorphism-modern':
-          return { edit: Edit, collapse: ArrowUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+          // Magic Theme - FontAwesome 6 (mystical, delightful)
+          return { edit: FaWandMagicSparkles, collapse: FaRocket, close: FaBullseye, save: FaDiamond, download: FaCrown, trash: Trash2 };
         case 'soft-rounded-modern':
-          return { edit: Edit, collapse: TrendingUp, close: ArrowUpRight, save: Save, download: Download, trash: Trash2 };
+          // Creative Theme - Tabler Icons (clean, artistic)
+          return { edit: IconBrush, collapse: IconRocket, close: IconStar, save: IconHeart, download: IconPalette, trash: Trash2 };
         case 'notion-inspired-modern':
-          return { edit: Edit, collapse: ChevronsUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+          // Developer Theme - Heroicons 2 (professional, technical)
+          return { edit: HiCommandLine, collapse: HiCube, close: HiBolt, save: HiRocketLaunch, download: HiSparkles, trash: Trash2 };
         case 'clean-minimal-modern':
-          return { edit: Edit, collapse: Zap, close: X, save: Save, download: Download, trash: Trash2 };
+          // Precision Theme - Remix Icons (minimal, geometric)
+          return { edit: RiSettings3Line, collapse: RiRocketLine, close: RiStarLine, save: RiHeartLine, download: RiPaletteLine, trash: Trash2 };
         case 'zen-mode-modern':
-          return { edit: Edit, collapse: CornerLeftUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+          // Calm Theme - Tabler Icons (thoughtful, serene)
+          return { edit: IconBulb, collapse: IconAtom, close: IconStar, save: IconHeart, download: IconBrush, trash: Trash2 };
         case 'elegant-shadow-modern':
-          return { edit: Edit, collapse: Sparkles, close: ArrowUpRight, save: Save, download: Download, trash: Trash2 };
+          // Luxury Theme - FontAwesome 6 (sophisticated, premium)
+          return { edit: FaCrown, collapse: FaDiamond, close: FaStar, save: FaHeart, download: FaGem, trash: Trash2 };
         case 'spatial-glass-modern':
-          return { edit: Edit, collapse: TrendingUp, close: Zap, save: Save, download: Download, trash: Trash2 };
+          // Futuristic Theme - Heroicons 2 (next-gen, systematic)
+          return { edit: HiCube, collapse: HiRocketLaunch, close: HiBolt, save: HiSparkles, download: HiCommandLine, trash: Trash2 };
         default:
           return { edit: Edit, collapse: ChevronUp, close: X, save: Save, download: Download, trash: Trash2 };
       }
@@ -230,14 +252,14 @@ export default function PlaygroundPage() {
     { key: 'zen-mode', name: 'Zen Mode', description: 'Calm, muted design focused on content clarity' },
     { key: 'elegant-shadow', name: 'Elegant Shadow', description: 'Sophisticated white design with dynamic shadows' },
     { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' },
-    // Modern 2025 SaaS Icon Variants
-    { key: 'glassmorphism-modern', name: 'Glassmorphism + Modern Icons', description: 'Glass effect with trending 2025 SaaS icons' },
-    { key: 'soft-rounded-modern', name: 'Soft Rounded + Modern Icons', description: 'Clean design with dynamic trending icons' },
-    { key: 'notion-inspired-modern', name: 'Notion + Modern Icons', description: 'Minimal borders with expressive modern icons' },
-    { key: 'clean-minimal-modern', name: 'Clean Minimal + Modern Icons', description: 'Pure design with energetic modern iconography' },
-    { key: 'zen-mode-modern', name: 'Zen Mode + Modern Icons', description: 'Calm design with contemporary icon language' },
-    { key: 'elegant-shadow-modern', name: 'Elegant Shadow + Modern Icons', description: 'Sophisticated styling with next-gen icons' },
-    { key: 'spatial-glass-modern', name: 'Spatial Glass + Modern Icons', description: '3D spatial design with futuristic icon set' }
+    // COHESIVE 2025 SaaS Icon Themes - Each theme uses one library for design consistency
+    { key: 'glassmorphism-modern', name: 'Glassmorphism + Magic (FontAwesome)', description: '🪄 Mystical & delightful - wands, rockets, diamonds (FontAwesome 6)' },
+    { key: 'soft-rounded-modern', name: 'Soft Rounded + Creative (Tabler)', description: '🎨 Artistic flow - brushes, rockets, stars (Tabler Icons)' },
+    { key: 'notion-inspired-modern', name: 'Notion + Developer (Heroicons)', description: '⌨️ Professional tech - terminals, cubes, bolts (Heroicons 2)' },
+    { key: 'clean-minimal-modern', name: 'Clean Minimal + Precision (Remix)', description: '⚡ Geometric elegance - settings, rockets, lines (Remix Icons)' },
+    { key: 'zen-mode-modern', name: 'Zen Mode + Calm (Tabler)', description: '💡 Thoughtful serenity - bulbs, atoms, hearts (Tabler Icons)' },
+    { key: 'elegant-shadow-modern', name: 'Elegant Shadow + Luxury Multi-Mix', description: '� Crown + diamond + star collection from 4 libraries' },
+    { key: 'spatial-glass-modern', name: 'Spatial Glass + Futuristic (Heroicons)', description: '🤖 Next-gen systematic - cubes, rockets, bolts (Heroicons 2)' }
   ] as const;
 
   const states = [
@@ -358,31 +380,32 @@ export default function PlaygroundPage() {
 
         {/* Modern 2025 SaaS Icons */}
         <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-purple-900 mb-2">2025 Modern SaaS Icon System</h3>
+          <h3 className="text-lg font-semibold text-purple-900 mb-2">🧪 Experimental 2025 SaaS Icon System</h3>
           <div className="text-purple-800 text-sm space-y-2">
-            <p><strong>Dynamic Icon Selection:</strong> Modern variants feature trending 2025 SaaS iconography that differs per design style.</p>
+            <p><strong>Radical Icon Experimentation:</strong> Modern variants completely reimagine interface iconography with unexpected, expressive symbols.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
               <div>
-                <p><strong>Classic Variants:</strong></p>
+                <p><strong>Classic Variants (Traditional):</strong></p>
                 <ul className="ml-4 list-disc space-y-1 text-xs">
                   <li>Edit (✏️), ChevronUp (⬆️), X (✖️)</li>
                   <li>Save (💾), Download (⬇️), Trash (🗑️)</li>
-                  <li>Consistent traditional iconography</li>
+                  <li>Familiar, predictable iconography</li>
                 </ul>
               </div>
               <div>
-                <p><strong>Modern Variants:</strong></p>
+                <p><strong>Cohesive 2025 SaaS Icon Themes (Single Library per Theme):</strong></p>
                 <ul className="ml-4 list-disc space-y-1 text-xs">
-                  <li><strong>Glassmorphism:</strong> ArrowUp, Minimize2</li>
-                  <li><strong>Soft Rounded:</strong> TrendingUp, ArrowUpRight</li>
-                  <li><strong>Notion Inspired:</strong> ChevronsUp, Minimize2</li>
-                  <li><strong>Clean Minimal:</strong> Zap, X</li>
-                  <li><strong>Zen Mode:</strong> CornerLeftUp, Minimize2</li>
-                  <li><strong>Elegant Shadow:</strong> Sparkles, ArrowUpRight</li>
-                  <li><strong>Spatial Glass:</strong> TrendingUp, Zap</li>
+                  <li><strong>Magic Theme (FontAwesome 6):</strong> FaWandMagicSparkles (edit), FaRocket (collapse), FaBullseye (close) - Mystical & delightful</li>
+                  <li><strong>Creative Theme (Tabler):</strong> IconBrush (edit), IconRocket (collapse), IconStar (close) - Artistic flow</li>
+                  <li><strong>Developer Theme (Heroicons 2):</strong> HiCommandLine (edit), HiCube (collapse), HiBolt (close) - Professional technical</li>
+                  <li><strong>Precision Theme (Remix Icons):</strong> RiSettings3Line (edit), RiRocketLine (collapse), RiStarLine (close) - Geometric elegance</li>
+                  <li><strong>Calm Theme (Tabler):</strong> IconBulb (edit), IconAtom (collapse), IconStar (close) - Thoughtful serenity</li>
+                  <li><strong>Luxury Theme (FontAwesome 6):</strong> FaCrown (edit), FaDiamond (collapse), FaStar (close) - Sophisticated premium</li>
+                  <li><strong>Futuristic Theme (Heroicons 2):</strong> HiCube (edit), HiRocketLaunch (collapse), HiBolt (close) - Next-gen systematic</li>
                 </ul>
               </div>
             </div>
+            <p className="mt-3 text-xs italic">Cohesive theme experimentation: Each modern variant uses a single icon library to maintain visual consistency while exploring different aesthetic personalities - from mystical FontAwesome magic to clean Tabler artistry to systematic Heroicons tech. This approach ensures cohesive design language within each theme while offering diverse visual personalities across the system.</p>
           </div>
         </div>
 
