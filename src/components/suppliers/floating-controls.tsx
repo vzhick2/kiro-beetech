@@ -95,17 +95,16 @@ export const FloatingControls = ({
       ? NOTION_STYLES.container.selected
       : NOTION_STYLES.container.default;
 
-  // Notion-style positioning: floating above content
-  const positionClasses = isMobile
-    ? 'bottom-6 left-4 right-4'
-    : 'bottom-6 right-6';
+  // Fixed positioning: always right-aligned, no snapping
+  // Use responsive margins but maintain consistent right positioning
+  const positionClasses = 'bottom-6 right-4 sm:right-6';
 
   // Spreadsheet mode controls with Notion aesthetic
   if (isSpreadsheetMode) {
     return (
       <div
-        className={`${NOTION_STYLES.base} ${containerStyle} ${isMobile ? 'bottom-6 left-4 right-4' : 'bottom-6 right-6'} ${NOTION_STYLES.animation.slideUp}`}
-        style={{ width: 'auto', maxWidth: 'fit-content' }}
+        className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
+        style={{ width: 'auto', maxWidth: isMobile ? 'calc(100vw - 2rem)' : 'fit-content' }}
       >
         <div className="px-4 py-3 flex items-center gap-3">
           {changedRowsCount > 0 && (
@@ -169,7 +168,7 @@ export const FloatingControls = ({
   return (
     <div
       className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
-      style={{ width: 'auto', maxWidth: 'fit-content' }}
+      style={{ width: 'auto', maxWidth: isMobile ? 'calc(100vw - 2rem)' : 'fit-content' }}
     >
       <div className="px-4 py-3 flex items-center">
         {selectedCount > 0 ? (
