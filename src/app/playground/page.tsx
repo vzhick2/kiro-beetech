@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronUp, Download, Trash2, Edit, Save, X, Zap, Layers, Settings, Sparkles, Shield } from 'lucide-react';
+import { ChevronUp, Download, Trash2, Edit, Save, X } from 'lucide-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'corporate' | 'soft-rounded' | 'micro-interactions' | 'linear-modern' | 'notion-inspired' | 'figma-professional';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'figma-professional' | 'aurora-glass' | 'paper-soft' | 'monospace-tech';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -48,13 +48,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-2 py-1.5",
       expanded: "px-3 py-1.5"
     },
-    corporate: {
-      container: "bg-slate-900 text-slate-100 rounded border border-slate-600 shadow-xl",
-      button: "hover:bg-slate-700 rounded px-4 py-2.5 font-medium",
-      deleteButton: "bg-red-600 hover:bg-red-700",
-      minimal: "px-3 py-2.5",
-      expanded: "px-4 py-2.5"
-    },
     'soft-rounded': {
       container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
       button: "hover:bg-gray-50 rounded-xl px-4 py-2 font-medium transition-colors",
@@ -66,13 +59,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
       button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:scale-105",
       deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 hover:scale-105 transition-transform",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'linear-modern': {
-      container: "bg-zinc-950 text-zinc-100 rounded-lg border border-zinc-800 shadow-2xl ring-1 ring-zinc-700/50",
-      button: "hover:bg-zinc-800 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 border border-zinc-700/50",
-      deleteButton: "bg-red-950 hover:bg-red-900 text-red-100 border border-red-800",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
@@ -89,6 +75,27 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       deleteButton: "bg-red-900 hover:bg-red-800 text-red-100 border border-red-700",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
+    },
+    'aurora-glass': {
+      container: "bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-xl border border-white/20 text-white rounded-2xl shadow-2xl ring-1 ring-purple-300/30",
+      button: "hover:bg-gradient-to-r hover:from-purple-400/30 hover:to-pink-400/30 rounded-xl px-4 py-2.5 font-medium transition-all duration-300 backdrop-blur-sm border border-white/10",
+      deleteButton: "bg-gradient-to-r from-red-500/80 to-pink-500/80 hover:from-red-600/90 hover:to-pink-600/90 text-white border border-red-300/30",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'paper-soft': {
+      container: "bg-stone-50 text-stone-800 rounded-lg shadow-sm border border-stone-200 ring-1 ring-stone-100/50",
+      button: "hover:bg-stone-100 rounded-md px-4 py-2.5 font-medium transition-colors text-stone-700 border border-stone-200/50",
+      deleteButton: "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'monospace-tech': {
+      container: "bg-slate-950 text-green-400 rounded font-mono border border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.15)] ring-1 ring-green-400/20",
+      button: "hover:bg-green-500/10 hover:border-green-400 px-4 py-2.5 font-mono text-sm border border-green-500/50 transition-all duration-200 hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]",
+      deleteButton: "bg-red-950 hover:bg-red-900 text-red-400 border border-red-500/50 font-mono",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
     }
   };
 
@@ -96,32 +103,14 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   const isMinimal = state === 'minimal';
   const padding = isMinimal ? styles.minimal : styles.expanded;
 
-  // Get variant-specific icons and content
-  const getVariantContent = () => {
-    switch (variant) {
-      case 'micro-interactions':
-        return { icon: Edit, text: 'Edit All Rows' };
-      case 'linear-modern':
-        return { icon: Layers, text: 'Edit All Rows' };
-      case 'notion-inspired':
-        return { icon: Edit, text: 'Edit All' };
-      case 'figma-professional':
-        return { icon: Sparkles, text: 'Edit All Rows' };
-      default:
-        return { icon: Edit, text: 'Edit All Rows' };
-    }
-  };
-
-  const { icon: VariantIcon, text: variantText } = getVariantContent();
-
   if (state === 'minimal') {
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <button className={`${styles.button} flex items-center gap-2`}>
-          <VariantIcon className="h-4 w-4" />
-          {variantText}
+          <Edit className="h-4 w-4" />
+          Edit All Rows
         </button>
-        <button className={`${styles.button} p-2`}>
+        <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10`}>
           <ChevronUp className="h-4 w-4" />
         </button>
       </div>
@@ -181,12 +170,13 @@ export default function PlaygroundPage() {
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
     { key: 'glassmorphism-enhanced', name: 'Glassmorphism Enhanced', description: 'Enhanced contrast with blue accents' },
     { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
-    { key: 'corporate', name: 'Corporate Dark', description: 'Professional dark theme' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
-    { key: 'linear-modern', name: 'Linear Modern', description: '2025 SaaS: Linear app inspired dark elegance' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
-    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' }
+    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' },
+    { key: 'aurora-glass', name: 'Aurora Glass', description: '2025 Creative: Gradient glass with aurora-inspired colors' },
+    { key: 'paper-soft', name: 'Paper Soft', description: '2025 Creative: Warm stone tones with tactile paper feel' },
+    { key: 'monospace-tech', name: 'Monospace Tech', description: '2025 Creative: Terminal-inspired with green accents' }
   ] as const;
 
   const states = [
