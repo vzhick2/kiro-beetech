@@ -11,7 +11,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'glassmorphism' | 'notion-inspired' | 'clean-minimal' | 'elegant-shadow' | 'spatial-glass';
+  variant: 'glassmorphism' | 'soft-rounded' | 'notion-inspired' | 'clean-minimal' | 'zen-mode' | 'elegant-shadow' | 'spatial-glass';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -24,6 +24,13 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       container: "bg-black/30 backdrop-blur-md border border-white/30 text-white rounded-2xl shadow-lg",
       button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150 select-none",
       deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150 select-none",
+      minimal: "px-3 py-3",
+      expanded: "px-5 py-3"
+    },
+    'soft-rounded': {
+      container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-500 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150 select-none",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
@@ -41,6 +48,13 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-2",
       expanded: "px-4 py-2"
     },
+    'zen-mode': {
+      container: "bg-stone-100 text-stone-600 rounded-xl shadow-sm border border-stone-200",
+      button: "hover:bg-stone-50 active:bg-stone-200 active:scale-95 rounded-lg px-3 py-2 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-400 hover:bg-red-500 active:bg-red-600 active:scale-95 text-white transition-all duration-150 select-none",
+      minimal: "px-3 py-2",
+      expanded: "px-4 py-2"
+    },
     'elegant-shadow': {
       container: "bg-white text-gray-700 rounded-2xl shadow-xl border border-gray-100",
       button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150 select-none",
@@ -49,7 +63,7 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       expanded: "px-6 py-3"
     },
     'spatial-glass': {
-      container: "bg-gradient-to-r from-slate-500/20 to-gray-500/20 backdrop-blur-md text-white rounded-2xl shadow-2xl border border-white/20 transform perspective-1000 rotateX-2",
+      container: "bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md text-white rounded-2xl shadow-2xl border border-white/20 transform perspective-1000 rotateX-2",
       button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150 select-none transform hover:translateZ-4",
       deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150 select-none",
       minimal: "px-4 py-3",
@@ -132,10 +146,12 @@ export default function PlaygroundPage() {
 
   const variants = [
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
+    { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
     { key: 'clean-minimal', name: 'Clean Minimal', description: 'Pure minimal design with subtle backdrop blur' },
+    { key: 'zen-mode', name: 'Zen Mode', description: 'Calm, muted design focused on content clarity' },
     { key: 'elegant-shadow', name: 'Elegant Shadow', description: 'Sophisticated white design with dynamic shadows' },
-    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with neutral depth transforms' }
+    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' }
   ] as const;
 
   const states = [
@@ -237,7 +253,7 @@ export default function PlaygroundPage() {
             <li>• Smooth transitions between states with expanding hover animations</li>
             <li>• Click feedback with scale-down effect (active:scale-95) for modern SaaS feel</li>
             <li>• All animations use duration-150-400 for responsive, contextual interactions</li>
-            <li>• <strong>5 Total Variants:</strong> Clean, consistent designs with unified iconography</li>
+            <li>• <strong>7 Total Variants:</strong> Clean, consistent designs with unified iconography</li>
           </ul>
         </div>
 
