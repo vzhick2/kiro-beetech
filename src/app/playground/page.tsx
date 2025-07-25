@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'minimal' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'figma-professional' | 'aurora-glass' | 'paper-soft' | 'monospace-tech';
+  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'figma-professional';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -41,13 +41,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
-    minimal: {
-      container: "bg-gray-800 text-gray-100 rounded-md border border-gray-600",
-      button: "hover:bg-gray-700 px-3 py-1.5 text-sm",
-      deleteButton: "bg-red-600 hover:bg-red-700",
-      minimal: "px-2 py-1.5",
-      expanded: "px-3 py-1.5"
-    },
     'soft-rounded': {
       container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
       button: "hover:bg-gray-50 rounded-xl px-4 py-2 font-medium transition-colors",
@@ -57,8 +50,8 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     },
     'micro-interactions': {
       container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
-      button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200 hover:scale-105",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 hover:scale-105 transition-transform",
+      button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200",
+      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
@@ -75,27 +68,6 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       deleteButton: "bg-red-900 hover:bg-red-800 text-red-100 border border-red-700",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
-    },
-    'aurora-glass': {
-      container: "bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-xl border border-white/20 text-white rounded-2xl shadow-2xl ring-1 ring-purple-300/30",
-      button: "hover:bg-gradient-to-r hover:from-purple-400/30 hover:to-pink-400/30 rounded-xl px-4 py-2.5 font-medium transition-all duration-300 backdrop-blur-sm border border-white/10",
-      deleteButton: "bg-gradient-to-r from-red-500/80 to-pink-500/80 hover:from-red-600/90 hover:to-pink-600/90 text-white border border-red-300/30",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'paper-soft': {
-      container: "bg-stone-50 text-stone-800 rounded-lg shadow-sm border border-stone-200 ring-1 ring-stone-100/50",
-      button: "hover:bg-stone-100 rounded-md px-4 py-2.5 font-medium transition-colors text-stone-700 border border-stone-200/50",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'monospace-tech': {
-      container: "bg-slate-950 text-green-400 rounded font-mono border border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.15)] ring-1 ring-green-400/20",
-      button: "hover:bg-green-500/10 hover:border-green-400 px-4 py-2.5 font-mono text-sm border border-green-500/50 transition-all duration-200 hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]",
-      deleteButton: "bg-red-950 hover:bg-red-900 text-red-400 border border-red-500/50 font-mono",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
     }
   };
 
@@ -106,12 +78,12 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   if (state === 'minimal') {
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
-        <button className={`${styles.button} flex items-center gap-2`}>
-          <Edit className="h-4 w-4" />
+        <button className={`${styles.button} flex items-center gap-2 group`}>
+          <Edit className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
           Edit All Rows
         </button>
-        <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10`}>
-          <ChevronUp className="h-4 w-4" />
+        <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10 group`}>
+          <ChevronUp className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-0.5" />
         </button>
       </div>
     );
@@ -128,12 +100,12 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
               variant === 'notion-inspired' 
                 ? 'bg-green-600 hover:bg-green-700 text-white' 
                 : 'bg-green-600 hover:bg-green-700'
-            } flex items-center gap-2`}>
-              <Save className="h-4 w-4" />
+            } flex items-center gap-2 group`}>
+              <Save className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
               Apply Changes
             </button>
-            <button className={`${styles.button} p-2`}>
-              <X className="h-4 w-4" />
+            <button className={`${styles.button} p-2 group`}>
+              <X className="h-4 w-4 transition-all duration-200 group-hover:rotate-90" />
             </button>
           </div>
         </div>
@@ -145,14 +117,14 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <span className="font-medium">{selectedCount} selected</span>
-        <button className={`${styles.button} p-2`}>
-          <Download className="h-4 w-4" />
+        <button className={`${styles.button} p-2 group`}>
+          <Download className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5" />
         </button>
-        <button className={`${styles.button} p-2`}>
-          <Edit className="h-4 w-4" />
+        <button className={`${styles.button} p-2 group`}>
+          <Edit className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
         </button>
-        <button className={`${styles.button} ${styles.deleteButton} p-2`}>
-          <Trash2 className="h-4 w-4" />
+        <button className={`${styles.button} ${styles.deleteButton} p-2 group`}>
+          <Trash2 className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:text-red-500" />
         </button>
       </div>
     );
@@ -169,14 +141,10 @@ export default function PlaygroundPage() {
     { key: 'original', name: 'Original Blue', description: 'Current design with blue theme' },
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
     { key: 'glassmorphism-enhanced', name: 'Glassmorphism Enhanced', description: 'Enhanced contrast with blue accents' },
-    { key: 'minimal', name: 'Minimal Gray', description: 'Clean, understated design' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
-    { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Engaging hover animations and feedback' },
+    { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Subtle meaningful animations and feedback' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
-    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' },
-    { key: 'aurora-glass', name: 'Aurora Glass', description: '2025 Creative: Gradient glass with aurora-inspired colors' },
-    { key: 'paper-soft', name: 'Paper Soft', description: '2025 Creative: Warm stone tones with tactile paper feel' },
-    { key: 'monospace-tech', name: 'Monospace Tech', description: '2025 Creative: Terminal-inspired with green accents' }
+    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' }
   ] as const;
 
   const states = [
@@ -286,6 +254,7 @@ export default function PlaygroundPage() {
             <li>• Consistent icon usage across all designs</li>
             <li>• Touch-friendly button sizing (minimum 44px targets)</li>
             <li>• Smooth transitions between states</li>
+            <li>• Subtle meaningful animations that communicate function</li>
           </ul>
         </div>
       </div>
