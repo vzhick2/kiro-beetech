@@ -129,7 +129,7 @@ export const FloatingControls = ({
               size="sm"
               onClick={onSaveChanges}
               disabled={!hasUnsavedChanges || isSaving}
-              className={`${NOTION_STYLES.button.success} h-9 px-4 text-sm font-medium ${NOTION_STYLES.animation.scaleIn}`}
+              className={`${NOTION_STYLES.button.success} h-9 px-4 text-sm font-medium ${NOTION_STYLES.animation.scaleIn} group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
             >
               {isSaving ? (
                 <>
@@ -138,7 +138,7 @@ export const FloatingControls = ({
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className="h-4 w-4 mr-2 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
                   Apply Changes
                 </>
               )}
@@ -147,17 +147,17 @@ export const FloatingControls = ({
               size="sm"
               onClick={onCancelChanges}
               disabled={isSaving}
-              className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0`}
+              className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
             </Button>
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
+              className={`${NOTION_STYLES.button.default} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
               title="Collapse all rows"
             >
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
             </Button>
           </div>
         </div>
@@ -182,9 +182,11 @@ export const FloatingControls = ({
                 >
                   {selectedCount}
                 </div>
-                <span className={`${NOTION_STYLES.text.count} text-sm`}>
-                  {selectedCount === 1 ? 'item selected' : 'items selected'}
-                </span>
+                {!isMobile && (
+                  <span className={`${NOTION_STYLES.text.count} text-sm`}>
+                    {selectedCount === 1 ? 'item selected' : 'items selected'}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -193,10 +195,10 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkExport}
                 disabled={loading}
-                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
+                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
                 title="Export selected"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               </Button>
 
               {hasInactiveSelected && (
@@ -204,10 +206,10 @@ export const FloatingControls = ({
                   size="sm"
                   onClick={onBulkUnarchive}
                   disabled={loading}
-                  className={`${NOTION_STYLES.button.primary} h-9 w-9 p-0`}
+                  className={`${NOTION_STYLES.button.primary} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
                   title="Unarchive selected"
                 >
-                  <RotateCcw className="h-4 w-4" />
+                  <RotateCcw className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
                 </Button>
               )}
 
@@ -215,20 +217,20 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkArchive}
                 disabled={loading}
-                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
+                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
                 title="Archive selected"
               >
-                <Archive className="h-4 w-4" />
+                <Archive className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               </Button>
 
               <Button
                 size="sm"
                 onClick={onBulkDelete}
                 disabled={loading}
-                className={`${NOTION_STYLES.button.danger} h-9 w-9 p-0`}
+                className={`${NOTION_STYLES.button.danger} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
                 title="Delete selected"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               </Button>
 
               <div className="w-px h-6 bg-gray-200 mx-1"></div>
@@ -238,24 +240,24 @@ export const FloatingControls = ({
                   size="sm"
                   onClick={onClearSelection}
                   disabled={loading}
-                  className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0`}
+                  className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0 group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
                   title="Clear selection"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
                 </Button>
               )}
 
-              <Button
-                size="sm"
-                onClick={onCollapseAll}
-                className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'}`}
-                title="Collapse all rows"
-              >
-                <ChevronUp className="h-4 w-4" />
-                {!isMobile && (
-                  <span className="ml-1 text-xs">Collapse All</span>
-                )}
-              </Button>
+                          <Button
+              size="sm"
+              onClick={onCollapseAll}
+              className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'} group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
+              title="Collapse all rows"
+            >
+              <ChevronUp className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+              {!isMobile && (
+                <span className="ml-1 text-xs">Collapse All</span>
+              )}
+            </Button>
             </div>
           </div>
         ) : (
@@ -263,24 +265,24 @@ export const FloatingControls = ({
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
               {!isMobile && (
-                <Button
-                  size="sm"
-                  onClick={onEnterSpreadsheetMode}
-                  className={`${NOTION_STYLES.button.primary} h-9 px-4 text-sm font-medium`}
-                >
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Edit All Rows
-                </Button>
+                              <Button
+                size="sm"
+                onClick={onEnterSpreadsheetMode}
+                className={`${NOTION_STYLES.button.primary} h-9 px-4 text-sm font-medium group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
+              >
+                <Edit3 className="h-4 w-4 mr-2 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+                Edit All Rows
+              </Button>
               )}
             </div>
 
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'}`}
+              className={`${NOTION_STYLES.button.default} h-9 ${isMobile ? 'w-9 p-0' : 'px-3'} group transition-all duration-150 hover:scale-[1.02] active:scale-95`}
               title="Collapse all rows"
             >
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               {!isMobile && <span className="ml-1 text-xs">Collapse All</span>}
             </Button>
           </div>

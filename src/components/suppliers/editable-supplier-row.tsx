@@ -355,20 +355,20 @@ export const EditableSupplierRow = ({
             <Button
               size="sm"
               variant="ghost"
-              className="h-8 w-8 p-0 text-gray-600 hover:text-gray-700 hover:bg-gray-50 action-button edit-action"
+              className="h-8 w-8 p-0 text-gray-600 hover:text-gray-700 hover:bg-gray-50 action-button edit-action group"
               onClick={handleStartEdit}
               title="Edit supplier"
             >
-              <Edit className="h-3.5 w-3.5" />
+              <Edit className="h-3.5 w-3.5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 action-button data-action"
+              className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 action-button data-action group"
               onClick={onShowPurchaseHistory}
               title="View purchase history"
             >
-              <BarChart3 className="h-3.5 w-3.5" />
+              <BarChart3 className="h-3.5 w-3.5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
             </Button>
           </div>
         ) : (
@@ -377,11 +377,11 @@ export const EditableSupplierRow = ({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50 group"
                 onClick={handleUndoRowChanges}
                 title="Undo changes to this row"
               >
-                <Undo2 className="h-3.5 w-3.5" />
+                <Undo2 className="h-3.5 w-3.5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               </Button>
             ) : (
               <div className="h-8 w-8" />

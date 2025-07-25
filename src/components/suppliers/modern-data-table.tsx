@@ -432,9 +432,9 @@ export const ModernDataTable = () => {
       >
         {/* Search and Filters - Notion-inspired layout */}
         <div className="px-6 py-5 border-b border-gray-100/80 bg-gray-50/20">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             {/* Search Bar */}
-            <div className="relative w-full sm:max-w-sm">
+            <div className="relative w-full lg:max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search suppliers..."
@@ -446,10 +446,10 @@ export const ModernDataTable = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 p-0 hover:bg-gray-100 rounded-full transition-colors"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-5 w-5 p-0 hover:bg-gray-100 rounded-full transition-all duration-150 hover:scale-110 active:scale-95"
                   onClick={clearSearch}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
                 </Button>
               )}
             </div>
