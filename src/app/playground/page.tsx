@@ -9,7 +9,7 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'original' | 'glassmorphism' | 'glassmorphism-enhanced' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'figma-professional';
+  variant: 'glassmorphism' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'clean-minimal' | 'rounded-glass' | 'modern-card' | 'zen-mode' | 'elegant-shadow';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
@@ -20,54 +20,68 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
   
   // Variant-specific styling
   const variantStyles = {
-    original: {
-      container: "bg-blue-600 text-white rounded-full",
-      button: "hover:bg-blue-700 rounded-lg px-3 py-2",
-      deleteButton: "bg-red-600 hover:bg-red-700",
-      minimal: "px-2 py-2",
-      expanded: "px-4 py-2"
-    },
     glassmorphism: {
       container: "bg-black/30 backdrop-blur-md border border-white/30 text-white rounded-2xl shadow-lg",
-      button: "hover:bg-white/20 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium",
-      deleteButton: "bg-red-500/90 hover:bg-red-600 text-white",
-      minimal: "px-3 py-3",
-      expanded: "px-5 py-3"
-    },
-    'glassmorphism-enhanced': {
-      container: "bg-black/35 backdrop-blur-lg border border-blue-400/50 text-white rounded-2xl shadow-xl",
-      button: "hover:bg-blue-400/30 rounded-xl px-3 py-2 backdrop-blur-sm border border-blue-300/30 transition-all text-white font-medium",
-      deleteButton: "bg-red-500/90 hover:bg-red-600 border border-red-400/30 text-white",
+      button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
     'soft-rounded': {
       container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
-      button: "hover:bg-gray-50 rounded-xl px-4 py-2 font-medium transition-colors",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 border border-red-200 transition-all duration-150",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
     'micro-interactions': {
       container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
-      button: "hover:bg-blue-50 hover:text-blue-600 rounded-lg px-4 py-2 font-medium transition-all duration-200",
-      deleteButton: "bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200",
+      button: "hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100 active:scale-95 rounded-lg px-4 py-2 font-medium transition-all duration-150",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
     'notion-inspired': {
       container: "bg-white text-gray-900 rounded-lg shadow-sm border border-gray-200 ring-1 ring-gray-100",
-      button: "hover:bg-gray-100 rounded-md px-3 py-2 font-medium transition-colors text-gray-700",
-      deleteButton: "bg-gray-50 hover:bg-red-50 text-red-600 border border-gray-200 hover:border-red-200",
+      button: "hover:bg-gray-100 active:bg-gray-200 active:scale-95 rounded-md px-3 py-2 font-medium transition-all duration-150 text-gray-700",
+      deleteButton: "bg-gray-50 hover:bg-red-50 active:bg-red-100 active:scale-95 text-red-600 border border-gray-200 hover:border-red-200 transition-all duration-150",
       minimal: "px-3 py-2.5",
       expanded: "px-4 py-2.5"
     },
-    'figma-professional': {
-      container: "bg-gray-900 text-white rounded-xl shadow-xl border border-gray-700",
-      button: "hover:bg-gray-700 rounded-lg px-4 py-2.5 font-medium transition-all duration-200 text-gray-100",
-      deleteButton: "bg-red-900 hover:bg-red-800 text-red-100 border border-red-700",
+    'clean-minimal': {
+      container: "bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl shadow-sm border border-gray-100",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-150",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
+    },
+    'rounded-glass': {
+      container: "bg-white/80 backdrop-blur-xl border border-white/50 text-gray-900 rounded-3xl shadow-lg",
+      button: "hover:bg-white/60 active:bg-white/80 active:scale-95 rounded-2xl px-4 py-2.5 font-medium transition-all duration-150",
+      deleteButton: "bg-red-100/80 hover:bg-red-200/90 active:bg-red-300/90 active:scale-95 text-red-700 transition-all duration-150",
+      minimal: "px-4 py-3.5",
+      expanded: "px-6 py-3.5"
+    },
+    'modern-card': {
+      container: "bg-gray-900 text-white rounded-xl shadow-2xl border border-gray-700/50",
+      button: "hover:bg-gray-700 active:bg-gray-600 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150",
+      deleteButton: "bg-red-900/80 hover:bg-red-800 active:bg-red-700 active:scale-95 text-red-200 transition-all duration-150",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'zen-mode': {
+      container: "bg-gray-50 text-gray-700 rounded-xl shadow-inner border border-gray-200/50",
+      button: "hover:bg-white hover:shadow-sm active:bg-gray-100 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-sm active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'elegant-shadow': {
+      container: "bg-white text-gray-800 rounded-2xl shadow-xl border border-gray-100",
+      button: "hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:bg-blue-100 active:scale-95 rounded-xl px-4 py-2.5 font-semibold transition-all duration-150",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-md active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      minimal: "px-4 py-3.5",
+      expanded: "px-6 py-3.5"
     }
   };
 
@@ -79,11 +93,11 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <button className={`${styles.button} flex items-center gap-2 group`}>
-          <Edit className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
+          <Edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
           Edit All Rows
         </button>
         <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10 group`}>
-          <ChevronUp className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-0.5" />
+          <ChevronUp className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
       </div>
     );
@@ -98,14 +112,14 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
           <div className="ml-auto flex items-center gap-2">
             <button className={`${styles.button} ${
               variant === 'notion-inspired' 
-                ? 'bg-green-600 hover:bg-green-700 text-white' 
-                : 'bg-green-600 hover:bg-green-700'
-            } flex items-center gap-2 group`}>
-              <Save className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                ? 'bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white' 
+                : 'bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95'
+            } flex items-center gap-2 group transition-all duration-150`}>
+              <Save className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               Apply Changes
             </button>
             <button className={`${styles.button} p-2 group`}>
-              <X className="h-4 w-4 transition-all duration-200 group-hover:rotate-90" />
+              <X className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
             </button>
           </div>
         </div>
@@ -118,13 +132,13 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <span className="font-medium">{selectedCount} selected</span>
         <button className={`${styles.button} p-2 group`}>
-          <Download className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5" />
+          <Download className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
         <button className={`${styles.button} p-2 group`}>
-          <Edit className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
+          <Edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
         <button className={`${styles.button} ${styles.deleteButton} p-2 group`}>
-          <Trash2 className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:text-red-500" />
+          <Trash2 className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
       </div>
     );
@@ -138,13 +152,15 @@ export default function PlaygroundPage() {
   const [selectedCount, setSelectedCount] = useState(2);
 
   const variants = [
-    { key: 'original', name: 'Original Blue', description: 'Current design with blue theme' },
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
-    { key: 'glassmorphism-enhanced', name: 'Glassmorphism Enhanced', description: 'Enhanced contrast with blue accents' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
     { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Subtle meaningful animations and feedback' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
-    { key: 'figma-professional', name: 'Figma Professional', description: '2025 SaaS: Design tool inspired dark theme' }
+    { key: 'clean-minimal', name: 'Clean Minimal', description: 'Pure minimal design with subtle backdrop blur' },
+    { key: 'rounded-glass', name: 'Rounded Glass', description: 'Ultra-rounded glass morphism with enhanced depth' },
+    { key: 'modern-card', name: 'Modern Card', description: 'Professional dark theme with elegant shadows' },
+    { key: 'zen-mode', name: 'Zen Mode', description: 'Calm, muted design focused on content clarity' },
+    { key: 'elegant-shadow', name: 'Elegant Shadow', description: 'Sophisticated white design with dynamic shadows' }
   ] as const;
 
   const states = [
@@ -251,11 +267,28 @@ export default function PlaygroundPage() {
           <ul className="text-blue-800 text-sm space-y-1">
             <li>• All variants use the same positioning logic (absolute bottom-6 right-6)</li>
             <li>• Responsive width adjustments based on content state</li>
-            <li>• Consistent icon usage across all designs</li>
+            <li>• Consistent icon usage across all designs (5x5 icons for uniformity)</li>
             <li>• Touch-friendly button sizing (minimum 44px targets)</li>
-            <li>• Smooth transitions between states</li>
-            <li>• Subtle meaningful animations that communicate function</li>
+            <li>• Smooth transitions between states with expanding hover animations</li>
+            <li>• Click feedback with scale-down effect (active:scale-95) for modern SaaS feel</li>
+            <li>• All animations use duration-150 for snappy, responsive interactions</li>
           </ul>
+        </div>
+
+        {/* Click Interaction Guidelines */}
+        <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-green-900 mb-2">Modern Click Interaction Standards</h3>
+          <div className="text-green-800 text-sm space-y-2">
+            <p><strong>Modern SaaS Practice:</strong> Subtle click feedback is standard - scale-down (95%) on active state provides immediate tactile response without being distracting.</p>
+            <p><strong>Why Click States Matter:</strong> They bridge the gap between hover intent and action completion, providing crucial user confidence in touch interfaces.</p>
+            <p><strong>Implementation:</strong> <code className="bg-green-100 px-1 rounded">active:scale-95 active:bg-[color] transition-all duration-150</code></p>
+            <ul className="mt-2 ml-4 list-disc space-y-1">
+              <li>Scale-down creates "button press" feeling</li>
+              <li>Slightly darker background confirms interaction</li>
+              <li>Fast 150ms transition feels responsive, not laggy</li>
+              <li>Works across mouse clicks and touch taps</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
