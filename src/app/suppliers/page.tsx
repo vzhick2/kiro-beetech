@@ -18,13 +18,11 @@ export default function SuppliersPage() {
         </div>
       </div>
 
-      {/* Main content with subtle background */}
+      {/* Main content with full-width table */}
       <div className="bg-gray-50/30">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto">
           <ErrorBoundary>
-            <div className="bg-white rounded-xl border border-gray-200/60 shadow-sm shadow-gray-900/[0.04] overflow-hidden">
-              <ModernDataTable />
-            </div>
+            <ModernDataTable />
           </ErrorBoundary>
         </div>
       </div>

@@ -428,7 +428,7 @@ export const ModernDataTable = () => {
     <>
       <div
         data-table-container
-        className="responsive-table w-full full-width-table"
+        className="responsive-table w-full full-width-table bg-white"
       >
         {/* Search and Filters - Notion-inspired layout */}
         <div className="px-6 py-5 border-b border-gray-100/80 bg-gray-50/20">
