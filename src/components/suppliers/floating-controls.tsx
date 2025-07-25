@@ -1,9 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Edit3, Save, X, Loader2, ChevronUp, Download, Archive, Trash2, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
 
 // Notion-inspired styling constants for clean, minimal design

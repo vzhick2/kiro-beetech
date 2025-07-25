@@ -46,7 +46,6 @@ const navigation: NavigationItem[] = [
   { type: 'separator' }, // Visual break
   // Design System
   { name: 'Playground', href: '/playground', icon: Palette },
-  { name: 'Toasts', href: '/toasts', icon: Palette },
 ];
 
 interface ResponsiveSidebarProps {

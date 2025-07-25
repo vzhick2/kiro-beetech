@@ -11,18 +11,30 @@
     /* Simple responsive base font - good for inventory data readability */
     font-size: clamp(14px, 1.1vw, 16px);
     line-height: 1.5;
-    /* 2025 Mobile UX: Prevent zoom on input focus */
+    /* Smart text size adjustment - allows zoom in desktop mode */
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
   }
 
-  /* Prevent zoom on all input elements across the entire app */
-  input,
-  textarea,
-  select {
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    font-size: 16px; /* Prevents iOS zoom on focus */
+  /* Smart zoom prevention for inputs - only applies to mobile-like viewports */
+  @media (max-width: 1023px) and (pointer: coarse) {
+    /* Mobile mode: Prevent zoom on input focus */
+    input,
+    textarea,
+    select {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+  }
+  
+  /* Desktop mode: Allow natural font sizing */
+  @media (min-width: 1024px), (pointer: fine) {
+    input,
+    textarea,
+    select {
+      font-size: inherit; /* Use natural font size for better zoom behavior */
+    }
   }
 
   /* Prevent zoom on all interactive elements */
@@ -203,7 +215,7 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto; /* Allow pull-to-refresh */
-  /* Prevent zoom on content */
+  /* Smart text size adjustment - context-aware */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   /* CRITICAL: Allow dynamic width adjustment - remove fixed constraints */

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider } from '@/providers/query-provider';
+import { ToastProvider } from '@/providers/toast-provider';
 import ErrorBoundary from '@/components/error-boundary';
 import { AppLayoutServer } from '@/components/layout/app-layout-server';
 import { ZoomPrevention } from '@/components/layout/zoom-prevention';
@@ -16,14 +17,12 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  minimumScale: 1,
-  userScalable: false,
+  // These will be dynamically adjusted by ZoomPrevention component
+  // based on detected desktop vs mobile mode
+  maximumScale: 3,
+  minimumScale: 0.5,
+  userScalable: true,
   viewportFit: 'cover' as const,
-  // Additional mobile zoom prevention
-  shrinkToFit: false,
-  // Force no scaling on any mobile device
-  scalable: false,
 };
 
 export default function RootLayout({
@@ -45,7 +44,9 @@ export default function RootLayout({
         <ZoomPrevention />
         <ErrorBoundary>
           <QueryProvider>
-            <AppLayoutServer>{children}</AppLayoutServer>
+            <ToastProvider>
+              <AppLayoutServer>{children}</AppLayoutServer>
+            </ToastProvider>
           </QueryProvider>
         </ErrorBoundary>
       </body>
