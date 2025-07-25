@@ -1,7 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronUp, Download, Trash2, Edit, Save, X } from 'lucide-react';
+import { 
+  ChevronUp, Download, Trash2, Edit, Save, X,
+  // Modern 2025 SaaS Icons
+  ArrowUp, Minimize2, ChevronsUp, ArrowUpRight, 
+  TrendingUp, Zap, Sparkles, CornerLeftUp
+} from 'lucide-react';
 
 // Mock states for demonstration
 type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
@@ -9,73 +14,148 @@ type PlaygroundState = 'minimal' | 'selected' | 'spreadsheet';
 interface PlaygroundControlsProps {
   state: PlaygroundState;
   selectedCount?: number;
-  variant: 'glassmorphism' | 'soft-rounded' | 'micro-interactions' | 'notion-inspired' | 'clean-minimal' | 'zen-mode' | 'elegant-shadow' | 'spatial-glass';
+  variant: 'glassmorphism' | 'soft-rounded' | 'notion-inspired' | 'clean-minimal' | 'zen-mode' | 'elegant-shadow' | 'spatial-glass' |
+            'glassmorphism-modern' | 'soft-rounded-modern' | 'notion-inspired-modern' | 'clean-minimal-modern' | 'zen-mode-modern' | 'elegant-shadow-modern' | 'spatial-glass-modern';
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
-  // Base classes for all variants
-  const baseClasses = "absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200 shadow-lg";
+  // Base classes for all variants (includes mobile context menu prevention)
+  const baseClasses = "absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200 shadow-lg select-none touch-manipulation";
   
   // Variant-specific styling
   const variantStyles = {
     glassmorphism: {
       container: "bg-black/30 backdrop-blur-md border border-white/30 text-white rounded-2xl shadow-lg",
-      button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150",
-      deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150",
+      button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150 select-none",
       minimal: "px-3 py-3",
       expanded: "px-5 py-3"
     },
     'soft-rounded': {
       container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
-      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150",
-      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 border border-red-200 transition-all duration-150",
-      minimal: "px-4 py-3",
-      expanded: "px-5 py-3"
-    },
-    'micro-interactions': {
-      container: "bg-white text-gray-900 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300",
-      button: "hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100 active:scale-95 rounded-lg px-4 py-2 font-medium transition-all duration-150",
-      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 border border-red-200 transition-all duration-150 select-none",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
     'notion-inspired': {
       container: "bg-white text-gray-900 rounded-lg shadow-sm border border-gray-200 ring-1 ring-gray-100",
-      button: "hover:bg-gray-100 active:bg-gray-200 active:scale-95 rounded-md px-3 py-2 font-medium transition-all duration-150 text-gray-700",
-      deleteButton: "bg-gray-50 hover:bg-red-50 active:bg-red-100 active:scale-95 text-red-600 border border-gray-200 hover:border-red-200 transition-all duration-150",
+      button: "hover:bg-gray-100 active:bg-gray-200 active:scale-95 rounded-md px-3 py-2 font-medium transition-all duration-150 text-gray-700 select-none",
+      deleteButton: "bg-gray-50 hover:bg-red-50 active:bg-red-100 active:scale-95 text-red-600 border border-gray-200 hover:border-red-200 transition-all duration-150 select-none",
       minimal: "px-3 py-2.5",
       expanded: "px-4 py-2.5"
     },
     'clean-minimal': {
       container: "bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl shadow-sm border border-gray-100",
-      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-150",
-      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
     'zen-mode': {
       container: "bg-gray-50 text-gray-700 rounded-xl shadow-inner border border-gray-200/50",
-      button: "hover:bg-white hover:shadow-sm active:bg-gray-100 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150",
-      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-sm active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      button: "hover:bg-white hover:shadow-sm active:bg-gray-100 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-sm active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
       minimal: "px-4 py-3",
       expanded: "px-5 py-3"
     },
     'elegant-shadow': {
       container: "bg-white text-gray-800 rounded-2xl shadow-xl border border-gray-100",
-      button: "hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:bg-blue-100 active:scale-95 rounded-xl px-4 py-2.5 font-semibold transition-all duration-150",
-      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-md active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150",
+      button: "hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:bg-blue-100 active:scale-95 rounded-xl px-4 py-2.5 font-semibold transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-md active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
       minimal: "px-4 py-3.5",
       expanded: "px-6 py-3.5"
     },
     'spatial-glass': {
       container: "bg-white/20 backdrop-blur-3xl border border-white/30 text-gray-900 rounded-2xl shadow-2xl transform-gpu perspective-1000 preserve-3d hover:shadow-3xl transition-all duration-500",
-      button: "hover:bg-white/30 hover:shadow-xl hover:translate-y-[-1px] active:bg-white/40 active:scale-95 active:translate-y-0 rounded-xl px-4 py-2.5 font-medium transition-all duration-200 transform-gpu",
-      deleteButton: "bg-red-200/60 hover:bg-red-300/70 hover:shadow-xl hover:translate-y-[-1px] active:bg-red-400/70 active:scale-95 active:translate-y-0 text-red-800 transition-all duration-200 transform-gpu",
+      button: "hover:bg-white/30 hover:shadow-xl hover:translate-y-[-1px] active:bg-white/40 active:scale-95 active:translate-y-0 rounded-xl px-4 py-2.5 font-medium transition-all duration-200 transform-gpu select-none",
+      deleteButton: "bg-red-200/60 hover:bg-red-300/70 hover:shadow-xl hover:translate-y-[-1px] active:bg-red-400/70 active:scale-95 active:translate-y-0 text-red-800 transition-all duration-200 transform-gpu select-none",
+      minimal: "px-4 py-3.5",
+      expanded: "px-6 py-3.5"
+    },
+    // Modern 2025 SaaS Icon Variants
+    'glassmorphism-modern': {
+      container: "bg-black/30 backdrop-blur-md border border-white/30 text-white rounded-2xl shadow-lg",
+      button: "hover:bg-white/20 active:bg-white/30 active:scale-95 rounded-xl px-3 py-2 backdrop-blur-sm text-white font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-500/90 hover:bg-red-600 active:bg-red-700 active:scale-95 text-white transition-all duration-150 select-none",
+      minimal: "px-3 py-3",
+      expanded: "px-5 py-3"
+    },
+    'soft-rounded-modern': {
+      container: "bg-white text-gray-700 rounded-2xl shadow-md border border-gray-200",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 border border-red-200 transition-all duration-150 select-none",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'notion-inspired-modern': {
+      container: "bg-white text-gray-900 rounded-lg shadow-sm border border-gray-200 ring-1 ring-gray-100",
+      button: "hover:bg-gray-100 active:bg-gray-200 active:scale-95 rounded-md px-3 py-2 font-medium transition-all duration-150 text-gray-700 select-none",
+      deleteButton: "bg-gray-50 hover:bg-red-50 active:bg-red-100 active:scale-95 text-red-600 border border-gray-200 hover:border-red-200 transition-all duration-150 select-none",
+      minimal: "px-3 py-2.5",
+      expanded: "px-4 py-2.5"
+    },
+    'clean-minimal-modern': {
+      container: "bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl shadow-sm border border-gray-100",
+      button: "hover:bg-gray-50 active:bg-gray-100 active:scale-95 rounded-xl px-4 py-2.5 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'zen-mode-modern': {
+      container: "bg-gray-50 text-gray-700 rounded-xl shadow-inner border border-gray-200/50",
+      button: "hover:bg-white hover:shadow-sm active:bg-gray-100 active:scale-95 rounded-lg px-4 py-2.5 font-medium transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-sm active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
+      minimal: "px-4 py-3",
+      expanded: "px-5 py-3"
+    },
+    'elegant-shadow-modern': {
+      container: "bg-white text-gray-800 rounded-2xl shadow-xl border border-gray-100",
+      button: "hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:bg-blue-100 active:scale-95 rounded-xl px-4 py-2.5 font-semibold transition-all duration-150 select-none",
+      deleteButton: "bg-red-50 hover:bg-red-100 hover:shadow-md active:bg-red-200 active:scale-95 text-red-600 transition-all duration-150 select-none",
+      minimal: "px-4 py-3.5",
+      expanded: "px-6 py-3.5"
+    },
+    'spatial-glass-modern': {
+      container: "bg-white/20 backdrop-blur-3xl border border-white/30 text-gray-900 rounded-2xl shadow-2xl transform-gpu perspective-1000 preserve-3d hover:shadow-3xl transition-all duration-500",
+      button: "hover:bg-white/30 hover:shadow-xl hover:translate-y-[-1px] active:bg-white/40 active:scale-95 active:translate-y-0 rounded-xl px-4 py-2.5 font-medium transition-all duration-200 transform-gpu select-none",
+      deleteButton: "bg-red-200/60 hover:bg-red-300/70 hover:shadow-xl hover:translate-y-[-1px] active:bg-red-400/70 active:scale-95 active:translate-y-0 text-red-800 transition-all duration-200 transform-gpu select-none",
       minimal: "px-4 py-3.5",
       expanded: "px-6 py-3.5"
     }
   };
 
+  // Helper function to get appropriate icons based on variant
+  const getIcons = (variant: string) => {
+    const isModern = variant.includes('-modern');
+    
+    if (isModern) {
+      // Modern 2025 SaaS Icons - different for each variant
+      switch (variant) {
+        case 'glassmorphism-modern':
+          return { edit: Edit, collapse: ArrowUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+        case 'soft-rounded-modern':
+          return { edit: Edit, collapse: TrendingUp, close: ArrowUpRight, save: Save, download: Download, trash: Trash2 };
+        case 'notion-inspired-modern':
+          return { edit: Edit, collapse: ChevronsUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+        case 'clean-minimal-modern':
+          return { edit: Edit, collapse: Zap, close: X, save: Save, download: Download, trash: Trash2 };
+        case 'zen-mode-modern':
+          return { edit: Edit, collapse: CornerLeftUp, close: Minimize2, save: Save, download: Download, trash: Trash2 };
+        case 'elegant-shadow-modern':
+          return { edit: Edit, collapse: Sparkles, close: ArrowUpRight, save: Save, download: Download, trash: Trash2 };
+        case 'spatial-glass-modern':
+          return { edit: Edit, collapse: TrendingUp, close: Zap, save: Save, download: Download, trash: Trash2 };
+        default:
+          return { edit: Edit, collapse: ChevronUp, close: X, save: Save, download: Download, trash: Trash2 };
+      }
+    } else {
+      // Classic icons for original variants
+      return { edit: Edit, collapse: ChevronUp, close: X, save: Save, download: Download, trash: Trash2 };
+    }
+  };
+
+  const icons = getIcons(variant);
   const styles = variantStyles[variant];
   const isMinimal = state === 'minimal';
   const padding = isMinimal ? styles.minimal : styles.expanded;
@@ -84,11 +164,11 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
     return (
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <button className={`${styles.button} flex items-center gap-2 group`}>
-          <Edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+          <icons.edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
           Edit All Rows
         </button>
         <button className={`${styles.button} flex items-center justify-center h-[2.5rem] w-10 group`}>
-          <ChevronUp className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
+          <icons.collapse className="h-6 w-6 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
         </button>
       </div>
     );
@@ -102,15 +182,15 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
           <span className="text-sm opacity-75">Tab: Next field • ↑↓: Navigate rows • Esc: Exit</span>
           <div className="ml-auto flex items-center gap-2">
             <button className={`${styles.button} ${
-              variant === 'notion-inspired' 
+              variant === 'notion-inspired' || variant === 'notion-inspired-modern'
                 ? 'bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white' 
                 : 'bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95'
             } flex items-center gap-2 group transition-all duration-150`}>
-              <Save className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+              <icons.save className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
               Apply Changes
             </button>
             <button className={`${styles.button} p-2 group`}>
-              <X className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
+              <icons.close className="h-6 w-6 transition-all duration-200 group-hover:scale-110 group-active:scale-95" strokeWidth={2.5} />
             </button>
           </div>
         </div>
@@ -123,13 +203,13 @@ function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundCon
       <div className={`${baseClasses} ${styles.container} ${padding}`}>
         <span className="font-medium">{selectedCount} selected</span>
         <button className={`${styles.button} p-2 group`}>
-          <Download className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+          <icons.download className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
         <button className={`${styles.button} p-2 group`}>
-          <Edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+          <icons.edit className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
         <button className={`${styles.button} ${styles.deleteButton} p-2 group`}>
-          <Trash2 className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
+          <icons.trash className="h-5 w-5 transition-all duration-200 group-hover:scale-110 group-active:scale-95" />
         </button>
       </div>
     );
@@ -145,12 +225,19 @@ export default function PlaygroundPage() {
   const variants = [
     { key: 'glassmorphism', name: 'Glassmorphism', description: 'Modern glass effect with blur' },
     { key: 'soft-rounded', name: 'Soft Rounded', description: 'Clean white design with rounded corners' },
-    { key: 'micro-interactions', name: 'Micro Interactions', description: '2025 trend: Subtle meaningful animations and feedback' },
     { key: 'notion-inspired', name: 'Notion Inspired', description: '2025 SaaS: Clean minimal with subtle borders' },
     { key: 'clean-minimal', name: 'Clean Minimal', description: 'Pure minimal design with subtle backdrop blur' },
     { key: 'zen-mode', name: 'Zen Mode', description: 'Calm, muted design focused on content clarity' },
     { key: 'elegant-shadow', name: 'Elegant Shadow', description: 'Sophisticated white design with dynamic shadows' },
-    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' }
+    { key: 'spatial-glass', name: 'Spatial Glass', description: '2025 Future: 3D spatial design with depth transforms' },
+    // Modern 2025 SaaS Icon Variants
+    { key: 'glassmorphism-modern', name: 'Glassmorphism + Modern Icons', description: 'Glass effect with trending 2025 SaaS icons' },
+    { key: 'soft-rounded-modern', name: 'Soft Rounded + Modern Icons', description: 'Clean design with dynamic trending icons' },
+    { key: 'notion-inspired-modern', name: 'Notion + Modern Icons', description: 'Minimal borders with expressive modern icons' },
+    { key: 'clean-minimal-modern', name: 'Clean Minimal + Modern Icons', description: 'Pure design with energetic modern iconography' },
+    { key: 'zen-mode-modern', name: 'Zen Mode + Modern Icons', description: 'Calm design with contemporary icon language' },
+    { key: 'elegant-shadow-modern', name: 'Elegant Shadow + Modern Icons', description: 'Sophisticated styling with next-gen icons' },
+    { key: 'spatial-glass-modern', name: 'Spatial Glass + Modern Icons', description: '3D spatial design with futuristic icon set' }
   ] as const;
 
   const states = [
@@ -257,14 +344,46 @@ export default function PlaygroundPage() {
           <ul className="text-blue-800 text-sm space-y-1">
             <li>• All variants use the same positioning logic (absolute bottom-6 right-6)</li>
             <li>• Responsive width adjustments based on content state</li>
-            <li>• Consistent icon usage across all designs (5x5 icons for uniformity)</li>
+            <li>• <strong>Dynamic Icon System:</strong> Classic variants use traditional icons, Modern variants use 2025 SaaS trending icons</li>
+            <li>• <strong>Fixed Icon Sizing:</strong> Collapse icons now h-6 w-6 (24px) for better visibility and touch targets</li>
             <li>• Enhanced stroke-width (2.5) for collapse/close icons for better visual weight</li>
             <li>• Touch-friendly button sizing (minimum 44px targets)</li>
+            <li>• <strong>Mobile Optimized:</strong> Context menu prevention with select-none and touch-manipulation</li>
             <li>• Smooth transitions between states with expanding hover animations</li>
             <li>• Click feedback with scale-down effect (active:scale-95) for modern SaaS feel</li>
             <li>• All animations use duration-150-400 for responsive, contextual interactions</li>
-            <li>• <strong>8 Total Variants:</strong> Curated selection of proven design patterns</li>
+            <li>• <strong>14 Total Variants:</strong> 7 classic designs + 7 modern icon variations</li>
           </ul>
+        </div>
+
+        {/* Modern 2025 SaaS Icons */}
+        <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-purple-900 mb-2">2025 Modern SaaS Icon System</h3>
+          <div className="text-purple-800 text-sm space-y-2">
+            <p><strong>Dynamic Icon Selection:</strong> Modern variants feature trending 2025 SaaS iconography that differs per design style.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div>
+                <p><strong>Classic Variants:</strong></p>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  <li>Edit (✏️), ChevronUp (⬆️), X (✖️)</li>
+                  <li>Save (💾), Download (⬇️), Trash (🗑️)</li>
+                  <li>Consistent traditional iconography</li>
+                </ul>
+              </div>
+              <div>
+                <p><strong>Modern Variants:</strong></p>
+                <ul className="ml-4 list-disc space-y-1 text-xs">
+                  <li><strong>Glassmorphism:</strong> ArrowUp, Minimize2</li>
+                  <li><strong>Soft Rounded:</strong> TrendingUp, ArrowUpRight</li>
+                  <li><strong>Notion Inspired:</strong> ChevronsUp, Minimize2</li>
+                  <li><strong>Clean Minimal:</strong> Zap, X</li>
+                  <li><strong>Zen Mode:</strong> CornerLeftUp, Minimize2</li>
+                  <li><strong>Elegant Shadow:</strong> Sparkles, ArrowUpRight</li>
+                  <li><strong>Spatial Glass:</strong> TrendingUp, Zap</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Click Interaction Guidelines */}
