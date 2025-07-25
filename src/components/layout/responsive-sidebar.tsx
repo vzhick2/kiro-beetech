@@ -43,7 +43,10 @@ const navigation: NavigationItem[] = [
   // Analytics & Data
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Data', href: '/data', icon: Database },
+  { type: 'separator' }, // Visual break
+  // Design System
   { name: 'Playground', href: '/playground', icon: Palette },
+  { name: 'Toasts', href: '/toasts', icon: Palette },
 ];
 
 interface ResponsiveSidebarProps {

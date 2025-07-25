@@ -6,15 +6,29 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
 
-// Shared styling constants for consistency
-const PILL_STYLES = {
-  base: "fixed z-50 rounded-full shadow-xl border-0 transition-all duration-200 hover:shadow-2xl",
-  blue: "bg-blue-600 hover:scale-105",
-  green: "bg-green-600",
+// Notion-inspired styling constants for clean, minimal design
+const NOTION_STYLES = {
+  base: "fixed z-50 transition-all duration-200 ease-in-out",
+  container: {
+    default: "bg-white/95 backdrop-blur-md border border-gray-200/60 shadow-lg shadow-gray-900/[0.08] rounded-lg",
+    editing: "bg-blue-50/95 backdrop-blur-md border border-blue-200/60 shadow-lg shadow-blue-900/[0.08] rounded-lg",
+    selected: "bg-gray-50/95 backdrop-blur-md border border-gray-300/60 shadow-lg shadow-gray-900/[0.08] rounded-lg"
+  },
+  text: {
+    primary: "text-gray-700 font-medium",
+    secondary: "text-gray-500 text-sm",
+    count: "text-gray-600 font-semibold"
+  },
   button: {
-    white: "bg-white/20 hover:bg-white/30 border-0 text-white transition-all duration-150 hover:scale-110",
-    red: "bg-red-500/80 hover:bg-red-500 border-0 text-white transition-all duration-150 hover:scale-110",
-    save: "bg-white text-green-700 hover:bg-white/90 transition-all duration-150 hover:scale-105"
+    default: "bg-gray-100/80 hover:bg-gray-200/80 border border-gray-200/40 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm",
+    primary: "bg-blue-500 hover:bg-blue-600 border border-blue-500 text-white transition-all duration-150 hover:shadow-sm",
+    success: "bg-green-500 hover:bg-green-600 border border-green-500 text-white transition-all duration-150 hover:shadow-sm",
+    danger: "bg-red-500 hover:bg-red-600 border border-red-500 text-white transition-all duration-150 hover:shadow-sm",
+    secondary: "bg-white hover:bg-gray-50 border border-gray-200 text-gray-600 hover:text-gray-700 transition-all duration-150 hover:shadow-sm"
+  },
+  animation: {
+    slideUp: "animate-in slide-in-from-bottom-2 fade-in-0 duration-200",
+    scaleIn: "animate-in zoom-in-95 fade-in-0 duration-150"
   }
 }
 
@@ -57,52 +71,64 @@ export const FloatingControls = ({
 }: FloatingControlsProps) => {
   const { isMobile } = useMobileDetection()
 
-  // Determine if we're showing only the collapse button (minimal mode)
+  // Determine current state for styling
   const isMinimalMode = !isSpreadsheetMode && selectedCount === 0
+  const containerStyle = isSpreadsheetMode 
+    ? NOTION_STYLES.container.editing 
+    : selectedCount > 0 
+      ? NOTION_STYLES.container.selected 
+      : NOTION_STYLES.container.default
 
-  // Mobile positioning: center-bottom, Desktop positioning: right-bottom
+  // Notion-style positioning: floating above content
   const positionClasses = isMobile 
-    ? "bottom-6 left-1/2 transform -translate-x-1/2" 
+    ? "bottom-6 left-4 right-4" 
     : "bottom-6 right-6"
-  
-  // Mobile sizing: responsive width, Desktop sizing: auto
-  // In minimal mode, we use minimal width instead of full width
-  const sizeClasses = isMobile 
-    ? (isMinimalMode ? "w-auto" : "w-[90vw] max-w-md")
-    : ""
-  
-  const sizeStyles = isMobile 
-    ? (isMinimalMode ? { width: 'auto' } : { minWidth: '280px', maxWidth: '90vw' })
-    : { width: 'auto', maxWidth: 'fit-content' }
 
-  // Spreadsheet mode controls with enhanced pill design
+  // Spreadsheet mode controls with Notion aesthetic
   if (isSpreadsheetMode) {
     return (
       <div 
-        className={`${PILL_STYLES.base} ${PILL_STYLES.green} ${positionClasses} ${sizeClasses}`}
-        style={sizeStyles}
+        className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
       >
-        <div className={`px-4 py-3 flex items-center gap-3 ${isMobile ? 'flex-wrap justify-center' : 'whitespace-nowrap'}`}>
-          <div className="text-xs font-medium text-white">
-            Spreadsheet Mode {changedRowsCount > 0 && `• ${changedRowsCount} rows modified`}
+        <div className={`px-4 py-3 flex items-center justify-between ${isMobile ? 'flex-col gap-3' : 'gap-4'}`}>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span className={`${NOTION_STYLES.text.primary} text-sm`}>
+                Spreadsheet Mode
+              </span>
+            </div>
+            {changedRowsCount > 0 && (
+              <div className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-md">
+                {changedRowsCount} modified
+              </div>
+            )}
           </div>
-          {!isMobile && <div className="text-xs text-white/80">Tab: Next field • ↑↓: Navigate rows • Esc: Exit</div>}
-          <div className="flex gap-2">
+          
+          {!isMobile && (
+            <div className={`${NOTION_STYLES.text.secondary} flex items-center gap-4`}>
+              <span>Tab: Next field</span>
+              <span>↑↓: Navigate</span>
+              <span>Esc: Exit</span>
+            </div>
+          )}
+          
+          <div className="flex items-center gap-2">
             <Button
               size="sm"
               onClick={onSaveChanges}
               disabled={!hasUnsavedChanges || isSaving}
-              className={`${PILL_STYLES.button.save} h-8 px-3 text-xs font-medium`}
+              className={`${NOTION_STYLES.button.success} h-9 px-4 text-sm font-medium ${NOTION_STYLES.animation.scaleIn}`}
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                  {isMobile ? "" : "Saving..."}
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Saving...
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-1" />
-                  {isMobile ? "" : "Apply Changes"}
+                  <Save className="h-4 w-4 mr-2" />
+                  Apply Changes
                 </>
               )}
             </Button>
@@ -110,15 +136,14 @@ export const FloatingControls = ({
               size="sm"
               onClick={onCancelChanges}
               disabled={isSaving}
-              className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
+              className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0`}
             >
               <X className="h-4 w-4" />
             </Button>
-            {/* Collapse button - always available */}
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className={`${PILL_STYLES.button.white} h-8 w-8 p-0`}
+              className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
               title="Collapse all rows"
             >
               <ChevronUp className="h-4 w-4" />
@@ -129,34 +154,36 @@ export const FloatingControls = ({
     )
   }
 
-  // Regular mode controls - Unified pill design for mobile and desktop
+  // Regular mode controls with Notion aesthetic
   return (
     <div 
-      className={`${PILL_STYLES.base} ${PILL_STYLES.blue} ${positionClasses} ${sizeClasses}`}
-      style={sizeStyles}
+      className={`${NOTION_STYLES.base} ${containerStyle} ${positionClasses} ${NOTION_STYLES.animation.slideUp}`}
+      style={{ maxWidth: isMobile ? 'none' : '600px' }}
     >
-      <div className={`${isMinimalMode ? 'px-2 py-2' : 'px-4 py-2'} flex items-center gap-2 ${isMobile ? 'justify-center' : 'whitespace-nowrap'}`}>
+      <div className={`px-4 py-3 flex items-center ${selectedCount > 0 ? 'justify-between' : 'justify-end'}`}>
         {selectedCount > 0 ? (
-          // Batch action controls with pill design
+          // Selection state with batch actions
           <>
-            {/* Selected count indicator - mobile gets bigger display */}
-            {isMobile ? (
-              <div className="bg-blue-500 rounded-full px-3 py-1 text-white font-medium text-base min-w-[2.5rem] text-center">
-                {selectedCount}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className={`w-6 h-6 bg-gray-600 text-white text-xs font-semibold rounded-md flex items-center justify-center ${NOTION_STYLES.animation.scaleIn}`}>
+                  {selectedCount}
+                </div>
+                <span className={`${NOTION_STYLES.text.count} text-sm`}>
+                  {selectedCount === 1 ? 'item selected' : 'items selected'}
+                </span>
               </div>
-            ) : (
-              <span className="text-xs text-white/90 mr-1">{selectedCount} selected</span>
-            )}
+            </div>
             
-            <div className="flex gap-1">
+            <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 onClick={onBulkExport}
                 disabled={loading}
-                className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
                 title="Export selected"
               >
-                <Download className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+                <Download className="h-4 w-4" />
               </Button>
 
               {hasInactiveSelected && (
@@ -164,10 +191,10 @@ export const FloatingControls = ({
                   size="sm"
                   onClick={onBulkUnarchive}
                   disabled={loading}
-                  className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                  className={`${NOTION_STYLES.button.primary} h-9 w-9 p-0`}
                   title="Unarchive selected"
                 >
-                  <RotateCcw className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+                  <RotateCcw className="h-4 w-4" />
                 </Button>
               )}
 
@@ -175,67 +202,67 @@ export const FloatingControls = ({
                 size="sm"
                 onClick={onBulkArchive}
                 disabled={loading}
-                className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
                 title="Archive selected"
               >
-                <Archive className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+                <Archive className="h-4 w-4" />
               </Button>
 
               <Button
                 size="sm"
                 onClick={onBulkDelete}
                 disabled={loading}
-                className={`${PILL_STYLES.button.red} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                className={`${NOTION_STYLES.button.danger} h-9 w-9 p-0`}
                 title="Delete selected"
               >
-                <Trash2 className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+                <Trash2 className="h-4 w-4" />
               </Button>
 
-              {/* Collapse button - always available */}
+              <div className="w-px h-6 bg-gray-200 mx-1"></div>
+
               <Button
                 size="sm"
                 onClick={onCollapseAll}
-                className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
                 title="Collapse all rows"
               >
-                <ChevronUp className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+                <ChevronUp className="h-4 w-4" />
               </Button>
 
-              {/* Clear selection - mobile only */}
-              {onClearSelection && isMobile && (
+              {onClearSelection && (
                 <Button
                   size="sm"
                   onClick={onClearSelection}
                   disabled={loading}
-                  className={`${PILL_STYLES.button.white} h-10 w-10 p-0 ml-1`}
+                  className={`${NOTION_STYLES.button.secondary} h-9 w-9 p-0`}
                   title="Clear selection"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </Button>
               )}
             </div>
           </>
         ) : (
-          // Default controls with pill design
-          <div className="flex gap-1">
-            {/* Edit All Rows - hidden on small screens */}
-            <Button
-              size="sm"
-              onClick={onEnterSpreadsheetMode}
-              className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 px-4' : 'h-8 px-3'} text-xs transition-all duration-150 hover:scale-105 hidden sm:flex`}
-            >
-              <Edit3 className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'} mr-1`} />
-              Edit All Rows
-            </Button>
+          // Default state with minimal controls
+          <div className="flex items-center gap-2">
+            {!isMobile && (
+              <Button
+                size="sm"
+                onClick={onEnterSpreadsheetMode}
+                className={`${NOTION_STYLES.button.primary} h-9 px-4 text-sm font-medium`}
+              >
+                <Edit3 className="h-4 w-4 mr-2" />
+                Edit All Rows
+              </Button>
+            )}
 
-            {/* Collapse button - always available */}
             <Button
               size="sm"
               onClick={onCollapseAll}
-              className={`${PILL_STYLES.button.white} ${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+              className={`${NOTION_STYLES.button.default} h-9 w-9 p-0`}
               title="Collapse all rows"
             >
-              <ChevronUp className={`${isMobile ? 'h-5 w-5' : 'h-4 w-4'}`} />
+              <ChevronUp className="h-4 w-4" />
             </Button>
           </div>
         )}
