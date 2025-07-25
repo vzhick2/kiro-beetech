@@ -103,6 +103,36 @@ export const EditableSupplierRow = ({
     return () => {} // Explicit return for when not editing
   }, [isEditing, onCancel])
 
+  // Handle click outside to exit edit mode if no changes
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (isEditing) {
+        const target = e.target as HTMLElement
+        const row = target.closest(`[data-supplier-id="${supplier.id}"]`)
+        
+        // If click is outside this row and no changes have been made, exit edit mode
+        if (!row) {
+          const hasChanges = 
+            formData.name !== supplier.name ||
+            formData.website !== (supplier.website || "") ||
+            formData.phone !== (supplier.phone || "") ||
+            formData.status !== supplier.status
+          
+          if (!hasChanges) {
+            onCancel()
+          }
+        }
+      }
+    }
+
+    if (isEditing) {
+      document.addEventListener("mousedown", handleClickOutside)
+      return () => document.removeEventListener("mousedown", handleClickOutside)
+    }
+    
+    return () => {}
+  }, [isEditing, onCancel, formData, supplier])
+
   const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement | null>) => {
     if (e.key === "Tab" && nextRef?.current) {
       e.preventDefault()
@@ -189,22 +219,22 @@ export const EditableSupplierRow = ({
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 action-button edit-action"
+              className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 action-button edit-action"
               onClick={() => onSave(formData)}
               disabled={isSaving || !isFormValid()}
               title="Save changes (Enter)"
             >
-              {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+              {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 action-button data-action"
+              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 action-button data-action"
               onClick={onCancel}
               disabled={isSaving}
               title="Cancel changes (Escape)"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           </div>
         </TableCell>
@@ -269,11 +299,12 @@ export const EditableSupplierRow = ({
         isFocused ? "ring-2 ring-blue-200" : ""
       } ${isExpanded ? "bg-blue-25" : ""} ${hasRowChanges ? "bg-yellow-25 border-l-4 border-yellow-400" : ""}`}
       data-state={isSelected && "selected"}
+      data-supplier-id={supplier.id}
       onClick={handleRowClick}
     >
       <TableCell className="p-0 h-12" style={{ width: columnWidths.actions }}>
         {!isSpreadsheetMode ? (
-          <div className="flex items-center justify-center gap-3 h-12 px-2">
+          <div className="flex items-center justify-center gap-2 h-12 px-2">
             <Checkbox
               checked={isSelected}
               onCheckedChange={(checked) => onSelect(!!checked)}
@@ -284,20 +315,20 @@ export const EditableSupplierRow = ({
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 w-7 p-0 text-gray-600 hover:text-gray-700 hover:bg-gray-50 action-button edit-action"
+              className="h-8 w-8 p-0 text-gray-600 hover:text-gray-700 hover:bg-gray-50 action-button edit-action"
               onClick={handleStartEdit}
               title="Edit supplier"
             >
-              <Edit className="h-3 w-3" />
+              <Edit className="h-3.5 w-3.5" />
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 w-7 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 action-button data-action"
+              className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 action-button data-action"
               onClick={onShowPurchaseHistory}
               title="View purchase history"
             >
-              <BarChart3 className="h-3 w-3" />
+              <BarChart3 className="h-3.5 w-3.5" />
             </Button>
           </div>
         ) : (
@@ -306,14 +337,14 @@ export const EditableSupplierRow = ({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 w-7 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                 onClick={handleUndoRowChanges}
                 title="Undo changes to this row"
               >
-                <Undo2 className="h-3 w-3" />
+                <Undo2 className="h-3.5 w-3.5" />
               </Button>
             ) : (
-              <div className="h-7 w-7" />
+              <div className="h-8 w-8" />
             )}
           </div>
         )}
