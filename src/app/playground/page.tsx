@@ -13,8 +13,6 @@ interface PlaygroundControlsProps {
 }
 
 function PlaygroundControls({ state, selectedCount = 2, variant }: PlaygroundControlsProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   // Base classes for all variants
   const baseClasses = "absolute bottom-6 right-6 flex items-center gap-2 transition-all duration-200 shadow-lg";
   
@@ -340,7 +338,7 @@ export default function PlaygroundPage() {
             <p><strong>Why Click States Matter:</strong> They bridge the gap between hover intent and action completion, providing crucial user confidence in touch interfaces.</p>
             <p><strong>Implementation:</strong> <code className="bg-green-100 px-1 rounded">active:scale-95 active:bg-[color] transition-all duration-150</code></p>
             <ul className="mt-2 ml-4 list-disc space-y-1">
-              <li>Scale-down creates "button press" feeling</li>
+              <li>Scale-down creates &ldquo;button press&rdquo; feeling</li>
               <li>Slightly darker background confirms interaction</li>
               <li>Fast 150ms transition feels responsive, not laggy</li>
               <li>Works across mouse clicks and touch taps</li>
