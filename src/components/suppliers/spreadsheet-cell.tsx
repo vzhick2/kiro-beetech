@@ -167,7 +167,7 @@ export const SpreadsheetCell = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="archived">Archived</SelectItem>
           </SelectContent>
         </Select>
       </div>

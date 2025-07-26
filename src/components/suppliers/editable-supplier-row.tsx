@@ -326,7 +326,7 @@ export const EditableSupplierRow = ({
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
             value={formData.status || 'active'}
-            onValueChange={(value: 'active' | 'inactive') =>
+            onValueChange={(value: 'active' | 'archived') =>
               setFormData({ ...formData, status: value })
             }
             disabled={isSaving}
@@ -336,7 +336,7 @@ export const EditableSupplierRow = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
         </TableCell>

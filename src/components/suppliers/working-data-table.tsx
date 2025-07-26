@@ -48,7 +48,7 @@ import { StatusBadge } from '@/components/status-badge';
 interface DisplaySupplier extends Supplier {
   id: string;
   phone?: string;
-  status: 'active' | 'inactive' | 'pending' | 'archived';
+  status: 'active' | 'pending' | 'archived';
 }
 
 const columnHelper = createColumnHelper<DisplaySupplier>();

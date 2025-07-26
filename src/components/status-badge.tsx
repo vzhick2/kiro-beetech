@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-export type Status = 'active' | 'inactive' | 'pending' | 'archived';
+export type Status = 'active' | 'pending' | 'archived';
 
 interface StatusBadgeProps {
   status: Status;
@@ -15,11 +15,6 @@ const statusConfig = {
     variant: 'default' as const,
     className:
       'bg-green-100 text-green-800 border-green-200 hover:bg-green-200',
-  },
-  inactive: {
-    label: 'Inactive',
-    variant: 'secondary' as const,
-    className: 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200',
   },
   pending: {
     label: 'Pending',
