@@ -220,6 +220,7 @@ export const ModernDataTable = () => {
     setPageSize,
   } = usePagination(data.length);
 
+  // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
   const {
     isSpreadsheetMode,
     hasUnsavedChanges,
@@ -232,6 +233,13 @@ export const ModernDataTable = () => {
     getChangedRowsCount,
     getAllChanges,
   } = useSpreadsheetMode();
+
+  // Mock navigation hooks temporarily until we fix the callback dependencies
+  const focusedRowIndex = -1;
+  const setFocusedRowIndex = () => {};
+  const currentCell = null;
+  const setCurrentCell = () => {};
+  const handleCellClick = () => {};
 
   // SSR-safe responsive column widths
   const columnWidths = useMemo(() => {
@@ -404,14 +412,15 @@ export const ModernDataTable = () => {
     setGlobalFilter(debouncedSearchValue);
   }, [debouncedSearchValue, setGlobalFilter]);
 
-  const { currentCell, setCurrentCell, handleCellClick } =
-    useSpreadsheetNavigation({
-      totalRows: table.getRowModel().rows.length,
-      isSpreadsheetMode,
-      onExitSpreadsheetMode: exitSpreadsheetMode,
-      expandedRows,
-      getRowId: index => table.getRowModel().rows[index]?.original.id || '',
-    });
+  // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
+  // const { currentCell, setCurrentCell, handleCellClick } =
+  //   useSpreadsheetNavigation({
+  //     totalRows: table.getRowModel().rows.length,
+  //     isSpreadsheetMode,
+  //     onExitSpreadsheetMode: exitSpreadsheetMode,
+  //     expandedRows,
+  //     getRowId: index => table.getRowModel().rows[index]?.original.id || '',
+  //   });
 
   const handleSaveSpreadsheetChanges = async () => {
     setIsSavingSpreadsheet(true);
@@ -441,15 +450,16 @@ export const ModernDataTable = () => {
     });
   };
 
-  const { focusedRowIndex } = useKeyboardNavigation({
-    totalRows: table.getRowModel().rows.length,
-    rowSelection,
-    setRowSelection,
-    onNewSupplier: () => addSupplierRowRef.current?.startAdding(),
-    onBulkDelete: () => handleBulkDelete(),
-    selectedCount: selectedIds.length,
-    getRowId: index => table.getRowModel().rows[index]?.id || '',
-  });
+  // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
+  // const { focusedRowIndex } = useKeyboardNavigation({
+  //   totalRows: table.getRowModel().rows.length,
+  //   rowSelection,
+  //   setRowSelection,
+  //   onNewSupplier: () => addSupplierRowRef.current?.startAdding(),
+  //   onBulkDelete: () => handleBulkDelete(),
+  //   selectedCount: selectedIds.length,
+  //   getRowId: index => table.getRowModel().rows[index]?.id || '',
+  // });
 
   const handleBulkDelete = () => {
     if (selectedIds.length > 0) {

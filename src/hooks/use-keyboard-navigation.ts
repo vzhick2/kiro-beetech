@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 type RowSelectionState = Record<string, boolean>;
 
@@ -29,8 +29,44 @@ export const useKeyboardNavigation = ({
 }: KeyboardNavigationProps) => {
   const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
 
+  // Use refs to store latest values without causing re-renders
+  const propsRef = useRef({
+    totalRows,
+    rowSelection,
+    setRowSelection,
+    onNewSupplier,
+    onBulkDelete,
+    selectedCount,
+    getRowId,
+  });
+
+  // Update refs with latest values
+  propsRef.current = {
+    totalRows,
+    rowSelection,
+    setRowSelection,
+    onNewSupplier,
+    onBulkDelete,
+    selectedCount,
+    getRowId,
+  };
+
+  const focusedRowIndexRef = useRef(focusedRowIndex);
+  focusedRowIndexRef.current = focusedRowIndex;
+
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      const {
+        totalRows,
+        rowSelection,
+        setRowSelection,
+        onNewSupplier,
+        onBulkDelete,
+        selectedCount,
+        getRowId,
+      } = propsRef.current;
+      const currentFocusedRowIndex = focusedRowIndexRef.current;
+
       // Ignore if user is typing in an input
       if (
         event.target instanceof HTMLInputElement ||
@@ -58,16 +94,16 @@ export const useKeyboardNavigation = ({
           case 'ArrowDown':
             event.preventDefault();
             // Extend selection with shift+arrows
-            if (focusedRowIndex >= 0) {
+            if (currentFocusedRowIndex >= 0) {
               const direction = event.key === 'ArrowUp' ? -1 : 1;
               const newIndex = Math.max(
                 0,
-                Math.min(totalRows - 1, focusedRowIndex + direction)
+                Math.min(totalRows - 1, currentFocusedRowIndex + direction)
               );
 
               // Create range selection
-              const start = Math.min(focusedRowIndex, newIndex);
-              const end = Math.max(focusedRowIndex, newIndex);
+              const start = Math.min(currentFocusedRowIndex, newIndex);
+              const end = Math.max(currentFocusedRowIndex, newIndex);
               const newSelection = { ...rowSelection };
 
               for (let i = start; i <= end; i++) {
@@ -100,8 +136,8 @@ export const useKeyboardNavigation = ({
           case ' ':
             event.preventDefault();
             // Toggle selection of focused row
-            if (focusedRowIndex >= 0) {
-              const rowId = getRowId(focusedRowIndex);
+            if (currentFocusedRowIndex >= 0) {
+              const rowId = getRowId(currentFocusedRowIndex);
               setRowSelection((prev: RowSelectionState) => ({
                 ...prev,
                 [rowId]: !prev[rowId],
@@ -122,22 +158,14 @@ export const useKeyboardNavigation = ({
         }
       }
     },
-    [
-      focusedRowIndex,
-      totalRows,
-      rowSelection,
-      setRowSelection,
-      onNewSupplier,
-      onBulkDelete,
-      selectedCount,
-      getRowId,
-    ]
+    [] // No dependencies - all values accessed via refs
   );
 
   // Handle click outside to deselect
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
       const target = event.target as Element;
+      const { setRowSelection } = propsRef.current;
 
       // Only reset selections if clicking in the main content area
       // This approach is more conservative - we only clear selections when
@@ -160,7 +188,7 @@ export const useKeyboardNavigation = ({
         setFocusedRowIndex(-1);
       }
     },
-    [setRowSelection]
+    [] // No dependencies - all values accessed via refs
   );
 
   useEffect(() => {

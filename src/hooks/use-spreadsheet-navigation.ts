@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 interface SpreadsheetNavigationProps {
   totalRows: number;
@@ -26,6 +26,30 @@ export const useSpreadsheetNavigation = ({
   // Editable columns: name(0), website(1), phone(2), status(3)
   const editableColumns = [0, 1, 2, 3];
 
+  // Use refs to store latest values without causing re-renders
+  const propsRef = useRef({
+    totalRows,
+    isSpreadsheetMode,
+    onExitSpreadsheetMode,
+    expandedRows,
+    getRowId,
+  });
+
+  // Update refs with latest values
+  propsRef.current = {
+    totalRows,
+    isSpreadsheetMode,
+    onExitSpreadsheetMode,
+    expandedRows,
+    getRowId,
+  };
+
+  const currentCellRef = useRef(currentCell);
+  currentCellRef.current = currentCell;
+
+  const navigationActiveRef = useRef(navigationActive);
+  navigationActiveRef.current = navigationActive;
+
   // Initialize cursor position when entering spreadsheet mode
   useEffect(() => {
     if (isSpreadsheetMode && !currentCell) {
@@ -48,6 +72,9 @@ export const useSpreadsheetNavigation = ({
   }, [isSpreadsheetMode, expandedRows, totalRows, getRowId, currentCell]);
 
   const moveToNextCell = useCallback(() => {
+    const currentCell = currentCellRef.current;
+    const { totalRows } = propsRef.current;
+
     if (!currentCell) return;
 
     const currentRow = currentCell.row;
@@ -63,9 +90,11 @@ export const useSpreadsheetNavigation = ({
       // First column of next row
       setCurrentCell({ row: currentRow + 1, col: editableColumns[0]! });
     }
-  }, [currentCell, totalRows, editableColumns]);
+  }, []); // No dependencies - all values accessed via refs
 
   const moveToPrevCell = useCallback(() => {
+    const currentCell = currentCellRef.current;
+
     if (!currentCell) return;
 
     const currentRow = currentCell.row;
@@ -84,10 +113,14 @@ export const useSpreadsheetNavigation = ({
         col: editableColumns[editableColumns.length - 1]!,
       });
     }
-  }, [currentCell, editableColumns]);
+  }, []); // No dependencies - all values accessed via refs
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      const { isSpreadsheetMode, totalRows, onExitSpreadsheetMode } = propsRef.current;
+      const currentCell = currentCellRef.current;
+      const navigationActive = navigationActiveRef.current;
+
       if (!isSpreadsheetMode || !navigationActive) return;
 
       const activeElement = document.activeElement;
@@ -148,26 +181,19 @@ export const useSpreadsheetNavigation = ({
         return;
       }
     },
-    [
-      isSpreadsheetMode,
-      navigationActive,
-      currentCell,
-      totalRows,
-      onExitSpreadsheetMode,
-      moveToNextCell,
-      moveToPrevCell,
-    ]
+    [moveToNextCell, moveToPrevCell] // Only stable callbacks in dependencies
   );
 
   // Reset navigation when clicking on a cell
   const handleCellClick = useCallback(
     (row: number, col: number) => {
+      const { isSpreadsheetMode } = propsRef.current;
       if (isSpreadsheetMode) {
         setCurrentCell({ row, col });
         setNavigationActive(true);
       }
     },
-    [isSpreadsheetMode]
+    [] // No dependencies - all values accessed via refs
   );
 
   useEffect(() => {

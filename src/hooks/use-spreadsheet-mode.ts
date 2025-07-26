@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { DisplaySupplier, Supplier } from '@/types/data-table';
 
 export const useSpreadsheetMode = () => {
@@ -9,6 +9,14 @@ export const useSpreadsheetMode = () => {
     new Map()
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
+  // Use ref to access current state without dependencies
+  const editedRowsRef = useRef(editedRows);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    editedRowsRef.current = editedRows;
+  }, [editedRows]);
 
   const enterSpreadsheetMode = useCallback(() => {
     setIsSpreadsheetMode(true);
@@ -35,43 +43,34 @@ export const useSpreadsheetMode = () => {
     []
   );
 
-  const undoRowChanges = useCallback(
-    (rowId: string) => {
-      setEditedRows(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(rowId);
-        return newMap;
-      });
-      // Update hasUnsavedChanges based on current map state
-      setHasUnsavedChanges(prev => {
-        // Get the current size after deletion
-        return editedRows.size > 1; // Will be 1 less after delete
-      });
-    },
-    [editedRows.size] // Use size instead of whole map to prevent circular deps
-  );
+  const undoRowChanges = useCallback((rowId: string) => {
+    setEditedRows(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(rowId);
+      setHasUnsavedChanges(newMap.size > 0);
+      return newMap;
+    });
+  }, []);
 
-  const getRowData = useCallback(
-    (rowId: string, originalData: DisplaySupplier): DisplaySupplier => {
-      const editedData = editedRows.get(rowId);
-      return editedData ? { ...originalData, ...editedData } : originalData;
-    },
-    [editedRows]
-  );
+  const getRowData = useCallback((rowId: string, originalData: DisplaySupplier): DisplaySupplier => {
+    const editedData = editedRowsRef.current.get(rowId);
+    return editedData ? { ...originalData, ...editedData } : originalData;
+  }, []);
 
-  const hasRowChanges = useCallback(
-    (rowId: string) => editedRows.has(rowId),
-    [editedRows]
-  );
+  const hasRowChanges = useCallback((rowId: string) => {
+    return editedRowsRef.current.has(rowId);
+  }, []);
 
-  const getChangedRowsCount = useCallback(() => editedRows.size, [editedRows]);
+  const getChangedRowsCount = useCallback(() => {
+    return editedRowsRef.current.size;
+  }, []);
 
   const getAllChanges = useCallback(() => {
-    return Array.from(editedRows.entries()).map(([rowId, changes]) => ({
+    return Array.from(editedRowsRef.current.entries()).map(([rowId, changes]) => ({
       rowId,
       changes,
     }));
-  }, [editedRows]);
+  }, []);
 
   return {
     isSpreadsheetMode,
