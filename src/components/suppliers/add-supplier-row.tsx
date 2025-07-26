@@ -51,8 +51,8 @@ export const AddSupplierRow = forwardRef<
       name: '',
       website: '',
       email: '',
-      phone: '',
-      status: 'active',
+      contactphone: '',
+      isarchived: false,
     });
 
     const nameInputRef = useRef<HTMLInputElement>(null);
@@ -99,8 +99,8 @@ export const AddSupplierRow = forwardRef<
           name: '',
           website: '',
           email: '',
-          phone: '',
-          status: 'active',
+          contactphone: '',
+          isarchived: false,
         });
         onValidationChange([]);
         setTimeout(() => {
@@ -118,8 +118,8 @@ export const AddSupplierRow = forwardRef<
         name: '',
         website: '',
         email: '',
-        phone: '',
-        status: 'active',
+        contactphone: '',
+        isarchived: false,
       });
       onValidationChange([]);
       setIsAdding(false);
@@ -218,8 +218,8 @@ export const AddSupplierRow = forwardRef<
           <Input
             ref={phoneInputRef}
             placeholder="Phone number"
-            value={formData.phone}
-            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+            value={formData.contactphone}
+            onChange={e => setFormData({ ...formData, contactphone: e.target.value })}
             onKeyDown={e => handleKeyDown(e)}
             className="h-8 text-sm"
             disabled={loading}
@@ -227,9 +227,9 @@ export const AddSupplierRow = forwardRef<
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
-            value={formData.status}
+            value={formData.isarchived ? 'inactive' : 'active'}
             onValueChange={(value: 'active' | 'inactive') =>
-              setFormData({ ...formData, status: value })
+              setFormData({ ...formData, isarchived: value === 'inactive' })
             }
             disabled={loading}
           >

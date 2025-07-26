@@ -36,10 +36,10 @@ export function ItemsTable({ onItemAdded }: ItemsTableProps) {
           lastCountedDate: item.lastcounteddate
             ? new Date(item.lastcounteddate)
             : new Date(),
-          primarySupplierId: item.primarysupplierid || undefined,
+          primarysupplierid: item.primarysupplierid || undefined,
           leadTimeDays: item.leadtimedays || 7,
           trackingMode: (item.tracking_mode || 'fully_tracked') as TrackingMode,
-          isArchived: item.isarchived || false,
+          isarchived: item.isarchived || false,
           created_at: new Date(item.created_at || Date.now()),
           updated_at: new Date(item.updated_at || Date.now()),
           lastUsedSupplier: item.lastUsedSupplier,

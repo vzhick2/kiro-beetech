@@ -50,11 +50,11 @@ export function ItemDetailModal({
             lastCountedDate: result.data.item.lastcounteddate
               ? new Date(result.data.item.lastcounteddate)
               : new Date(),
-            primarySupplierId: result.data.item.primarysupplierid || '',
+            primarysupplierid: result.data.item.primarysupplierid || '',
             leadTimeDays: result.data.item.leadtimedays || 7,
             trackingMode: (result.data.item.tracking_mode ||
               'fully_tracked') as TrackingMode,
-            isArchived: result.data.item.isarchived || false,
+            isarchived: result.data.item.isarchived || false,
             created_at: new Date(result.data.item.created_at || Date.now()),
             updated_at: new Date(result.data.item.updated_at || Date.now()),
           },
@@ -156,7 +156,7 @@ export function ItemDetailModal({
                 Primary Supplier
               </label>
               <p className="text-sm">
-                {details.item.primarySupplierId || 'Not set'}
+                {details.item.primarysupplierid || 'Not set'}
               </p>
             </div>
           </div>

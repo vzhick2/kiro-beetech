@@ -44,7 +44,7 @@ export function generateCycleCountAlerts(
   limit: number = 5
 ): CycleCountAlert[] {
   const alerts: CycleCountAlert[] = items
-    .filter(item => !item.isArchived)
+    .filter(item => !item.isarchived)
     .map(item => {
       const priorityScore = calculateCycleCountPriority(item);
       let alertType: 'NEGATIVE_INVENTORY' | 'LOW_STOCK';

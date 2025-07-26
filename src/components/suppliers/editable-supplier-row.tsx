@@ -24,18 +24,18 @@ import {
 } from '@/components/ui/select';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Supplier, EditingRow } from '@/types/data-table';
+import type { Supplier, DisplaySupplier, EditingRow } from '@/types/data-table';
 import { StatusBadge } from './status-badge';
 
 interface EditableSupplierRowProps {
-  supplier: Supplier;
+  supplier: DisplaySupplier;
   isSelected: boolean;
   isFocused: boolean;
   onSelect: (selected: boolean, event?: React.MouseEvent) => void;
   editingRow: EditingRow | null;
   isSaving: boolean;
-  onEdit: (rowId: string, data: Partial<Supplier>) => void;
-  onSave: (data: Partial<Supplier>) => void;
+  onEdit: (rowId: string, data: Partial<DisplaySupplier>) => void;
+  onSave: (data: Partial<DisplaySupplier>) => void;
   onCancel: () => void;
   onToggleExpand: () => void;
   isExpanded: boolean;
@@ -43,7 +43,7 @@ interface EditableSupplierRowProps {
   hasRowChanges?: boolean;
   onSpreadsheetChange?: (
     rowId: string,
-    field: keyof Supplier,
+    field: keyof DisplaySupplier,
     value: any
   ) => void;
   onUndoRowChanges?: () => void;
@@ -75,7 +75,7 @@ export const EditableSupplierRow = ({
   columnWidths,
 }: EditableSupplierRowProps) => {
   const isEditing = editingRow?.rowId === supplier.id;
-  const [formData, setFormData] = useState<Partial<Supplier>>({
+  const [formData, setFormData] = useState<Partial<DisplaySupplier>>({
     name: supplier.name,
     website: supplier.website || '',
     phone: supplier.phone || '',
@@ -209,7 +209,7 @@ export const EditableSupplierRow = ({
     }
   };
 
-  const handleSpreadsheetChange = (field: keyof Supplier, value: any) => {
+  const handleSpreadsheetChange = (field: keyof DisplaySupplier, value: any) => {
     if (onSpreadsheetChange) {
       onSpreadsheetChange(supplier.id, field, value);
     }

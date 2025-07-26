@@ -32,10 +32,10 @@ export interface Item {
   weightedAverageCost: number;
   reorderPoint?: number;
   lastCountedDate?: Date;
-  primarySupplierId?: string;
+  primarysupplierid?: string;
   leadTimeDays: number;
   trackingMode: TrackingMode;
-  isArchived: boolean;
+  isarchived: boolean;
   created_at: Date;
   updated_at?: Date;
   // Virtual fields for enhanced display
@@ -44,20 +44,21 @@ export interface Item {
 }
 
 export interface Supplier {
-  supplierId: string;
+  supplierid: string; // matches Supabase schema exactly
   name: string;
   website?: string;
-  contactPhone?: string;
+  email?: string;
+  contactphone?: string; // matches Supabase schema exactly
   address?: string;
   notes?: string;
-  isArchived: boolean;
+  isarchived: boolean; // matches Supabase schema exactly
   created_at: Date;
 }
 
 export interface Purchase {
   purchaseId: string;
   displayId: string;
-  supplierId: string;
+  supplierid: string;
   purchaseDate: Date;
   effectiveDate: Date;
   total: number;
@@ -91,7 +92,7 @@ export interface Recipe {
   laborMinutes?: number;
   projectedMaterialCost?: number;
   ingredients: RecipeIngredient[];
-  isArchived: boolean;
+  isarchived: boolean;
   created_at: Date;
   updated_at?: Date;
 }
@@ -206,7 +207,7 @@ export interface BatchTemplate {
 
 export interface QuickReorderRequest {
   itemId: string;
-  supplierId: string;
+  supplierid: string;
   quantity: number;
   estimatedCost: number;
 }
@@ -236,7 +237,7 @@ export interface CreateItemRequest {
   inventoryUnit: InventoryUnit;
   currentQuantity?: number;
   reorderPoint?: number;
-  primarySupplierId?: string;
+  primarysupplierid?: string;
   leadTimeDays?: number;
   trackingMode?: TrackingMode;
 }
@@ -244,13 +245,14 @@ export interface CreateItemRequest {
 export interface CreateSupplierRequest {
   name: string;
   website?: string;
-  contactPhone?: string;
+  email?: string;
+  contactphone?: string; // matches Supabase schema
   address?: string;
   notes?: string;
 }
 
 export interface CreatePurchaseRequest {
-  supplierId: string;
+  supplierid: string;
   purchaseDate: Date;
   effectiveDate: Date;
   total: number;

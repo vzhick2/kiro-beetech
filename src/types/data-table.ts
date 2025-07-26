@@ -1,26 +1,32 @@
-export interface Supplier {
-  id: string;
+import { Supplier as BaseSupplier } from './index';
+
+// Use the unified Supplier type from index.ts
+export type Supplier = BaseSupplier;
+
+// Display helper type for table components that need transformed data
+export interface DisplaySupplier {
+  id: string; // transformed from supplierid
   name: string;
   website?: string;
   email?: string;
-  phone?: string;
+  phone?: string; // transformed from contactphone
   address?: string;
   notes?: string;
-  status: 'active' | 'inactive';
-  createdAt: Date;
+  status: 'active' | 'inactive'; // transformed from isarchived
+  createdAt: Date; // transformed from created_at
 }
 
 export interface EditingRow {
   rowId: string;
-  data: Partial<Supplier>;
+  data: Partial<DisplaySupplier>;
 }
 
 export interface NewSupplier {
   name: string;
   website: string;
   email: string;
-  phone: string;
-  status: 'active' | 'inactive';
+  contactphone: string; // matches Supabase schema
+  isarchived: boolean; // matches Supabase schema
 }
 
 export interface PaginationState {

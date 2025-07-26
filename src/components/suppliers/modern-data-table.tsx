@@ -36,8 +36,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import type { Supplier } from '@/types/data-table';
-import { useDataTable } from '@/hooks/use-data-table';
+import type { Supplier, DisplaySupplier } from '@/types/data-table';
+import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers } from '@/hooks/use-suppliers';
 import { usePagination } from '@/hooks/use-pagination';
 import { useShiftSelection } from '@/hooks/use-selection';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
@@ -57,41 +57,134 @@ import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { FloatingControls } from './floating-controls';
 import { PurchaseHistoryModal } from './purchase-history-modal';
 
-const columnHelper = createColumnHelper<Supplier>();
+const columnHelper = createColumnHelper<DisplaySupplier>();
 
 export const ModernDataTable = () => {
   const { isMobile } = useMobileDetection();
   const { searchValue, debouncedSearchValue, updateSearch, clearSearch } =
     useDebouncedSearch('', 100);
-  const {
-    data,
-    allData,
-    loading,
-    error,
-    globalFilter,
-    setGlobalFilter,
-    statusFilter,
-    setStatusFilter,
-    statusCounts,
-    editingRow,
-    setEditingRow,
-    savingRows,
-    validationErrors,
-    setValidationErrors,
-    expandedRows,
-    toggleRowExpansion,
-    duplicateWarning,
-    setDuplicateWarning,
-    updateSupplier,
-    updateMultipleSuppliers,
-    addSupplier,
-    deleteSuppliers,
-    archiveSuppliers,
-    unarchiveSuppliers,
-    exportSuppliers,
-    getPurchaseHistory,
-    refetch,
-  } = useDataTable();
+  // Use real Supabase data
+  const { data: rawSuppliers, isLoading: loading, error, refetch } = useSuppliers();
+  const createSupplierMutation = useCreateSupplier();
+  const updateSupplierMutation = useUpdateSupplier();
+  const deleteSupplierMutation = useDeleteSupplier();
+  const bulkDeleteMutation = useBulkDeleteSuppliers();
+  const bulkArchiveMutation = useBulkArchiveSuppliers();
+
+  // Transform database suppliers to display format
+  const allData = useMemo((): DisplaySupplier[] => {
+    if (!rawSuppliers) return [];
+    return rawSuppliers.map(supplier => ({
+      ...supplier,
+      id: supplier.supplierid,
+      phone: supplier.contactphone || '',
+      status: supplier.isarchived ? 'inactive' : 'active',
+      createdAt: new Date(supplier.created_at),
+    }));
+  }, [rawSuppliers]);
+
+  // Local state for table functionality
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [editingRow, setEditingRow] = useState<any>(null);
+  const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
+  const [validationErrors, setValidationErrors] = useState<any[]>([]);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [duplicateWarning, setDuplicateWarning] = useState<any>(null);
+
+  // Calculate status counts
+  const statusCounts = useMemo(() => {
+    const counts = { all: 0, active: 0, inactive: 0 };
+    allData.forEach(supplier => {
+      counts.all++;
+      if (supplier.status === 'active') {
+        counts.active++;
+      } else if (supplier.status === 'inactive') {
+        counts.inactive++;
+      }
+    });
+    return counts;
+  }, [allData]);
+
+  // Filter data based on status and search
+  const data = useMemo(() => {
+    let filtered = allData;
+    
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(supplier => supplier.status === statusFilter);
+    }
+    
+    if (globalFilter) {
+      const searchLower = globalFilter.toLowerCase();
+      filtered = filtered.filter(supplier => 
+        supplier.name.toLowerCase().includes(searchLower) ||
+        supplier.email?.toLowerCase().includes(searchLower) ||
+        supplier.phone?.toLowerCase().includes(searchLower) ||
+        supplier.website?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return filtered;
+  }, [allData, statusFilter, globalFilter]);
+
+  // Helper functions
+  const toggleRowExpansion = (rowId: string) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(rowId)) {
+        newSet.delete(rowId);
+      } else {
+        newSet.add(rowId);
+      }
+      return newSet;
+    });
+  };
+
+  const updateSupplier = async (id: string, data: Partial<Supplier>) => {
+     setSavingRows(prev => new Set(prev).add(id));
+     try {
+       await updateSupplierMutation.mutateAsync({ supplierId: id, updates: data });
+     } finally {
+       setSavingRows(prev => {
+         const newSet = new Set(prev);
+         newSet.delete(id);
+         return newSet;
+       });
+     }
+   };
+
+  const updateMultipleSuppliers = async (updates: { id: string; data: Partial<Supplier> }[]) => {
+    for (const update of updates) {
+      await updateSupplier(update.id, update.data);
+    }
+  };
+
+  const addSupplier = async (data: any) => {
+     await createSupplierMutation.mutateAsync(data);
+   };
+
+  const deleteSuppliers = async (ids: string[]) => {
+    await bulkDeleteMutation.mutateAsync(ids);
+  };
+
+  const archiveSuppliers = async (ids: string[]) => {
+     await bulkArchiveMutation.mutateAsync(ids);
+   };
+
+   const unarchiveSuppliers = async (ids: string[]) => {
+     // TODO: Implement unarchive functionality
+     console.log('Unarchive suppliers:', ids);
+   };
+
+  const exportSuppliers = async (ids: string[], format: string) => {
+    // TODO: Implement export functionality
+    console.log('Export suppliers:', ids, format);
+  };
+
+  const getPurchaseHistory = (supplierId: string) => {
+    // TODO: Implement purchase history
+    return [];
+  };
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -102,7 +195,7 @@ export const ModernDataTable = () => {
   } | null>(null);
   const [purchaseHistoryModal, setPurchaseHistoryModal] = useState<{
     show: boolean;
-    supplier: Supplier | null;
+    supplier: DisplaySupplier | null;
   }>({ show: false, supplier: null });
 
   const addSupplierRowRef = useRef<{ startAdding: () => void }>(null);
@@ -403,7 +496,7 @@ export const ModernDataTable = () => {
     );
   };
 
-  const handleShowPurchaseHistory = (supplier: Supplier) => {
+  const handleShowPurchaseHistory = (supplier: DisplaySupplier) => {
     setPurchaseHistoryModal({ show: true, supplier });
   };
 
@@ -731,7 +824,7 @@ export const ModernDataTable = () => {
         open={duplicateWarning?.show || false}
         onOpenChange={open => !open && setDuplicateWarning(null)}
         title="Similar Supplier Detected"
-        description={`A supplier with similar ${duplicateWarning?.matches.map(m => m.type).join(' and ')} already exists. Do you want to add this supplier anyway?`}
+        description={`A supplier with similar ${duplicateWarning?.matches.map((m: any) => m.type).join(' and ')} already exists. Do you want to add this supplier anyway?`}
         confirmText="Add Anyway"
         onConfirm={() => duplicateWarning?.onProceed()}
       />

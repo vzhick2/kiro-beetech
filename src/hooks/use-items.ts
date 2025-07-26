@@ -51,11 +51,11 @@ export function useItems(searchQuery = '', typeFilter = 'all') {
             lastCountedDate: dbItem.lastcounteddate
               ? new Date(dbItem.lastcounteddate)
               : new Date(),
-            primarySupplierId: dbItem.primarysupplierid || undefined,
+            primarysupplierid: dbItem.primarysupplierid || undefined,
             leadTimeDays: dbItem.leadtimedays || 7,
             trackingMode: (dbItem.tracking_mode ||
               'fully_tracked') as TrackingMode,
-            isArchived: dbItem.isarchived || false,
+            isarchived: dbItem.isarchived || false,
             created_at: new Date(dbItem.created_at || new Date()),
             updated_at: dbItem.updated_at
               ? new Date(dbItem.updated_at)
@@ -232,7 +232,7 @@ export function useBulkArchiveItems() {
             return oldData;
           }
           return oldData.map(item =>
-            itemIds.includes(item.itemId) ? { ...item, isArchived: true } : item
+            itemIds.includes(item.itemId) ? { ...item, isarchived: true } : item
           );
         }
       );

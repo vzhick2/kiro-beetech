@@ -47,6 +47,7 @@ import { StatusBadge } from '@/components/status-badge';
 // Map database supplier to display format
 interface DisplaySupplier extends Supplier {
   id: string;
+  phone?: string;
   status: 'active' | 'inactive' | 'pending' | 'archived';
 }
 
@@ -66,8 +67,10 @@ export const ModernDataTable = () => {
     if (!rawSuppliers) return [];
     return rawSuppliers.map(supplier => ({
       ...supplier,
-      id: supplier.supplierId,
-      status: supplier.isArchived ? 'archived' : 'active',
+      id: supplier.supplierid,
+      phone: supplier.contactphone || '',
+      status: supplier.isarchived ? 'archived' : 'active',
+      createdAt: new Date(supplier.created_at),
     }));
   }, [rawSuppliers]);
 
@@ -151,7 +154,7 @@ export const ModernDataTable = () => {
         size: 180,
       }),
 
-      columnHelper.accessor('contactPhone', {
+      columnHelper.accessor('phone', {
         header: 'Phone',
         cell: ({ getValue }) => {
           const phone = getValue();

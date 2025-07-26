@@ -27,22 +27,15 @@ export function useSuppliers(searchQuery = '') {
         throw new Error(result.error);
       }
 
-      // Transform database fields to match TypeScript interface
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const transformedSuppliers: Supplier[] = (result.data || []).map(
+      // No transformation needed - types now match Supabase schema
+      const suppliers: Supplier[] = (result.data || []).map(
         (dbSupplier: any) => ({
-          supplierId: dbSupplier.supplierid,
-          name: dbSupplier.name,
-          website: dbSupplier.website,
-          contactPhone: dbSupplier.contactphone,
-          address: dbSupplier.address,
-          notes: dbSupplier.notes,
-          isArchived: dbSupplier.isarchived || false,
+          ...dbSupplier,
           created_at: new Date(dbSupplier.created_at),
         })
       );
 
-      return transformedSuppliers;
+      return suppliers;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
@@ -106,7 +99,7 @@ export function useUpdateSupplier() {
             return oldData;
           }
           return oldData.map(supplier =>
-            supplier.supplierId === supplierId
+            supplier.supplierid === supplierId
               ? { ...supplier, ...updatedSupplier }
               : supplier
           );
@@ -139,7 +132,7 @@ export function useDeleteSupplier() {
           if (!oldData) {
             return oldData;
           }
-          return oldData.filter(supplier => supplier.supplierId !== supplierId);
+          return oldData.filter(supplier => supplier.supplierid !== supplierId);
         }
       );
 
@@ -170,7 +163,7 @@ export function useBulkDeleteSuppliers() {
             return oldData;
           }
           return oldData.filter(
-            supplier => !supplierIds.includes(supplier.supplierId)
+            supplier => !supplierIds.includes(supplier.supplierid)
           );
         }
       );
@@ -202,8 +195,8 @@ export function useBulkArchiveSuppliers() {
             return oldData;
           }
           return oldData.map(supplier =>
-            supplierIds.includes(supplier.supplierId)
-              ? { ...supplier, isArchived: true }
+            supplierIds.includes(supplier.supplierid)
+              ? { ...supplier, isarchived: true }
               : supplier
           );
         }

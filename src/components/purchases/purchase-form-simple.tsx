@@ -32,7 +32,7 @@ interface PurchaseFormProps {
 export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
   // State management
   const [formData, setFormData] = useState({
-    supplierId: selectedPurchase?.supplierId || '',
+    supplierid: selectedPurchase?.supplierid || '',
     purchaseDate: selectedPurchase?.purchaseDate
       ? new Date(selectedPurchase.purchaseDate).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
@@ -59,7 +59,7 @@ export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
         await updateDraftPurchase.mutateAsync({
           purchaseId: selectedPurchase.purchaseId,
           updates: {
-            ...(formData.supplierId && { supplierId: formData.supplierId }),
+            ...(formData.supplierid && { supplierid: formData.supplierid }),
             ...(formData.purchaseDate && {
               purchaseDate: formData.purchaseDate,
             }),
@@ -74,12 +74,12 @@ export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
         });
       } else {
         // Create new purchase - ensure required fields are present
-        if (!formData.supplierId || !formData.expectedDate) {
+        if (!formData.supplierid || !formData.expectedDate) {
           throw new Error('Supplier and expected date are required');
         }
 
         await createDraftPurchase.mutateAsync({
-          supplierId: formData.supplierId,
+          supplierid: formData.supplierid,
           purchaseDate: formData.purchaseDate as string,
           effectiveDate: formData.expectedDate,
           grandTotal: formData.shipping + formData.taxes + formData.otherCosts,
@@ -91,7 +91,7 @@ export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
 
         // Reset form
         setFormData({
-          supplierId: '',
+          supplierid: '',
           purchaseDate: new Date().toISOString().split('T')[0],
           expectedDate: '',
           shipping: 0,
@@ -139,15 +139,15 @@ export function PurchaseForm({ selectedPurchase }: PurchaseFormProps) {
               <select
                 id="supplier"
                 required
-                value={formData.supplierId}
+                value={formData.supplierid}
                 onChange={e =>
-                  setFormData(prev => ({ ...prev, supplierId: e.target.value }))
+                  setFormData(prev => ({ ...prev, supplierid: e.target.value }))
                 }
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">Select a supplier</option>
                 {suppliers.map(supplier => (
-                  <option key={supplier.supplierId} value={supplier.supplierId}>
+                  <option key={supplier.supplierid} value={supplier.supplierid}>
                     {supplier.name}
                   </option>
                 ))}

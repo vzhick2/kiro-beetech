@@ -35,21 +35,21 @@ export const ItemSchema = z.object({
   weightedAverageCost: z.number().min(0).default(0),
   reorderPoint: z.number().min(0).optional(),
   lastCountedDate: z.date().optional(),
-  primarySupplierId: z.string().uuid().optional(),
+  primarysupplierid: z.string().uuid().optional(),
   leadTimeDays: z.number().int().min(1).default(7),
-  isArchived: z.boolean().default(false),
+  isarchived: z.boolean().default(false),
   created_at: z.date(),
   updated_at: z.date().optional(),
 });
 
 export const SupplierSchema = z.object({
-  supplierId: z.string().uuid(),
+  supplierid: z.string().uuid(),
   name: z.string().min(1, 'Name is required').max(255),
-  contactEmail: z.string().email().optional().or(z.literal('')),
-  contactPhone: z.string().max(50).optional(),
+  email: z.string().email().optional().or(z.literal('')),
+  contactphone: z.string().max(50).optional(),
   address: z.string().max(500).optional(),
   notes: z.string().max(1000).optional(),
-  isArchived: z.boolean().default(false),
+  isarchived: z.boolean().default(false),
   created_at: z.date(),
 });
 
@@ -66,7 +66,7 @@ export const PurchaseLineItemSchema = z.object({
 export const PurchaseSchema = z.object({
   purchaseId: z.string().uuid(),
   displayId: z.string().min(1),
-  supplierId: z.string().uuid(),
+  supplierid: z.string().uuid(),
   purchaseDate: z.date(),
   effectiveDate: z.date(),
   grandTotal: z.number().min(0, 'Grand total cannot be negative'),
@@ -81,7 +81,7 @@ export const PurchaseSchema = z.object({
 });
 
 export const PurchaseUpdateSchema = z.object({
-  supplierId: z.string().uuid().optional(),
+  supplierid: z.string().uuid().optional(),
   purchaseDate: z.date().optional(),
   effectiveDate: z.date().optional(),
   grandTotal: z.number().min(0, 'Grand total cannot be negative').optional(),
@@ -111,7 +111,7 @@ export const RecipeSchema = z.object({
   ingredients: z
     .array(RecipeIngredientSchema)
     .min(1, 'At least one ingredient is required'),
-  isArchived: z.boolean().default(false),
+  isarchived: z.boolean().default(false),
   created_at: z.date(),
   updated_at: z.date().optional(),
 });
@@ -141,7 +141,7 @@ export const CreateItemSchema = z.object({
   inventoryUnit: InventoryUnitSchema,
   currentQuantity: z.number().min(0).default(0),
   reorderPoint: z.number().min(0).optional(),
-  primarySupplierId: z.string().uuid().optional(),
+  primarysupplierid: z.string().uuid().optional(),
   leadTimeDays: z.number().int().min(1).default(7),
 });
 
@@ -165,7 +165,7 @@ export const CreateSupplierSchema = z.object({
           'Please enter a valid website URL (e.g., www.example.com or https://example.com)',
       }
     ),
-  contactPhone: z.string().max(50).optional(),
+  contactphone: z.string().max(50).optional(),
   address: z.string().max(500).optional(),
   notes: z.string().max(1000).optional(),
 });
@@ -178,7 +178,7 @@ export const CreatePurchaseLineItemSchema = z.object({
 });
 
 export const CreatePurchaseSchema = z.object({
-  supplierId: z.string().uuid(),
+  supplierid: z.string().uuid(),
   purchaseDate: z.date(),
   effectiveDate: z.date(),
   grandTotal: z.number().min(0, 'Grand total cannot be negative'),
@@ -227,7 +227,7 @@ export const ItemFilterSchema = z.object({
 
 export const PurchaseFilterSchema = z.object({
   search: z.string().optional(),
-  supplierId: z.string().uuid().optional(),
+  supplierid: z.string().uuid().optional(),
   dateFrom: z.date().optional(),
   dateTo: z.date().optional(),
   isDraft: z.boolean().optional(),

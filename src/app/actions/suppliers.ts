@@ -41,13 +41,17 @@ export async function createSupplier(supplierData: CreateSupplierRequest) {
       isarchived: false,
     };
 
-    // Map fields to correct database column names
+    // Add optional fields directly - no mapping needed with unified types
     if (supplierData.website) {
       insertData.website = supplierData.website;
     }
 
-    if (supplierData.contactPhone) {
-      insertData.contactphone = supplierData.contactPhone;
+    if (supplierData.email) {
+      insertData.email = supplierData.email;
+    }
+
+    if (supplierData.contactphone) {
+      insertData.contactphone = supplierData.contactphone;
     }
 
     if (supplierData.address) {

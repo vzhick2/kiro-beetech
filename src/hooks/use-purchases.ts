@@ -81,7 +81,7 @@ export function usePurchases(draftsOnly = false) {
             return {
               purchaseId: dbPurchase.purchaseid,
               displayId: dbPurchase.displayid,
-              supplierId: dbPurchase.supplierid,
+              supplierid: dbPurchase.supplierid,
               purchaseDate: new Date(dbPurchase.purchasedate),
               effectiveDate: new Date(dbPurchase.effectivedate),
               total: Number(dbPurchase.total) || 0, // Database field
@@ -130,7 +130,7 @@ export function useCreateDraftPurchase() {
 
   return useMutation({
     mutationFn: async (purchaseData: {
-      supplierId: string;
+      supplierid: string;
       purchaseDate: string;
       effectiveDate: string;
       grandTotal: number; // Keep grandTotal for UI interface
@@ -170,7 +170,7 @@ export function useUpdateDraftPurchase() {
     }: {
       purchaseId: string;
       updates: {
-        supplierId?: string;
+        supplierid?: string;
         purchaseDate?: string;
         effectiveDate?: string;
         grandTotal?: number; // Keep grandTotal for UI interface

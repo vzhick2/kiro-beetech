@@ -11,17 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Supplier } from '@/types/data-table';
+import type { DisplaySupplier } from '@/types/data-table';
 
 interface SpreadsheetCellProps {
   value: any;
-  field: keyof Supplier;
+  field: keyof DisplaySupplier;
   rowId: string;
   rowIndex: number;
   colIndex: number;
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
-  onChange: (field: keyof Supplier, value: any) => void;
+  onChange: (field: keyof DisplaySupplier, value: any) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
