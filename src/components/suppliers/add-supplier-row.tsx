@@ -139,7 +139,7 @@ export const AddSupplierRow = forwardRef<
           <TableCell colSpan={6} className="p-1 h-12">
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-600 hover:text-gray-700 h-10 text-sm"
+              className="w-full justify-start text-gray-600 hover:text-gray-700 h-10 text-sm transition-colors"
               onClick={handleStartAdding}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -227,9 +227,9 @@ export const AddSupplierRow = forwardRef<
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
           <Select
-            value={formData.isarchived ? 'inactive' : 'active'}
-            onValueChange={(value: 'active' | 'inactive') =>
-              setFormData({ ...formData, isarchived: value === 'inactive' })
+            value={formData.isarchived ? 'archived' : 'active'}
+            onValueChange={(value: 'active' | 'archived') =>
+              setFormData({ ...formData, isarchived: value === 'archived' })
             }
             disabled={loading}
           >
@@ -238,7 +238,7 @@ export const AddSupplierRow = forwardRef<
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
         </TableCell>

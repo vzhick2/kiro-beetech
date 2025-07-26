@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 
 interface StatusBadgeProps {
-  status: 'active' | 'inactive';
+  status: 'active' | 'archived';
 }
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {

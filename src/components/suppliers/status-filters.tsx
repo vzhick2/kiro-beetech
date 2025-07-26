@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface StatusFiltersProps {
-  activeFilter: 'all' | 'active' | 'inactive';
-  onFilterChange: (filter: 'all' | 'active' | 'inactive') => void;
+  activeFilter: 'all' | 'active' | 'archived';
+  onFilterChange: (filter: 'all' | 'active' | 'archived') => void;
   counts: {
     total: number;
     active: number;
-    inactive: number;
+    archived: number;
   };
 }
 
@@ -43,14 +43,14 @@ export const StatusFilters = ({
         </Badge>
       </Button>
       <Button
-        variant={activeFilter === 'inactive' ? 'default' : 'outline'}
+        variant={activeFilter === 'archived' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onFilterChange('inactive')}
+        onClick={() => onFilterChange('archived')}
         className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
-        Inactive
+        Archived
         <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
-          {counts.inactive}
+          {counts.archived}
         </Badge>
       </Button>
     </div>

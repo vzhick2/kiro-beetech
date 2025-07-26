@@ -12,7 +12,7 @@ export interface DisplaySupplier {
   phone?: string; // transformed from contactphone
   address?: string;
   notes?: string;
-  status: 'active' | 'inactive'; // transformed from isarchived
+  status: 'active' | 'archived'; // transformed from isarchived
   createdAt: Date; // transformed from created_at
 }
 

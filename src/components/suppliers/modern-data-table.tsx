@@ -36,7 +36,7 @@ import { Table, TableBody, TableHead, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import type { Supplier, DisplaySupplier } from '@/types/data-table';
-import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers } from '@/hooks/use-suppliers';
+import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers, useBulkUnarchiveSuppliers } from '@/hooks/use-suppliers';
 import { usePagination } from '@/hooks/use-pagination';
 import { useShiftSelection } from '@/hooks/use-selection';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
@@ -76,6 +76,7 @@ export const ModernDataTable = () => {
   const deleteSupplierMutation = useDeleteSupplier();
   const bulkDeleteMutation = useBulkDeleteSuppliers();
   const bulkArchiveMutation = useBulkArchiveSuppliers();
+  const bulkUnarchiveMutation = useBulkUnarchiveSuppliers();
 
   // Transform database suppliers to display format
   const allData = useMemo((): DisplaySupplier[] => {
@@ -84,14 +85,14 @@ export const ModernDataTable = () => {
       ...supplier,
       id: supplier.supplierid,
       phone: supplier.contactphone || '',
-      status: supplier.isarchived ? 'inactive' : 'active',
+      status: supplier.isarchived ? 'archived' : 'active',
       createdAt: new Date(supplier.created_at),
     }));
   }, [rawSuppliers]);
 
   // Local state for table functionality
   const [globalFilter, setGlobalFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'archived'>('all');
   const [editingRow, setEditingRow] = useState<any>(null);
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
   const [validationErrors, setValidationErrors] = useState<any[]>([]);
@@ -100,14 +101,14 @@ export const ModernDataTable = () => {
 
   // Calculate status counts
   const statusCounts = useMemo(() => {
-    const counts = { total: 0, all: 0, active: 0, inactive: 0 };
+    const counts = { total: 0, all: 0, active: 0, archived: 0 };
     allData.forEach(supplier => {
       counts.total++;
       counts.all++;
       if (supplier.status === 'active') {
         counts.active++;
-      } else if (supplier.status === 'inactive') {
-        counts.inactive++;
+      } else if (supplier.status === 'archived') {
+        counts.archived++;
       }
     });
     return counts;
@@ -179,8 +180,7 @@ export const ModernDataTable = () => {
    };
 
    const unarchiveSuppliers = async (ids: string[]) => {
-     // TODO: Implement unarchive functionality
-     console.log('Unarchive suppliers:', ids);
+     await bulkUnarchiveMutation.mutateAsync(ids);
    };
 
   const exportSuppliers = async (ids: string[], format: string) => {
@@ -277,7 +277,7 @@ export const ModernDataTable = () => {
     const supplier: Supplier = {
       supplierid: display.id,
       name: display.name,
-      isarchived: display.status === 'inactive',
+      isarchived: display.status === 'archived',
       created_at: display.createdAt,
     };
     
@@ -396,8 +396,8 @@ export const ModernDataTable = () => {
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedIds = selectedRows.map(row => row.original.id);
-  const hasInactiveSelected = selectedRows.some(
-    row => row.original.status === 'inactive'
+  const hasArchivedSelected = selectedRows.some(
+    row => row.original.status === 'archived'
   );
 
   // Sync debounced search value with global filter
@@ -812,7 +812,7 @@ export const ModernDataTable = () => {
         hasUnsavedChanges={hasUnsavedChanges}
         changedRowsCount={getChangedRowsCount()}
         selectedCount={selectedIds.length}
-        hasInactiveSelected={hasInactiveSelected}
+        hasInactiveSelected={hasArchivedSelected}
         onEnterSpreadsheetMode={enterSpreadsheetMode}
         onSaveChanges={handleSaveSpreadsheetChanges}
         onCancelChanges={exitSpreadsheetMode}
