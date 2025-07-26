@@ -85,7 +85,7 @@ export const ModernDataTable = () => {
 
   // Local state for table functionality
   const [globalFilter, setGlobalFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [editingRow, setEditingRow] = useState<any>(null);
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
   const [validationErrors, setValidationErrors] = useState<any[]>([]);
@@ -94,8 +94,9 @@ export const ModernDataTable = () => {
 
   // Calculate status counts
   const statusCounts = useMemo(() => {
-    const counts = { all: 0, active: 0, inactive: 0 };
+    const counts = { total: 0, all: 0, active: 0, inactive: 0 };
     allData.forEach(supplier => {
+      counts.total++;
       counts.all++;
       if (supplier.status === 'active') {
         counts.active++;
@@ -236,6 +237,25 @@ export const ModernDataTable = () => {
   } = useColumnWidths();
 
   const [isSavingSpreadsheet, setIsSavingSpreadsheet] = useState(false);
+
+  // Helper function to convert DisplaySupplier back to Supplier type
+  const displayToSupplier = (display: DisplaySupplier): Supplier => {
+    const supplier: Supplier = {
+      supplierid: display.id,
+      name: display.name,
+      isarchived: display.status === 'inactive',
+      created_at: display.createdAt,
+    };
+    
+    // Only add optional fields if they exist
+    if (display.website) supplier.website = display.website;
+    if (display.email) supplier.email = display.email;
+    if (display.phone) supplier.contactphone = display.phone;
+    if (display.address) supplier.address = display.address;
+    if (display.notes) supplier.notes = display.notes;
+    
+    return supplier;
+  };
 
   // Collapse all rows when entering spreadsheet mode
   useEffect(() => {
@@ -506,8 +526,8 @@ export const ModernDataTable = () => {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
-            <span className="text-xs">{error}</span>
-            <Button variant="outline" size="sm" onClick={refetch}>
+            <span className="text-xs">{error?.message || String(error)}</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="h-4 w-4 mr-2" />
               <span className="text-xs">Retry</span>
             </Button>
@@ -710,7 +730,7 @@ export const ModernDataTable = () => {
                     {expandedRows.has(row.original.id) &&
                       !isSpreadsheetMode && (
                         <ExpandableRowDetails
-                          supplier={getRowData(row.original.id, row.original)}
+                          supplier={displayToSupplier(getRowData(row.original.id, row.original))}
                           isExpanded={true}
                           onToggle={() => toggleRowExpansion(row.original.id)}
                           onUpdate={updateSupplier}
@@ -802,7 +822,7 @@ export const ModernDataTable = () => {
       <PurchaseHistoryModal
         isOpen={purchaseHistoryModal.show}
         onClose={() => setPurchaseHistoryModal({ show: false, supplier: null })}
-        supplier={purchaseHistoryModal.supplier}
+        supplier={purchaseHistoryModal.supplier ? displayToSupplier(purchaseHistoryModal.supplier) : null}
         purchaseHistory={
           purchaseHistoryModal.supplier
             ? getPurchaseHistory(purchaseHistoryModal.supplier.id)

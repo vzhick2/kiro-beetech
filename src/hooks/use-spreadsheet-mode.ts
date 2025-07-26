@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { Supplier } from '@/types/data-table';
+import type { DisplaySupplier, Supplier } from '@/types/data-table';
 
 export const useSpreadsheetMode = () => {
   const [isSpreadsheetMode, setIsSpreadsheetMode] = useState(false);
@@ -23,7 +23,7 @@ export const useSpreadsheetMode = () => {
   }, []);
 
   const updateRowData = useCallback(
-    (rowId: string, field: keyof Supplier, value: any) => {
+    (rowId: string, field: keyof DisplaySupplier, value: any) => {
       setEditedRows(prev => {
         const newMap = new Map(prev);
         const existingData = newMap.get(rowId) || {};
@@ -52,7 +52,7 @@ export const useSpreadsheetMode = () => {
   );
 
   const getRowData = useCallback(
-    (rowId: string, originalData: Supplier): Supplier => {
+    (rowId: string, originalData: DisplaySupplier): DisplaySupplier => {
       const editedData = editedRows.get(rowId);
       return editedData ? { ...originalData, ...editedData } : originalData;
     },
