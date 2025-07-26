@@ -21,7 +21,7 @@ interface SupplierPage {
 // Enhanced action for paginated suppliers
 export async function getPaginatedSuppliers(
   offset = 0, 
-  limit = 50, 
+  limit = 20, 
   searchTerm = '', 
   status: 'all' | 'active' | 'archived' = 'all'
 ): Promise<SupplierPage> {

@@ -40,7 +40,7 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
   } = useInfiniteSuppliersData({
     searchTerm: filters.search,
     status: filters.status,
-    pageSize: 50
+    pageSize: 20
   });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
