@@ -27,7 +27,6 @@ import {
   AlertCircle,
   RefreshCw,
   ExternalLink,
-  Columns3,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,6 @@ import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier, 
 import { usePagination } from '@/hooks/use-pagination';
 import { useShiftSelection } from '@/hooks/use-selection';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
-import { useColumnWidths } from '@/hooks/use-column-widths';
 import { useMobileDetection } from '@/hooks/use-mobile-detection';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
 import { AddSupplierRow } from './add-supplier-row';
@@ -51,7 +49,6 @@ import { PaginationControls } from './pagination-controls';
 import { StatusFilters } from './status-filters';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { StatusBadge } from './status-badge';
-import { ColumnResizer } from './column-resizer';
 import { useSpreadsheetMode } from '@/hooks/use-spreadsheet-mode';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { FloatingControls } from './floating-controls';
@@ -61,6 +58,15 @@ const columnHelper = createColumnHelper<DisplaySupplier>();
 
 export const ModernDataTable = () => {
   const { isMobile } = useMobileDetection();
+  
+  // SSR-safe client detection
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Mark as client-side after hydration
+    setIsClient(true);
+  }, []);
+
   const { searchValue, debouncedSearchValue, updateSearch, clearSearch } =
     useDebouncedSearch('', 100);
   // Use real Supabase data
@@ -227,14 +233,41 @@ export const ModernDataTable = () => {
     getAllChanges,
   } = useSpreadsheetMode();
 
-  const {
-    columnWidths,
-    dragStartWidth,
-    resetColumnWidths,
-    updateColumnWidth,
-    startResize,
-    stopResize,
-  } = useColumnWidths();
+  // SSR-safe responsive column widths
+  const columnWidths = useMemo(() => {
+    // Use conservative defaults for SSR, then responsive widths for client
+    if (!isClient) {
+      // SSR defaults - conservative fixed widths
+      return {
+        actions: 140,
+        name: 200,
+        website: 220,
+        phone: 140,
+        status: 80,
+      };
+    }
+
+    // Client-side responsive calculation based on viewport
+    if (isMobile) {
+      // Mobile: compact layout with fixed proportions
+      return {
+        actions: 90,
+        name: 180,
+        website: 200, 
+        phone: 140,
+        status: 90,
+      };
+    } else {
+      // Desktop: wider layout
+      return {
+        actions: 140,
+        name: 250,
+        website: 280,
+        phone: 160,
+        status: 100,
+      };
+    }
+  }, [isMobile, isClient]);
 
   const [isSavingSpreadsheet, setIsSavingSpreadsheet] = useState(false);
 
@@ -313,13 +346,13 @@ export const ModernDataTable = () => {
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 text-xs"
+              className="text-gray-700 hover:text-blue-600 hover:underline flex items-center gap-1 text-sm transition-colors"
             >
               {website.replace(/^https?:\/\//, '')}
               <ExternalLink className="h-3 w-3" />
             </a>
           ) : (
-            <span className="text-gray-400 italic text-xs">No website</span>
+            <span className="text-gray-400 italic text-sm">No website</span>
           );
         },
         size: columnWidths.website,
@@ -334,20 +367,8 @@ export const ModernDataTable = () => {
         cell: ({ getValue }) => <StatusBadge status={getValue()} />,
         size: columnWidths.status,
       }),
-      columnHelper.accessor('createdAt', {
-        header: 'Created',
-        cell: ({ getValue }) => {
-          const date = getValue();
-          return (
-            <span className="text-xs" title={date.toLocaleString()}>
-              {date.toLocaleDateString()}
-            </span>
-          );
-        },
-        size: columnWidths.created,
-      }),
     ],
-    [resetSelection, isSpreadsheetMode, columnWidths]
+    [resetSelection, isSpreadsheetMode]
   );
 
   const table = useReactTable({
@@ -578,19 +599,21 @@ export const ModernDataTable = () => {
           </div>
         </div>
 
-        {/* Table - Full width, no borders */}
-        <div className="w-full">
+        {/* Table - Full width responsive */}
+        <div className="w-full overflow-x-auto">
           <Table
-            className="border-0 w-full"
-            style={{ tableLayout: 'fixed', width: '100%' }}
+            className="border-0 w-full min-w-full"
+            style={{ 
+              tableLayout: isClient ? 'auto' : 'fixed', 
+              width: '100%' 
+            }}
           >
             <colgroup>
-              <col style={{ width: `${columnWidths.actions}px` }} />
-              <col style={{ width: `${columnWidths.name}px` }} />
-              <col style={{ width: `${columnWidths.website}px` }} />
-              <col style={{ width: `${columnWidths.phone}px` }} />
-              <col style={{ width: `${columnWidths.status}px` }} />
-              <col style={{ width: `${columnWidths.created}px` }} />
+              <col style={{ width: `${columnWidths.actions}px`, minWidth: `${columnWidths.actions}px` }} />
+              <col style={{ width: `${columnWidths.name}px`, minWidth: '150px' }} />
+              <col style={{ width: `${columnWidths.website}px`, minWidth: '180px' }} />
+              <col style={{ width: `${columnWidths.phone}px`, minWidth: '120px' }} />
+              <col style={{ width: `${columnWidths.status}px`, minWidth: '80px' }} />
             </colgroup>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
@@ -599,16 +622,12 @@ export const ModernDataTable = () => {
                   className="border-b border-gray-100/80 h-10 bg-gray-50/20"
                 >
                   {headerGroup.headers.map((header, index) => {
-                    const isLastColumn =
-                      index === headerGroup.headers.length - 1;
                     const isActionsColumn = header.id === 'actions';
-                    const showResizer =
-                      !isLastColumn && !isActionsColumn && !isMobile;
 
                     return (
                       <TableHead
                         key={header.id}
-                        className="relative border-0 text-xs font-semibold text-gray-600 p-0 h-10"
+                        className="relative border-0 text-sm font-semibold text-gray-600 p-0 h-10"
                         style={{ width: header.getSize() }}
                       >
                         <div
@@ -621,21 +640,6 @@ export const ModernDataTable = () => {
                           }`}
                           onClick={header.column.getToggleSortingHandler()}
                         >
-                          {/* Show reset button only in actions column header */}
-                          {isActionsColumn && !isSpreadsheetMode && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 mr-1"
-                              onClick={e => {
-                                e.stopPropagation();
-                                resetColumnWidths();
-                              }}
-                              title="Reset column widths"
-                            >
-                              <Columns3 className="h-3 w-3" />
-                            </Button>
-                          )}
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -661,14 +665,6 @@ export const ModernDataTable = () => {
                             </div>
                           )}
                         </div>
-                        {showResizer && (
-                          <ColumnResizer
-                            columnId={header.id}
-                            onResize={updateColumnWidth}
-                            onStartResize={startResize}
-                            onStopResize={stopResize}
-                          />
-                        )}
                       </TableHead>
                     );
                   })}

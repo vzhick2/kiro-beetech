@@ -62,7 +62,7 @@ export const ExpandableRowDetails = ({
 
   return (
     <TableRow className="bg-gray-25 border-b border-gray-200">
-      <TableCell colSpan={6} className="py-6 px-6">
+      <TableCell colSpan={5} className="py-6 px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl ml-2 mt-4">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">

@@ -242,9 +242,6 @@ export const AddSupplierRow = forwardRef<
             </SelectContent>
           </Select>
         </TableCell>
-        <TableCell className="p-1 h-12" style={{ width: columnWidths.created }}>
-          <div className="text-sm text-gray-400 text-center">-</div>
-        </TableCell>
       </TableRow>
     );
   }

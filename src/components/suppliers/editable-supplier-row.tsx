@@ -326,9 +326,6 @@ export const EditableSupplierRow = ({
             </SelectContent>
           </Select>
         </TableCell>
-        <TableCell className="p-1 h-12" style={{ width: columnWidths.created }}>
-          <div className="text-sm text-gray-400 text-center">-</div>
-        </TableCell>
       </TableRow>
     );
   }
@@ -390,7 +387,7 @@ export const EditableSupplierRow = ({
         )}
       </TableCell>
       <TableCell
-        className="font-medium text-xs p-1 h-12"
+        className="font-medium text-sm p-1 h-12"
         style={{ width: columnWidths.name, maxWidth: columnWidths.name }}
       >
         {isSpreadsheetMode ? (
@@ -415,14 +412,14 @@ export const EditableSupplierRow = ({
             onDoubleClick={handleDoubleClickEdit}
             title="Double-click to edit"
           >
-            <div className="cell-content" title={supplier.name}>
+            <div className="cell-content text-sm" title={supplier.name}>
               {supplier.name}
             </div>
           </div>
         )}
       </TableCell>
       <TableCell
-        className="text-xs p-1 h-12"
+        className="text-sm p-1 h-12"
         style={{ width: columnWidths.website, maxWidth: columnWidths.website }}
       >
         {isSpreadsheetMode ? (
@@ -452,7 +449,7 @@ export const EditableSupplierRow = ({
                 href={supplier.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                className="text-gray-700 hover:text-blue-600 hover:underline flex items-center gap-1 text-sm transition-colors"
                 title={supplier.website}
               >
                 <span className="cell-content">
@@ -461,13 +458,13 @@ export const EditableSupplierRow = ({
                 <ExternalLink className="h-3 w-3 flex-shrink-0" />
               </a>
             ) : (
-              <span className="text-gray-400 italic">No website</span>
+              <span className="text-gray-400 italic text-sm">No website</span>
             )}
           </div>
         )}
       </TableCell>
       <TableCell
-        className="text-xs p-1 h-12"
+        className="text-sm p-1 h-12"
         style={{ width: columnWidths.phone, maxWidth: columnWidths.phone }}
       >
         {isSpreadsheetMode ? (
@@ -493,21 +490,17 @@ export const EditableSupplierRow = ({
             title="Double-click to edit"
           >
             {supplier.phone ? (
-              <a
-                href={`tel:${supplier.phone}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline"
-                title={supplier.phone}
-              >
+              <span className="text-sm" title={supplier.phone}>
                 <div className="cell-content">{supplier.phone}</div>
-              </a>
+              </span>
             ) : (
-              <span className="text-gray-400 italic">No phone</span>
+              <span className="text-gray-400 italic text-sm">No phone</span>
             )}
           </div>
         )}
       </TableCell>
       <TableCell
-        className="text-xs p-1 h-12"
+        className="text-sm p-1 h-12"
         style={{ width: columnWidths.status }}
       >
         {isSpreadsheetMode ? (
@@ -531,16 +524,6 @@ export const EditableSupplierRow = ({
             <StatusBadge status={supplier.status} />
           </div>
         )}
-      </TableCell>
-      <TableCell
-        className="text-xs p-1 h-12"
-        style={{ width: columnWidths.created }}
-      >
-        <div className="h-full flex items-center">
-          <span title={supplier.createdAt.toLocaleString()}>
-            {supplier.createdAt.toLocaleDateString()}
-          </span>
-        </div>
       </TableCell>
     </TableRow>
   );

@@ -98,11 +98,11 @@ export const SpreadsheetCell = ({
     // Regular display mode
     if (field === 'status') {
       return (
-        <span className="px-2 py-1 rounded text-xs bg-gray-100">{value}</span>
+        <span className="px-2 py-1 rounded text-sm bg-gray-100">{value}</span>
       );
     }
     return (
-      <span className="text-xs">
+      <span className="text-sm">
         {value || <span className="text-gray-400 italic">—</span>}
       </span>
     );
@@ -111,7 +111,7 @@ export const SpreadsheetCell = ({
   // Spreadsheet edit mode
   const isWebsiteField = field === 'website';
   const websiteClass = isWebsiteField ? 'text-blue-600' : '';
-  const cellClass = `h-10 text-xs font-medium ${websiteClass} ${hasChanges ? 'border-blue-300 bg-blue-50' : ''}`;
+  const cellClass = `h-10 text-sm font-medium ${websiteClass} ${hasChanges ? 'border-blue-300 bg-blue-50' : ''}`;
   const focusClass = 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
 
   if (field === 'status') {
@@ -125,7 +125,7 @@ export const SpreadsheetCell = ({
         >
           <SelectTrigger
             ref={selectRef}
-            className={`${cellClass} ${focusClass} [&]:text-xs [&]:font-medium`}
+            className={`${cellClass} ${focusClass} [&]:text-sm [&]:font-medium`}
             onKeyDown={handleSelectKeyDown}
           >
             <SelectValue />
@@ -148,7 +148,7 @@ export const SpreadsheetCell = ({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleInputClick}
-        className={`${cellClass} ${focusClass} [&]:text-xs [&]:font-medium ${isWebsiteField ? '[&]:text-blue-600' : ''}`}
+        className={`${cellClass} ${focusClass} [&]:text-sm [&]:font-medium ${isWebsiteField ? '[&]:text-blue-600' : ''}`}
         placeholder={
           field === 'name'
             ? 'Supplier name'
