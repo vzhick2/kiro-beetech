@@ -5,6 +5,7 @@ import { Loader2, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useInfiniteSuppliersData } from '@/hooks/use-infinite-suppliers';
 import { transformSupplier } from './utils';
+import { EditableRow } from './editable-row';
 import { 
   useSupplierFilters, 
   useSupplierSelection, 
