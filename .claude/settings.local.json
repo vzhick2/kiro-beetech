@@ -6,7 +6,20 @@
       "WebFetch(domain:gist.github.com)",
       "WebFetch(domain:apidog.com)",
       "Bash(find:*)",
-      "Bash(pnpm run:*)"
+      "Bash(pnpm run:*)",
+      "Bash(ls:*)",
+      "Bash(echo $HOME)",
+      "Bash(env)",
+      "mcp__ide__getDiagnostics",
+      "mcp__github__*",
+      "mcp__playwright__*",
+      "mcp__supabase__*",
+      "mcp__context7__*",
+      "mcp__firecrawl__*",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude --version)",
+      "Bash(claude update)",
+      "Bash(claude doctor)"
     ],
     "deny": []
   }
