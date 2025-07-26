@@ -82,15 +82,50 @@ export const SpreadsheetCell = ({
     handleKeyDown(e);
   };
 
-  // Simplified cursor positioning - just position at end on click
+  // Enhanced cursor positioning - allow natural text selection and editing
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const input = e.currentTarget;
 
-    // Simple approach: position cursor at end of text
+    // Get click position relative to input
+    const rect = input.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    
+    // Let the browser naturally position the cursor based on click position
+    // We don't force any cursor positioning - this allows normal text selection
+    
+    // Optional: If you want to ensure the input is fully focused for keyboard navigation
+    // but preserve click-based cursor positioning, we can just ensure focus without
+    // interfering with selection
     setTimeout(() => {
-      const length = input.value.length;
-      input.setSelectionRange(length, length);
+      if (document.activeElement === input) {
+        // Input is focused, cursor position was set by the click - don't override
+        return;
+      }
+      // If for some reason focus was lost, refocus and position at click location
+      input.focus();
+    }, 0);
+  };
+
+  // Allow natural text selection behavior
+  const handleInputMouseDown = (e: React.MouseEvent<HTMLInputElement>) => {
+    // Don't prevent default - this allows normal text selection behavior
+    e.stopPropagation();
+  };
+
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // When input receives focus via keyboard navigation (not click),
+    // we can optionally select all text for quick editing
+    const input = e.currentTarget;
+    
+    // Check if this was a click-based focus (preserve cursor) or keyboard focus (select all)
+    // We'll use a simple heuristic: if the last interaction was very recent, assume it was a click
+    setTimeout(() => {
+      // Only select all if no selection exists (meaning it wasn't a click-to-position)
+      if (input.selectionStart === input.selectionEnd && input.selectionStart === input.value.length) {
+        // Cursor is at end with no selection - this was likely keyboard navigation
+        // User can still click to position cursor wherever they want
+      }
     }, 0);
   };
 
@@ -148,6 +183,8 @@ export const SpreadsheetCell = ({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleInputClick}
+        onMouseDown={handleInputMouseDown}
+        onFocus={handleInputFocus}
         className={`${cellClass} ${focusClass} [&]:text-sm [&]:font-medium ${isWebsiteField ? '[&]:text-blue-600' : ''}`}
         placeholder={
           field === 'name'

@@ -126,10 +126,19 @@ export const EditableSupplierRow = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (isEditing) {
         const target = e.target as HTMLElement;
+        
+        // More specific detection of clicks within this row
         const row = target.closest(`[data-supplier-id="${supplier.id}"]`);
-
-        // If click is outside this row and no changes have been made, exit edit mode
-        if (!row) {
+        const isWithinRow = row !== null;
+        
+        // Check if click is on any interactive element that should NOT exit edit mode
+        const isInteractiveElement = target.closest('input, textarea, select, button, [role="button"], [role="combobox"], [role="listbox"]');
+        
+        // Only exit edit mode if:
+        // 1. Click is completely outside this row, AND
+        // 2. No changes have been made, AND  
+        // 3. Not clicking on any interactive elements
+        if (!isWithinRow && !isInteractiveElement) {
           const hasChanges =
             formData.name !== supplier.name ||
             formData.website !== (supplier.website || '') ||
@@ -144,9 +153,10 @@ export const EditableSupplierRow = ({
     };
 
     if (isEditing) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Use capture phase to ensure we catch the event before other handlers
+      document.addEventListener('mousedown', handleClickOutside, true);
       return () =>
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('mousedown', handleClickOutside, true);
     }
 
     return () => {};
@@ -167,7 +177,11 @@ export const EditableSupplierRow = ({
     }
   };
 
-  const handleDoubleClickEdit = () => {
+  const handleDoubleClickEdit = (e: React.MouseEvent) => {
+    // Prevent the double-click from also triggering row expansion
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!isEditing && !isSpreadsheetMode) {
       onEdit(supplier.id, {});
     }

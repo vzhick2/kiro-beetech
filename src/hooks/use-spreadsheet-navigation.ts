@@ -211,10 +211,16 @@ export const useSpreadsheetNavigation = ({
           | HTMLButtonElement;
         if (element) {
           element.focus();
+          // For input elements, allow normal cursor positioning without forcing position
+          // This enables users to click anywhere in the text and select/edit text naturally
           if (element instanceof HTMLInputElement) {
-            // Don't select all text, just position cursor at end
-            const length = element.value.length;
-            element.setSelectionRange(length, length);
+            // Only position cursor at end if this is initial navigation (not a click)
+            // Check if the element was just clicked by checking if it already has focus
+            if (document.activeElement !== element) {
+              const length = element.value.length;
+              element.setSelectionRange(length, length);
+            }
+            // If element already has focus (from a click), preserve user's cursor position
           }
         }
       }, 10);

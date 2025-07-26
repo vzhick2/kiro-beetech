@@ -6,7 +6,7 @@ import React from 'react';
 
 import { TableCell } from '@/components/ui/table';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -234,13 +234,6 @@ export const ModernDataTable = () => {
     getAllChanges,
   } = useSpreadsheetMode();
 
-  // Mock navigation hooks temporarily until we fix the callback dependencies
-  const focusedRowIndex = -1;
-  const setFocusedRowIndex = () => {};
-  const currentCell = null;
-  const setCurrentCell = () => {};
-  const handleCellClick = () => {};
-
   // SSR-safe responsive column widths
   const columnWidths = useMemo(() => {
     // Use conservative defaults for SSR, then responsive widths for client
@@ -412,16 +405,6 @@ export const ModernDataTable = () => {
     setGlobalFilter(debouncedSearchValue);
   }, [debouncedSearchValue, setGlobalFilter]);
 
-  // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
-  // const { currentCell, setCurrentCell, handleCellClick } =
-  //   useSpreadsheetNavigation({
-  //     totalRows: table.getRowModel().rows.length,
-  //     isSpreadsheetMode,
-  //     onExitSpreadsheetMode: exitSpreadsheetMode,
-  //     expandedRows,
-  //     getRowId: index => table.getRowModel().rows[index]?.original.id || '',
-  //   });
-
   const handleSaveSpreadsheetChanges = async () => {
     setIsSavingSpreadsheet(true);
     try {
@@ -470,6 +453,25 @@ export const ModernDataTable = () => {
       });
     }
   };
+
+  // Initialize navigation hooks after all handlers are defined
+  const { currentCell, setCurrentCell, handleCellClick } = useSpreadsheetNavigation({
+    totalRows: table.getRowModel().rows.length,
+    isSpreadsheetMode,
+    onExitSpreadsheetMode: exitSpreadsheetMode,
+    expandedRows,
+    getRowId: useCallback((index: number) => table.getRowModel().rows[index]?.original.id || '', [table]),
+  });
+
+  const { focusedRowIndex, setFocusedRowIndex } = useKeyboardNavigation({
+    totalRows: table.getRowModel().rows.length,
+    rowSelection,
+    setRowSelection,
+    onNewSupplier: () => {},
+    onBulkDelete: handleBulkDelete,
+    selectedCount: selectedIds.length,
+    getRowId: useCallback((index: number) => table.getRowModel().rows[index]?.original.id || '', [table]),
+  });
 
   const confirmDelete = async () => {
     if (deleteConfirmation) {
