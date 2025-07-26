@@ -511,9 +511,28 @@ export const ModernDataTable = () => {
     setEditingRow({ rowId, data });
   };
 
-  const handleSaveRow = async (data: Partial<Supplier>) => {
+  const handleSaveRow = async (data: Partial<DisplaySupplier>) => {
     if (editingRow) {
-      await updateSupplier(editingRow.rowId, data);
+      try {
+        // Transform DisplaySupplier data to Supplier format for database
+        const supplierData: Partial<Supplier> = {};
+        
+        if (data.name !== undefined) supplierData.name = data.name;
+        if (data.website !== undefined) supplierData.website = data.website;
+        if (data.email !== undefined) supplierData.email = data.email;
+        if (data.phone !== undefined) supplierData.contactphone = data.phone; // Transform phone to contactphone
+        if (data.address !== undefined) supplierData.address = data.address;
+        if (data.notes !== undefined) supplierData.notes = data.notes;
+        if (data.status !== undefined) supplierData.isarchived = data.status === 'archived';
+        
+        await updateSupplier(editingRow.rowId, supplierData);
+        
+        // Clear editing state after successful save
+        setEditingRow(null);
+      } catch (error) {
+        console.error('Failed to save supplier:', error);
+        // Keep editing mode active on error so user can retry
+      }
     }
   };
 

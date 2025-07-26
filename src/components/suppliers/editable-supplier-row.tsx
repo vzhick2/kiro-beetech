@@ -309,7 +309,7 @@ export const EditableSupplierRow = ({
             onKeyDown={e => handleKeyDown(e, phoneInputRef)}
             className="h-8 text-xs"
             disabled={isSaving}
-            placeholder="Website *"
+            placeholder="Website"
           />
         </TableCell>
         <TableCell className="p-1 h-12" style={{ width: columnWidths.phone }}>

@@ -204,7 +204,7 @@ export const AddSupplierRow = forwardRef<
         <TableCell className="p-1 h-12" style={{ width: columnWidths.website }}>
           <Input
             ref={websiteInputRef}
-            placeholder="Website *"
+            placeholder="Website"
             value={formData.website}
             onChange={e =>
               setFormData({ ...formData, website: e.target.value })
