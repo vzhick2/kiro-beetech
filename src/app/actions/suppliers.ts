@@ -188,3 +188,26 @@ export async function bulkArchiveSuppliers(supplierIds: string[]) {
     return { success: false, error: 'Failed to bulk archive suppliers' };
   }
 }
+
+export async function bulkUnarchiveSuppliers(supplierIds: string[]) {
+  try {
+    if (!supplierIds || supplierIds.length === 0) {
+      return { success: true, unarchivedCount: 0 };
+    }
+
+    const { error } = await supabaseAdmin
+      .from('suppliers')
+      .update({ isarchived: false })
+      .in('supplierid', supplierIds);
+
+    if (error) {
+      console.error('Error bulk unarchiving suppliers:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, unarchivedCount: supplierIds.length };
+  } catch (error) {
+    console.error('Failed to bulk unarchive suppliers:', error);
+    return { success: false, error: 'Failed to bulk unarchive suppliers' };
+  }
+}

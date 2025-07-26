@@ -5,6 +5,7 @@ export interface CleanSupplier {
   website?: string;
   phone?: string;
   email?: string;
+  notes?: string;
   isArchived: boolean;
   createdAt: Date;
 }
@@ -12,6 +13,8 @@ export interface CleanSupplier {
 export interface SupplierFilters {
   search: string;
   status: 'all' | 'active' | 'archived';
+  sortBy: 'name' | 'createdAt' | 'website';
+  sortOrder: 'asc' | 'desc';
 }
 
 export interface SupplierSelection {

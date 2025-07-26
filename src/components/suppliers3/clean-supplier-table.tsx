@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useSuppliers, useUpdateSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers } from '@/hooks/use-suppliers';
+import { useSuppliers, useUpdateSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers, useBulkUnarchiveSuppliers } from '@/hooks/use-suppliers';
 import { FilterBar } from './filter-bar';
 import { SupplierRow } from './supplier-row';
 import { EditableRow } from './editable-row';
@@ -31,6 +31,7 @@ const transformSupplier = (supplier: Supplier): CleanSupplier => {
   if (supplier.website) clean.website = supplier.website;
   if (supplier.contactphone) clean.phone = supplier.contactphone;
   if (supplier.email) clean.email = supplier.email;
+  if (supplier.notes) clean.notes = supplier.notes;
   
   return clean;
 };
@@ -41,6 +42,7 @@ export const CleanSupplierTable = () => {
   const updateMutation = useUpdateSupplier();
   const bulkDeleteMutation = useBulkDeleteSuppliers();
   const bulkArchiveMutation = useBulkArchiveSuppliers();
+  const bulkUnarchiveMutation = useBulkUnarchiveSuppliers();
 
   // State management with custom hooks
   const { filters, updateFilter, clearFilters } = useSupplierFilters();
@@ -101,8 +103,13 @@ export const CleanSupplierTable = () => {
   };
 
   const handleBulkUnarchive = async () => {
-    // Implementation would need a bulk unarchive mutation
-    console.log('Bulk unarchive not implemented yet');
+    if (selectedIds.length === 0) return;
+    try {
+      await bulkUnarchiveMutation.mutateAsync(selectedIds);
+      clearSelection();
+    } catch (error) {
+      console.error('Failed to unarchive suppliers:', error);
+    }
   };
 
   const handleBulkExport = async () => {

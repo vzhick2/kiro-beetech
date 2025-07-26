@@ -207,3 +207,38 @@ export function useBulkArchiveSuppliers() {
     },
   });
 }
+
+
+export function useBulkUnarchiveSuppliers() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (supplierIds: string[]) => {
+      const { bulkUnarchiveSuppliers } = await import('@/app/actions/suppliers');
+      const result = await bulkUnarchiveSuppliers(supplierIds);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result;
+    },
+    onSuccess: (_, supplierIds) => {
+      // Update suppliers list cache
+      queryClient.setQueriesData(
+        { queryKey: suppliersKeys.lists() },
+        (oldData: Supplier[] | undefined) => {
+          if (!oldData) {
+            return oldData;
+          }
+          return oldData.map(supplier =>
+            supplierIds.includes(supplier.supplierid)
+              ? { ...supplier, isarchived: false }
+              : supplier
+          );
+        }
+      );
+      
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: suppliersKeys.lists() });
+    },
+  });
+}

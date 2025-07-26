@@ -6,7 +6,9 @@ import { CleanSupplier, SupplierFilters, SupplierSelection, ViewMode } from './t
 export const useSupplierFilters = () => {
   const [filters, setFilters] = useState<SupplierFilters>({
     search: '',
-    status: 'all'
+    status: 'all',
+    sortBy: 'name',
+    sortOrder: 'asc'
   });
 
   const updateFilter = (key: keyof SupplierFilters, value: string) => {
@@ -14,7 +16,7 @@ export const useSupplierFilters = () => {
   };
 
   const clearFilters = () => {
-    setFilters({ search: '', status: 'all' });
+    setFilters({ search: '', status: 'all', sortBy: 'name', sortOrder: 'asc' });
   };
 
   return {
