@@ -31,7 +31,7 @@ const transformSupplier = (supplier: SupplierRow): CleanSupplier => {
   if (supplier.website) clean.website = supplier.website;
   if (supplier.contactphone) clean.phone = supplier.contactphone;
   if (supplier.notes) clean.notes = supplier.notes;
-  if (supplier.email) clean.email = supplier.email;
+
   
   return clean;
 };
@@ -152,7 +152,7 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
         Showing {loadedCount} of {totalCount} suppliers
         {filters.search && (
           <span className="ml-2 text-blue-600">
-            • Filtered by "{filters.search}"
+            • Filtered by &ldquo;{filters.search}&rdquo;
           </span>
         )}
       </div>
@@ -409,7 +409,7 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
           <div className="text-center py-12">
             <div className="text-gray-500">
               {filters.search ? 
-                `No suppliers found matching "${filters.search}"` : 
+                `No suppliers found matching &ldquo;${filters.search}&rdquo;` : 
                 'No suppliers found'
               }
             </div>

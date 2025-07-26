@@ -15,6 +15,7 @@ export const transformSupplier = (supplier: SupplierRow): CleanSupplier => {
   if (supplier.website) clean.website = supplier.website;
   if (supplier.contactphone) clean.phone = supplier.contactphone;
   if (supplier.notes) clean.notes = supplier.notes;
+  if ((supplier as any).email) clean.email = (supplier as any).email;
   
   return clean;
 };
