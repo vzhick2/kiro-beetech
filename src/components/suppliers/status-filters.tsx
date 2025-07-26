@@ -24,10 +24,10 @@ export const StatusFilters = ({
         variant={activeFilter === 'all' ? 'default' : 'outline'}
         size="sm"
         onClick={() => onFilterChange('all')}
-        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
+        className="h-8 text-sm px-3 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         All
-        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
           {counts.total}
         </Badge>
       </Button>
@@ -35,10 +35,10 @@ export const StatusFilters = ({
         variant={activeFilter === 'active' ? 'default' : 'outline'}
         size="sm"
         onClick={() => onFilterChange('active')}
-        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
+        className="h-8 text-sm px-3 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         Active
-        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
           {counts.active}
         </Badge>
       </Button>
@@ -46,10 +46,10 @@ export const StatusFilters = ({
         variant={activeFilter === 'archived' ? 'default' : 'outline'}
         size="sm"
         onClick={() => onFilterChange('archived')}
-        className="h-8 text-sm px-4 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
+        className="h-8 text-sm px-3 whitespace-nowrap transition-all duration-150 hover:scale-[1.02] active:scale-95 shadow-sm"
       >
         Archived
-        <Badge variant="secondary" className="ml-2 h-5 px-2 text-xs">
+        <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
           {counts.archived}
         </Badge>
       </Button>

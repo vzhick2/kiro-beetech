@@ -177,16 +177,6 @@ export const EditableSupplierRow = ({
     }
   };
 
-  const handleDoubleClickEdit = (e: React.MouseEvent) => {
-    // Prevent the double-click from also triggering row expansion
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!isEditing && !isSpreadsheetMode) {
-      onEdit(supplier.id, {});
-    }
-  };
-
   const isFormValid = () => {
     return formData.name?.trim() !== '' && formData.website?.trim() !== '';
   };
@@ -422,9 +412,7 @@ export const EditableSupplierRow = ({
           </div>
         ) : (
           <div
-            className="h-full flex items-center cursor-pointer"
-            onDoubleClick={handleDoubleClickEdit}
-            title="Double-click to edit"
+            className="h-full flex items-center"
           >
             <div className="cell-content text-sm" title={supplier.name}>
               {supplier.name}
@@ -454,9 +442,7 @@ export const EditableSupplierRow = ({
           </div>
         ) : (
           <div
-            className="h-full flex items-center cursor-pointer"
-            onDoubleClick={handleDoubleClickEdit}
-            title="Double-click to edit"
+            className="h-full flex items-center"
           >
             {supplier.website ? (
               <a
@@ -499,9 +485,7 @@ export const EditableSupplierRow = ({
           </div>
         ) : (
           <div
-            className="h-full flex items-center cursor-pointer"
-            onDoubleClick={handleDoubleClickEdit}
-            title="Double-click to edit"
+            className="h-full flex items-center"
           >
             {supplier.phone ? (
               <span className="text-sm" title={supplier.phone}>

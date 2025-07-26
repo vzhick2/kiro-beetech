@@ -35,7 +35,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import type { Supplier, DisplaySupplier } from '@/types/data-table';
+import type { Supplier, DisplaySupplier, ValidationError } from '@/types/data-table';
+import type { CreateSupplierRequest } from '@/types/index';
 import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier, useBulkDeleteSuppliers, useBulkArchiveSuppliers, useBulkUnarchiveSuppliers } from '@/hooks/use-suppliers';
 import { usePagination } from '@/hooks/use-pagination';
 import { useShiftSelection } from '@/hooks/use-selection';
@@ -91,13 +92,16 @@ export const ModernDataTable = () => {
   }, [rawSuppliers]);
 
   // Local state for table functionality
-  const [globalFilter, setGlobalFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'archived'>('all');
   const [editingRow, setEditingRow] = useState<any>(null);
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
-  const [validationErrors, setValidationErrors] = useState<any[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [duplicateWarning, setDuplicateWarning] = useState<any>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    show: boolean;
+    matches: { type: 'name' | 'website' | 'phone' }[];
+    onProceed: () => void;
+  } | null>(null);
 
   // Calculate status counts - optimized with reduce
   const statusCounts = useMemo(() => {
@@ -109,13 +113,13 @@ export const ModernDataTable = () => {
     }, { total: 0, all: 0, active: 0, archived: 0 });
   }, [allData]);
 
-  // Filter data based on status and search - optimized
+  // Filter data based on status and search - optimized with debounced search
   const data = useMemo(() => {
-    if (statusFilter === 'all' && !globalFilter) {
+    if (statusFilter === 'all' && !debouncedSearchValue) {
       return allData; // Early return for no filtering
     }
     
-    const searchLower = globalFilter ? globalFilter.toLowerCase() : '';
+    const searchLower = debouncedSearchValue ? debouncedSearchValue.toLowerCase() : '';
     
     return allData.filter(supplier => {
       // Status filter check
@@ -124,7 +128,7 @@ export const ModernDataTable = () => {
       }
       
       // Search filter check - optimized with early return
-      if (!globalFilter) return true;
+      if (!debouncedSearchValue) return true;
       
       return (
         supplier.name.toLowerCase().includes(searchLower) ||
@@ -133,7 +137,7 @@ export const ModernDataTable = () => {
         supplier.website?.toLowerCase().includes(searchLower)
       );
     });
-  }, [allData, statusFilter, globalFilter]);
+  }, [allData, statusFilter, debouncedSearchValue]);
 
   // Helper functions
   const toggleRowExpansion = (rowId: string) => {
@@ -167,7 +171,7 @@ export const ModernDataTable = () => {
     }
   };
 
-  const addSupplier = async (data: any) => {
+  const addSupplier = async (data: CreateSupplierRequest) => {
      await createSupplierMutation.mutateAsync(data);
    };
 
@@ -378,13 +382,11 @@ export const ModernDataTable = () => {
     state: {
       sorting,
       rowSelection,
-      globalFilter,
       pagination,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -406,11 +408,6 @@ export const ModernDataTable = () => {
   }, [table.getFilteredSelectedRowModel]);
 
   const { selectedRows, selectedIds, hasArchivedSelected } = selectedRowsData;
-
-  // Sync debounced search value with global filter
-  useEffect(() => {
-    setGlobalFilter(debouncedSearchValue);
-  }, [debouncedSearchValue, setGlobalFilter]);
 
   const handleSaveSpreadsheetChanges = async () => {
     setIsSavingSpreadsheet(true);
@@ -878,7 +875,7 @@ export const ModernDataTable = () => {
         open={duplicateWarning?.show || false}
         onOpenChange={open => !open && setDuplicateWarning(null)}
         title="Similar Supplier Detected"
-        description={`A supplier with similar ${duplicateWarning?.matches.map((m: any) => m.type).join(' and ')} already exists. Do you want to add this supplier anyway?`}
+        description={`A supplier with similar ${duplicateWarning?.matches.map((m) => m.type).join(' and ')} already exists. Do you want to add this supplier anyway?`}
         confirmText="Add Anyway"
         onConfirm={() => duplicateWarning?.onProceed()}
       />

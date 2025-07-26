@@ -11,19 +11,13 @@ import {
 import { Plus, Check, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { TableCell, TableRow } from '@/components/ui/table';
-import type { NewSupplier, ValidationError } from '@/types/data-table';
+import type { ValidationError } from '@/types/data-table';
+import type { CreateSupplierRequest } from '@/types/index';
 import { FieldValidation } from './field-validation';
 
 interface AddSupplierRowProps {
-  onAdd: (supplier: NewSupplier) => Promise<void>;
+  onAdd: (supplier: CreateSupplierRequest) => Promise<void>;
   loading: boolean;
   validationErrors: ValidationError[];
   onValidationChange: (errors: ValidationError[]) => void;
@@ -47,12 +41,11 @@ export const AddSupplierRow = forwardRef<
     ref
   ) => {
     const [isAdding, setIsAdding] = useState(false);
-    const [formData, setFormData] = useState<NewSupplier>({
+    const [formData, setFormData] = useState<CreateSupplierRequest>({
       name: '',
       website: '',
       email: '',
       contactphone: '',
-      isarchived: false,
     });
 
     const nameInputRef = useRef<HTMLInputElement>(null);
@@ -87,7 +80,7 @@ export const AddSupplierRow = forwardRef<
     };
 
     const isFormValid = () => {
-      return formData.name.trim() !== '' && formData.website.trim() !== '';
+      return formData.name.trim() !== '' && (formData.website?.trim() || '') !== '';
     };
 
     const handleSave = async () => {
@@ -100,7 +93,6 @@ export const AddSupplierRow = forwardRef<
           website: '',
           email: '',
           contactphone: '',
-          isarchived: false,
         });
         onValidationChange([]);
         setTimeout(() => {
@@ -119,7 +111,6 @@ export const AddSupplierRow = forwardRef<
         website: '',
         email: '',
         contactphone: '',
-        isarchived: false,
       });
       onValidationChange([]);
       setIsAdding(false);
@@ -136,14 +127,14 @@ export const AddSupplierRow = forwardRef<
     if (!isAdding) {
       return (
         <TableRow className="hover:bg-gray-50 transition-colors border-b border-gray-200 h-12">
-          <TableCell colSpan={6} className="p-1 h-12">
+          <TableCell colSpan={5} className="p-1 h-12">
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-600 hover:text-gray-700 h-10 text-sm transition-colors"
+              className="w-full justify-start text-gray-600 hover:text-gray-700 h-10 text-sm transition-colors hover:bg-gray-100 transform-none"
               onClick={handleStartAdding}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add new supplier (N)
+              <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="flex-shrink-0">Add new supplier (N)</span>
             </Button>
           </TableCell>
         </TableRow>
@@ -224,23 +215,6 @@ export const AddSupplierRow = forwardRef<
             className="h-8 text-sm"
             disabled={loading}
           />
-        </TableCell>
-        <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
-          <Select
-            value={formData.isarchived ? 'archived' : 'active'}
-            onValueChange={(value: 'active' | 'archived') =>
-              setFormData({ ...formData, isarchived: value === 'archived' })
-            }
-            disabled={loading}
-          >
-            <SelectTrigger className="h-8 text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
         </TableCell>
       </TableRow>
     );
