@@ -65,30 +65,34 @@ Since we removed the `mode_changed_date` field for simplicity, we use these alte
 ### Core Tables
 
 ```sql
--- Items table with inventory tracking
+-- Items with enhanced categorization
 CREATE TABLE items (
   itemId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  displayId TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  SKU TEXT UNIQUE NOT NULL,
+  sku TEXT UNIQUE,
   type item_type NOT NULL,
-  isArchived BOOLEAN DEFAULT FALSE,
+  category TEXT, -- New field for subcategorization
   inventoryUnit inventory_unit NOT NULL,
   currentQuantity NUMERIC DEFAULT 0,
   weightedAverageCost NUMERIC DEFAULT 0,
-  reorderPoint NUMERIC,
-  lastCountedDate DATE,
-  primarySupplierId UUID REFERENCES suppliers(supplierId),
-  leadTimeDays INTEGER DEFAULT 7,
-  trackingMode TEXT DEFAULT 'fully_tracked' CHECK (trackingMode IN ('fully_tracked', 'cost_added')),
-  lastInventorySnapshot NUMERIC,
+  tracking_mode tracking_mode DEFAULT 'fully_tracked',
+  isArchived BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ
 );
+
+-- Add category suggestions for natural skincare business
+-- Base categories by type:
+-- Ingredients: Base Oils, Essential Oils, Butters, Waxes, Preservatives, Active Ingredients, Colorants
+-- Packaging: Containers, Labels, Caps/Pumps, Boxes  
+-- Products: Face Care, Body Care, Lip Care, Hair Care
 
 -- Suppliers for purchase management
 CREATE TABLE suppliers (
   supplierId UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
+  email TEXT,
   website TEXT,
   contactphone TEXT,
   address TEXT,
@@ -226,6 +230,10 @@ CREATE TYPE inventory_unit AS ENUM ('each', 'lb', 'oz', 'kg', 'g', 'gal', 'qt', 
 CREATE TYPE transaction_type AS ENUM ('purchase', 'sale', 'adjustment', 'batch_consumption', 'batch_production');
 CREATE TYPE sales_channel AS ENUM ('qbo', 'bigcommerce');
 CREATE TYPE data_source AS ENUM ('manual', 'imported');
+
+-- Note: tracking_mode uses TEXT with CHECK constraint for flexibility
+-- ALTER TABLE items ADD CONSTRAINT items_tracking_mode_check 
+-- CHECK (tracking_mode IN ('fully_tracked', 'cost_added'));
 ```
 
 ### Database Indexes

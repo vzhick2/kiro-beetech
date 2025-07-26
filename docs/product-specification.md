@@ -96,6 +96,15 @@ Complete product specification covering business requirements, user interface de
 - **Error Prevention**: Comprehensive validation and variance checking
 - **Audit Trail**: Complete tracking of cost allocation decisions
 
+### Purchase Workflow Detail
+
+1. **Create Draft**: Basic purchase info (supplier, date, notes)
+2. **Add Line Items**: Items, quantities, base costs
+3. **Enter Overhead**: Shipping, taxes, other fees
+4. **Preview Allocation**: See cost distribution before finalizing
+5. **Validate Totals**: Check for significant variances
+6. **Finalize**: Apply allocation, update WAC, log transactions, change status from draft to finalized
+
 ### 3. Business Logic
 
 #### 3.1 Alert System
@@ -280,7 +289,7 @@ Responsive sidebar (persistent on desktop, hamburger on mobile) with primary vie
 3. **Enter Overhead**: Shipping, taxes, other fees
 4. **Preview Allocation**: See cost distribution before finalizing
 5. **Validate Totals**: Check for significant variances
-6. **Finalize**: Apply allocation, update WAC, log transactions
+6. **Finalize**: Apply allocation, update WAC, log transactions, change status from draft to finalized
 
 ### Production Workflow Detail
 
@@ -407,6 +416,93 @@ _These views require complex data entry and analysis, suited for desktop/laptop 
 - **Ingredient Substitution**: UI for temporary ingredient swaps with cost impact
 - **Desktop Layout**: Side-by-side ingredient list and cost breakdown
 
+## 📦 Purchase Management
+
+### Master-Detail Interface Design
+
+**Layout**: Split-screen interface with purchase list (master) on left and detailed purchase editor (detail) on right, optimized for desktop workflow with mobile-responsive stacking.
+
+**Master Panel Features**:
+- Purchase list with search and filtering
+- Status indicators (Draft/Finalized)
+- Quick purchase summary (supplier, date, total, item count)
+- New purchase creation
+
+**Detail Panel Features**:
+- Spreadsheet-style line item editing
+- Real-time total calculations
+- Receipt/document upload (drag & drop)
+- Automatic cost allocation preview
+- Enhanced keyboard navigation
+
+### Purchase Workflow
+
+#### 1. Draft Creation & Editing
+- **Spreadsheet Interface**: Excel-like line item entry with Tab/Enter navigation
+- **Auto-Item Creation**: Missing items can be created inline via modal popup
+- **Real-time Calculations**: Automatic total updates as items are added/edited
+- **Receipt Upload**: Drag & drop document attachment support
+- **Total Validation**: Simple check that line items don't exceed invoice total
+
+#### 2. Item Entry Enhancement
+- **Smart Dropdown**: Type-ahead search with "+ Add [item name]" option for missing items
+- **Quick Item Creation Modal**: Minimal fields (name, SKU, type, unit, tracking mode)
+- **Auto-SKU Generation**: Suggested SKU based on item name
+- **Inline Validation**: Real-time field validation and error display
+
+#### 3. Cost Allocation System
+- **Automatic Distribution**: Shipping/taxes allocated proportionally to COGS items
+- **Non-COGS Calculation**: Auto-calculated as difference between total invoice and COGS items
+- **Real-time Preview**: Show allocation impact as totals change
+- **Override Capability**: Manual adjustment of allocation when needed
+
+#### 4. Finalization & Post-Edit
+- **Direct Edit**: Finalized purchases can be edited directly with automatic WAC recalculation
+- **WAC Recalculation**: System automatically reverses old impact and applies new calculations
+- **Audit Trail**: Complete tracking of changes with timestamps
+- **Simple Validation**: Basic checks (totals, required fields) without complex variance detection
+
+### Always Visible Fields
+
+- **Purchase Number** (`displayid`) - Reference for tracking and communication ("PO-2025-001")
+- **Supplier Name** (via `supplierid` relationship) - Who the order is from
+- **Purchase Date** (`purchasedate`) - When the purchase was placed
+- **Status** (`isdraft`) - Show as "Draft" or "Finalized" for workflow management
+- **Total Amount** (`total`) - Financial overview of the purchase
+
+### Conditionally Visible Fields
+
+- **Effective Date** (`effectivedate`) - When inventory impact occurs, might be different from purchase date
+- **Shipping Cost** (`shipping`) - Important for cost analysis but might be in detail view
+- **Tax Amount** (`taxes`) - Important for cost analysis but might be in detail view
+- **Other Costs** (`othercosts`) - Additional fees, important for managers
+- **Notes** (`notes`) - Valuable but space-consuming
+- **Attachments** - Receipt images and documents
+
+### Hidden from Users
+
+- **Overhead allocation calculations** - Backend business logic
+- **Internal processing timestamps** - Users care about business dates, not system processing times
+
+### Enhanced Features
+
+#### Desktop Optimizations
+- **Keyboard Shortcuts**: 
+  - Tab: Move between cells
+  - Enter: Save cell, move to next row
+  - Ctrl+S: Save draft
+  - Ctrl+Enter: Finalize purchase
+  - Escape: Cancel current edit
+- **Drag & Drop**: Receipt and document upload
+- **Multi-file Support**: Multiple receipt attachments per purchase
+- **Back-dating Support**: Historical effective dates with WAC impact warnings
+
+#### Mobile Considerations
+- **Responsive Stacking**: Master-detail becomes vertical stack on mobile
+- **Touch-friendly**: 44px minimum touch targets
+- **Swipe Navigation**: Switch between purchases via swipe gestures
+- **Quick Actions**: Essential functions accessible with large buttons
+
 ## 📝 Data Entry Standards
 
 ### Form Design Principles
@@ -507,7 +603,7 @@ _These views require complex data entry and analysis, suited for desktop/laptop 
 
 #### Status Indicators
 
-- **Tracking Mode Badges**: 🟢 Fully Tracked, � Cost Added
+- **Tracking Mode Badges**: 🟢 Fully Tracked, 🟡 Cost Added
 - **Alert Priorities**: Color-coded importance
 - **Draft Status**: Clear workflow stage
 - **Archive States**: Inactive item indication

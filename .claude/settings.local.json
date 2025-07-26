@@ -5,7 +5,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:gist.github.com)",
       "WebFetch(domain:apidog.com)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pnpm run:*)"
     ],
     "deny": []
   }

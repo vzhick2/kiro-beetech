@@ -25,7 +25,7 @@ BTINV is a **private, business-focused inventory management system** designed fo
 
 ### 📦 **Purchase Management**
 
-- **Draft Purchases**: Overhead allocation (shipping, taxes) with allocation preview
+- **Draft Purchases**: Simple draft/finalized workflow with overhead allocation preview
 - **Statement Integration**: Automated bank CSV import with supplier matching
 - **Mixed Invoice Support**: Handle COGS and non-COGS items in single purchases
 - **Allocation Engine**: Real-time preview of cost distribution with variance warnings
@@ -144,59 +144,9 @@ _See [Developer Guide](./docs/developer-guide.md) for detailed project structure
 
 _See [Developer Guide](./docs/developer-guide.md) for complete command reference and [Technical Reference](./docs/technical-reference.md) for database schema._
 
-## 📊 Progress Tracking
+## 📋 Current Development Status
 
-This app follows a **business-focused design** that prioritizes practical inventory management for small businesses.
-
-### **Phase 1: Foundation** ✅ **100% Complete**
-
-- ✅ Next.js 15.4.1 + React 19.1.0 setup with TypeScript
-- ✅ Supabase integration with PostgreSQL database
-- ✅ Tailwind CSS 4.1.11 design system
-- ✅ Mobile-first responsive layout
-- ✅ Authentication and security setup
-- ✅ **4-file documentation structure** established
-
-### **Phase 2: Core Database** ✅ **100% Complete**
-
-- ✅ Complete database schema with proper relationships
-- ✅ PostgreSQL functions for WAC calculations
-- ✅ Transaction logging system for audit trails
-- ✅ Row Level Security policies
-- ✅ Seed data generation for testing
-
-### **Phase 3: Smart Business Logic** ✅ **100% Complete**
-
-- ✅ Two-mode tracking system (Fully Tracked/Cost Added)
-- ✅ Cycle count alerts with priority scoring
-- ✅ CSV import system with validation
-- ✅ Purchase management with draft workflow
-- ✅ WAC calculation with inventory awareness
-- ✅ Business rules across components
-- ✅ Purchase workflow with allocation preview
-
-### **Core Features 🚧 (40% Complete)**
-
-- ✅ Enhanced Server Actions with allocation functionality
-- ✅ Suppliers management (removed AG Grid complexity)
-- 🚧 Items management with two-mode tracking support
-- 📋 Complete UI implementation for all tracking modes
-
-### **Phase 5: Advanced Workflows 📋 (20% Complete)**
-
-- 📋 Recipe management with cost calculations
-- 📋 Batch production with yield tracking
-- 📋 Sales integration with BigCommerce
-- 📋 Reporting dashboard with COGS analytics
-- 📋 Statement-based import automation
-
-### **Phase 6: Polish & Optimization 📋 (0% Complete)**
-
-- 📋 Performance optimization
-- 📋 Advanced error handling
-- 📋 User onboarding flow
-- 📋 Mobile app considerations
-- 📋 Documentation completion
+For detailed development progress, task tracking, and completion status, see **[Tasks](./docs/tasks.md)**.
 
 ## 🔐 Security & Privacy
 

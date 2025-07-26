@@ -1,1 +1,0 @@
-This folder is for prototype pages or features

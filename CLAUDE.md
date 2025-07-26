@@ -9,9 +9,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev                   # Start dev server (primary command)
 pnpm build                 # Build for production
 pnpm lint && pnpm type-check  # Check before committing
+pnpm format                # Format code with Prettier
+pnpm clean                 # Clear .next and cache folders
 
 # Database (after schema changes)
 pnpm db:generate          # Regenerate TypeScript types
+pnpm db:start             # Start local Supabase
+pnpm db:stop              # Stop local Supabase
+pnpm db:reset             # Reset local database
+pnpm db:status            # Check Supabase status
 
 # Testing
 pnpm test                 # Run Playwright tests
@@ -63,8 +69,8 @@ pnpm test:ui              # Run with visual UI
 
 **Available MCP servers**:
 
-- **GitHub MCP**: Use for multi-file implementations and PR creation
-- **Playwright MCP**: Auto-trigger after UI changes for testing
+- **GitHub MCP**: Multi-file commits and PR creation (ask user about local pull after operations)
+- **Playwright MCP**: Auto-trigger after UI changes, critical path testing, visual validation
 - **Supabase MCP**: Validate schema and test queries before code changes
 - **Context7 MCP**: Look up current documentation for libraries
 - **Firecrawl MCP**: Research and gather external information
@@ -75,6 +81,8 @@ pnpm test:ui              # Run with visual UI
 **Components**: Feature-organized in `src/components/[feature]/`
 **Types**: Auto-generated from Supabase schema - run `pnpm db:generate` after DB changes
 **Validation**: Zod schemas in `src/lib/validations/`
+**Utilities**: Shared functions in `src/lib/utils/` (check before creating new)
+**State Management**: Zustand for client state, TanStack Query for server state
 
 ### Testing Guidelines
 
@@ -117,8 +125,9 @@ pnpm test:ui              # Run with visual UI
 ### Communication Standards
 
 - **Questions First**: If user message ends with "?" - present options, don't implement automatically
-- **Factual Language**: Use objective, technical language; avoid superlatives like "perfect", "amazing", "excellent"
+- **Factual Language**: Use objective, technical language; avoid superlatives like "perfect", "amazing", "excellent", "completely fixed"
 - **Reasoning First**: Explain technical decisions and provide alternatives before implementing
+- **No Code in Chat**: Only show code in chat if user needs to manually copy/paste for specific reasons
 
 ### Response Pattern
 

@@ -1,8 +1,8 @@
 ---
 title: 'User Interface Fields Guide'
 description: 'What database fields should be visible to users in the finished KIRO inventory management app'
-purpose: 'UI/UX guidance for field visibility and progressive disclosure'
-last_updated: 'July 24, 2025'
+purpose: 'UI/UX guidance for field visibility and progressive disclosure - matches current Supabase schema'
+last_updated: 'January 27, 2025'
 doc_type: 'ui-guidance'
 related: ['technical-reference.md', 'product-specification.md']
 ---
@@ -13,164 +13,226 @@ This document outlines which database fields should be visible to users in the f
 
 **General Principle**: Show users what they need to make decisions and take action, while hiding the technical complexity that powers the system behind the scenes.
 
+**Schema Alignment**: This guide reflects the exact fields available in the current Supabase database as of January 27, 2025.
+
 ## 🛍️ Items Management
 
 ### Always Visible Fields
 
-- **Item Name** - Primary identifier users will recognize ("Organic Rose Hip Oil", "2oz Glass Jars")
-- **Current Quantity** - Critical for inventory decisions and day-to-day operations
-- **Unit of Measure** - Essential context ("oz", "pieces", "ml") so users know what the quantity means
-- **Tracking Mode** - Users need to understand if an item is "Fully Tracked" or "Cost Added" to set expectations
-- **Category** - Helps organize and filter items ("Base Oils", "Essential Oils", "Packaging", "Preservatives")
+- **Item Name** (`name`) - Primary identifier users will recognize ("Organic Rose Hip Oil", "2oz Glass Jars")
+- **Current Quantity** (`currentquantity`) - Critical for inventory decisions and day-to-day operations
+- **Unit of Measure** (`inventoryunit`) - Essential context ("oz", "pieces", "ml") so users know what the quantity means
+- **Tracking Mode** (`tracking_mode`) - Users need to understand if an item is "fully_tracked" or "cost_added" to set expectations
+- **Item Type** (`type`) - Basic categorization: "ingredient", "packaging", "product"
 
 ### Conditionally Visible Fields
 
-- **SKU/Product Code** - Show if users want detailed tracking, hide if it clutters the interface
-- **Description** - Useful for detailed item information but might be hidden in list views to save space
-- **Reorder Point & Quantity** - Important for inventory management but could be in an "advanced" or "settings" section
-- **Current Cost** - Sensitive information - might only show to managers or in specific cost-focused views
+- **SKU** (`sku`) - Show if users want detailed tracking, hide if it clutters the interface
+- **Reorder Point** (`reorderpoint`) - Important for inventory management but could be in an "advanced" section
+- **Weighted Average Cost** (`weightedaveragecost`) - Show to managers or in cost-focused views only
+- **Primary Supplier** (`primarysupplierid`) - Useful for reordering but not always needed
+- **Lead Time Days** (`leadtimedays`) - Planning information, conditionally visible
+- **Last Counted Date** (`lastcounteddate`) - Useful for cycle count planning
 
 ### Hidden from Users
 
-- **Base Cost vs Allocated Cost** - Too complex for daily operations; this is backend calculation logic
-- **Weighted Average Cost** - Calculated field that changes automatically; users don't need to see the math
-- **Database timestamps** - Users care when something was last updated, but not precise database timestamps
+- **Item ID** (`itemid`) - Technical UUID primary key
+- **Database timestamps** (`created_at`, `updated_at`) - Replace with user-friendly "Last modified" when relevant
+- **Last Inventory Snapshot** (`last_inventory_snapshot`) - Technical field for tracking mode changes
+- **Archive Status** (`isarchived`) - Handle through filtering, not direct display
 
 ## 🏢 Supplier Management
 
 ### Always Visible Fields
 
-- **Supplier Name** - Primary identifier for selecting suppliers ("Mountain Rose Herbs", "Wholesale Supplies Plus")
-- **Contact Person** - Who to call when placing orders
-- **Phone Number** - Essential for quick communication
-- **Website** - Useful for checking product catalogs or placing online orders
+- **Supplier Name** (`name`) - Primary identifier for selecting suppliers
+- **Contact Email** (`email`) - Primary contact method for supplier communication
+- **Contact Phone** (`contactphone`) - Essential for quick communication  
+- **Website** (`website`) - Useful for checking product catalogs or placing online orders
 
 ### Conditionally Visible Fields
 
-- **Full Address** - Important for shipping but might be collapsed/expandable to save screen space
-- **Payment Terms** - Relevant for purchasing decisions but not needed in all views
-- **Last Used Date** - Helpful for "recently used" sorting but not critical information
-- **Notes** - Valuable for context but might be in a detail view rather than list view
+- **Address** (`address`) - Important for shipping but might be collapsed/expandable to save screen space
+- **Notes** (`notes`) - Valuable for context but might be in a detail view rather than list view
+- **Archive Status** (`isarchived`) - Show through filtering rather than explicit field
 
 ### Hidden from Users
 
-- **Internal optimization flags** - Backend efficiency tools that don't affect user workflow
+- **Supplier ID** (`supplierid`) - Technical UUID primary key
+- **Created At** (`created_at`) - Technical timestamp
 
 ## 📦 Purchase Management
 
 ### Always Visible Fields
 
-- **Purchase Number** - Reference for tracking and communication ("PO-2025-001")
-- **Supplier Name** - Who the order is from
-- **Order Date** - When the purchase was placed
-- **Status** - "Draft", "Ordered", "Received" - critical for workflow management
-- **Total Amount** - Financial overview of the purchase
+- **Purchase Number** (`displayid`) - Reference for tracking and communication ("PO-2025-001")
+- **Supplier Name** (via `supplierid` relationship) - Who the order is from
+- **Purchase Date** (`purchasedate`) - When the purchase was placed
+- **Status** (`isdraft`) - Show as "Draft" or "Finalized" for workflow management
+- **Total Amount** (`total`) - Financial overview of the purchase
 
 ### Conditionally Visible Fields
 
-- **Expected vs Actual Delivery Date** - Important for planning but might clutter daily views
-- **Individual Line Items** - Essential in detail view, summarized in list view
-- **Unit Costs** - Important for cost analysis but might be manager-only information
-- **Notes** - Valuable but space-consuming
+- **Effective Date** (`effectivedate`) - When inventory impact occurs, might be different from purchase date
+- **Shipping Cost** (`shipping`) - Important for cost analysis but might be in detail view
+- **Tax Amount** (`taxes`) - Important for cost analysis but might be in detail view
+- **Other Costs** (`othercosts`) - Additional fees, important for managers
+- **Notes** (`notes`) - Valuable but space-consuming
 
 ### Hidden from Users
 
-- **Overhead allocation calculations** - Backend business logic
-- **Internal processing timestamps** - Users care about business dates, not system processing times
+- **Purchase ID** (`purchaseid`) - Technical UUID primary key
+- **Database timestamps** (`created_at`, `updated_at`) - Users care about business dates, not system processing times
+
+## 📦 Purchase Line Items
+
+### Always Visible Fields (in Purchase Detail View)
+
+- **Item Name** (via `itemid` relationship) - What was purchased
+- **Quantity** (`quantity`) - How much was ordered
+- **Unit Cost** (`unitcost`) - Cost per unit
+- **Total Cost** (`totalcost`) - Line item total
+
+### Conditionally Visible Fields
+
+- **Notes** (`notes`) - Item-specific purchase notes
+
+### Hidden from Users
+
+- **Line Item ID** (`lineitemid`) - Technical UUID primary key
+- **Purchase ID** (`purchaseid`) - Technical foreign key
 
 ## 🍽️ Recipe Management
 
 ### Always Visible Fields
 
-- **Recipe Name** - What users call the product ("Anti-Aging Night Cream", "Vanilla Lip Balm")
-- **Yield** - How many units the recipe makes ("12 2oz jars", "24 lip balm tubes")
-- **Prep & Mix Time** - Essential for production planning
-- **Ingredient List with Quantities** - Core recipe information
+- **Recipe Name** (`name`) - What users call the product ("Anti-Aging Night Cream")
+- **Display Version** (`displayversion`) - User-friendly version identifier
+- **Expected Yield** (`expectedyield`) - How many units the recipe makes
+- **Output Product** (via `outputproductid` relationship) - What product this recipe creates
 
 ### Conditionally Visible Fields
 
-- **Cost Information** - Might be manager-only or in a separate "costing" view
-- **Selling Price & Margins** - Business-sensitive information for authorized users only
-- **Detailed Instructions** - Essential for production but might be collapsible for space
-- **Category** - Useful for organization but not always needed ("Face Care", "Lip Care", "Body Care")
+- **Version Number** (`version`) - Technical version for tracking changes
+- **Labor Minutes** (`laborminutes`) - Production planning information
+- **Projected Material Cost** (`projectedmaterialcost`) - Cost estimation, might be manager-only
+- **Archive Status** (`isarchived`) - Handle through filtering
 
 ### Hidden from Users
 
-- **Cost allocation breakdowns** - Complex calculations better handled behind the scenes
+- **Recipe ID** (`recipeid`) - Technical UUID primary key
+- **Database timestamps** (`created_at`, `updated_at`) - Technical metadata
+
+## 🧪 Recipe Ingredients
+
+### Always Visible Fields (in Recipe Detail View)
+
+- **Ingredient Name** (via `itemid` relationship) - What ingredient is used
+- **Quantity** (`quantity`) - How much is needed
+- **Unit** (via item relationship) - Unit of measurement
+
+### Conditionally Visible Fields
+
+- **Notes** (`notes`) - Preparation instructions or substitution notes
+
+### Hidden from Users
+
+- **Ingredient ID** (`ingredientid`) - Technical UUID primary key
+- **Recipe ID** (`recipeid`) - Technical foreign key
+
+## 🏭 Batch Production
+
+### Always Visible Fields
+
+- **Batch Number** (`displayid`) - Reference for tracking ("BATCH-2025-001")
+- **Recipe** (via `recipeid` relationship) - What was produced
+- **Date Created** (`datecreated`) - When batch was made
+- **Quantity Made** (`qtymade`) - Actual output
+- **Material Cost** (`materialcost`) - Cost of ingredients used
+- **Actual Cost** (`actualcost`) - Total production cost
+
+### Conditionally Visible Fields
+
+- **Effective Date** (`effectivedate`) - When inventory impact occurs
+- **Yield Percentage** (`yieldpercentage`) - Efficiency metric
+- **Labor Cost** (`laborcost`) - Production labor costs
+- **Cost Variance** (`costvariance`) - Difference from projected cost
+- **Expiry Date** (`expirydate`) - Product shelf life
+- **Notes** (`notes`) - Production notes
+
+### Hidden from Users
+
+- **Batch ID** (`batchid`) - Technical UUID primary key
+- **Created At** (`created_at`) - Technical timestamp
 
 ## 💰 Sales Tracking
 
 ### Always Visible Fields
 
-- **Sale Date** - When the transaction occurred
-- **Items Sold** - What was purchased
-- **Quantities** - How much of each item
-- **Total Sale Amount** - Financial summary
+- **Display ID** (`displayid`) - Sale reference number
+- **Item** (via `itemid` relationship) - What was sold
+- **Sales Channel** (`channel`) - "qbo" or "bigcommerce"
+- **Period Start/End** (`periodstart`, `periodend`) - Sales period dates
+- **Quantity Sold** (`quantitysold`) - Amount sold
+- **Revenue** (`revenue`) - Sales amount
 
 ### Conditionally Visible Fields
 
-- **Customer Name** - Optional field, might not always be collected
-- **Payment Method** - Useful for reconciliation but not always needed in all views
-- **Individual Item Prices** - Detailed breakdown vs. summary view
-- **Source** - Whether from POS, manual entry, etc. - useful for tracking but not critical
+- **Data Source** (`datasource`) - "manual" or "imported" - useful for tracking but not critical
 
 ### Hidden from Users
 
-- **Cost of goods sold calculations** - Backend profitability analysis
-- **Import metadata** - Technical details about data processing
+- **Sales Period ID** (`salesperiodid`) - Technical UUID primary key
+- **Created At** (`created_at`) - Technical timestamp
 
-## 🔄 Inventory Adjustments
+## 🔄 Transaction Logs
 
-### Always Visible Fields
+### Always Visible Fields (in Audit Views)
 
-- **Item Name** - What was adjusted
-- **Old vs New Quantity** - What changed
-- **Reason for Adjustment** - "Cycle Count", "Waste", "Correction", "Spoilage"
-- **Adjustment Date** - When it happened
+- **Item** (via `itemid` relationship) - What was affected
+- **Transaction Type** (`transactiontype`) - "purchase", "sale", "adjustment", "batch_consumption", "batch_production"
+- **Quantity** (`quantity`) - Amount changed
+- **Effective Date** (`effectivedate`) - When it happened
 
 ### Conditionally Visible Fields
 
-- **Cost Impact** - Financial effect of the adjustment - might be manager-only
-- **Detailed Notes** - Important context but space-consuming
-- **Who Made the Change** - Useful for accountability but might be in audit logs rather than main interface
+- **Unit Cost** (`unitcost`) - Cost information when relevant
+- **Reference Type/ID** (`referencetype`, `referenceid`) - What caused this transaction
+- **Notes** (`notes`) - Additional context
 
 ### Hidden from Users
 
-- **System-generated transaction records** - Users see the result, not the database mechanics
+- **Transaction ID** (`transactionid`) - Technical UUID primary key
+- **Created At** (`created_at`) - Technical timestamp
 
-## 📊 Reporting & Alerts
+## 📊 Forecasting Data
 
-### Always Visible Fields
+### Conditionally Visible Fields (in Advanced Analytics)
 
-- **Alert Type** - "Low Stock", "Reorder Needed", "Expired Ingredients"
-- **Item Name** - What needs attention
-- **Current Quantity vs. Reorder Point** - The actual numbers driving the alert
-- **Suggested Action** - What to do about it
-
-### Conditionally Visible Fields
-
-- **Priority Level** - Useful for sorting but might be shown through visual cues (colors) rather than text
-- **Alert Date** - How long this has been an issue
-- **Supplier Suggestions** - Who to order from, based on purchase history
+- **Predicted Demand** (`predicteddemand`) - Forecasted usage
+- **Seasonal Index** (`seasonalindex`) - Seasonal adjustment factor
+- **Recommended Reorder Point** (`recommendedreorderpoint`) - System suggestion
 
 ### Hidden from Users
 
-- **Alert processing metadata** - When alerts were generated, acknowledged, etc.
+- **Forecasting ID** (`forecastingid`) - Technical UUID primary key
+- **Is Automatic** (`isautomatic`) - System flag
+- **Calculated At** (`calculatedat`) - Technical timestamp
 
 ## ⚙️ General UI Principles
 
 ### Always Hide
 
-- **Primary keys, foreign keys** - Technical database references (id, supplier_id, item_id, etc.)
+- **Primary keys, foreign keys** - All UUID fields (itemid, supplierid, purchaseid, etc.)
 - **Created/updated timestamps** - Replace with user-friendly "Last modified" dates when relevant
-- **JSON fields and complex data structures** - Present the information in user-friendly formats
-- **System configuration details** - Internal settings that don't affect daily operations
+- **Technical flags** - Internal system configuration fields
+- **Archive flags** - Handle through filtering rather than explicit display
 
 ### Progressive Disclosure Strategy
 
-- **Basic view** - Name, quantity, status, key actions
+- **Basic view** - Name, quantity/status, key actions
 - **Detailed view** - Full information when user clicks for more details
-- **Advanced/Manager view** - Financial data, cost breakdowns, system settings
+- **Advanced/Manager view** - Financial data, cost breakdowns, system analytics
 
 ### Mobile Considerations
 
@@ -195,8 +257,24 @@ This document outlines which database fields should be visible to users in the f
 
 ### Inventory View
 
-- Show quantities, locations, reorder points
+- Show quantities, tracking modes, reorder points
 - Hide recipe details unless managing ingredients
 - Emphasize stock levels and movement
 
-The key principle is **contextual relevance** - users should see exactly what they need for their current task, with the ability to drill down for more detail when needed.
+## 🔧 Current Database Limitations
+
+### Missing Fields (for future enhancement)
+
+- **Item Categories**: Currently only basic `type` enum, no detailed categorization
+- **Item Descriptions**: No description field for detailed item information
+- **Supplier Contact Person**: No separate contact person field
+- **Purchase Status Enum**: Currently only `isdraft` boolean, not full status workflow
+
+### Working Within Current Schema
+
+- Use `type` field for basic categorization (ingredient/packaging/product)
+- Use `notes` fields for additional context where needed
+- Handle status workflows through `isdraft` boolean interpretation
+- Leverage relationships for display names and additional context
+
+The key principle remains **contextual relevance** - users should see exactly what they need for their current task, with the ability to drill down for more detail when needed, while working within the current database structure.
