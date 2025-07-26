@@ -3,8 +3,8 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Loader2, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useInfiniteSuppliersData } from '@/hooks/use-infinite-suppliers';
+import { transformSupplier } from './utils';
 import { 
   useSupplierFilters, 
   useSupplierSelection, 
@@ -19,23 +19,6 @@ interface InfiniteSupplierListProps {
   onSupplierUpdateAction: (supplierId: string, data: any) => void;
 }
 
-// Transform database row to clean supplier interface
-const transformSupplier = (supplier: SupplierRow): CleanSupplier => {
-  const clean: CleanSupplier = {
-    id: supplier.supplierid,
-    name: supplier.name,
-    isArchived: supplier.isarchived || false,
-    createdAt: new Date(supplier.created_at || Date.now())
-  };
-  
-  if (supplier.website) clean.website = supplier.website;
-  if (supplier.contactphone) clean.phone = supplier.contactphone;
-  if (supplier.notes) clean.notes = supplier.notes;
-
-  
-  return clean;
-};
-
 export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplierListProps) => {
   const { filters, updateFilter } = useSupplierFilters();
   const { selection, toggleSelection } = useSupplierSelection();
@@ -43,9 +26,6 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
   
   // Expandable rows state
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  
-  // Edit form state
-  const [editForm, setEditForm] = useState<Partial<CleanSupplier>>({});
   
   const {
     suppliers,
@@ -80,25 +60,6 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
       newExpanded.add(supplierId);
     }
     setExpandedRows(newExpanded);
-  };
-
-  // Edit handlers
-  const handleEdit = (supplier: CleanSupplier) => {
-    setEditForm(supplier);
-    enterEditMode(supplier.id);
-  };
-
-  const handleSave = async () => {
-    if (editingId && editForm) {
-      await onSupplierUpdateAction(editingId, editForm);
-      enterViewMode();
-      setEditForm({});
-    }
-  };
-
-  const handleCancel = () => {
-    enterViewMode();
-    setEditForm({});
   };
 
   // Intersection Observer for auto-loading
@@ -200,77 +161,12 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
               {/* Main Row */}
               <div className="relative">
                 {editingId === supplier.id ? (
-                  /* Edit Mode */
-                  <div className="grid grid-cols-12 gap-4 p-4 bg-blue-50">
-                    <div className="col-span-1 flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={selection.selectedIds.has(supplier.id)}
-                        onChange={() => toggleSelection(supplier.id, index)}
-                        className="rounded"
-                      />
-                    </div>
-                    
-                    {/* Name Input */}
-                    <div className="col-span-3">
-                      <Input
-                        value={editForm.name || supplier.name}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full"
-                      />
-                    </div>
-                    
-                    {/* Phone Input */}
-                    <div className="col-span-2">
-                      <Input
-                        value={editForm.phone || supplier.phone || ''}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full"
-                        placeholder="Phone"
-                      />
-                    </div>
-                    
-                    {/* Website Input */}
-                    <div className="col-span-2">
-                      <Input
-                        value={editForm.website || supplier.website || ''}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, website: e.target.value }))}
-                        className="w-full"
-                        placeholder="Website"
-                      />
-                    </div>
-                    
-                    {/* Status */}
-                    <div className="col-span-2 flex items-center">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        supplier.isArchived 
-                          ? 'bg-gray-100 text-gray-700' 
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {supplier.isArchived ? 'Archived' : 'Active'}
-                      </span>
-                    </div>
-                    
-                    {/* Save/Cancel Actions */}
-                    <div className="col-span-2 flex gap-2">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={handleSave}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
+                  <EditableRow
+                    supplier={supplier}
+                    onSave={onSupplierUpdateAction}
+                    onCancel={enterViewMode}
+                  />
                 ) : (
-                  /* View Mode */
                   <div className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors">
                     {/* Expand/Collapse Button */}
                     <div className="col-span-1 flex items-center gap-2">
@@ -334,7 +230,7 @@ export const InfiniteSupplierList = ({ onSupplierUpdateAction }: InfiniteSupplie
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEdit(supplier)}
+                        onClick={() => enterEditMode(supplier.id)}
                       >
                         Edit
                       </Button>
