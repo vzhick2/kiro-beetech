@@ -99,40 +99,40 @@ export const ModernDataTable = () => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [duplicateWarning, setDuplicateWarning] = useState<any>(null);
 
-  // Calculate status counts
+  // Calculate status counts - optimized with reduce
   const statusCounts = useMemo(() => {
-    const counts = { total: 0, all: 0, active: 0, archived: 0 };
-    allData.forEach(supplier => {
+    return allData.reduce((counts, supplier) => {
       counts.total++;
       counts.all++;
-      if (supplier.status === 'active') {
-        counts.active++;
-      } else if (supplier.status === 'archived') {
-        counts.archived++;
-      }
-    });
-    return counts;
+      counts[supplier.status as 'active' | 'archived']++;
+      return counts;
+    }, { total: 0, all: 0, active: 0, archived: 0 });
   }, [allData]);
 
-  // Filter data based on status and search
+  // Filter data based on status and search - optimized
   const data = useMemo(() => {
-    let filtered = allData;
-    
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(supplier => supplier.status === statusFilter);
+    if (statusFilter === 'all' && !globalFilter) {
+      return allData; // Early return for no filtering
     }
     
-    if (globalFilter) {
-      const searchLower = globalFilter.toLowerCase();
-      filtered = filtered.filter(supplier => 
+    const searchLower = globalFilter ? globalFilter.toLowerCase() : '';
+    
+    return allData.filter(supplier => {
+      // Status filter check
+      if (statusFilter !== 'all' && supplier.status !== statusFilter) {
+        return false;
+      }
+      
+      // Search filter check - optimized with early return
+      if (!globalFilter) return true;
+      
+      return (
         supplier.name.toLowerCase().includes(searchLower) ||
         supplier.email?.toLowerCase().includes(searchLower) ||
         supplier.phone?.toLowerCase().includes(searchLower) ||
         supplier.website?.toLowerCase().includes(searchLower)
       );
-    }
-    
-    return filtered;
+    });
   }, [allData, statusFilter, globalFilter]);
 
   // Helper functions
@@ -394,11 +394,18 @@ export const ModernDataTable = () => {
     pageCount,
   });
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows;
-  const selectedIds = selectedRows.map(row => row.original.id);
-  const hasArchivedSelected = selectedRows.some(
-    row => row.original.status === 'archived'
-  );
+  // Memoize selection calculations for performance
+  const selectedRowsData = useMemo(() => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const selectedIds = selectedRows.map(row => row.original.id);
+    const hasArchivedSelected = selectedRows.some(
+      row => row.original.status === 'archived'
+    );
+    
+    return { selectedRows, selectedIds, hasArchivedSelected };
+  }, [table.getFilteredSelectedRowModel]);
+
+  const { selectedRows, selectedIds, hasArchivedSelected } = selectedRowsData;
 
   // Sync debounced search value with global filter
   useEffect(() => {
