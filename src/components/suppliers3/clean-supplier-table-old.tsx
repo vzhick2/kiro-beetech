@@ -10,12 +10,11 @@ import { AddSupplierModal } from './add-supplier-modal';
 import { 
   useSupplierFilters, 
   useSupplierSelection
-} from './hooks';
-
+} from './hooks';// Transform Supabase supplier to clean format
 export const CleanSupplierTable = () => {
   // State management with custom hooks
   const { filters, updateFilter, clearFilters } = useSupplierFilters();
-  const { selection, clearSelection } = useSupplierSelection();
+  const { selection, toggleSelection, clearSelection } = useSupplierSelection();
   
   // Add supplier modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -26,19 +25,29 @@ export const CleanSupplierTable = () => {
   const bulkArchiveMutation = useBulkArchiveSuppliers();
   const bulkUnarchiveMutation = useBulkUnarchiveSuppliers();
 
-  // Update supplier handler
-  const handleUpdateSupplier = async (supplierId: string, data: any) => {
+  // Selection helpers
+  const selectedIds = Array.from(selection.selectedIds);
+  const selectedSuppliers = suppliers.filter(s => selection.selectedIds.has(s.id));
+  const hasArchivedSelected = selectedSuppliers.some(s => s.isArchived);
+
+  // Handlers
+  const handleUpdateSupplier = async (id: string, updates: Partial<CleanSupplier>) => {
     try {
-      await updateMutation.mutateAsync({ id: supplierId, ...data });
+      // Transform back to Supabase format
+      const supplierUpdates: Record<string, unknown> = {};
+      if (updates.name !== undefined) supplierUpdates.name = updates.name;
+      if (updates.website !== undefined) supplierUpdates.website = updates.website;
+      if (updates.phone !== undefined) supplierUpdates.contactphone = updates.phone;
+      if (updates.email !== undefined) supplierUpdates.email = updates.email;
+      if (updates.isArchived !== undefined) supplierUpdates.isarchived = updates.isArchived;
+
+      await updateMutation.mutateAsync({ supplierId: id, updates: supplierUpdates });
+      enterViewMode();
     } catch (error) {
       console.error('Failed to update supplier:', error);
     }
   };
 
-  // Selection helpers
-  const selectedIds = Array.from(selection.selectedIds);
-
-  // Bulk operation handlers
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
     try {
@@ -70,9 +79,37 @@ export const CleanSupplierTable = () => {
   };
 
   const handleBulkExport = async () => {
-    // Simple CSV export - would need selected suppliers data
-    console.log('Bulk export not implemented for infinite scroll yet');
+    // Simple CSV export
+    const csvContent = selectedSuppliers.map(s => 
+      `"${s.name}","${s.website || ''}","${s.phone || ''}","${s.email || ''}","${s.isArchived ? 'Archived' : 'Active'}"`
+    ).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'suppliers.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
+
+  const handleSelectAll = () => {
+    if (selection.selectedIds.size === filteredSuppliers.length) {
+      clearSelection();
+    } else {
+      selectAll(filteredSuppliers.map(s => s.id));
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg border border-red-200 p-6">
+        <div className="text-red-600">
+          Error loading suppliers: {error.message || String(error)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
