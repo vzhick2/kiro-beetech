@@ -12,19 +12,21 @@ const nextConfig: NextConfig = {
       'ag-grid-react',
       '@radix-ui/react-icons',
     ],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
     serverActions: {
       allowedOrigins: [
         'http://localhost:3000',
         'https://your-production-domain.com',
       ],
+    },
+  },
+
+  // Turbopack configuration (moved from experimental.turbo)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
     },
   },
 

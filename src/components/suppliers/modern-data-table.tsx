@@ -45,9 +45,9 @@ import { useMobileDetection } from '@/hooks/use-mobile-detection';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
 import { AddSupplierRow } from './add-supplier-row';
 import { EditableSupplierRow } from './editable-supplier-row';
-import { ExpandableRowDetails } from './expandable-row-details';
 import { PaginationControls } from './pagination-controls';
-import { StatusFilters } from './status-filters';
+import { ViewOptionsPanel, type ColumnVisibility } from './view-options-panel';
+import { SmartCell } from './smart-cell';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { StatusBadge } from './status-badge';
 import { useSpreadsheetMode } from '@/hooks/use-spreadsheet-mode';
@@ -91,39 +91,43 @@ export const ModernDataTable = () => {
     }));
   }, [rawSuppliers]);
 
-  // Local state for table functionality
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'archived'>('all');
+  // Local state for table functionality - updated for hybrid approach
+  const [includeInactive, setIncludeInactive] = useState(false);
+  const [densityMode, setDensityMode] = useState<'compact' | 'normal' | 'comfortable'>('normal');
+  
+  // Column visibility state with smart defaults
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
+    name: true,        // Always visible (required)
+    website: true,     // Default visible
+    phone: true,       // Default visible  
+    email: false,      // Hidden by default for space
+    address: false,    // Hidden by default for space
+    notes: false,      // Hidden by default for space
+    status: true,      // Default visible
+    createdAt: false,  // Hidden by default
+  });
+
   const [editingRow, setEditingRow] = useState<any>(null);
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  // Removed: expandedRows state (no longer needed)
   const [duplicateWarning, setDuplicateWarning] = useState<{
     show: boolean;
     matches: { type: 'name' | 'website' | 'phone' }[];
     onProceed: () => void;
   } | null>(null);
 
-  // Calculate status counts - optimized with reduce
-  const statusCounts = useMemo(() => {
-    return allData.reduce((counts, supplier) => {
-      counts.total++;
-      counts.all++;
-      counts[supplier.status as 'active' | 'archived']++;
-      return counts;
-    }, { total: 0, all: 0, active: 0, archived: 0 });
-  }, [allData]);
-
-  // Filter data based on status and search - optimized with debounced search
+  // Filter data based on include inactive and search - optimized with debounced search
   const data = useMemo(() => {
-    if (statusFilter === 'all' && !debouncedSearchValue) {
+    if (includeInactive && !debouncedSearchValue) {
       return allData; // Early return for no filtering
     }
     
     const searchLower = debouncedSearchValue ? debouncedSearchValue.toLowerCase() : '';
     
     return allData.filter(supplier => {
-      // Status filter check
-      if (statusFilter !== 'all' && supplier.status !== statusFilter) {
+      // Status filter check - show only active unless includeInactive is true
+      if (!includeInactive && supplier.status === 'archived') {
         return false;
       }
       
@@ -139,20 +143,20 @@ export const ModernDataTable = () => {
         supplier.notes?.toLowerCase().includes(searchLower)
       );
     });
-  }, [allData, statusFilter, debouncedSearchValue]);
+  }, [allData, includeInactive, debouncedSearchValue]);
 
-  // Helper functions
-  const toggleRowExpansion = (rowId: string) => {
-    setExpandedRows(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(rowId)) {
-        newSet.delete(rowId);
-      } else {
-        newSet.add(rowId);
-      }
-      return newSet;
-    });
-  };
+  // Helper functions for column visibility
+  const handleColumnVisibilityChange = useCallback((column: keyof ColumnVisibility, visible: boolean) => {
+    setColumnVisibility(prev => ({ ...prev, [column]: visible }));
+  }, []);
+
+  const handleIncludeInactiveChange = useCallback((include: boolean) => {
+    setIncludeInactive(include);
+  }, []);
+
+  const handleDensityModeChange = useCallback((mode: 'compact' | 'normal' | 'comfortable') => {
+    setDensityMode(mode);
+  }, []);
 
   const updateSupplier = async (id: string, data: Partial<Supplier>) => {
      setSavingRows(prev => new Set(prev).add(id));
@@ -297,23 +301,23 @@ export const ModernDataTable = () => {
     return supplier;
   };
 
-  // Collapse all rows when entering spreadsheet mode
-  useEffect(() => {
-    if (isSpreadsheetMode) {
-      const allRowIds = data.map(row => row.id);
-      allRowIds.forEach(id => {
-        if (expandedRows.has(id)) {
-          toggleRowExpansion(id);
-        }
-      });
-    }
-  }, [isSpreadsheetMode]);
+  // Collapse all rows when entering spreadsheet mode - REMOVED (no expanding rows)
+  // useEffect(() => {
+  //   if (isSpreadsheetMode) {
+  //     const allRowIds = data.map(row => row.id);
+  //     allRowIds.forEach(id => {
+  //       if (expandedRows.has(id)) {
+  //         toggleRowExpansion(id);
+  //       }
+  //     });
+  //   }
+  // }, [isSpreadsheetMode]);
 
   // Clear selection when filter or search changes
   useEffect(() => {
     setRowSelection({});
     resetSelection();
-  }, [statusFilter, debouncedSearchValue, resetSelection]);
+  }, [includeInactive, debouncedSearchValue, resetSelection]);
 
   const columns = useMemo(
     () => [
@@ -339,43 +343,117 @@ export const ModernDataTable = () => {
         enableHiding: false,
         size: columnWidths.actions,
       }),
+      
+      // Supplier Name - Always visible (required)
       columnHelper.accessor('name', {
         header: 'Supplier Name',
-        cell: () => null,
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="text" 
+            densityMode={densityMode}
+            className="font-medium"
+          />
+        ) : null,
         size: columnWidths.name,
+        enableHiding: false, // Always visible
       }),
+      
+      // Website - Default visible
       columnHelper.accessor('website', {
         header: 'Website',
-        cell: ({ getValue }) => {
-          const website = getValue();
-          return website ? (
-            <a
-              href={website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-blue-600 hover:underline flex items-center gap-1 text-sm transition-colors"
-            >
-              {website.replace(/^https?:\/\//, '')}
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          ) : (
-            <span className="text-gray-400 italic text-sm">No website</span>
-          );
-        },
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="website" 
+            densityMode={densityMode}
+          />
+        ) : null,
         size: columnWidths.website,
+        enableHiding: true,
       }),
+      
+      // Phone - Default visible
       columnHelper.accessor('phone', {
         header: 'Phone',
-        cell: () => null,
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="phone" 
+            densityMode={densityMode}
+          />
+        ) : null,
         size: columnWidths.phone,
+        enableHiding: true,
       }),
+      
+      // Email - Hidden by default
+      columnHelper.accessor('email', {
+        header: 'Email',
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="email" 
+            densityMode={densityMode}
+          />
+        ) : null,
+        size: 200,
+        enableHiding: true,
+      }),
+      
+      // Address - Hidden by default  
+      columnHelper.accessor('address', {
+        header: 'Address',
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="multiline" 
+            densityMode={densityMode}
+            maxLength={densityMode === 'compact' ? 40 : densityMode === 'normal' ? 80 : 120}
+          />
+        ) : null,
+        size: 250,
+        enableHiding: true,
+      }),
+      
+      // Notes - Hidden by default
+      columnHelper.accessor('notes', {
+        header: 'Notes',
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()} 
+            type="multiline" 
+            densityMode={densityMode}
+            maxLength={densityMode === 'compact' ? 50 : densityMode === 'normal' ? 100 : 150}
+          />
+        ) : null,
+        size: 300,
+        enableHiding: true,
+      }),
+      
+      // Status - Default visible
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ getValue }) => <StatusBadge status={getValue()} />,
         size: columnWidths.status,
+        enableHiding: true,
       }),
-    ],
-    [resetSelection, isSpreadsheetMode]
+      
+      // Created Date - Hidden by default
+      columnHelper.accessor('createdAt', {
+        header: 'Created',
+        cell: ({ getValue }) => !isSpreadsheetMode ? (
+          <SmartCell 
+            value={getValue()?.toLocaleDateString()} 
+            type="text" 
+            densityMode={densityMode}
+            className="text-gray-600 text-xs"
+          />
+        ) : null,
+        size: 120,
+        enableHiding: true,
+      }),
+    ], [resetSelection, isSpreadsheetMode, densityMode, columnWidths]
   );
 
   const table = useReactTable({
@@ -385,13 +463,19 @@ export const ModernDataTable = () => {
       sorting,
       rowSelection,
       pagination,
+      columnVisibility: columnVisibility as unknown as Record<string, boolean>,
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+  onColumnVisibilityChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newState = updater(columnVisibility as unknown as Record<string, boolean>);
+        setColumnVisibility(newState as unknown as ColumnVisibility);
+      } else {
+        setColumnVisibility(updater as unknown as ColumnVisibility);
+      }
+    },
+  getCoreRowModel: getCoreRowModel(),
+  getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: false,
@@ -431,12 +515,7 @@ export const ModernDataTable = () => {
   };
 
   const handleCollapseAll = () => {
-    const allRowIds = data.map(row => row.id);
-    allRowIds.forEach(id => {
-      if (expandedRows.has(id)) {
-        toggleRowExpansion(id);
-      }
-    });
+    // No longer needed - no expanding rows to collapse
   };
 
   // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
@@ -465,7 +544,7 @@ export const ModernDataTable = () => {
     totalRows: table.getRowModel().rows.length,
     isSpreadsheetMode,
     onExitSpreadsheetMode: exitSpreadsheetMode,
-    expandedRows,
+    expandedRows: new Set<string>(), // Empty set - no expanding rows in hybrid approach
     getRowId: useCallback((index: number) => table.getRowModel().rows[index]?.original.id || '', [table]),
   });
 
@@ -511,9 +590,7 @@ export const ModernDataTable = () => {
   };
 
   const handleEditRow = (rowId: string, data: Partial<Supplier>) => {
-    if (!expandedRows.has(rowId)) {
-      toggleRowExpansion(rowId);
-    }
+    // No longer need to expand rows - editing happens inline with smart cells
     setEditingRow({ rowId, data });
   };
 
@@ -625,12 +702,15 @@ export const ModernDataTable = () => {
               )}
             </div>
 
-            {/* Status Filters */}
+            {/* View Options Panel */}
             <div className="flex-shrink-0">
-              <StatusFilters
-                activeFilter={statusFilter}
-                onFilterChange={setStatusFilter}
-                counts={statusCounts}
+              <ViewOptionsPanel
+                columnVisibility={columnVisibility}
+                onColumnVisibilityChange={handleColumnVisibilityChange}
+                includeInactive={includeInactive}
+                onIncludeInactiveChange={handleIncludeInactiveChange}
+                densityMode={densityMode}
+                onDensityModeChange={handleDensityModeChange}
               />
             </div>
           </div>
@@ -646,11 +726,61 @@ export const ModernDataTable = () => {
             }}
           >
             <colgroup>
-              <col style={{ width: `${columnWidths.actions}px`, minWidth: `${columnWidths.actions}px` }} />
-              <col style={{ width: `${columnWidths.name}px`, minWidth: '150px' }} />
-              <col style={{ width: `${columnWidths.website}px`, minWidth: '180px' }} />
-              <col style={{ width: `${columnWidths.phone}px`, minWidth: '120px' }} />
-              <col style={{ width: `${columnWidths.status}px`, minWidth: '80px' }} />
+              {/* Dynamic columns based on visibility */}
+              {table.getAllColumns().map((column) => {
+                const colId = column.id;
+                let width: number;
+                let minWidth: string;
+                
+                switch (colId) {
+                  case 'actions':
+                    width = columnWidths.actions;
+                    minWidth = `${columnWidths.actions}px`;
+                    break;
+                  case 'name':
+                    width = columnWidths.name;
+                    minWidth = '150px';
+                    break;
+                  case 'website':
+                    width = columnWidths.website;
+                    minWidth = '180px';
+                    break;
+                  case 'phone':
+                    width = columnWidths.phone;
+                    minWidth = '120px';
+                    break;
+                  case 'email':
+                    width = 200;
+                    minWidth = '160px';
+                    break;
+                  case 'address':
+                    width = 250;
+                    minWidth = '200px';
+                    break;
+                  case 'notes':
+                    width = 300;
+                    minWidth = '250px';
+                    break;
+                  case 'status':
+                    width = columnWidths.status;
+                    minWidth = '80px';
+                    break;
+                  case 'createdAt':
+                    width = 120;
+                    minWidth = '100px';
+                    break;
+                  default:
+                    width = 150;
+                    minWidth = '120px';
+                }
+                
+                return (
+                  <col 
+                    key={colId}
+                    style={{ width: `${width}px`, minWidth }} 
+                  />
+                );
+              })}
             </colgroup>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
@@ -747,8 +877,8 @@ export const ModernDataTable = () => {
                       onEdit={handleEditRow}
                       onSave={handleSaveRow}
                       onCancel={handleCancelEdit}
-                      onToggleExpand={() => toggleRowExpansion(row.original.id)}
-                      isExpanded={expandedRows.has(row.original.id)}
+                      onToggleExpand={() => {}} // Placeholder - no longer needed
+                      isExpanded={false} // Placeholder - no longer needed
                       isSpreadsheetMode={isSpreadsheetMode}
                       hasRowChanges={hasRowChanges(row.original.id)}
                       onSpreadsheetChange={updateRowData}
@@ -760,17 +890,7 @@ export const ModernDataTable = () => {
                       rowIndex={index}
                       columnWidths={columnWidths}
                     />
-                    {expandedRows.has(row.original.id) &&
-                      !isSpreadsheetMode && (
-                        <ExpandableRowDetails
-                          supplier={displayToSupplier(getRowData(row.original.id, row.original))}
-                          isExpanded={true}
-                          onToggle={() => toggleRowExpansion(row.original.id)}
-                          onUpdate={(field, value) => updateSupplier(row.original.id, { [field]: value })}
-                          isEditing={editingRow?.rowId === row.original.id}
-                          columnWidths={columnWidths}
-                        />
-                      )}
+                    {/* Removed: ExpandableRowDetails - no longer needed */}
                   </React.Fragment>
                 ))
               ) : (
@@ -782,7 +902,7 @@ export const ModernDataTable = () => {
                     <div className="flex flex-col items-center gap-2 text-gray-500">
                       <AlertCircle className="h-6 w-6" />
                       <p className="text-xs">No suppliers found</p>
-                      {(searchValue || statusFilter !== 'all') && (
+                      {(searchValue || !includeInactive) && (
                         <div className="flex gap-2">
                           {searchValue && (
                             <Button
@@ -793,13 +913,13 @@ export const ModernDataTable = () => {
                               <span className="text-xs">Clear search</span>
                             </Button>
                           )}
-                          {statusFilter !== 'all' && (
+                          {!includeInactive && (
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setStatusFilter('all')}
+                              onClick={() => setIncludeInactive(true)}
                             >
-                              <span className="text-xs">Show all statuses</span>
+                              <span className="text-xs">Show all suppliers</span>
                             </Button>
                           )}
                         </div>
@@ -884,13 +1004,21 @@ export const ModernDataTable = () => {
 
       <style jsx>{`
         .responsive-table {
-          /* Fixed row height for consistent alignment - accommodates 2 lines */
-          --row-height: 56px;
+          /* Dynamic row height based on density mode */
+          --row-height: ${
+            densityMode === 'compact' ? '44px' : 
+            densityMode === 'normal' ? '56px' : 
+            '72px' // comfortable
+          };
         }
 
         @media (max-width: 768px) {
           .responsive-table {
-            --row-height: 60px;
+            --row-height: ${
+              densityMode === 'compact' ? '48px' : 
+              densityMode === 'normal' ? '60px' : 
+              '76px' // comfortable  
+            };
           }
         }
 
@@ -914,14 +1042,22 @@ export const ModernDataTable = () => {
           vertical-align: middle;
         }
 
-        /* Multi-line text support - limit to 2 lines for better readability */
+        /* Multi-line text support - dynamic based on density */
         .responsive-table :global(.cell-content) {
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: ${
+            densityMode === 'compact' ? 1 : 
+            densityMode === 'normal' ? 2 : 
+            3 // comfortable
+          };
           -webkit-box-orient: vertical;
           overflow: hidden;
-          line-height: 1.4;
-          max-height: 2.8em;
+          line-height: ${densityMode === 'compact' ? '1.3' : '1.4'};
+          max-height: ${
+            densityMode === 'compact' ? '1.3em' : 
+            densityMode === 'normal' ? '2.8em' : 
+            '4.2em' // comfortable
+          };
           word-break: break-word;
           text-overflow: ellipsis;
         }
