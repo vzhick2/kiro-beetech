@@ -134,7 +134,9 @@ export const ModernDataTable = () => {
         supplier.name.toLowerCase().includes(searchLower) ||
         supplier.email?.toLowerCase().includes(searchLower) ||
         supplier.phone?.toLowerCase().includes(searchLower) ||
-        supplier.website?.toLowerCase().includes(searchLower)
+        supplier.website?.toLowerCase().includes(searchLower) ||
+        supplier.address?.toLowerCase().includes(searchLower) ||
+        supplier.notes?.toLowerCase().includes(searchLower)
       );
     });
   }, [allData, statusFilter, debouncedSearchValue]);
@@ -764,7 +766,7 @@ export const ModernDataTable = () => {
                           supplier={displayToSupplier(getRowData(row.original.id, row.original))}
                           isExpanded={true}
                           onToggle={() => toggleRowExpansion(row.original.id)}
-                          onUpdate={updateSupplier}
+                          onUpdate={(field, value) => updateSupplier(row.original.id, { [field]: value })}
                           isEditing={editingRow?.rowId === row.original.id}
                           columnWidths={columnWidths}
                         />
