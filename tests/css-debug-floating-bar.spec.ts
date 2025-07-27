@@ -54,11 +54,11 @@ test('CSS DEBUG: Why floating bar is invisible', async ({ page }) => {
         },
         
         // Parent info
-        offsetParent: floatingBar.offsetParent?.tagName || 'null',
-        parentOverflow: floatingBar.parentElement ? window.getComputedStyle(floatingBar.parentElement).overflow : 'unknown',
+  offsetParent: (floatingBar as HTMLElement).offsetParent?.tagName || 'null',
+  parentOverflow: floatingBar.parentElement ? window.getComputedStyle(floatingBar.parentElement).overflow : 'unknown',
         
-        // Check if it's actually visible
-        isVisible: floatingBar.offsetWidth > 0 && floatingBar.offsetHeight > 0,
+  // Check if it's actually visible
+  isVisible: (floatingBar as HTMLElement).offsetWidth > 0 && (floatingBar as HTMLElement).offsetHeight > 0,
         
         // Get all classes
         className: floatingBar.className,

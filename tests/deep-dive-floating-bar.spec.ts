@@ -129,12 +129,12 @@ test('DEEP DIVE: Floating action bar investigation', async ({ page }) => {
       // Try to find the floating bar in the DOM even if not visible
       const floatingBarInDOM = await page.evaluate(() => {
         const elements = document.querySelectorAll('[class*="fixed"]');
-        const results = [];
+        const results: any[] = [];
         elements.forEach((el, index) => {
           results.push({
             index,
             classes: el.className,
-            visible: el.offsetParent !== null,
+            visible: (el as HTMLElement).offsetParent !== null,
             text: el.textContent?.substring(0, 100),
             styles: window.getComputedStyle(el).cssText.substring(0, 200)
           });
