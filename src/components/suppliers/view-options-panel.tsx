@@ -157,4 +157,7 @@ export const ViewOptionsPanel = React.memo(({
       </DropdownMenuContent>
     </DropdownMenu>
   );
+
 });
+
+ViewOptionsPanel.displayName = 'ViewOptionsPanel';
