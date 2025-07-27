@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Mail, MapPin, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, MapPin, FileText, Check, Clock, Save } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import type { Supplier } from '@/types/data-table';
 
 interface ExpandableRowDetailsProps {
@@ -36,16 +37,33 @@ export const ExpandableRowDetails = ({
     notes: false,
   });
 
+  const [saveStates, setSaveStates] = useState({
+    email: 'idle' as 'idle' | 'saving' | 'saved',
+    address: 'idle' as 'idle' | 'saving' | 'saved',
+    notes: 'idle' as 'idle' | 'saving' | 'saved',
+  });
+
   const handleChange = (field: keyof typeof localData, value: string) => {
     setLocalData(prev => ({ ...prev, [field]: value }));
     setHasChanges(prev => ({ ...prev, [field]: true }));
   };
 
   const handleSave = (field: keyof typeof localData) => {
-    if (hasChanges[field]) {
-      onUpdate(field as keyof Supplier, localData[field]);
-      setHasChanges(prev => ({ ...prev, [field]: false }));
-    }
+    if (!hasChanges[field]) return;
+
+    setSaveStates(prev => ({ ...prev, [field]: 'saving' }));
+    
+    onUpdate(field as keyof Supplier, localData[field]);
+    
+    setHasChanges(prev => ({ ...prev, [field]: false }));
+    
+    // Show saved state briefly
+    setTimeout(() => {
+      setSaveStates(prev => ({ ...prev, [field]: 'saved' }));
+      setTimeout(() => {
+        setSaveStates(prev => ({ ...prev, [field]: 'idle' }));
+      }, 2000);
+    }, 300);
   };
 
   // Update local data when supplier prop changes
@@ -68,6 +86,16 @@ export const ExpandableRowDetails = ({
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
               <Mail className="h-4 w-4" />
               Email Address
+              {hasChanges.email && isEditing && (
+                <div className="flex items-center gap-1 ml-auto">
+                  {saveStates.email === 'saving' && (
+                    <Clock className="h-3 w-3 animate-spin text-gray-500" />
+                  )}
+                  {saveStates.email === 'saved' && (
+                    <Check className="h-3 w-3 text-green-500" />
+                  )}
+                </div>
+              )}
             </div>
             {isEditing ? (
               <div onClick={e => e.stopPropagation()}>
@@ -99,6 +127,16 @@ export const ExpandableRowDetails = ({
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
               <MapPin className="h-4 w-4" />
               Address
+              {hasChanges.address && isEditing && (
+                <div className="flex items-center gap-1 ml-auto">
+                  {saveStates.address === 'saving' && (
+                    <Clock className="h-3 w-3 animate-spin text-gray-500" />
+                  )}
+                  {saveStates.address === 'saved' && (
+                    <Check className="h-3 w-3 text-green-500" />
+                  )}
+                </div>
+              )}
             </div>
             {isEditing ? (
               <div onClick={e => e.stopPropagation()}>
@@ -122,6 +160,33 @@ export const ExpandableRowDetails = ({
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
               <FileText className="h-4 w-4" />
               Notes
+              {hasChanges.notes && (
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button
+                    size="sm"
+                    onClick={() => handleSave('notes')}
+                    disabled={saveStates.notes === 'saving'}
+                    className="h-6 px-2 text-xs bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    {saveStates.notes === 'saving' ? (
+                      <>
+                        <Clock className="h-3 w-3 mr-1 animate-spin" />
+                        Saving...
+                      </>
+                    ) : saveStates.notes === 'saved' ? (
+                      <>
+                        <Check className="h-3 w-3 mr-1" />
+                        Saved
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-3 w-3 mr-1" />
+                        Save
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
             <div onClick={e => e.stopPropagation()}>
               <Textarea
@@ -131,6 +196,11 @@ export const ExpandableRowDetails = ({
                 placeholder="Click to add notes about this supplier..."
                 className="min-h-[80px] resize-none"
               />
+              {hasChanges.notes && (
+                <div className="text-xs text-gray-500 mt-1">
+                  💡 Changes will auto-save when you click away, or click the Save button above
+                </div>
+              )}
             </div>
           </div>
         </div>

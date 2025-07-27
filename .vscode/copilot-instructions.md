@@ -4,7 +4,6 @@
 
 ### 🏭 **Project Identity**
 
-**KIRO Inventory Management** - Internal workshop tool prioritizing operational flexibility over rigid constraints.
 **Tech Stack**: Next.js 15 + React 19 + TypeScript + Tailwind + Supabase
 
 ### 🎯 **Workshop Reality**
@@ -14,20 +13,13 @@
 - Mobile-first workshop/field operations
 - Forgiving validation patterns for efficiency
 
-### 📱 **User Experience Priorities**
-
-- Touch-friendly interfaces (44px+ targets)
-- Progressive enhancement (works without JavaScript)
-- Contextual help for workshop operations
-- Batch operations for productivity
-
 ## AI Behavioral Framework
 
 ### 🤖 **Autonomy Rules**
 
-- **✅ Act Independently**: Bug fixes, performance optimization, UI polish, code quality, documentation updates, TypeScript fixes
+- **✅ Act Independently**: Bug fixes, code quality, documentation updates, TypeScript fixes
 - **🔐 Ask Permission**: New features, schema changes, business logic modifications, dependency updates, architectural decisions
-- **No Need for Code in Chat**: No need to give me code here in chat, because I do not understand it. Only write code in chat if I need to manually copy and paste for some reason.
+- **No Need for Code in Chat**: No need to give me code here in chat. Only write code in chat if you need user to manually copy and paste for some reason.
 
 ### 🎯 **Auto-Detection Modes**
 
@@ -98,7 +90,6 @@ Before making changes, always:
 - **Codebase Search**: Find existing patterns before creating new
 - **Pull Requests**: Feature branches with clear descriptions
 - **Context7 MCP**: Current library documentation and API patterns
-- **GitHub MCP Sync**: After GitHub MCP operations, ask user if they want local pull instead of auto-pulling
 
 ### 🎭 **Testing Framework (Playwright MCP)**
 
