@@ -13,8 +13,8 @@ import {
   type PaginationState,
 } from '@tanstack/react-table';
 import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
+
 import { 
-  Settings, 
   ChevronUp, 
   ChevronDown, 
   ChevronLeft, 
@@ -29,10 +29,12 @@ import {
   Trash2
 } from 'lucide-react';
 
+import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
+
 
 interface TestSuppliersTableProps {
   showInactive: boolean;
-  onToggleInactive: (show: boolean) => void;
+  onToggleInactiveAction: (show: boolean) => void;
 }
 
 // Column visibility configuration
@@ -47,7 +49,7 @@ interface ColumnVisibility {
   created_at: boolean;
 }
 
-export function TestSuppliersTable({ showInactive, onToggleInactive }: TestSuppliersTableProps) {
+export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['testsuppliers', { showInactive }],
@@ -70,7 +72,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactive }: TestSuppl
     isarchived: true,
     created_at: false,
   });
-  const [showViewOptions, setShowViewOptions] = useState(false);
+  // Remove custom view options dropdown state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
 
@@ -465,9 +467,9 @@ export function TestSuppliersTable({ showInactive, onToggleInactive }: TestSuppl
 
   return (
     <div className="space-y-4">
-      {/* Top bar with pagination info and view options */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+      {/* Top bar with pagination info, search, and view options */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
           <span>
             Showing {startItem} to {endItem} of {totalItems} suppliers
           </span>
@@ -484,151 +486,59 @@ export function TestSuppliersTable({ showInactive, onToggleInactive }: TestSuppl
               <option value={100}>100</option>
             </select>
           </div>
+          {/* Search bar */}
+          <div className="relative w-64">
+            <input
+              type="text"
+              placeholder="Search suppliers..."
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded w-full text-sm"
+              // TODO: wire up search state if needed
+              disabled
+            />
+            {/* Optionally add a search icon here */}
+          </div>
         </div>
-        
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span>Page {pagination.pageIndex + 1} of {totalPages}</span>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronsLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronsRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-          
-          <div className="relative">
+          <span>Page {pagination.pageIndex + 1} of {totalPages}</span>
+          <div className="flex items-center gap-1">
             <button
-              onClick={() => setShowViewOptions(!showViewOptions)}
-              className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Settings className="h-4 w-4" />
-              View Options
-              <ChevronDown className="h-4 w-4" />
+              <ChevronsLeft className="h-4 w-4" />
             </button>
-            
-            {showViewOptions && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-6">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Columns</h3>
-                    <div className="space-y-3">
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.name}
-                          onChange={() => toggleColumnVisibility('name')}
-                          className="rounded border-gray-300"
-                          disabled
-                        />
-                        <span className="text-gray-600">Supplier Name (required)</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.website}
-                          onChange={() => toggleColumnVisibility('website')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Website</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.contactphone}
-                          onChange={() => toggleColumnVisibility('contactphone')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Phone</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.contactemail}
-                          onChange={() => toggleColumnVisibility('contactemail')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Email</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.address}
-                          onChange={() => toggleColumnVisibility('address')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Address</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.notes}
-                          onChange={() => toggleColumnVisibility('notes')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Notes</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.isarchived}
-                          onChange={() => toggleColumnVisibility('isarchived')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Status</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={columnVisibility.created_at}
-                          onChange={() => toggleColumnVisibility('created_at')}
-                          className="rounded border-gray-300"
-                        />
-                        <span className="text-gray-900">Created Date</span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Display Options</h3>
-                    <label className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={showInactive}
-                        onChange={(e) => onToggleInactive(e.target.checked)}
-                        className="rounded border-gray-300"
-                      />
-                      <span className="text-gray-900">Include inactive suppliers</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </button>
           </div>
+          {/* View Options Panel - matches main suppliers page */}
+          <ViewOptionsPanel
+            columnVisibility={columnVisibility as any}
+            onColumnVisibilityChange={(col, visible) => setColumnVisibility(prev => ({ ...prev, [col]: visible }))}
+            includeInactive={showInactive}
+            onIncludeInactiveChange={onToggleInactiveAction}
+            densityMode={"normal"}
+            onDensityModeChange={() => {}}
+          />
         </div>
       </div>
 

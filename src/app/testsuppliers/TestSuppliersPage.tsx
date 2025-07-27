@@ -14,7 +14,7 @@ export default function TestSuppliersPage() {
       </div>
       <TestSuppliersTable 
         showInactive={showInactive} 
-        onToggleInactive={setShowInactive}
+  onToggleInactiveAction={setShowInactive}
       />
     </main>
   );
