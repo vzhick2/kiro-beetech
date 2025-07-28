@@ -654,6 +654,120 @@ If deployment issues occur:
 - Check Node.js version compatibility
 - Verify environment variables in `.env.local`
 
+### 🎯 Critical UI Issue Fixes
+
+#### Radix UI Dropdown Positioning Issues
+
+**⚠️ MAJOR ISSUE RESOLVED (July 27, 2025)** - *Documented after 7-hour debugging session*
+
+**Problem**: Radix UI DropdownMenu components may position incorrectly in complex layouts with fixed headers and sidebars, appearing as overlays on the wrong side of the screen instead of positioned relative to their trigger button.
+
+**Root Cause**: Radix UI's portal-based positioning system conflicts with CSS layouts using:
+- Fixed positioning for headers/sidebars
+- Complex z-index stacking
+- Nested relative/absolute positioning containers
+- CSS transforms that create new stacking contexts
+
+**Symptoms**:
+- Dropdown appears as overlay on left side of screen
+- Dropdown ignores trigger button position
+- Portal attempts (`Portal.Root`) don't resolve the issue
+- Position adjustments via CSS don't work consistently
+
+**Solution**: Replace Radix UI DropdownMenu with custom implementation
+
+```typescript
+// ❌ PROBLEMATIC: Radix UI DropdownMenu
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
+
+// ✅ SOLUTION: Custom dropdown with absolute positioning
+import { useState, useRef, useEffect } from 'react'
+
+export function CustomDropdown({ trigger, children }: CustomDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Click-outside detection
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      {/* Trigger Button */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="..."
+      >
+        {trigger}
+      </button>
+
+      {/* Custom Positioned Dropdown */}
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 bg-white border rounded-md shadow-lg z-50">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+**Key Implementation Details**:
+
+1. **Positioning Strategy**:
+   - Parent container: `relative` positioning
+   - Dropdown: `absolute` with `right-0 top-full mt-2`
+   - Proper z-index: `z-50` for overlay behavior
+
+2. **State Management**:
+   - `useState` for open/close state
+   - `useRef` for DOM element references
+   - `useEffect` for click-outside detection
+
+3. **Event Handling**:
+   - Manual click-outside detection with document listeners
+   - Proper cleanup in useEffect dependencies
+
+**Files Modified in Fix**:
+- `src/components/suppliers/ViewOptionsPanel.tsx` - Complete rewrite
+- `src/app/testsuppliers/page.tsx` - Added relative positioning wrapper
+
+**Testing Verification**:
+- ✅ Dropdown appears under trigger button (not on left side)
+- ✅ Click-outside closes dropdown properly
+- ✅ Button shows expanded/active states correctly
+- ✅ All column visibility checkboxes functional
+
+**When to Use This Pattern**:
+- Complex layout with fixed headers/sidebars
+- Multiple stacking contexts from CSS transforms
+- Portal-based solutions fail to position correctly
+- Need full control over dropdown positioning
+
+**Prevention Strategy**:
+- Test dropdown components early in complex layouts
+- Use Playwright MCP for visual regression testing
+- Document positioning requirements for future components
+- Consider custom implementations for critical UI elements
+
+**Alternative Solutions Attempted**:
+1. ❌ Portal containers (`Portal.Root`)
+2. ❌ CSS positioning adjustments
+3. ❌ Z-index manipulation
+4. ✅ **Custom implementation with absolute positioning**
+
+This fix saves significant debugging time for similar issues. Always test dropdown components in the target layout context, not in isolation.
+
 ### Database Troubleshooting
 
 #### Connection Issues

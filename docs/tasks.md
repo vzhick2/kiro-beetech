@@ -125,6 +125,7 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Smart delete strategy** - Archive-first approach with conditional delete for clean records
 - ✅ **Floating action bar positioning fixes** - Resolved excessive padding and positioning issues (July 27, 2025)
 - ✅ **Persistent column visibility** - User column preferences saved to localStorage with proper SSR handling (July 27, 2025)
+- ✅ **ViewOptionsPanel dropdown positioning fix** - Replaced problematic Radix UI DropdownMenu with custom implementation using absolute positioning for correct dropdown placement (July 27, 2025)
 
 #### **2.3 Seed Data System** ✅ **Complete**
 
