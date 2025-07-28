@@ -769,11 +769,23 @@ interface ColumnVisibility {
 
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
       {selectedRows.size > 0 && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-lg">
-            <div className="flex items-center gap-2 px-4 py-2.5">
+        <div 
+          className="floating-action-bar fixed bottom-4 right-4 z-[9999]"
+          style={{ 
+            position: 'fixed',
+            zIndex: 9999,
+            pointerEvents: 'auto',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            willChange: 'transform',
+            contain: 'none',
+            isolation: 'isolate'
+          }}
+        >
+          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl">
+            <div className="flex items-center gap-3 px-4 py-3">
               {/* Selection count */}
-              <div className="flex items-center gap-2 px-2.5 py-1.5 bg-gray-800 text-white rounded-xl text-sm font-medium">
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                 <span>{selectedRows.size}</span>
                 <span className="text-gray-300">selected</span>
               </div>
@@ -781,8 +793,9 @@ interface ColumnVisibility {
               {/* Export button */}
               <button 
                 onClick={handleExportSelected}
-                className="group flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95"
+                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Export selected"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <Download className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
@@ -790,8 +803,9 @@ interface ColumnVisibility {
               {/* Unarchive button (blue) */}
               <button 
                 onClick={handleUnarchiveSelected}
-                className="group flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95"
+                className="group flex items-center justify-center w-11 h-11 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Unarchive selected"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <RotateCcw className="h-4 w-4 text-white transition-transform duration-150 group-hover:scale-110" />
               </button>
@@ -799,8 +813,9 @@ interface ColumnVisibility {
               {/* Archive button */}
               <button 
                 onClick={handleArchiveSelected}
-                className="group flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95"
+                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Archive selected"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <Archive className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
@@ -808,8 +823,9 @@ interface ColumnVisibility {
               {/* Delete button */}
               <button 
                 onClick={handleDeleteSelected}
-                className="group flex items-center justify-center w-10 h-10 bg-red-500 hover:bg-red-600 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95"
+                className="group flex items-center justify-center w-11 h-11 bg-red-500 hover:bg-red-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Delete selected"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <Trash2 className="h-4 w-4 text-white transition-transform duration-150 group-hover:scale-110" />
               </button>
@@ -817,8 +833,9 @@ interface ColumnVisibility {
               {/* Close button */}
               <button 
                 onClick={() => setSelectedRows(new Set())}
-                className="group flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95"
+                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Clear selection"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <X className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>

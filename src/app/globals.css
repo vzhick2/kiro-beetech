@@ -195,12 +195,18 @@
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* CRITICAL: Ensure floating elements are not clipped */
+  position: relative;
+  z-index: 1;
 }
 
 .main-layout {
   flex: 1;
   display: flex;
   overflow: hidden;
+  /* Allow floating elements to escape container clipping */
+  position: relative;
+  z-index: 1;
 }
 
 .content-area {
@@ -222,6 +228,9 @@
   max-width: none;
   /* Ensure proper positioning for mobile sidebar interaction */
   position: relative;
+  z-index: 1;
+  /* CRITICAL: Allow floating elements to escape overflow clipping */
+  contain: layout;
 }
 
 /* Custom Scrollbar Styling - Dark Theme, Wider for Better Usability */
@@ -288,16 +297,31 @@ table td {
   overflow-wrap: break-word;
 }
 
-/* Prevent zoom on all interactive elements in tables */
-table button,
-table input,
-table select,
-table a {
-  -webkit-tap-highlight-color: transparent;
-  font-size: 16px; /* Prevents iOS zoom on focus */
-}
+  /* Prevent zoom on all interactive elements in tables */
+  table button,
+  table input,
+  table select,
+  table a {
+    -webkit-tap-highlight-color: transparent;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
 
-/* Ensure consistent viewport behavior across all pages */
+  /* CRITICAL: Floating action bars - never clip these elements */
+  .floating-action-bar,
+  [style*="position: fixed"],
+  .fixed[style*="z-index"] {
+    /* Force floating elements to be absolutely positioned and never clipped */
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    /* Force hardware acceleration to prevent clipping issues */
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    will-change: transform !important;
+    /* Ensure they're not affected by parent overflow settings */
+    contain: none !important;
+    isolation: isolate !important;
+  }/* Ensure consistent viewport behavior across all pages */
 .page-container {
   /* Allow proper responsive behavior */
   width: 100%;
