@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuPortal,
 } from '@/components/ui/dropdown-menu';
 
 export interface ColumnVisibility {
@@ -58,23 +59,25 @@ export const ViewOptionsPanel = React.memo(({
   ];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-9 px-3 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all duration-150"
+    <div className="relative">
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 px-3 bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all duration-150"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            View Options
+            <ChevronDown className="h-3 w-3 ml-1" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          align="end" 
+          className="w-80 p-4 bg-white border border-gray-200 shadow-lg rounded-lg"
+          sideOffset={8}
+          side="bottom"
         >
-          <Settings className="h-4 w-4 mr-2" />
-          View Options
-          <ChevronDown className="h-3 w-3 ml-1" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end"
-        className="w-80 p-4 bg-white border border-gray-200 shadow-lg rounded-lg"
-        sideOffset={4}
-      >
         <DropdownMenuLabel className="px-0 pb-3 text-sm font-semibold text-gray-900">
           Columns
         </DropdownMenuLabel>
@@ -127,8 +130,8 @@ export const ViewOptionsPanel = React.memo(({
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
+    </div>
   );
-
 });
 
 ViewOptionsPanel.displayName = 'ViewOptionsPanel';

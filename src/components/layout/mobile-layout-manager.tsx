@@ -96,7 +96,7 @@ export function MobileLayoutManager({ children }: MobileLayoutManagerProps) {
         />
 
         {/* Content Area - c32a068 pattern: Always starts from left, gets pushed when sidebar opens */}
-        <div className="content-area flex-1 transition-all duration-200 ease-out">
+        <div className="content-area flex-1 duration-200 ease-out">
           <main>{memoizedChildren}</main>
         </div>
       </div>
