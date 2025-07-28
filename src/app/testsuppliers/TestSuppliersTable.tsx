@@ -13,10 +13,14 @@ import {
   type PaginationState,
 } from '@tanstack/react-table';
 import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
-import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers } from '@/app/actions/suppliers';
+import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers, bulkUpdateSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
+import { useSpreadsheetMode } from '@/hooks/use-spreadsheet-mode';
+import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
+import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
+import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell';
 
 import { 
   ChevronUp, 
@@ -30,7 +34,9 @@ import {
   Download,
   X,
   RotateCcw,
-  Trash2
+  Trash2,
+  Save,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface TestSuppliersTableProps {
@@ -82,6 +88,23 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   // Remove custom view options dropdown state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
+  
+  // Spreadsheet mode state
+  const {
+    isSpreadsheetMode,
+    hasUnsavedChanges,
+    enterSpreadsheetMode,
+    exitSpreadsheetMode,
+    updateRowData,
+    undoRowChanges,
+    getRowData,
+    hasRowChanges,
+    getChangedRowsCount,
+    getAllChanges,
+  } = useSpreadsheetMode();
+
+  // Single row edit updates  
+  const updateSupplierMutation = useUpdateSupplier();
   
   // Debounced search with 350ms delay for better UX
   const { searchValue, debouncedSearchValue, updateSearch, clearSearch } = useDebouncedSearch('', 350);
@@ -168,9 +191,42 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     });
   }, [selectedRows]);
 
-  const handleEditRow = useCallback((rowId: string) => {
+  // Helper function to save changes for a specific row
+  const saveRowChanges = useCallback(async (rowId: string) => {
+    if (hasRowChanges(rowId)) {
+      try {
+        const changes = getAllChanges().find(change => change.rowId === rowId);
+        if (changes) {
+          await updateSupplierMutation.mutateAsync({
+            supplierId: rowId,
+            updates: changes.changes,
+          });
+          // Clear the saved changes for this row since they're now persisted
+          undoRowChanges(rowId);
+          return true;
+        }
+      } catch (error) {
+        console.error('Failed to save changes for row:', rowId, error);
+        alert('Failed to save changes. Please try again.');
+        return false;
+      }
+    }
+    return true;
+  }, [hasRowChanges, getAllChanges, updateSupplierMutation, undoRowChanges]);
+
+  const handleEditRow = useCallback(async (rowId: string) => {
+    // If we're currently editing a different row and it has changes, confirm before switching
+    if (editingRow && editingRow !== rowId && hasRowChanges(editingRow)) {
+      if (!confirm('You have unsaved changes. Are you sure you want to switch to editing another row? Your changes will be lost.')) {
+        return;
+      }
+      // Clear the unsaved changes
+      undoRowChanges(editingRow);
+    }
+    
+    // Toggle edit mode for the clicked row
     setEditingRow(editingRow === rowId ? null : rowId);
-  }, [editingRow]);
+  }, [editingRow, hasRowChanges, undoRowChanges]);
 
   // Batch action handlers
   const handleUnarchiveSelected = useCallback(async () => {
@@ -343,7 +399,118 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     return filtered;
   }, [suppliers, debouncedSearchValue]);
 
-  // Table columns with conditional visibility
+  // Spreadsheet navigation - initialized after filteredSuppliers
+  const { currentCell, handleCellClick } = useSpreadsheetNavigation({
+    totalRows: filteredSuppliers.length,
+    isSpreadsheetMode,
+    onExitSpreadsheetMode: () => {
+      if (hasUnsavedChanges) {
+        if (confirm('You have unsaved changes. Are you sure you want to exit edit mode?')) {
+          exitSpreadsheetMode();
+        }
+      } else {
+        exitSpreadsheetMode();
+      }
+    },
+    expandedRows: new Set(filteredSuppliers.map(s => s.supplierid)),
+    getRowId: (index: number) => filteredSuppliers[index]?.supplierid || '',
+  });
+
+  // Helper function to convert Supplier to DisplaySupplier
+  const toDisplaySupplier = useCallback((supplier: Supplier): import('@/types/data-table').DisplaySupplier => {
+    const displaySupplier: import('@/types/data-table').DisplaySupplier = {
+      id: supplier.supplierid,
+      name: supplier.name,
+      status: supplier.isarchived ? 'archived' : 'active',
+      createdAt: supplier.created_at ? new Date(supplier.created_at) : new Date(),
+    };
+    
+    if (supplier.website) displaySupplier.website = supplier.website;
+    if (supplier.email) displaySupplier.email = supplier.email;
+    if (supplier.contactphone) displaySupplier.phone = supplier.contactphone;
+    if (supplier.address) displaySupplier.address = supplier.address;
+    if (supplier.notes) displaySupplier.notes = supplier.notes;
+    
+    return displaySupplier;
+  }, []);
+
+  // Track all local changes across all cells
+  const [localChanges, setLocalChanges] = useState<Map<string, Partial<import('@/types/data-table').DisplaySupplier>>>(new Map());
+
+  // Handle local changes from cells (for visual feedback only)
+  const handleLocalChange = useCallback((field: keyof import('@/types/data-table').DisplaySupplier, value: any, rowId: string) => {
+    setLocalChanges(prev => {
+      const newMap = new Map(prev);
+      const existingData = newMap.get(rowId) || {};
+      newMap.set(rowId, { ...existingData, [field]: value });
+      return newMap;
+    });
+  }, []);
+
+  // Get current value (either local change or original)
+  const getCurrentValue = useCallback((supplier: Supplier, field: keyof import('@/types/data-table').DisplaySupplier) => {
+    const localChange = localChanges.get(supplier.supplierid);
+    if (localChange && field in localChange) {
+      return localChange[field];
+    }
+    return toDisplaySupplier(supplier)[field];
+  }, [localChanges, toDisplaySupplier]);
+
+  // Helper function to get field value for a supplier in either mode
+  const getFieldValue = useCallback((supplier: Supplier, field: keyof import('@/types/data-table').DisplaySupplier) => {
+    if (isSpreadsheetMode) {
+      return getCurrentValue(supplier, field);
+    }
+    return toDisplaySupplier(supplier)[field];
+  }, [isSpreadsheetMode, getCurrentValue, toDisplaySupplier]);
+
+  // Save spreadsheet changes
+  const handleSaveSpreadsheetChanges = useCallback(async () => {
+    if (localChanges.size === 0) {
+      alert('No changes to save');
+      return;
+    }
+
+    try {
+      // Convert localChanges to the format expected by bulkUpdateSuppliers
+      const updates = Array.from(localChanges.entries()).map(([id, changes]) => {
+        // Map DisplaySupplier fields back to database Supplier fields
+        const dbChanges: any = {};
+        
+        if (changes.name !== undefined) dbChanges.name = changes.name;
+        if (changes.website !== undefined) dbChanges.website = changes.website;
+        if (changes.email !== undefined) dbChanges.email = changes.email;
+        if (changes.phone !== undefined) dbChanges.contactphone = changes.phone; // phone → contactphone
+        if (changes.address !== undefined) dbChanges.address = changes.address;
+        if (changes.notes !== undefined) dbChanges.notes = changes.notes;
+        if (changes.status !== undefined) {
+          dbChanges.isarchived = changes.status === 'archived'; // status → isarchived
+        }
+
+        return {
+          supplierId: id, // Note: supplierId not supplierid
+          changes: dbChanges
+        };
+      });
+
+      console.log('Saving supplier updates:', updates);
+      
+      // Call the bulk update server action
+      const result = await bulkUpdateSuppliers(updates);
+      
+      if (result.success) {
+        alert(`Successfully updated ${result.updatedCount} supplier(s)`);
+        setLocalChanges(new Map());
+        exitSpreadsheetMode();
+        refetch(); // Refresh the data
+      } else {
+        alert(result.error || 'Failed to save changes');
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+      alert('Failed to save changes. Please try again.');
+    }
+  }, [localChanges, exitSpreadsheetMode, refetch]);
   const columnHelper = createColumnHelper<Supplier>();
   const columns = useMemo(() => {
     const actionColumns = [
@@ -355,49 +522,52 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const allCurrentSelected = currentPageRows.length > 0 && currentPageRows.every(id => selectedRows.has(id));
           
           return (
-            <div className="flex items-center justify-center px-3">
+            <div className="flex items-center justify-center px-1">
               <input
                 type="checkbox"
                 checked={allCurrentSelected}
                 onChange={() => toggleAllRows(currentPageRows)}
-                className="rounded border-gray-300"
+                className="rounded border-gray-300 w-4 h-4"
+                disabled={isSpreadsheetMode}
               />
             </div>
           );
         },
         cell: ({ row }) => (
-          <div className="flex items-center justify-center h-full py-2 px-3">
+          <div className="flex items-center justify-center h-full py-1 px-1">
             <input
               type="checkbox"
               checked={selectedRows.has(row.original.supplierid)}
               onChange={() => toggleRowSelection(row.original.supplierid)}
-              className="rounded border-gray-300"
+              className="rounded border-gray-300 w-4 h-4"
+              disabled={isSpreadsheetMode}
             />
           </div>
         ),
-        size: 44,
-        minSize: 44,
-        maxSize: 44,
+        size: 36,
+        minSize: 36,
+        maxSize: 36,
         enableSorting: false,
       }),
       // Edit column
       columnHelper.display({
         id: 'edit',
-        header: () => <div className="flex items-center justify-center px-3"></div>,
+        header: () => <div className="flex items-center justify-center px-1"></div>,
         cell: ({ row }) => (
-          <div className="flex items-center justify-center h-full py-2 px-3">
+          <div className="flex items-center justify-center h-full py-1 px-1">
             <button
               onClick={() => handleEditRow(row.original.supplierid)}
-              className={`p-1 rounded hover:bg-gray-100 ${editingRow === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+              className={`p-1 rounded hover:bg-gray-100 ${editingRow === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'} ${isSpreadsheetMode ? 'opacity-50 cursor-not-allowed' : ''}`}
               title="Edit row"
+              disabled={isSpreadsheetMode}
             >
               <Edit3 className="h-4 w-4" />
             </button>
           </div>
         ),
-        size: 44,
-        minSize: 44,
-        maxSize: 44,
+        size: 36,
+        minSize: 36,
+        maxSize: 36,
         enableSorting: false,
       }),
     ];
@@ -410,17 +580,46 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('name')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            <div className="font-medium text-gray-900 leading-tight max-h-[4.5rem] overflow-hidden" style={{ 
-              display: '-webkit-box', 
-              WebkitLineClamp: 3, 
-              WebkitBoxOrient: 'vertical' 
-            }}>
-              {info.getValue()}
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'name');
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 0)}
+              >
+                <SpreadsheetCell
+                  key={`${supplier.supplierid}-name`}
+                  value={value}
+                  field="name"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={0}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              <div className="text-gray-700 text-sm leading-tight max-h-[4.5rem] overflow-hidden" style={{ 
+                display: '-webkit-box', 
+                WebkitLineClamp: 3, 
+                WebkitBoxOrient: 'vertical' 
+              }}>
+                {String(value || '')}
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
         size: 200,
         minSize: 150,
         enableSorting: true,
@@ -432,27 +631,55 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('website')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            {info.getValue() ? (
-              <a 
-                href={info.getValue() || '#'} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-700 hover:text-blue-600 hover:underline leading-tight max-h-[4.5rem] overflow-hidden block transition-colors duration-150"
-                style={{ 
-                  display: '-webkit-box', 
-                  WebkitLineClamp: 3, 
-                  WebkitBoxOrient: 'vertical' 
-                }}
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'website');
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 1)}
               >
-                {info.getValue() || ''}
-              </a>
-            ) : (
-              <span className="text-gray-400">-</span>
-            )}
-          </div>
-        ),
+                <SpreadsheetCell
+                  value={value}
+                  field="website"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={1}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              {value ? (
+                <a 
+                  href={String(value) || '#'} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-600 text-xs hover:text-blue-800 hover:underline leading-tight max-h-[4.5rem] overflow-hidden block transition-colors duration-150"
+                  style={{ 
+                    display: '-webkit-box', 
+                    WebkitLineClamp: 3, 
+                    WebkitBoxOrient: 'vertical' 
+                  }}
+                >
+                  {String(value)}
+                </a>
+              ) : (
+                <span className="text-gray-400 text-xs">-</span>
+              )}
+            </div>
+          );
+        },
         size: 180,
         minSize: 120,
         enableSorting: true,
@@ -464,17 +691,45 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('contactphone')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            <span className="text-gray-700 leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
-              display: '-webkit-box', 
-              WebkitLineClamp: 3, 
-              WebkitBoxOrient: 'vertical' 
-            }}>
-              {info.getValue() || '-'}
-            </span>
-          </div>
-        ),
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'phone'); // Note: maps to 'phone' in DisplaySupplier
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 2)}
+              >
+                <SpreadsheetCell
+                  value={value}
+                  field="phone"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={2}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              <span className="text-gray-700 text-sm leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+                display: '-webkit-box', 
+                WebkitLineClamp: 3, 
+                WebkitBoxOrient: 'vertical' 
+              }}>
+                {String(value || '-')}
+              </span>
+            </div>
+          );
+        },
         size: 140,
         minSize: 100,
         enableSorting: true,
@@ -486,25 +741,53 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('email')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            {info.getValue() ? (
-              <a 
-                href={`mailto:${info.getValue()}`} 
-                className="text-gray-700 hover:text-blue-600 hover:underline leading-tight max-h-[4.5rem] overflow-hidden block transition-colors duration-150"
-                style={{ 
-                  display: '-webkit-box', 
-                  WebkitLineClamp: 3, 
-                  WebkitBoxOrient: 'vertical' 
-                }}
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'email');
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 3)}
               >
-                {String(info.getValue() || '')}
-              </a>
-            ) : (
-              <span className="text-gray-400">-</span>
-            )}
-          </div>
-        ),
+                <SpreadsheetCell
+                  value={value}
+                  field="email"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={3}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              {value ? (
+                <a 
+                  href={`mailto:${value}`} 
+                  className="text-blue-600 text-xs hover:text-blue-800 hover:underline leading-tight max-h-[4.5rem] overflow-hidden block transition-colors duration-150"
+                  style={{ 
+                    display: '-webkit-box', 
+                    WebkitLineClamp: 3, 
+                    WebkitBoxOrient: 'vertical' 
+                  }}
+                >
+                  {String(value || '')}
+                </a>
+              ) : (
+                <span className="text-gray-400 text-xs">-</span>
+              )}
+            </div>
+          );
+        },
         size: 180,
         minSize: 120,
         enableSorting: true,
@@ -516,17 +799,45 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('address')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            <span className="text-gray-700 leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
-              display: '-webkit-box', 
-              WebkitLineClamp: 3, 
-              WebkitBoxOrient: 'vertical' 
-            }}>
-              {info.getValue() || '-'}
-            </span>
-          </div>
-        ),
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'address');
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 4)}
+              >
+                <SpreadsheetCell
+                  value={value}
+                  field="address"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={4}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              <span className="text-gray-700 leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+                display: '-webkit-box', 
+                WebkitLineClamp: 3, 
+                WebkitBoxOrient: 'vertical' 
+              }}>
+                {info.getValue() || '-'}
+              </span>
+            </div>
+          );
+        },
         size: 200,
         minSize: 150,
         enableSorting: true,
@@ -538,17 +849,45 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('notes')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            <span className="text-gray-600 text-sm leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
-              display: '-webkit-box', 
-              WebkitLineClamp: 3, 
-              WebkitBoxOrient: 'vertical' 
-            }}>
-              {info.getValue() || ''}
-            </span>
-          </div>
-        ),
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'notes');
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 5)}
+              >
+                <SpreadsheetCell
+                  value={value}
+                  field="notes"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={5}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              <span className="text-gray-600 text-sm leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+                display: '-webkit-box', 
+                WebkitLineClamp: 3, 
+                WebkitBoxOrient: 'vertical' 
+              }}>
+                {info.getValue() || ''}
+              </span>
+            </div>
+          );
+        },
         size: 250,
         minSize: 150,
         enableSorting: true,
@@ -560,15 +899,43 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             {renderSortIcon('isarchived')}
           </div>
         ),
-        cell: info => (
-          <div className="flex items-center h-full py-2 px-3">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              info.getValue() ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-            }`}>
-              {info.getValue() ? 'Inactive' : 'Active'}
-            </span>
-          </div>
-        ),
+        cell: info => {
+          const supplier = info.row.original;
+          const rowIndex = info.row.index;
+          const value = getFieldValue(supplier, 'status'); // Maps to 'status' in DisplaySupplier
+          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          
+          if (isEditing) {
+            return (
+              <div 
+                className="flex items-center h-full py-1 px-1 w-full"
+                onClick={() => handleCellClick(rowIndex, 6)}
+              >
+                <SpreadsheetCell
+                  value={value}
+                  field="status"
+                  rowId={supplier.supplierid}
+                  rowIndex={rowIndex}
+                  colIndex={6}
+                  isSpreadsheetMode={isEditing}
+                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChange={handleLocalChange}
+                />
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex items-center h-full py-2 px-3">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                info.getValue() ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+              }`}>
+                {info.getValue() ? 'Inactive' : 'Active'}
+              </span>
+            </div>
+          );
+        },
         size: 100,
         minSize: 80,
         enableSorting: true,
@@ -637,17 +1004,26 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         handleDeleteSelected();
       }
 
-      // Escape key - Clear selection
+      // Escape key - Clear selection and exit edit mode (with confirmation if changes exist)
       if (e.key === 'Escape') {
         e.preventDefault();
         setSelectedRows(new Set());
-        setEditingRow(null);
+        
+        // If we're editing a row with changes, confirm before exiting
+        if (editingRow && hasRowChanges(editingRow)) {
+          if (confirm('You have unsaved changes. Are you sure you want to exit editing? Your changes will be lost.')) {
+            undoRowChanges(editingRow);
+            setEditingRow(null);
+          }
+        } else {
+          setEditingRow(null);
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedRows, handleDeleteSelected, table]);
+  }, [selectedRows, handleDeleteSelected, table, editingRow, hasRowChanges, undoRowChanges]);
 
   // Sync sticky horizontal scrollbar with main table
   useEffect(() => {
@@ -943,7 +1319,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       </div>
 
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
-      {selectedRows.size > 0 && (
+      {(selectedRows.size > 0 || isSpreadsheetMode || (!isSpreadsheetMode && selectedRows.size === 0)) && (
         <div 
           className="fixed bottom-4 right-4 z-[9999]"
           style={{ 
@@ -961,61 +1337,175 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         >
           <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl w-fit">
             <div className="flex items-center gap-3 p-4">
-              {/* Selection count */}
-              <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
-                <span>{selectedRows.size}</span>
-                <span className="text-gray-300">selected</span>
-              </div>
               
-              {/* Export button */}
-              <button 
-                onClick={handleExportSelected}
-                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                title="Export selected"
-                style={{ minWidth: '44px', minHeight: '44px' }}
-              >
-                <Download className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
-              </button>
-              
-              {/* Unarchive button (gray to match archive) */}
-              <button 
-                onClick={handleUnarchiveSelected}
-                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                title="Unarchive selected"
-                style={{ minWidth: '44px', minHeight: '44px' }}
-              >
-                <RotateCcw className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
-              </button>
-              
-              {/* Archive button */}
-              <button 
-                onClick={handleArchiveSelected}
-                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                title="Archive selected"
-                style={{ minWidth: '44px', minHeight: '44px' }}
-              >
-                <Archive className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
-              </button>
-              
-              {/* Delete button */}
-              <button 
-                onClick={handleDeleteSelected}
-                className="group flex items-center justify-center w-11 h-11 bg-red-500 hover:bg-red-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                title="Delete selected"
-                style={{ minWidth: '44px', minHeight: '44px' }}
-              >
-                <Trash2 className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
-              </button>
-              
-              {/* Close button */}
-              <button 
-                onClick={() => setSelectedRows(new Set())}
-                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                title="Clear selection"
-                style={{ minWidth: '44px', minHeight: '44px' }}
-              >
-                <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
-              </button>
+              {/* SPREADSHEET MODE - Save/Cancel Controls */}
+              {isSpreadsheetMode && (
+                <>
+                  {/* Changes count */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
+                    <FileSpreadsheet className="h-4 w-4" />
+                    <span>Edit Mode</span>
+                    {localChanges.size > 0 && (
+                      <>
+                        <span className="text-blue-200">•</span>
+                        <span>{localChanges.size}</span>
+                        <span className="text-blue-200">changed</span>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Save button */}
+                  <button 
+                    onClick={handleSaveSpreadsheetChanges}
+                    className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Save changes"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <Save className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Cancel button */}
+                  <button 
+                    onClick={() => {
+                      if (localChanges.size > 0) {
+                        if (confirm('You have unsaved changes. Are you sure you want to cancel?')) {
+                          setLocalChanges(new Map());
+                          exitSpreadsheetMode();
+                        }
+                      } else {
+                        exitSpreadsheetMode();
+                      }
+                    }}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Cancel editing"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                </>
+              )}
+
+              {/* BULK ACTIONS - When rows are selected */}
+              {selectedRows.size > 0 && !isSpreadsheetMode && (
+                <>
+                  {/* Selection count */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
+                    <span>{selectedRows.size}</span>
+                    <span className="text-gray-300">selected</span>
+                  </div>
+                  
+                  {/* Export button */}
+                  <button 
+                    onClick={handleExportSelected}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Export selected"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <Download className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Unarchive button (gray to match archive) */}
+                  <button 
+                    onClick={handleUnarchiveSelected}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Unarchive selected"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <RotateCcw className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Archive button */}
+                  <button 
+                    onClick={handleArchiveSelected}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Archive selected"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <Archive className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Delete button */}
+                  <button 
+                    onClick={handleDeleteSelected}
+                    className="group flex items-center justify-center w-11 h-11 bg-red-500 hover:bg-red-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Delete selected"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <Trash2 className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Close button */}
+                  <button 
+                    onClick={() => setSelectedRows(new Set())}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Clear selection"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                </>
+              )}
+
+              {/* SINGLE ROW EDIT MODE - When editing a single row */}
+              {editingRow && !isSpreadsheetMode && (
+                <>
+                  {/* Editing row indicator */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
+                    <Edit3 className="h-4 w-4" />
+                    <span>Editing Row</span>
+                    {hasRowChanges(editingRow) && (
+                      <>
+                        <span className="text-yellow-200">•</span>
+                        <span className="text-yellow-200">unsaved</span>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Save button */}
+                  <button 
+                    onClick={() => saveRowChanges(editingRow).then(() => setEditingRow(null))}
+                    className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Save changes"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <Save className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Cancel button */}
+                  <button 
+                    onClick={() => {
+                      if (hasRowChanges(editingRow)) {
+                        if (confirm('You have unsaved changes. Are you sure you want to cancel?')) {
+                          undoRowChanges(editingRow);
+                          setEditingRow(null);
+                        }
+                      } else {
+                        setEditingRow(null);
+                      }
+                    }}
+                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                    title="Cancel editing"
+                    style={{ minWidth: '44px', minHeight: '44px' }}
+                  >
+                    <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                  </button>
+                </>
+              )}
+
+              {/* ENTER EDIT MODE - When no rows selected and not in spreadsheet mode */}
+              {selectedRows.size === 0 && !isSpreadsheetMode && !editingRow && (
+                <>
+                  {/* Enter Edit Mode button */}
+                  <button 
+                    onClick={enterSpreadsheetMode}
+                    className="group flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation text-sm font-medium"
+                    title="Enter spreadsheet edit mode"
+                  >
+                    <FileSpreadsheet className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
+                    <span>Enter Edit Mode</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

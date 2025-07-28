@@ -23,8 +23,8 @@ export const useSpreadsheetNavigation = ({
   } | null>(null);
   const [navigationActive, setNavigationActive] = useState(false);
 
-  // Editable columns: name(0), website(1), phone(2), status(3)
-  const editableColumns = [0, 1, 2, 3];
+  // Editable columns: name(0), website(1), phone(2), email(3), address(4), notes(5), status(6)
+  const editableColumns = [0, 1, 2, 3, 4, 5, 6];
 
   // Use refs to store latest values without causing re-renders
   const propsRef = useRef({
@@ -154,6 +154,12 @@ export const useSpreadsheetNavigation = ({
       // Don't handle navigation if dropdown is open
       if (isSelectOpen) return;
 
+      // ONLY handle specific navigation keys - ignore all typing characters
+      const navigationKeys = ['Tab', 'Enter', 'ArrowUp', 'ArrowDown'];
+      if (!navigationKeys.includes(event.key)) {
+        return; // Let normal typing happen without interference
+      }
+
       // Handle tab navigation within spreadsheet
       if (event.key === 'Tab') {
         event.preventDefault();
@@ -165,18 +171,31 @@ export const useSpreadsheetNavigation = ({
         return;
       }
 
-      // Handle up/down arrows to move between rows (keeping same column)
-      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        if (!currentCell) return;
-
+      // Handle Enter to move to next cell (like Tab)
+      if (event.key === 'Enter') {
         event.preventDefault();
-        const currentRow = currentCell.row;
-        const currentCol = currentCell.col;
+        moveToNextCell();
+        return;
+      }
 
-        if (event.key === 'ArrowUp' && currentRow > 0) {
-          setCurrentCell({ row: currentRow - 1, col: currentCol });
-        } else if (event.key === 'ArrowDown' && currentRow < totalRows - 1) {
-          setCurrentCell({ row: currentRow + 1, col: currentCol });
+      // Handle arrow keys for navigation only
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        // Only handle if input is empty or cursor is at appropriate position
+        if (activeElement instanceof HTMLInputElement) {
+          const input = activeElement;
+          if (input.value.length === 0 || 
+              (event.key === 'ArrowUp' && input.selectionStart === 0) ||
+              (event.key === 'ArrowDown' && input.selectionStart === input.value.length)) {
+            event.preventDefault();
+            const currentRow = currentCell?.row ?? 0;
+            const currentCol = currentCell?.col ?? 0;
+            
+            if (event.key === 'ArrowUp' && currentRow > 0) {
+              setCurrentCell({ row: currentRow - 1, col: currentCol });
+            } else if (event.key === 'ArrowDown' && currentRow < totalRows - 1) {
+              setCurrentCell({ row: currentRow + 1, col: currentCol });
+            }
+          }
         }
         return;
       }
@@ -197,23 +216,24 @@ export const useSpreadsheetNavigation = ({
   );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => document.removeEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keydown', handleKeyDown, false);
+    return () => document.removeEventListener('keydown', handleKeyDown, false);
   }, [handleKeyDown]);
 
   // Focus the appropriate input when cell changes
   useEffect(() => {
     if (currentCell && isSpreadsheetMode && navigationActive) {
       setTimeout(() => {
-        const cellSelector = `[data-cell="${currentCell.row}-${currentCell.col}"] input, [data-cell="${currentCell.row}-${currentCell.col}"] button[role="combobox"]`;
+        const cellSelector = `[data-cell="${currentCell.row}-${currentCell.col}"] input, [data-cell="${currentCell.row}-${currentCell.col}"] textarea, [data-cell="${currentCell.row}-${currentCell.col}"] button[role="combobox"]`;
         const element = document.querySelector(cellSelector) as
           | HTMLInputElement
+          | HTMLTextAreaElement  
           | HTMLButtonElement;
         if (element) {
           element.focus();
-          // For input elements, allow normal cursor positioning without forcing position
+          // For input/textarea elements, allow normal cursor positioning without forcing position
           // This enables users to click anywhere in the text and select/edit text naturally
-          if (element instanceof HTMLInputElement) {
+          if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
             // Only position cursor at end if this is initial navigation (not a click)
             // Check if the element was just clicked by checking if it already has focus
             if (document.activeElement !== element) {

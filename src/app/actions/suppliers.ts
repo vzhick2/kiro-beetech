@@ -291,3 +291,50 @@ export async function bulkUnarchiveSuppliers(supplierIds: string[]) {
     return { success: false, error: 'Failed to bulk unarchive suppliers' };
   }
 }
+
+export async function bulkUpdateSuppliers(updates: Array<{ supplierId: string; changes: Record<string, unknown> }>) {
+  try {
+    if (!updates || updates.length === 0) {
+      return { success: true, updatedCount: 0 };
+    }
+
+    // Validate all updates first
+    for (const update of updates) {
+      const parseResult = SupplierUpdateSchema.safeParse(update.changes);
+      if (!parseResult.success) {
+        return {
+          success: false,
+          error: `Invalid update data for supplier ${update.supplierId}`,
+          details: parseResult.error.flatten(),
+        };
+      }
+    }
+
+    // Perform updates sequentially to avoid conflicts
+    const results = [];
+    for (const update of updates) {
+      const { data, error } = await supabaseAdmin
+        .from('suppliers')
+        .update(update.changes)
+        .eq('supplierid', update.supplierId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error(`Error updating supplier ${update.supplierId}:`, error);
+        return { 
+          success: false, 
+          error: `Failed to update supplier ${update.supplierId}: ${error.message}`,
+          partialUpdates: results.length
+        };
+      }
+
+      results.push(data);
+    }
+
+    return { success: true, updatedCount: results.length, data: results };
+  } catch (error) {
+    console.error('Error in bulkUpdateSuppliers:', error);
+    return { success: false, error: 'Failed to bulk update suppliers' };
+  }
+}

@@ -4,6 +4,7 @@ import type React from 'react';
 
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ interface SpreadsheetCellProps {
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
   onChange: (field: keyof DisplaySupplier, value: any) => void;
+  onLocalChange: (field: keyof DisplaySupplier, value: any, rowId: string) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
@@ -34,20 +36,36 @@ export const SpreadsheetCell = ({
   isSpreadsheetMode,
   hasChanges,
   onChange,
+  onLocalChange,
   onKeyDown,
 }: SpreadsheetCellProps) => {
   const [localValue, setLocalValue] = useState(value);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
+  
+  // Keep track of the original value to compare against for saving
+  const originalValueRef = useRef(value);
 
+  // Only update localValue if value changed from external source (not from our own onChange)
+  const lastValueRef = useRef(value);
   useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
+    if (value !== lastValueRef.current) {
+      setLocalValue(value);
+      lastValueRef.current = value;
+      // Update original value only if this is a fresh load (not a local change)
+      if (!hasChanges) {
+        originalValueRef.current = value;
+      }
+    }
+  }, [value, hasChanges]);
 
   const handleBlur = () => {
-    if (localValue !== value) {
+    // Compare against original value, not current value (which might be updated by onLocalChange)
+    if (localValue !== originalValueRef.current) {
       onChange(field, localValue);
+      // Call onLocalChange here for visual feedback (counter update)
+      onLocalChange(field, localValue, rowId);
     }
   };
 
@@ -68,7 +86,12 @@ export const SpreadsheetCell = ({
     } else {
       // For regular inputs
       if (e.key === 'Enter') {
+        e.preventDefault();
         handleBlur();
+        // Move focus to next cell or blur current one
+        if (inputRef.current) {
+          inputRef.current.blur();
+        }
       }
     }
     onKeyDown?.(e);
@@ -83,7 +106,7 @@ export const SpreadsheetCell = ({
   };
 
   // Enhanced cursor positioning - allow natural text selection and editing
-  const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     e.stopPropagation();
     const input = e.currentTarget;
 
@@ -108,12 +131,12 @@ export const SpreadsheetCell = ({
   };
 
   // Allow natural text selection behavior
-  const handleInputMouseDown = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleInputMouseDown = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     // Don't prevent default - this allows normal text selection behavior
     e.stopPropagation();
   };
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // When input receives focus via keyboard navigation (not click),
     // we can optionally select all text for quick editing
     const input = e.currentTarget;
@@ -130,37 +153,61 @@ export const SpreadsheetCell = ({
   };
 
   if (!isSpreadsheetMode) {
-    // Regular display mode
+    // Regular display mode - match table styling exactly
+    const isWebsiteField = field === 'website';
+    const isEmailField = field === 'email';
+    
+    // Use smaller font for email and website fields consistently
+    const fontSize = (isWebsiteField || isEmailField) ? 'text-xs' : 'text-sm';
+    const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
+    
     if (field === 'status') {
       return (
-        <span className="px-2 py-1 rounded text-sm bg-gray-100">{value}</span>
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          {value === 'archived' ? 'Inactive' : 'Active'}
+        </span>
       );
     }
     return (
-      <span className="text-sm">
+      <div className={`${fontSize} ${textColor} leading-tight max-h-[4.5rem] overflow-hidden block`} style={{ 
+        display: '-webkit-box', 
+        WebkitLineClamp: 3, 
+        WebkitBoxOrient: 'vertical' 
+      }}>
         {value || <span className="text-gray-400 italic">—</span>}
-      </span>
+      </div>
     );
   }
 
-  // Spreadsheet edit mode
+  // Spreadsheet edit mode - match display mode styling exactly
   const isWebsiteField = field === 'website';
-  const websiteClass = isWebsiteField ? 'text-blue-600' : '';
-  const cellClass = `h-10 text-sm font-medium ${websiteClass} ${hasChanges ? 'border-blue-300 bg-blue-50' : ''}`;
-  const focusClass = 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+  const isEmailField = field === 'email';
+  
+  // Fix website text size issue - use text-xs for website/email consistently
+  const fontSize = (isWebsiteField || isEmailField) ? 'text-xs' : 'text-sm';
+  const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
+  
+  // Match exact table cell styling: py-2 px-3 from table cells
+  // Keep same height as display mode - no min-h constraints that change row height
+  const cellClass = `w-full ${fontSize} ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''}`;
+  const containerClass = `w-full py-2 px-3 ${hasChanges ? 'bg-blue-50' : 'bg-white'}`;
 
   if (field === 'status') {
     return (
-      <div data-cell={`${rowIndex}-${colIndex}`}>
+      <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
         <Select
           value={localValue}
-          onValueChange={newValue => onChange(field, newValue)}
+          onValueChange={newValue => {
+            setLocalValue(newValue);
+            onChange(field, newValue);
+            onLocalChange(field, newValue, rowId);
+          }}
           open={isSelectOpen}
           onOpenChange={setIsSelectOpen}
         >
           <SelectTrigger
             ref={selectRef}
-            className={`${cellClass} ${focusClass} [&]:text-sm [&]:font-medium`}
+            className="w-full border-0 bg-transparent shadow-none outline-none focus:ring-0 text-xs py-0"
             onKeyDown={handleSelectKeyDown}
           >
             <SelectValue />
@@ -175,17 +222,20 @@ export const SpreadsheetCell = ({
   }
 
   return (
-    <div data-cell={`${rowIndex}-${colIndex}`}>
-      <Input
+    <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
+      <Textarea
         ref={inputRef}
         value={localValue || ''}
-        onChange={e => setLocalValue(e.target.value)}
+        onChange={e => {
+          setLocalValue(e.target.value);
+          // Don't call onLocalChange on every keystroke - only on blur
+        }}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleInputClick}
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
-        className={`${cellClass} ${focusClass} [&]:text-sm [&]:font-medium ${isWebsiteField ? '[&]:text-blue-600' : ''}`}
+        className={cellClass}
         placeholder={
           field === 'name'
             ? 'Supplier name'
@@ -193,6 +243,14 @@ export const SpreadsheetCell = ({
               ? 'Website'
               : `${field}`
         }
+        rows={3}
+        style={{
+          lineHeight: '1.25',
+          resize: 'none',
+          height: '4.5rem', // Fixed height to match display mode exactly
+          padding: 0,
+          margin: 0,
+        }}
       />
     </div>
   );

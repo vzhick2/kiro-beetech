@@ -79,12 +79,18 @@ export const EditableSupplierRow = ({
     name: supplier.name,
     website: supplier.website || '',
     phone: supplier.phone || '',
+    email: supplier.email || '',
+    address: supplier.address || '',
+    notes: supplier.notes || '',
     status: supplier.status,
   });
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const websiteInputRef = useRef<HTMLInputElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const addressInputRef = useRef<HTMLTextAreaElement>(null);
+  const notesInputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isEditing && nameInputRef.current) {
@@ -99,6 +105,9 @@ export const EditableSupplierRow = ({
         name: supplier.name,
         website: supplier.website || '',
         phone: supplier.phone || '',
+        email: supplier.email || '',
+        address: supplier.address || '',
+        notes: supplier.notes || '',
         status: supplier.status,
       });
     }
@@ -164,7 +173,7 @@ export const EditableSupplierRow = ({
 
   const handleKeyDown = (
     e: React.KeyboardEvent,
-    nextRef?: React.RefObject<HTMLInputElement | null>
+    nextRef?: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>
   ) => {
     if (e.key === 'Tab' && nextRef?.current) {
       e.preventDefault();
@@ -307,7 +316,7 @@ export const EditableSupplierRow = ({
             ref={phoneInputRef}
             value={formData.phone || ''}
             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-            onKeyDown={e => handleKeyDown(e)}
+            onKeyDown={e => handleKeyDown(e, emailInputRef)}
             className="h-8 text-xs"
             disabled={isSaving}
             placeholder="Phone number"
@@ -329,6 +338,43 @@ export const EditableSupplierRow = ({
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
+        </TableCell>
+        <TableCell className="p-1 h-12" style={{ width: columnWidths.email }}>
+          <Input
+            ref={emailInputRef}
+            value={formData.email || ''}
+            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            onKeyDown={e => handleKeyDown(e, addressInputRef)}
+            className="h-8 text-xs"
+            disabled={isSaving}
+            placeholder="Email address"
+          />
+        </TableCell>
+        <TableCell className="p-1 h-12" style={{ width: columnWidths.address }}>
+          <textarea
+            ref={addressInputRef}
+            value={formData.address || ''}
+            onChange={e => setFormData({ ...formData, address: e.target.value })}
+            onKeyDown={e => handleKeyDown(e, notesInputRef)}
+            className="w-full h-8 px-3 py-1 text-xs border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+            disabled={isSaving}
+            placeholder="Address"
+            rows={1}
+            style={{ minHeight: '32px', maxHeight: '96px' }}
+          />
+        </TableCell>
+        <TableCell className="p-1 h-12" style={{ width: columnWidths.notes }}>
+          <textarea
+            ref={notesInputRef}
+            value={formData.notes || ''}
+            onChange={e => setFormData({ ...formData, notes: e.target.value })}
+            onKeyDown={e => handleKeyDown(e)}
+            className="w-full h-8 px-3 py-1 text-xs border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+            disabled={isSaving}
+            placeholder="Notes"
+            rows={1}
+            style={{ minHeight: '32px', maxHeight: '96px' }}
+          />
         </TableCell>
       </TableRow>
     );
