@@ -123,6 +123,8 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 - ✅ **Table UI/UX improvements** - Removed density selector, enhanced zebra striping, compact floating controls, proper vertical centering
 - ✅ **Working bulk operations** - Archive, delete, unarchive with proper API integration and error handling
 - ✅ **Smart delete strategy** - Archive-first approach with conditional delete for clean records
+- ✅ **Floating action bar positioning fixes** - Resolved excessive padding and positioning issues (July 27, 2025)
+- ✅ **Persistent column visibility** - User column preferences saved to localStorage with proper SSR handling (July 27, 2025)
 
 #### **2.3 Seed Data System** ✅ **Complete**
 
@@ -226,13 +228,15 @@ Development tasks and progress tracking for the internal BTINV inventory managem
 
 ### **Phase 4: UI Completion** 📋 **Planned**
 
-#### **4.1 Suppliers Management UI** 📋 **Planned**
+#### **4.1 Suppliers Management UI** ✅ **Complete** - *July 27, 2025*
 
-- 📋 **Suppliers table with inline editing**
-- 📋 **Add/edit supplier modal**
-- 📋 **Supplier-item relationship management**
-- 📋 **Archive/unarchive UI controls**
-- 📋 **Last used suppliers optimization display**
+- ✅ **Suppliers table with inline editing** - Full spreadsheet-style editing with save/cancel functionality
+- ✅ **Add/edit supplier modal** - Modern edit modal with comprehensive form validation
+- ✅ **Supplier-item relationship management** - Backend API functionality complete
+- ✅ **Archive/unarchive UI controls** - Working bulk operations with floating action bar
+- ✅ **Last used suppliers optimization display** - Session-based filter persistence
+- ✅ **Floating action bar positioning** - Fixed positioning and padding issues
+- ✅ **Persistent column visibility** - User preferences stored in localStorage with SSR safety
 
 #### **4.2 Purchase Management UI** 📋 **Planned**
 

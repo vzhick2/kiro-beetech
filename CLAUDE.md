@@ -135,6 +135,24 @@ Based on `.cursorrules`:
 - **🔐 Ask Permission**: New features, schema changes, business logic modifications
 - **90% Confidence Threshold**: Only proceed autonomously if solution confidence ≥ 90%
 
+### AI Behavior Guidelines
+**CRITICAL**: Distinguish between analysis requests and implementation requests:
+
+**📊 Analysis Mode** (NO CODE CHANGES):
+- When users ask for "suggestions," "recommendations," "analysis," "reports," or "what can be done"
+- Strategic planning discussions about testsuppliers blueprint
+- Code review and improvement suggestions
+- **Response**: Provide detailed analysis, recommendations, and strategic insights ONLY
+
+**🔧 Implementation Mode** (CODE CHANGES ALLOWED):
+- Look for explicit implementation signals: "implement this," "make these changes," "code this up," "build this," "create this"
+- Direct bug fix requests: "fix this error," "update this function"
+- **Response**: Proceed with code modifications
+
+**❓ When In Doubt**: Ask "Would you like me to implement these suggestions or just provide the analysis?"
+
+**Special Case - TestSuppliersTable**: This is the strategic blueprint component. Treat all requests about it as analysis/planning unless implementation is explicitly requested.
+
 ## Critical Files to Understand
 
 ### Documentation (Read These First)

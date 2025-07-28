@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers } from '@/app/actions/suppliers';
+import { useColumnPreferences } from '@/hooks/use-local-storage';
 
 import { 
   ChevronUp, 
@@ -61,7 +62,9 @@ interface ColumnVisibility {
     pageIndex: 0,
     pageSize: 20,
   });
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
+
+  // Use persistent column visibility with localStorage
+  const [columnVisibility, setColumnVisibility] = useColumnPreferences<ColumnVisibility>('testsuppliers', {
     name: true,
     website: true,
     contactphone: true,
@@ -764,11 +767,11 @@ interface ColumnVisibility {
         </div>
       </div>
 
-      {/* Floating Action Bar - Bottom Right */}
+      {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
       {selectedRows.size > 0 && (
         <div className="fixed bottom-6 right-6 z-50">
-          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-lg px-3 py-2.5">
-            <div className="flex items-center gap-2">
+          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-2 px-4 py-2.5">
               {/* Selection count */}
               <div className="flex items-center gap-2 px-2.5 py-1.5 bg-gray-800 text-white rounded-xl text-sm font-medium">
                 <span>{selectedRows.size}</span>
