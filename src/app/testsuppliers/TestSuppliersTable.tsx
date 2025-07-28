@@ -1,6 +1,6 @@
 // TESTSUPPLIERS Table Component (Client Component) - Notion-inspired design
 'use client';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -82,6 +82,39 @@ interface ColumnVisibility {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>('');
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Ctrl+A - Select all visible rows
+      if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault();
+        const visibleRowIds = table.getRowModel().rows.map(row => row.original.supplierid);
+        setSelectedRows(new Set(visibleRowIds));
+      }
+
+      // Delete key - Delete selected rows
+      if (e.key === 'Delete' && selectedRows.size > 0) {
+        e.preventDefault();
+        handleDeleteSelected();
+      }
+
+      // Escape key - Clear selection
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setSelectedRows(new Set());
+        setEditingRow(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedRows, handleDeleteSelected, table]);
 
   // Mapping between ViewOptionsPanel keys and table column keys
   const columnKeyMapping = {
@@ -283,13 +316,69 @@ interface ColumnVisibility {
     }
   }, [selectedRows, refetch]);
 
+  // CSV export functionality
+  const exportToCsv = useCallback((data: Supplier[], filename: string) => {
+    // Define CSV headers
+    const headers = [
+      'Supplier ID',
+      'Name', 
+      'Website',
+      'Phone',
+      'Email',
+      'Address',
+      'Notes',
+      'Status',
+      'Created Date'
+    ];
+
+    // Convert data to CSV rows
+    const csvRows = [
+      headers.join(','),
+      ...data.map(supplier => [
+        supplier.supplierid,
+        `"${supplier.name.replace(/"/g, '""')}"`,
+        supplier.website ? `"${supplier.website.replace(/"/g, '""')}"` : '',
+        supplier.contactphone ? `"${supplier.contactphone.replace(/"/g, '""')}"` : '',
+        supplier.email ? `"${supplier.email.replace(/"/g, '""')}"` : '',
+        supplier.address ? `"${supplier.address.replace(/"/g, '""')}"` : '',
+        supplier.notes ? `"${supplier.notes.replace(/"/g, '""')}"` : '',
+        supplier.isarchived ? 'Inactive' : 'Active',
+        supplier.created_at ? formatDate(String(supplier.created_at)) : ''
+      ].join(','))
+    ];
+
+    // Create and download CSV file
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  }, [formatDate]);
+
   const handleExportSelected = useCallback(() => {
     const selectedIds = Array.from(selectedRows);
     const selectedSuppliers = suppliers.filter(s => selectedIds.includes(s.supplierid));
-    console.log('Exporting suppliers:', selectedSuppliers);
-    // TODO: Implement CSV export
-    // exportToCsv(selectedSuppliers, 'selected-suppliers.csv');
-  }, [selectedRows, suppliers]);
+    
+    if (selectedSuppliers.length === 0) {
+      alert('No suppliers selected for export');
+      return;
+    }
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `suppliers-export-${timestamp}.csv`;
+    
+    exportToCsv(selectedSuppliers, filename);
+    console.log(`Exported ${selectedSuppliers.length} suppliers to ${filename}`);
+  }, [selectedRows, suppliers, exportToCsv]);
 
   // Filter suppliers based on search and showInactive
   const filteredSuppliers = useMemo(() => {
@@ -788,6 +877,7 @@ interface ColumnVisibility {
               <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                 <span>{selectedRows.size}</span>
                 <span className="text-gray-300">selected</span>
+                <span className="text-xs text-gray-400 ml-1">• Del to delete • Esc to clear</span>
               </div>
               
               {/* Export button */}
