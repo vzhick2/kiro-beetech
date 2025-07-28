@@ -83,38 +83,6 @@ interface ColumnVisibility {
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>('');
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts if user is typing in an input/textarea
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      // Ctrl+A - Select all visible rows
-      if (e.ctrlKey && e.key === 'a') {
-        e.preventDefault();
-        const visibleRowIds = table.getRowModel().rows.map(row => row.original.supplierid);
-        setSelectedRows(new Set(visibleRowIds));
-      }
-
-      // Delete key - Delete selected rows
-      if (e.key === 'Delete' && selectedRows.size > 0) {
-        e.preventDefault();
-        handleDeleteSelected();
-      }
-
-      // Escape key - Clear selection
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setSelectedRows(new Set());
-        setEditingRow(null);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedRows, handleDeleteSelected, table]);
 
   // Mapping between ViewOptionsPanel keys and table column keys
   const columnKeyMapping = {
@@ -379,6 +347,7 @@ interface ColumnVisibility {
     exportToCsv(selectedSuppliers, filename);
     console.log(`Exported ${selectedSuppliers.length} suppliers to ${filename}`);
   }, [selectedRows, suppliers, exportToCsv]);
+
 
   // Filter suppliers based on search and showInactive
   const filteredSuppliers = useMemo(() => {
@@ -673,6 +642,39 @@ interface ColumnVisibility {
     manualPagination: false,
   });
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Ctrl+A - Select all visible rows
+      if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault();
+        const visibleRowIds = table.getRowModel().rows.map(row => row.original.supplierid);
+        setSelectedRows(new Set(visibleRowIds));
+      }
+
+      // Delete key - Delete selected rows
+      if (e.key === 'Delete' && selectedRows.size > 0) {
+        e.preventDefault();
+        handleDeleteSelected();
+      }
+
+      // Escape key - Clear selection
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setSelectedRows(new Set());
+        setEditingRow(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedRows, handleDeleteSelected, table]);
+
   // Pagination info
   const totalItems = filteredSuppliers.length;
   const startItem = pagination.pageIndex * pagination.pageSize + 1;
@@ -859,7 +861,7 @@ interface ColumnVisibility {
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
       {selectedRows.size > 0 && (
         <div 
-          className="floating-action-bar fixed bottom-4 right-4 z-[9999]"
+          className="floating-action-bar fixed bottom-6 right-6 z-[9999]"
           style={{ 
             position: 'fixed',
             zIndex: 9999,
@@ -871,8 +873,8 @@ interface ColumnVisibility {
             isolation: 'isolate'
           }}
         >
-          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl">
-            <div className="flex items-center gap-3 px-4 py-3">
+          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl w-fit">
+            <div className="flex items-center gap-2 px-3 py-2.5">
               {/* Selection count */}
               <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                 <span>{selectedRows.size}</span>
