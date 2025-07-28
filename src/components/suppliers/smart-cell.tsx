@@ -21,9 +21,8 @@ export const SmartCell = ({
   const [showTooltip, setShowTooltip] = useState(false);
 
   if (!value || value.trim() === '') {
-    const emptyTextSize = (type === 'email' || type === 'website') ? 'text-xs' : 'text-sm';
     return (
-      <span className={`text-gray-400 italic ${emptyTextSize} ${className}`}>
+      <span className={`text-gray-400 italic ${className}`}>
         {type === 'email' ? 'No email' : 
          type === 'phone' ? 'No phone' : 
          type === 'website' ? 'No website' : 
@@ -73,7 +72,7 @@ export const SmartCell = ({
         return (
           <a
             href={`mailto:${value}`}
-            className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
             {displayValue}
@@ -87,7 +86,7 @@ export const SmartCell = ({
         return (
           <a
             href={phoneHref}
-            className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
             {displayValue}
@@ -106,7 +105,7 @@ export const SmartCell = ({
             href={websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors"
+            className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
             {truncatedUrl}
@@ -117,7 +116,7 @@ export const SmartCell = ({
       case 'multiline':
         return (
           <div 
-            className={`text-xs whitespace-pre-wrap break-words ${className}`}
+            className={`whitespace-pre-wrap break-words ${className}`}
             style={{
               display: '-webkit-box',
               WebkitLineClamp: maxLines,
@@ -134,7 +133,7 @@ export const SmartCell = ({
       default:
         return (
           <span 
-            className={`text-xs ${className}`}
+            className={className}
             title={shouldTruncate ? value : undefined}
           >
             {displayValue}

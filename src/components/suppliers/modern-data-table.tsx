@@ -686,7 +686,7 @@ export const ModernDataTable = () => {
         {/* Table - Full width responsive */}
         <div className="w-full overflow-x-auto">
           <Table
-            className="border-0 w-full min-w-full"
+            className="border-0 w-full min-w-full [&_*]:!text-xs"
             style={{ 
               tableLayout: isClient ? 'auto' : 'fixed', 
               width: '100%' 

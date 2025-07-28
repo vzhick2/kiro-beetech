@@ -468,7 +468,7 @@ export const EditableSupplierRow = ({
         )}
       </TableCell>
       <TableCell
-        className="text-sm p-1 h-12"
+        className="text-xs p-1 h-12"
         style={{ width: columnWidths.website, maxWidth: columnWidths.website }}
       >
         {isSpreadsheetMode ? (
@@ -497,7 +497,7 @@ export const EditableSupplierRow = ({
                 href={supplier.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-blue-600 hover:underline flex items-center gap-1 text-sm transition-colors"
+                className="text-gray-700 hover:text-blue-600 hover:underline flex items-center gap-1 text-xs transition-colors"
                 title={supplier.website}
               >
                 <span className="cell-content">
@@ -506,13 +506,13 @@ export const EditableSupplierRow = ({
                 <ExternalLink className="h-3 w-3 flex-shrink-0" />
               </a>
             ) : (
-              <span className="text-gray-400 italic text-sm">No website</span>
+              <span className="text-gray-400 italic text-xs">No website</span>
             )}
           </div>
         )}
       </TableCell>
       <TableCell
-        className="text-sm p-1 h-12"
+        className="text-xs p-1 h-12"
         style={{ width: columnWidths.phone, maxWidth: columnWidths.phone }}
       >
         {isSpreadsheetMode ? (
@@ -537,7 +537,7 @@ export const EditableSupplierRow = ({
             className="h-full flex items-center"
           >
             {supplier.phone ? (
-              <span className="text-sm" title={supplier.phone}>
+              <span className="text-xs" title={supplier.phone}>
                 <div className="cell-content">{supplier.phone}</div>
               </span>
             ) : (

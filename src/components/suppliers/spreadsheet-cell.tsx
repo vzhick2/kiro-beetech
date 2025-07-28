@@ -157,19 +157,18 @@ export const SpreadsheetCell = ({
     const isWebsiteField = field === 'website';
     const isEmailField = field === 'email';
     
-    // Use smaller font for email and website fields consistently
-    const fontSize = (isWebsiteField || isEmailField) ? 'text-xs' : 'text-sm';
+    // Simplified - let global table styling handle font sizes
     const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
     
     if (field === 'status') {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-green-100 text-green-800">
           {value === 'archived' ? 'Inactive' : 'Active'}
         </span>
       );
     }
     return (
-      <div className={`${fontSize} ${textColor} leading-tight max-h-[4.5rem] overflow-hidden block`} style={{ 
+      <div className={`${textColor} leading-tight max-h-[4.5rem] overflow-hidden block`} style={{ 
         display: '-webkit-box', 
         WebkitLineClamp: 3, 
         WebkitBoxOrient: 'vertical' 
@@ -179,17 +178,15 @@ export const SpreadsheetCell = ({
     );
   }
 
-  // Spreadsheet edit mode - match display mode styling exactly
+  // Spreadsheet edit mode - simplified with global table font sizing
   const isWebsiteField = field === 'website';
   const isEmailField = field === 'email';
   
-  // Fix website text size issue - use text-xs for website/email consistently
-  const fontSize = (isWebsiteField || isEmailField) ? 'text-xs' : 'text-sm';
   const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
   
   // Match exact table cell styling: py-2 px-3 from table cells
   // Keep same height as display mode - no min-h constraints that change row height
-  const cellClass = `w-full ${fontSize} ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''}`;
+  const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''}`;
   const containerClass = `w-full py-2 px-3 ${hasChanges ? 'bg-blue-50' : 'bg-white'}`;
 
   if (field === 'status') {
@@ -207,7 +204,7 @@ export const SpreadsheetCell = ({
         >
           <SelectTrigger
             ref={selectRef}
-            className="w-full border-0 bg-transparent shadow-none outline-none focus:ring-0 text-xs py-0"
+            className="w-full border-0 bg-transparent shadow-none outline-none focus:ring-0 py-0"
             onKeyDown={handleSelectKeyDown}
           >
             <SelectValue />

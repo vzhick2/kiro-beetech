@@ -1178,7 +1178,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
               }
             `
           }} />
-          <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
+          <table className="w-full divide-y divide-gray-200 [&_*]:!text-xs" style={{ tableLayout: 'fixed' }}>
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
