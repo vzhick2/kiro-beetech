@@ -75,6 +75,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   // Remove custom view options dropdown state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   // Helper functions
   const handleSort = useCallback((columnId: string) => {
@@ -172,6 +173,25 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     // TODO: Implement CSV export
     // exportToCsv(selectedSuppliers, 'selected-suppliers.csv');
   }, [selectedRows, suppliers]);
+
+  // Filter suppliers based on search and showInactive
+  const filteredSuppliers = useMemo(() => {
+    let filtered = suppliers;
+    
+    // Filter by search term
+    if (searchValue.trim()) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(supplier => 
+        supplier.name.toLowerCase().includes(searchLower) ||
+        supplier.website?.toLowerCase().includes(searchLower) ||
+        supplier.contactphone?.toLowerCase().includes(searchLower) ||
+        supplier.address?.toLowerCase().includes(searchLower) ||
+        supplier.notes?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return filtered;
+  }, [suppliers, searchValue]);
 
   // Table columns with conditional visibility
   const columnHelper = createColumnHelper<Supplier>();
@@ -432,7 +452,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   }, [columnHelper, handleSort, renderSortIcon, formatDate, columnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRow]);
   // Table instance with pagination
   const table = useReactTable({
-    data: suppliers,
+    data: filteredSuppliers,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -447,7 +467,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   });
 
   // Pagination info
-  const totalItems = suppliers.length;
+  const totalItems = filteredSuppliers.length;
   const startItem = pagination.pageIndex * pagination.pageSize + 1;
   const endItem = Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalItems);
   const totalPages = Math.ceil(totalItems / pagination.pageSize);
@@ -466,135 +486,167 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   );
 
   return (
-    <div className="space-y-4">
-      {/* Top bar with pagination info, search, and view options */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
-          <span>
-            Showing {startItem} to {endItem} of {totalItems} suppliers
-          </span>
-          <div className="flex items-center gap-2">
-            <span>Rows per page:</span>
-            <select
-              value={pagination.pageSize}
-              onChange={(e) => setPagination(prev => ({ ...prev, pageSize: Number(e.target.value), pageIndex: 0 }))}
-              className="border border-gray-300 rounded px-2 py-1 text-sm"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
-          </div>
+    <div className="w-full h-full">
+      {/* Top bar with search and view options */}
+      <div className="px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Search bar */}
-          <div className="relative w-64">
+          <div className="relative w-full lg:max-w-md">
             <input
               type="text"
               placeholder="Search suppliers..."
-              className="pl-8 pr-2 py-1 border border-gray-300 rounded w-full text-sm"
-              // TODO: wire up search state if needed
-              disabled
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            {/* Optionally add a search icon here */}
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            {searchValue && (
+              <button
+                onClick={() => setSearchValue('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
           </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>Page {pagination.pageIndex + 1} of {totalPages}</span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-              className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </button>
+          
+          {/* View Options Panel */}
+          <div className="flex-shrink-0">
+            <ViewOptionsPanel
+              columnVisibility={columnVisibility as any}
+              onColumnVisibilityChange={(col, visible) => setColumnVisibility(prev => ({ ...prev, [col]: visible }))}
+              includeInactive={showInactive}
+              onIncludeInactiveChange={onToggleInactiveAction}
+              densityMode={"normal"}
+              onDensityModeChange={() => {}}
+            />
           </div>
-          {/* View Options Panel - matches main suppliers page */}
-          <ViewOptionsPanel
-            columnVisibility={columnVisibility as any}
-            onColumnVisibilityChange={(col, visible) => setColumnVisibility(prev => ({ ...prev, [col]: visible }))}
-            includeInactive={showInactive}
-            onIncludeInactiveChange={onToggleInactiveAction}
-            densityMode={"normal"}
-            onDensityModeChange={() => {}}
-          />
         </div>
       </div>
 
 
 
       {/* Table */}
-      <div className="bg-white border-t border-b border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto" style={{ scrollbarWidth: 'thin' }}>
-          <table className="w-full divide-y divide-gray-200" style={{ minWidth: '100%', width: 'max-content' }}>
-            <thead className="bg-gray-50">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th
-                      key={header.id}
-                      style={{ width: header.getSize() }}
-                      className="px-0 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {table.getRowModel().rows.map((row, index) => (
-                <tr 
-                  key={row.id} 
-                  className={`
-                    ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}
-                    hover:bg-gray-100/50 
-                    ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
-                    ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
-                    transition-colors duration-150
-                  `}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <td 
-                      key={cell.id} 
-                      style={{ width: cell.column.getSize() }}
-                      className="text-sm text-gray-900 align-top"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="w-full overflow-x-auto bg-white">
+        <table className="w-full divide-y divide-gray-200" style={{ minWidth: '100%', width: 'max-content' }}>
+          <thead className="bg-gray-50">
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th
+                    key={header.id}
+                    style={{ width: header.getSize() }}
+                    className="px-0 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {table.getRowModel().rows.map((row, index) => (
+              <tr 
+                key={row.id} 
+                className={`
+                  ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}
+                  hover:bg-gray-100/50 
+                  ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
+                  ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
+                  transition-colors duration-150
+                `}
+              >
+                {row.getVisibleCells().map(cell => (
+                  <td 
+                    key={cell.id} 
+                    style={{ width: cell.column.getSize() }}
+                    className="text-sm text-gray-900 align-top"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
         
-        {suppliers.length === 0 && (
+        {filteredSuppliers.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-gray-500">No suppliers found</div>
+            <div className="text-gray-500">
+              {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
+            </div>
+            {searchValue && (
+              <button
+                onClick={() => setSearchValue('')}
+                className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Clear search
+              </button>
+            )}
           </div>
         )}
+      </div>
+
+      {/* Bottom pagination */}
+      <div className="px-6 py-4 border-t border-gray-200 bg-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span>
+              Showing {startItem} to {endItem} of {totalItems} suppliers
+            </span>
+            <div className="flex items-center gap-2">
+              <span>Rows per page:</span>
+              <select
+                value={pagination.pageSize}
+                onChange={(e) => setPagination(prev => ({ ...prev, pageSize: Number(e.target.value), pageIndex: 0 }))}
+                className="border border-gray-300 rounded px-2 py-1 text-sm"
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">Page {pagination.pageIndex + 1} of {totalPages}</span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+                className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Floating Action Bar - Bottom Right */}
