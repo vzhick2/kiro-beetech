@@ -206,7 +206,7 @@
 .content-area {
   flex: 1;
   overflow-y: auto; /* Scrollbar appears here - below header, right of sidebar */
-  overflow-x: hidden;
+  overflow-x: auto; /* Allow horizontal scrolling when content exceeds width */
   min-width: 0; /* Allow shrinking below content size */
   box-sizing: border-box;
   /* 2025 Mobile UX: Smooth scrolling and enable pull-to-refresh */
