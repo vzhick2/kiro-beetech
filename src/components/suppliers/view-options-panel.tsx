@@ -71,7 +71,7 @@ export const ViewOptionsPanel = React.memo(({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
-        align="end" 
+        align="start" 
         className="w-80 p-4 bg-white border border-gray-200 shadow-lg rounded-lg"
         sideOffset={4}
       >
