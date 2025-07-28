@@ -343,6 +343,7 @@ Before finalizing any output for this inventory project:
 - **WAC Calculation**: On-demand with caching in items table
 - **Negative Inventory**: Supported with proper alerting
 - **Mutable Transactions**: Allow corrections with audit timestamps
+- **Smart Delete Strategy**: Archive-first approach with conditional delete for clean records
 
 ### Component Architecture
 
@@ -350,6 +351,77 @@ Before finalizing any output for this inventory project:
 - **Client Components**: Use when interactivity is needed
 - **Error Boundaries**: Comprehensive error handling
 - **Form Handling**: Server Actions for mutations
+
+### Smart Delete Pattern
+
+The application uses an "Archive-First with Smart Delete" strategy to balance data safety with cleanup needs:
+
+#### Business Rules
+- **Primary Action**: Archive (soft delete) - always available and safe
+- **Secondary Action**: Delete (hard delete) - only for records with no business activity
+- **Validation**: Check for any business relationships before allowing deletion
+- **User Guidance**: Clear messaging when delete is blocked with archive suggestion
+
+#### Implementation Example
+
+```typescript
+/**
+ * Check if a supplier can be safely deleted (no business activity)
+ */
+export async function canDeleteSupplier(supplierId: string) {
+  try {
+    // Check for any purchases from this supplier
+    const { data: purchases } = await supabaseAdmin
+      .from('purchases')
+      .select('purchaseid')
+      .eq('supplierid', supplierId)
+      .limit(1);
+
+    if (purchases && purchases.length > 0) {
+      return { canDelete: false, reason: 'Supplier has purchase history' };
+    }
+
+    // Check for items using this as primary supplier
+    const { data: items } = await supabaseAdmin
+      .from('items')
+      .select('itemid')
+      .eq('primarysupplierid', supplierId)
+      .limit(1);
+
+    if (items && items.length > 0) {
+      return { canDelete: false, reason: 'Supplier is set as primary supplier for items' };
+    }
+
+    return { canDelete: true };
+  } catch (error) {
+    return { canDelete: false, reason: 'Failed to validate supplier deletion' };
+  }
+}
+
+export async function deleteSupplier(supplierId: string) {
+  const deleteCheck = await canDeleteSupplier(supplierId);
+  if (!deleteCheck.canDelete) {
+    return { 
+      success: false, 
+      error: deleteCheck.reason,
+      suggestArchive: true 
+    };
+  }
+  // Proceed with deletion...
+}
+```
+
+#### UI Implementation
+- Show Archive button prominently (primary action)
+- Show Delete button conditionally (secondary action)
+- Provide clear feedback when delete is blocked
+- Suggest Archive as alternative for records with business activity
+
+#### Benefits
+- **Data Safety**: Business history always preserved through archive
+- **Test Cleanup**: Unused test records can be permanently removed
+- **User Clarity**: Clear guidance on when to use each action
+- **Consistency**: Same pattern works across all entity types
 
 ## 📦 Dependency Management
 

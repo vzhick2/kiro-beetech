@@ -988,6 +988,235 @@ export function useCycleCountAlerts(limit: number = 5) {
 }
 ```
 
+### Suppliers Management
+
+#### `bulkArchiveSuppliers(supplierIds: string[])`
+
+**Purpose**: Archive multiple suppliers (soft delete)
+**Location**: `src/app/actions/suppliers.ts`
+**Parameters**: Array of supplier UUIDs
+**Returns**: Promise with enhanced response including counts and error details
+
+```typescript
+'use server';
+
+export async function bulkArchiveSuppliers(supplierIds: string[]) {
+  try {
+    const { error } = await supabase
+      .from('suppliers')
+      .update({ is_archived: true })
+      .in('supplierId', supplierIds);
+
+    if (error) throw error;
+
+    revalidatePath('/suppliers');
+    revalidatePath('/testsuppliers');
+
+    return { 
+      success: true, 
+      message: `Successfully archived ${supplierIds.length} supplier(s)` 
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.message 
+    };
+  }
+}
+```
+
+#### `bulkUnarchiveSuppliers(supplierIds: string[])`
+
+**Purpose**: Unarchive multiple suppliers
+**Location**: `src/app/actions/suppliers.ts`
+**Parameters**: Array of supplier UUIDs
+**Returns**: Promise with enhanced response including counts and error details
+
+```typescript
+'use server';
+
+export async function bulkUnarchiveSuppliers(supplierIds: string[]) {
+  try {
+    const { error } = await supabase
+      .from('suppliers')
+      .update({ is_archived: false })
+      .in('supplierId', supplierIds);
+
+    if (error) throw error;
+
+    revalidatePath('/suppliers');
+    revalidatePath('/testsuppliers');
+
+    return { 
+      success: true, 
+      message: `Successfully unarchived ${supplierIds.length} supplier(s)` 
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.message 
+    };
+  }
+}
+```
+
+#### `bulkDeleteSuppliers(supplierIds: string[])`
+
+**Purpose**: Smart delete operation with validation - archive if relationships exist, delete if clean
+**Location**: `src/app/actions/suppliers.ts`
+**Parameters**: Array of supplier UUIDs
+**Returns**: Promise with detailed response including operation breakdown
+
+```typescript
+'use server';
+
+export async function bulkDeleteSuppliers(supplierIds: string[]) {
+  try {
+    const deletableIds: string[] = [];
+    const blockedSuppliers: Array<{ id: string; name: string; reason: string }> = [];
+
+    // Validate each supplier
+    for (const id of supplierIds) {
+      const canDelete = await canDeleteSupplier(id);
+      
+      if (canDelete.canDelete) {
+        deletableIds.push(id);
+      } else {
+        // Get supplier name for user feedback
+        const { data: supplier } = await supabase
+          .from('suppliers')
+          .select('companyName')
+          .eq('supplierId', id)
+          .single();
+        
+        blockedSuppliers.push({
+          id,
+          name: supplier?.companyName || 'Unknown Supplier',
+          reason: canDelete.reason || 'Has related data'
+        });
+      }
+    }
+
+    let deletedCount = 0;
+    let archivedCount = 0;
+
+    // Delete clean suppliers
+    if (deletableIds.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('suppliers')
+        .delete()
+        .in('supplierId', deletableIds);
+
+      if (deleteError) throw deleteError;
+      deletedCount = deletableIds.length;
+    }
+
+    // Archive suppliers with relationships
+    if (blockedSuppliers.length > 0) {
+      const blockedIds = blockedSuppliers.map(s => s.id);
+      const { error: archiveError } = await supabase
+        .from('suppliers')
+        .update({ is_archived: true })
+        .in('supplierId', blockedIds);
+
+      if (archiveError) throw archiveError;
+      archivedCount = blockedIds.length;
+    }
+
+    revalidatePath('/suppliers');
+    revalidatePath('/testsuppliers');
+
+    // Build response message
+    let message = '';
+    if (deletedCount > 0 && archivedCount > 0) {
+      message = `Successfully deleted ${deletedCount} supplier(s) and archived ${archivedCount} supplier(s) with relationships`;
+    } else if (deletedCount > 0) {
+      message = `Successfully deleted ${deletedCount} supplier(s)`;
+    } else if (archivedCount > 0) {
+      message = `Archived ${archivedCount} supplier(s) with existing relationships instead of deleting`;
+    } else {
+      message = 'No suppliers were processed';
+    }
+
+    return {
+      success: true,
+      message,
+      details: {
+        deleted: deletedCount,
+        archived: archivedCount,
+        blockedSuppliers: blockedSuppliers.map(s => ({
+          name: s.name,
+          reason: s.reason
+        }))
+      }
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.message 
+    };
+  }
+}
+```
+
+#### `canDeleteSupplier(supplierId: string)`
+
+**Purpose**: Validate if a supplier can be safely deleted without data integrity issues
+**Location**: `src/app/actions/suppliers.ts`
+**Parameters**: Supplier UUID
+**Returns**: Promise with validation result and reason
+
+```typescript
+async function canDeleteSupplier(supplierId: string): Promise<{
+  canDelete: boolean;
+  reason?: string;
+}> {
+  try {
+    // Check for purchases
+    const { data: purchases, error: purchaseError } = await supabase
+      .from('purchases')
+      .select('purchaseId')
+      .eq('supplierId', supplierId)
+      .limit(1);
+
+    if (purchaseError) throw purchaseError;
+
+    if (purchases && purchases.length > 0) {
+      return {
+        canDelete: false,
+        reason: 'Has purchase history'
+      };
+    }
+
+    // Check for items with this as primary supplier
+    const { data: items, error: itemError } = await supabase
+      .from('items')
+      .select('itemId')
+      .eq('primarySupplierId', supplierId)
+      .limit(1);
+
+    if (itemError) throw itemError;
+
+    if (items && items.length > 0) {
+      return {
+        canDelete: false,
+        reason: 'Is primary supplier for items'
+      };
+    }
+
+    // Safe to delete - no relationships found
+    return {
+      canDelete: true
+    };
+  } catch (error) {
+    return {
+      canDelete: false,
+      reason: 'Error checking relationships'
+    };
+  }
+}
+```
+
 ## Authentication & Authorization
 
 ### Row Level Security (RLS) Policies

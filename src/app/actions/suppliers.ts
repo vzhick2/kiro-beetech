@@ -112,8 +112,62 @@ export async function updateSupplier(
   }
 }
 
+/**
+ * Check if a supplier can be safely deleted (no business activity)
+ */
+export async function canDeleteSupplier(supplierId: string) {
+  try {
+    // Check for any purchases from this supplier
+    const { data: purchases, error: purchaseError } = await supabaseAdmin
+      .from('purchases')
+      .select('purchaseid')
+      .eq('supplierid', supplierId)
+      .limit(1);
+
+    if (purchaseError) {
+      console.error('Error checking purchases:', purchaseError);
+      return { canDelete: false, reason: 'Error checking purchase history' };
+    }
+
+    if (purchases && purchases.length > 0) {
+      return { canDelete: false, reason: 'Supplier has purchase history' };
+    }
+
+    // Check for items using this as primary supplier
+    const { data: items, error: itemError } = await supabaseAdmin
+      .from('items')
+      .select('itemid')
+      .eq('primarysupplierid', supplierId)
+      .limit(1);
+
+    if (itemError) {
+      console.error('Error checking items:', itemError);
+      return { canDelete: false, reason: 'Error checking item relationships' };
+    }
+
+    if (items && items.length > 0) {
+      return { canDelete: false, reason: 'Supplier is set as primary supplier for items' };
+    }
+
+    return { canDelete: true };
+  } catch (error) {
+    console.error('Error in canDeleteSupplier:', error);
+    return { canDelete: false, reason: 'Failed to validate supplier deletion' };
+  }
+}
+
 export async function deleteSupplier(supplierId: string) {
   try {
+    // Check if supplier can be deleted
+    const deleteCheck = await canDeleteSupplier(supplierId);
+    if (!deleteCheck.canDelete) {
+      return { 
+        success: false, 
+        error: deleteCheck.reason,
+        suggestArchive: true 
+      };
+    }
+
     const { error } = await supabaseAdmin
       .from('suppliers')
       .delete()
@@ -140,20 +194,46 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
   }
   try {
     if (supplierIds.length === 0) {
-      return { success: true, deletedCount: 0 };
+      return { success: true, deletedCount: 0, blockedCount: 0, blockedReasons: [] };
     }
 
-    const { error } = await supabaseAdmin
-      .from('suppliers')
-      .delete()
-      .in('supplierid', supplierIds);
+    // Check which suppliers can be deleted
+    const deleteChecks = await Promise.all(
+      supplierIds.map(async (id) => ({
+        id,
+        ...(await canDeleteSupplier(id))
+      }))
+    );
 
-    if (error) {
-      console.error('Error bulk deleting suppliers:', error);
-      return { success: false, error: error.message };
+    const canDeleteIds = deleteChecks
+      .filter(check => check.canDelete)
+      .map(check => check.id);
+    
+    const blockedIds = deleteChecks
+      .filter(check => !check.canDelete)
+      .map(check => ({ id: check.id, reason: check.reason }));
+
+    let deletedCount = 0;
+    if (canDeleteIds.length > 0) {
+      const { error } = await supabaseAdmin
+        .from('suppliers')
+        .delete()
+        .in('supplierid', canDeleteIds);
+
+      if (error) {
+        console.error('Error bulk deleting suppliers:', error);
+        return { success: false, error: error.message };
+      }
+      deletedCount = canDeleteIds.length;
     }
 
-    return { success: true, deletedCount: supplierIds.length };
+    return { 
+      success: true, 
+      deletedCount,
+      blockedCount: blockedIds.length,
+      blockedReasons: blockedIds,
+      suggestArchive: blockedIds.length > 0
+    };
   } catch (error) {
     console.error('Failed to bulk delete suppliers:', error);
     return { success: false, error: 'Failed to bulk delete suppliers' };

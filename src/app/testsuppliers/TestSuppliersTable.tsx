@@ -237,7 +237,36 @@ interface ColumnVisibility {
       try {
         const result = await bulkDeleteSuppliers(selectedIds);
         if (result.success) {
-          console.log(`Successfully deleted ${result.deletedCount} suppliers`);
+          const { 
+            deletedCount = 0, 
+            blockedCount = 0, 
+            blockedReasons = [], 
+            suggestArchive = false 
+          } = result;
+          
+          let message = '';
+          if (deletedCount > 0) {
+            message += `Successfully deleted ${deletedCount} supplier${deletedCount !== 1 ? 's' : ''}`;
+          }
+          
+          if (blockedCount > 0) {
+            if (deletedCount > 0) message += '\n\n';
+            message += `${blockedCount} supplier${blockedCount !== 1 ? 's' : ''} could not be deleted:\n`;
+            if (blockedReasons && blockedReasons.length > 0) {
+              blockedReasons.forEach((blocked: any) => {
+                message += `• ${blocked.reason}\n`;
+              });
+            }
+            if (suggestArchive) {
+              message += '\nConsider using "Archive" instead to preserve business data.';
+            }
+          }
+          
+          console.log(`Delete operation completed: ${deletedCount} deleted, ${blockedCount} blocked`);
+          if (message) {
+            alert(message);
+          }
+          
           setSelectedRows(new Set());
           refetch();
         } else {
