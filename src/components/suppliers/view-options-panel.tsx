@@ -12,13 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 export interface ColumnVisibility {
   name: boolean;
@@ -44,12 +37,6 @@ interface ViewOptionsPanelProps {
   densityMode: DensityMode['mode'];
   onDensityModeChange: (mode: DensityMode['mode']) => void;
 }
-
-const DENSITY_MODES: DensityMode[] = [
-  { mode: 'compact', label: 'Compact' },
-  { mode: 'normal', label: 'Normal' },
-  { mode: 'comfortable', label: 'Comfortable' },
-];
 
 export const ViewOptionsPanel = React.memo(({
   columnVisibility,
@@ -136,22 +123,6 @@ export const ViewOptionsPanel = React.memo(({
             <Label htmlFor="include-inactive" className="text-sm cursor-pointer select-none text-gray-700">
               Include inactive suppliers
             </Label>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-900">Row Density</Label>
-            <Select value={densityMode} onValueChange={onDensityModeChange}>
-              <SelectTrigger className="h-8 bg-white border-gray-200">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DENSITY_MODES.map(({ mode, label }) => (
-                  <SelectItem key={mode} value={mode}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </DropdownMenuContent>
