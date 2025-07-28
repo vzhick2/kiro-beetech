@@ -42,6 +42,7 @@ export const ViewOptionsPanel = React.memo(({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ right: number | 'auto', left: number | 'auto' }>({ right: 0, left: 'auto' });
 
   const columns = [
     { key: 'name' as const, label: 'Supplier Name', required: true },
@@ -53,6 +54,29 @@ export const ViewOptionsPanel = React.memo(({
     { key: 'status' as const, label: 'Status', required: false },
     { key: 'createdAt' as const, label: 'Created Date', required: false },
   ];
+
+  // Calculate dropdown position to prevent cutoff
+  useEffect(() => {
+    if (isOpen && containerRef.current && dropdownRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const dropdownWidth = 288; // w-72 = 18rem = 288px
+      const viewportWidth = window.innerWidth;
+      const rightEdge = containerRect.right;
+      const leftEdge = containerRect.left;
+      
+      // Check if dropdown would overflow on the right
+      if (rightEdge < dropdownWidth + 16) { // 16px margin
+        // Position from left edge instead
+        setDropdownPosition({ 
+          right: 'auto', 
+          left: Math.max(0, leftEdge - (dropdownWidth - containerRect.width)) 
+        });
+      } else {
+        // Default position (right-aligned)
+        setDropdownPosition({ right: 0, left: 'auto' });
+      }
+    }
+  }, [isOpen]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -90,16 +114,20 @@ export const ViewOptionsPanel = React.memo(({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 top-full mt-2 w-80 p-4 bg-white border border-gray-200 shadow-lg rounded-lg z-50"
-          style={{ position: 'absolute' }}
+          className="absolute top-full mt-2 w-72 p-3 bg-white border border-gray-200 shadow-lg rounded-lg z-50"
+          style={{ 
+            position: 'absolute',
+            right: dropdownPosition.right === 'auto' ? 'auto' : `${dropdownPosition.right}px`,
+            left: dropdownPosition.left === 'auto' ? 'auto' : `${dropdownPosition.left}px`,
+          }}
         >
-          <div className="px-0 pb-3 text-sm font-semibold text-gray-900">
+          <div className="pb-3 text-sm font-semibold text-gray-900">
             Columns
           </div>
           
-          <div className="space-y-3 mb-4">
+          <div className="space-y-2.5 mb-4">
             {columns.map(({ key, label, required }) => (
-              <div key={key} className="flex items-center space-x-3">
+              <div key={key} className="flex items-center space-x-2.5">
                 <Checkbox
                   id={`column-${key}`}
                   checked={columnVisibility[key]}
@@ -124,12 +152,12 @@ export const ViewOptionsPanel = React.memo(({
 
           <div className="my-4 h-px bg-gray-200" />
 
-          <div className="px-0 pb-3 text-sm font-semibold text-gray-900">
+          <div className="pb-3 text-sm font-semibold text-gray-900">
             Display Options
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2.5">
               <Checkbox
                 id="include-inactive"
                 checked={includeInactive}

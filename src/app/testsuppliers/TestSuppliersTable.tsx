@@ -711,64 +711,64 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
 
       {/* Table */}
-      <div className="w-full bg-white">
-        <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed', minWidth: 'max-content' }}>
+      <div className="w-full bg-white overflow-x-auto">
+        <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
           <thead className="bg-gray-50">
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th
-                  key={header.id}
-                  style={{ width: header.getSize() }}
-                  className={densityClasses.header}
-                >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {table.getRowModel().rows.map((row, index) => (
-            <tr 
-              key={row.id} 
-              className={`
-                ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}
-                hover:bg-gray-100/60 
-                ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
-                ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
-                transition-colors duration-150
-              `}
-            >
-              {row.getVisibleCells().map(cell => (
-                <td 
-                  key={cell.id} 
-                  style={{ width: cell.column.getSize() }}
-                  className={`${densityClasses.cell} align-middle`}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      
-      {filteredSuppliers.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-500">
-            {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th
+                    key={header.id}
+                    style={{ width: header.getSize() }}
+                    className={densityClasses.header}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {table.getRowModel().rows.map((row, index) => (
+              <tr 
+                key={row.id} 
+                className={`
+                  ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}
+                  hover:bg-gray-100/60 
+                  ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
+                  ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
+                  transition-colors duration-150
+                `}
+              >
+                {row.getVisibleCells().map(cell => (
+                  <td 
+                    key={cell.id} 
+                    style={{ width: cell.column.getSize() }}
+                    className={`${densityClasses.cell} align-middle`}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {filteredSuppliers.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-gray-500">
+              {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
+            </div>
+            {searchValue && (
+              <button
+                onClick={() => setSearchValue('')}
+                className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+              >
+                Clear search
+              </button>
+            )}
           </div>
-          {searchValue && (
-            <button
-              onClick={() => setSearchValue('')}
-              className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
-            >
-              Clear search
-            </button>
-          )}
-        </div>
-      )}
+        )}
       </div>
 
       {/* Bottom pagination */}
