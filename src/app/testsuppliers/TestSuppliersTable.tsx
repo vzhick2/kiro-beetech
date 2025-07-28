@@ -15,6 +15,7 @@ import {
 import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
+import { useDebouncedSearch } from '@/hooks/use-debounce';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
 
 import { 
@@ -81,7 +82,9 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   // Remove custom view options dropdown state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
-  const [searchValue, setSearchValue] = useState<string>('');
+  
+  // Debounced search with 350ms delay for better UX
+  const { searchValue, debouncedSearchValue, updateSearch, clearSearch } = useDebouncedSearch('', 350);
 
   // Get density mode classes - fixed to compact
   const getDensityClasses = () => {
@@ -324,9 +327,9 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   const filteredSuppliers = useMemo(() => {
     let filtered = suppliers;
     
-    // Filter by search term
-    if (searchValue.trim()) {
-      const searchLower = searchValue.toLowerCase();
+    // Filter by search term (using debounced value)
+    if (debouncedSearchValue.trim()) {
+      const searchLower = debouncedSearchValue.toLowerCase();
       filtered = filtered.filter(supplier => 
         supplier.name.toLowerCase().includes(searchLower) ||
         supplier.website?.toLowerCase().includes(searchLower) ||
@@ -338,7 +341,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     }
     
     return filtered;
-  }, [suppliers, searchValue]);
+  }, [suppliers, debouncedSearchValue]);
 
   // Table columns with conditional visibility
   const columnHelper = createColumnHelper<Supplier>();
@@ -646,6 +649,77 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedRows, handleDeleteSelected, table]);
 
+  // Sync sticky horizontal scrollbar with main table
+  useEffect(() => {
+    const mainContainer = document.getElementById('main-table-container');
+    const stickyScrollbar = document.getElementById('sticky-scrollbar');
+    
+    if (!mainContainer || !stickyScrollbar) return;
+
+    const updateScrollbarWidth = () => {
+      const table = mainContainer.querySelector('table');
+      const stickyContent = document.getElementById('sticky-scrollbar-content');
+      if (table && stickyContent) {
+        // Get actual table dimensions
+        const tableScrollWidth = table.scrollWidth;
+        const containerClientWidth = mainContainer.clientWidth;
+        const containerOffsetLeft = mainContainer.getBoundingClientRect().left;
+        
+        // Set the sticky scrollbar width and position to match table container
+        stickyScrollbar.style.left = `${containerOffsetLeft}px`;
+        stickyScrollbar.style.width = `${containerClientWidth}px`;
+        stickyScrollbar.style.right = 'auto';
+        stickyContent.style.width = `${tableScrollWidth}px`;
+        
+        // Show/hide sticky scrollbar based on whether scrolling is needed
+        const needsScrollbar = tableScrollWidth > containerClientWidth;
+        stickyScrollbar.style.display = needsScrollbar ? 'block' : 'none';
+      }
+    };
+
+    // Multiple timing checks to ensure proper calculation
+    const timeouts = [0, 100, 300, 1000]; // Progressive delays
+    timeouts.forEach(delay => {
+      setTimeout(updateScrollbarWidth, delay);
+    });
+
+    let isMainScrolling = false;
+    let isStickyScrolling = false;
+
+    const handleMainScroll = () => {
+      if (isStickyScrolling) return;
+      isMainScrolling = true;
+      stickyScrollbar.scrollLeft = mainContainer.scrollLeft;
+      requestAnimationFrame(() => {
+        isMainScrolling = false;
+      });
+    };
+
+    const handleStickyScroll = () => {
+      if (isMainScrolling) return;
+      isStickyScrolling = true;
+      mainContainer.scrollLeft = stickyScrollbar.scrollLeft;
+      requestAnimationFrame(() => {
+        isStickyScrolling = false;
+      });
+    };
+
+    const handleResize = () => {
+      // Delay to ensure layout has settled after resize
+      setTimeout(updateScrollbarWidth, 100);
+    };
+
+    mainContainer.addEventListener('scroll', handleMainScroll);
+    stickyScrollbar.addEventListener('scroll', handleStickyScroll);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      mainContainer.removeEventListener('scroll', handleMainScroll);
+      stickyScrollbar.removeEventListener('scroll', handleStickyScroll);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [filteredSuppliers, table.getVisibleLeafColumns().length]); // Re-run when data or visible columns change
+
   // Pagination info
   const totalItems = filteredSuppliers.length;
   const startItem = pagination.pageIndex * pagination.pageSize + 1;
@@ -676,7 +750,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
               type="text"
               placeholder="Search suppliers..."
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => updateSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -686,7 +760,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             </div>
             {searchValue && (
               <button
-                onClick={() => setSearchValue('')}
+                onClick={clearSearch}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
                 <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
@@ -710,9 +784,25 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
 
 
-      {/* Table */}
-      <div className="w-full bg-white overflow-x-auto">
-        <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
+      {/* Table with Sticky Horizontal Scrollbar */}
+      <div className="relative">
+        {/* Main table container */}
+        <div 
+          className="w-full bg-white overflow-x-scroll" 
+          id="main-table-container"
+          style={{
+            scrollbarWidth: 'none', /* Firefox */
+            msOverflowStyle: 'none', /* IE/Edge */
+          }}
+        >
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              #main-table-container::-webkit-scrollbar {
+                display: none; /* WebKit browsers */
+              }
+            `
+          }} />
+          <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
@@ -752,23 +842,46 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
               </tr>
             ))}
           </tbody>
-        </table>
-        
-        {filteredSuppliers.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-500">
-              {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
+          </table>
+          
+          {filteredSuppliers.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-500">
+                {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
+              </div>
+              {searchValue && (
+                <button
+                  onClick={clearSearch}
+                  className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  Clear search
+                </button>
+              )}
             </div>
-            {searchValue && (
-              <button
-                onClick={() => setSearchValue('')}
-                className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
-              >
-                Clear search
-              </button>
-            )}
-          </div>
-        )}
+          )}
+        </div>
+        
+        {/* Sticky Horizontal Scrollbar - Fixed to viewport bottom */}
+        <div 
+          className="fixed bottom-0 z-50"
+          style={{ 
+            overflowX: 'scroll', 
+            overflowY: 'hidden',
+            height: '17px', /* Match native scrollbar height */
+            backgroundColor: 'transparent',
+            left: '0px', /* Will be dynamically positioned */
+            width: '100%' /* Will be dynamically sized */
+          }}
+          id="sticky-scrollbar"
+        >
+          <div 
+            id="sticky-scrollbar-content"
+            style={{ 
+              height: '17px', 
+              width: '100%'
+            }} 
+          />
+        </div>
       </div>
 
       {/* Bottom pagination */}
