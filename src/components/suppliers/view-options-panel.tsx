@@ -71,9 +71,13 @@ export const ViewOptionsPanel = React.memo(({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
-        align="end" 
+        align="end"
+        side="bottom"
+        alignOffset={0}
         className="w-80 p-4 bg-white border border-gray-200 shadow-lg rounded-lg"
-        sideOffset={4}
+        sideOffset={8}
+        avoidCollisions={true}
+        collisionPadding={16}
       >
         <DropdownMenuLabel className="px-0 pb-3 text-sm font-semibold text-gray-900">
           Columns
