@@ -30,16 +30,14 @@ import {
   RotateCcw,
   Trash2
 } from 'lucide-react';
-
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
-
 
 interface TestSuppliersTableProps {
   showInactive: boolean;
   onToggleInactiveAction: (show: boolean) => void;
 }
 
-  // Column visibility configuration
+// Column visibility configuration
 interface ColumnVisibility {
   name: boolean;
   website: boolean;
@@ -49,7 +47,9 @@ interface ColumnVisibility {
   notes: boolean;
   isarchived: boolean;
   created_at: boolean;
-}export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
+}
+
+export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['testsuppliers', { showInactive }],
@@ -861,25 +861,26 @@ interface ColumnVisibility {
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
       {selectedRows.size > 0 && (
         <div 
-          className="floating-action-bar fixed bottom-6 right-6 z-[9999]"
+          className="fixed bottom-4 right-4 z-[9999]"
           style={{ 
             position: 'fixed',
+            bottom: '16px',
+            right: '16px',
+            left: 'unset',
+            width: 'auto',
             zIndex: 9999,
             pointerEvents: 'auto',
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
-            willChange: 'transform',
-            contain: 'none',
-            isolation: 'isolate'
+            willChange: 'transform'
           }}
         >
           <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl w-fit">
-            <div className="flex items-center gap-2 px-3 py-2.5">
+            <div className="flex items-center gap-3 p-4">
               {/* Selection count */}
               <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                 <span>{selectedRows.size}</span>
                 <span className="text-gray-300">selected</span>
-                <span className="text-xs text-gray-400 ml-1">• Del to delete • Esc to clear</span>
               </div>
               
               {/* Export button */}
@@ -889,17 +890,17 @@ interface ColumnVisibility {
                 title="Export selected"
                 style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <Download className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                <Download className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
               
-              {/* Unarchive button (blue) */}
+              {/* Unarchive button (gray to match archive) */}
               <button 
                 onClick={handleUnarchiveSelected}
-                className="group flex items-center justify-center w-11 h-11 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                 title="Unarchive selected"
                 style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <RotateCcw className="h-4 w-4 text-white transition-transform duration-150 group-hover:scale-110" />
+                <RotateCcw className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
               
               {/* Archive button */}
@@ -909,7 +910,7 @@ interface ColumnVisibility {
                 title="Archive selected"
                 style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <Archive className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                <Archive className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
               
               {/* Delete button */}
@@ -919,7 +920,7 @@ interface ColumnVisibility {
                 title="Delete selected"
                 style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <Trash2 className="h-4 w-4 text-white transition-transform duration-150 group-hover:scale-110" />
+                <Trash2 className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
               </button>
               
               {/* Close button */}
@@ -929,7 +930,7 @@ interface ColumnVisibility {
                 title="Clear selection"
                 style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <X className="h-4 w-4 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
+                <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
               </button>
             </div>
           </div>
