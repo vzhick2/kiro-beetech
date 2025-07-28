@@ -46,7 +46,7 @@ import { useDebouncedSearch } from '@/hooks/use-debounce';
 import { AddSupplierRow } from './add-supplier-row';
 import { EditableSupplierRow } from './editable-supplier-row';
 import { PaginationControls } from './pagination-controls';
-import { ViewOptionsPanel, type ColumnVisibility } from './view-options-panel';
+
 import { SmartCell } from './smart-cell';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { StatusBadge } from './status-badge';
@@ -95,17 +95,7 @@ export const ModernDataTable = () => {
   const [includeInactive, setIncludeInactive] = useState(false);
   const [densityMode, setDensityMode] = useState<'compact' | 'normal' | 'comfortable'>('normal');
   
-  // Column visibility state with smart defaults
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
-    name: true,        // Always visible (required)
-    website: true,     // Default visible
-    phone: true,       // Default visible  
-    email: false,      // Hidden by default for space
-    address: false,    // Hidden by default for space
-    notes: false,      // Hidden by default for space
-    status: true,      // Default visible
-    createdAt: false,  // Hidden by default
-  });
+
 
   const [editingRow, setEditingRow] = useState<any>(null);
   const [savingRows, setSavingRows] = useState<Set<string>>(new Set());
@@ -145,10 +135,7 @@ export const ModernDataTable = () => {
     });
   }, [allData, includeInactive, debouncedSearchValue]);
 
-  // Helper functions for column visibility
-  const handleColumnVisibilityChange = useCallback((column: keyof ColumnVisibility, visible: boolean) => {
-    setColumnVisibility(prev => ({ ...prev, [column]: visible }));
-  }, []);
+
 
   const handleIncludeInactiveChange = useCallback((include: boolean) => {
     setIncludeInactive(include);
@@ -463,17 +450,8 @@ export const ModernDataTable = () => {
       sorting,
       rowSelection,
       pagination,
-      columnVisibility: columnVisibility as unknown as Record<string, boolean>,
     },
     onSortingChange: setSorting,
-  onColumnVisibilityChange: (updater) => {
-      if (typeof updater === 'function') {
-        const newState = updater(columnVisibility as unknown as Record<string, boolean>);
-        setColumnVisibility(newState as unknown as ColumnVisibility);
-      } else {
-        setColumnVisibility(updater as unknown as ColumnVisibility);
-      }
-    },
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -702,17 +680,7 @@ export const ModernDataTable = () => {
               )}
             </div>
 
-            {/* View Options Panel */}
-            <div className="flex-shrink-0">
-              <ViewOptionsPanel
-                columnVisibility={columnVisibility}
-                onColumnVisibilityChange={handleColumnVisibilityChange}
-                includeInactive={includeInactive}
-                onIncludeInactiveChange={handleIncludeInactiveChange}
-                densityMode={densityMode}
-                onDensityModeChange={handleDensityModeChange}
-              />
-            </div>
+
           </div>
         </div>
 

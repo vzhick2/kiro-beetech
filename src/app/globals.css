@@ -6,7 +6,8 @@
     background-color: #f8fafc;
     color: #1f2937;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    overflow: hidden; /* Prevent body scroll - scrollbar will be in content area only */
+    /* REMOVED: overflow: hidden; - was creating clipping context for Radix UI portals */
+    /* The content-area handles scrolling properly with overflow-y: auto */
     /* Simple responsive base font - good for inventory data readability */
     font-size: clamp(14px, 1.1vw, 16px);
     line-height: 1.5;
@@ -188,7 +189,7 @@
 /* Layout structure for proper scrollbar positioning */
 .app-container {
   height: 100vh;
-  overflow: hidden;
+  /* REMOVED: overflow: hidden; - was creating clipping context for Radix UI portals */
   display: flex;
   flex-direction: column;
   /* 2025 Mobile UX: Allow pull-to-refresh while preventing horizontal overscroll */
@@ -203,7 +204,7 @@
 .main-layout {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  /* REMOVED: overflow: hidden; - was creating clipping context for Radix UI portals */
   /* Allow floating elements to escape container clipping */
   position: relative;
   z-index: 1;

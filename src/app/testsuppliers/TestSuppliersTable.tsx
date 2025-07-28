@@ -30,7 +30,6 @@ import {
   RotateCcw,
   Trash2
 } from 'lucide-react';
-import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
 
 interface TestSuppliersTableProps {
   showInactive: boolean;
@@ -82,52 +81,6 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>('');
-
-
-  // Mapping between ViewOptionsPanel keys and table column keys
-  const columnKeyMapping = {
-    name: 'name',
-    website: 'website', 
-    phone: 'contactphone',
-    email: 'email',
-    address: 'address',
-    notes: 'notes',
-    status: 'isarchived',
-    createdAt: 'created_at'
-  } as const;
-
-  // Convert ViewOptionsPanel visibility to table column visibility
-  const viewOptionsToTableVisibility = (viewOptions: typeof columnKeyMapping) => {
-    const result: Partial<ColumnVisibility> = {};
-    Object.entries(viewOptions).forEach(([viewKey, tableKey]) => {
-      if (tableKey in columnVisibility) {
-        result[tableKey as keyof ColumnVisibility] = columnVisibility[tableKey as keyof ColumnVisibility];
-      }
-    });
-    return result;
-  };
-
-  // Convert table column visibility to ViewOptionsPanel format
-  const tableToViewOptionsVisibility = () => {
-    return {
-      name: columnVisibility.name,
-      website: columnVisibility.website,
-      phone: columnVisibility.contactphone,
-      email: columnVisibility.email,
-      address: columnVisibility.address,
-      notes: columnVisibility.notes,
-      status: columnVisibility.isarchived,
-      createdAt: columnVisibility.created_at,
-    };
-  };
-
-  // Handle ViewOptionsPanel column visibility changes
-  const handleViewOptionsColumnChange = (viewKey: string, visible: boolean) => {
-    const tableKey = columnKeyMapping[viewKey as keyof typeof columnKeyMapping];
-    if (tableKey) {
-      setColumnVisibility(prev => ({ ...prev, [tableKey]: visible }));
-    }
-  };
 
   // Get density mode classes - fixed to compact
   const getDensityClasses = () => {
@@ -721,18 +674,6 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
               </button>
             )}
-          </div>
-          
-          {/* View Options Panel */}
-          <div className="flex-shrink-0">
-            <ViewOptionsPanel
-              columnVisibility={tableToViewOptionsVisibility()}
-              onColumnVisibilityChange={handleViewOptionsColumnChange}
-              includeInactive={showInactive}
-              onIncludeInactiveChange={onToggleInactiveAction}
-              densityMode={densityMode}
-              onDensityModeChange={() => {}} // No-op since density is fixed
-            />
           </div>
         </div>
       </div>
