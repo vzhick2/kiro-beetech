@@ -72,10 +72,83 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     isarchived: true,
     created_at: false,
   });
+  
+  // Density mode state
+  const [densityMode, setDensityMode] = useState<'compact' | 'normal' | 'comfortable'>('normal');
+  
   // Remove custom view options dropdown state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>('');
+
+  // Mapping between ViewOptionsPanel keys and table column keys
+  const columnKeyMapping = {
+    name: 'name',
+    website: 'website', 
+    phone: 'contactphone',
+    email: 'contactemail',
+    address: 'address',
+    notes: 'notes',
+    status: 'isarchived',
+    createdAt: 'created_at'
+  } as const;
+
+  // Convert ViewOptionsPanel visibility to table column visibility
+  const viewOptionsToTableVisibility = (viewOptions: typeof columnKeyMapping) => {
+    const result: Partial<ColumnVisibility> = {};
+    Object.entries(viewOptions).forEach(([viewKey, tableKey]) => {
+      if (tableKey in columnVisibility) {
+        result[tableKey as keyof ColumnVisibility] = columnVisibility[tableKey as keyof ColumnVisibility];
+      }
+    });
+    return result;
+  };
+
+  // Convert table column visibility to ViewOptionsPanel format
+  const tableToViewOptionsVisibility = () => {
+    return {
+      name: columnVisibility.name,
+      website: columnVisibility.website,
+      phone: columnVisibility.contactphone,
+      email: columnVisibility.contactemail,
+      address: columnVisibility.address,
+      notes: columnVisibility.notes,
+      status: columnVisibility.isarchived,
+      createdAt: columnVisibility.created_at,
+    };
+  };
+
+  // Handle ViewOptionsPanel column visibility changes
+  const handleViewOptionsColumnChange = (viewKey: string, visible: boolean) => {
+    const tableKey = columnKeyMapping[viewKey as keyof typeof columnKeyMapping];
+    if (tableKey) {
+      setColumnVisibility(prev => ({ ...prev, [tableKey]: visible }));
+    }
+  };
+
+  // Get density mode classes
+  const getDensityClasses = () => {
+    switch (densityMode) {
+      case 'compact':
+        return {
+          header: 'px-0 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+          cell: 'text-sm text-gray-900 align-top py-2'
+        };
+      case 'comfortable':
+        return {
+          header: 'px-0 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+          cell: 'text-sm text-gray-900 align-top py-4'
+        };
+      case 'normal':
+      default:
+        return {
+          header: 'px-0 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+          cell: 'text-sm text-gray-900 align-top py-3'
+        };
+    }
+  };
+
+  const densityClasses = getDensityClasses();
 
   // Helper functions
   const handleSort = useCallback((columnId: string) => {
@@ -255,7 +328,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     const dataColumns = [
       columnHelper.accessor('name', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('name')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('name')}>
             <span className="font-medium text-gray-900">Supplier Name</span>
             {renderSortIcon('name')}
           </div>
@@ -277,7 +350,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('website', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('website')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('website')}>
             <span className="font-medium text-gray-900">Website</span>
             {renderSortIcon('website')}
           </div>
@@ -309,7 +382,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('contactphone', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('contactphone')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('contactphone')}>
             <span className="font-medium text-gray-900">Phone</span>
             {renderSortIcon('contactphone')}
           </div>
@@ -331,7 +404,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('contactemail' as any, {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('contactemail')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('contactemail')}>
             <span className="font-medium text-gray-900">Email</span>
             {renderSortIcon('contactemail')}
           </div>
@@ -361,7 +434,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('address', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('address')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('address')}>
             <span className="font-medium text-gray-900">Address</span>
             {renderSortIcon('address')}
           </div>
@@ -383,7 +456,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('notes', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('notes')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('notes')}>
             <span className="font-medium text-gray-900">Notes</span>
             {renderSortIcon('notes')}
           </div>
@@ -405,7 +478,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('isarchived', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('isarchived')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('isarchived')}>
             <span className="font-medium text-gray-900">Status</span>
             {renderSortIcon('isarchived')}
           </div>
@@ -425,7 +498,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       }),
       columnHelper.accessor('created_at', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 -mx-3 px-3 py-1 rounded" onClick={() => handleSort('created_at')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('created_at')}>
             <span className="font-medium text-gray-900">Created Date</span>
             {renderSortIcon('created_at')}
           </div>
@@ -517,12 +590,12 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           {/* View Options Panel */}
           <div className="flex-shrink-0">
             <ViewOptionsPanel
-              columnVisibility={columnVisibility as any}
-              onColumnVisibilityChange={(col, visible) => setColumnVisibility(prev => ({ ...prev, [col]: visible }))}
+              columnVisibility={tableToViewOptionsVisibility()}
+              onColumnVisibilityChange={handleViewOptionsColumnChange}
               includeInactive={showInactive}
               onIncludeInactiveChange={onToggleInactiveAction}
-              densityMode={"normal"}
-              onDensityModeChange={() => {}}
+              densityMode={densityMode}
+              onDensityModeChange={setDensityMode}
             />
           </div>
         </div>
@@ -533,7 +606,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       {/* Table */}
       <div className="w-full bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed', minWidth: '100%' }}>
+          <table className="divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
             <thead className="bg-gray-50">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
@@ -541,7 +614,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   <th
                     key={header.id}
                     style={{ width: header.getSize() }}
-                    className="px-0 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className={densityClasses.header}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
@@ -565,7 +638,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   <td 
                     key={cell.id} 
                     style={{ width: cell.column.getSize() }}
-                    className="text-sm text-gray-900 align-top"
+                    className={densityClasses.cell}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
