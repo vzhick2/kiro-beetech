@@ -6,6 +6,7 @@
 
 # MCP Configuration (contains secrets)
 .kiro/settings/mcp.json
+.mcp.json
 
 # Testing
 /coverage

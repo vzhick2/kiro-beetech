@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@upstash/context7-mcp"]
+    },
+    "firecrawl": {
+      "type": "stdio", 
+      "command": "npx",
+      "args": ["firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "your-firecrawl-api-key-here"
+      }
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx", 
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-personal-access-token-here"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "supabase": {
+      "type": "stdio", 
+      "command": "npx",
+      "args": ["@supabase/mcp-server-supabase@latest"],
+      "env": {
+        "SUPABASE_URL": "your-supabase-url-here",
+        "SUPABASE_SERVICE_ROLE_KEY": "your-supabase-service-role-key-here"
+      }
+    }
+  }
+}

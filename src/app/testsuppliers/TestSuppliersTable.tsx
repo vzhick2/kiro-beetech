@@ -531,9 +531,10 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
 
       {/* Table */}
-      <div className="w-full overflow-x-auto bg-white">
-        <table className="w-full divide-y divide-gray-200" style={{ minWidth: '100%', width: 'max-content' }}>
-          <thead className="bg-gray-50">
+      <div className="w-full bg-white">
+        <div className="overflow-x-auto">
+          <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed', minWidth: '100%' }}>
+            <thead className="bg-gray-50">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
@@ -589,6 +590,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
             )}
           </div>
         )}
+        </div>
       </div>
 
       {/* Bottom pagination */}

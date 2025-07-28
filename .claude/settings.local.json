@@ -24,7 +24,10 @@
       "Bash(dir:*)",
       "Bash(mkdir:*)",
       "Bash(npm config:*)",
-      "Bash(claude doctor:*)"
+      "Bash(claude doctor:*)",
+      "Bash(claude --debug)",
+      "Bash(where bash)",
+      "Bash(echo $SHELL)"
     ],
     "deny": []
   }
