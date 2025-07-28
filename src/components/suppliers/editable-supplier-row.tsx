@@ -437,7 +437,7 @@ export const EditableSupplierRow = ({
         )}
       </TableCell>
       <TableCell
-        className="font-medium text-sm p-1 h-12"
+        className="text-xs p-1 h-12"
         style={{ width: columnWidths.name, maxWidth: columnWidths.name }}
       >
         {isSpreadsheetMode ? (
@@ -454,13 +454,14 @@ export const EditableSupplierRow = ({
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
               onChange={handleSpreadsheetChange}
+              onLocalChange={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
           <div
             className="h-full flex items-center"
           >
-            <div className="cell-content text-sm" title={supplier.name}>
+            <div className="cell-content text-xs" title={supplier.name}>
               {supplier.name}
             </div>
           </div>
@@ -484,6 +485,7 @@ export const EditableSupplierRow = ({
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
               onChange={handleSpreadsheetChange}
+              onLocalChange={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
@@ -527,6 +529,7 @@ export const EditableSupplierRow = ({
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
               onChange={handleSpreadsheetChange}
+              onLocalChange={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
@@ -561,6 +564,7 @@ export const EditableSupplierRow = ({
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
               onChange={handleSpreadsheetChange}
+              onLocalChange={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (

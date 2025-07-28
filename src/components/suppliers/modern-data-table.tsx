@@ -339,7 +339,6 @@ export const ModernDataTable = () => {
             value={getValue()} 
             type="text" 
             densityMode={densityMode}
-            className="font-medium"
           />
         ) : null,
         size: columnWidths.name,

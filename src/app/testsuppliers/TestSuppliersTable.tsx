@@ -113,7 +113,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   const getDensityClasses = () => {
     return {
       header: 'px-0 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-      cell: 'text-sm text-gray-900 align-middle py-2'
+      cell: 'text-xs text-gray-900 align-middle py-2'
     };
   };
 
@@ -576,7 +576,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('name', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('name')}>
-            <span className="font-medium text-gray-900">Supplier Name</span>
+            <span className="text-gray-900">Supplier Name</span>
             {renderSortIcon('name')}
           </div>
         ),
@@ -610,7 +610,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           
           return (
             <div className="flex items-center h-full py-2 px-3">
-              <div className="text-gray-700 text-sm leading-tight max-h-[4.5rem] overflow-hidden" style={{ 
+              <div className="text-gray-700 text-xs leading-tight max-h-[4.5rem] overflow-hidden" style={{ 
                 display: '-webkit-box', 
                 WebkitLineClamp: 3, 
                 WebkitBoxOrient: 'vertical' 
@@ -627,7 +627,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('website', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('website')}>
-            <span className="font-medium text-gray-900">Website</span>
+            <span className="text-gray-900">Website</span>
             {renderSortIcon('website')}
           </div>
         ),
@@ -687,7 +687,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('contactphone', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('contactphone')}>
-            <span className="font-medium text-gray-900">Phone</span>
+            <span className="text-gray-900">Phone</span>
             {renderSortIcon('contactphone')}
           </div>
         ),
@@ -720,7 +720,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           
           return (
             <div className="flex items-center h-full py-2 px-3">
-              <span className="text-gray-700 text-sm leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+              <span className="text-gray-700 text-xs leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
                 display: '-webkit-box', 
                 WebkitLineClamp: 3, 
                 WebkitBoxOrient: 'vertical' 
@@ -737,7 +737,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('email', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('email')}>
-            <span className="font-medium text-gray-900">Email</span>
+            <span className="text-gray-900">Email</span>
             {renderSortIcon('email')}
           </div>
         ),
@@ -795,7 +795,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('address', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('address')}>
-            <span className="font-medium text-gray-900">Address</span>
+            <span className="text-gray-900">Address</span>
             {renderSortIcon('address')}
           </div>
         ),
@@ -828,7 +828,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           
           return (
             <div className="flex items-center h-full py-2 px-3">
-              <span className="text-gray-700 leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+              <span className="text-gray-700 text-xs leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
                 display: '-webkit-box', 
                 WebkitLineClamp: 3, 
                 WebkitBoxOrient: 'vertical' 
@@ -845,7 +845,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('notes', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('notes')}>
-            <span className="font-medium text-gray-900">Notes</span>
+            <span className="text-gray-900">Notes</span>
             {renderSortIcon('notes')}
           </div>
         ),
@@ -878,7 +878,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           
           return (
             <div className="flex items-center h-full py-2 px-3">
-              <span className="text-gray-600 text-sm leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
+              <span className="text-gray-600 text-xs leading-tight max-h-[4.5rem] overflow-hidden block" style={{ 
                 display: '-webkit-box', 
                 WebkitLineClamp: 3, 
                 WebkitBoxOrient: 'vertical' 
@@ -895,7 +895,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('isarchived', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('isarchived')}>
-            <span className="font-medium text-gray-900">Status</span>
+            <span className="text-gray-900">Status</span>
             {renderSortIcon('isarchived')}
           </div>
         ),
@@ -928,7 +928,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           
           return (
             <div className="flex items-center h-full py-2 px-3">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${
                 info.getValue() ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
               }`}>
                 {info.getValue() ? 'Inactive' : 'Active'}
@@ -943,13 +943,13 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       columnHelper.accessor('created_at', {
         header: () => (
           <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('created_at')}>
-            <span className="font-medium text-gray-900">Created Date</span>
+            <span className="text-gray-900">Created Date</span>
             {renderSortIcon('created_at')}
           </div>
         ),
         cell: info => (
           <div className="flex items-center h-full py-2 px-3">
-            <span className="text-gray-600 text-sm">{info.getValue() ? formatDate(String(info.getValue())) : '-'}</span>
+            <span className="text-gray-600 text-xs">{info.getValue() ? formatDate(String(info.getValue())) : '-'}</span>
           </div>
         ),
         size: 120,
