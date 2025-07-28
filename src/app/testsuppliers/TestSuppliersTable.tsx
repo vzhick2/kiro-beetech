@@ -15,6 +15,7 @@ import {
 import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
+import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
 
 import { 
   ChevronUp, 
@@ -40,12 +41,12 @@ interface TestSuppliersTableProps {
 interface ColumnVisibility {
   name: boolean;
   website: boolean;
-  contactphone: boolean;
+  phone: boolean;
   email: boolean;
   address: boolean;
   notes: boolean;
-  isarchived: boolean;
-  created_at: boolean;
+  status: boolean;
+  createdAt: boolean;
 }
 
 export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
@@ -66,12 +67,12 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   const [columnVisibility, setColumnVisibility] = useColumnPreferences<ColumnVisibility>('testsuppliers', {
     name: true,
     website: true,
-    contactphone: true,
+    phone: true,
     email: true,
     address: false,
     notes: true,
-    isarchived: true,
-    created_at: false,
+    status: true,
+    createdAt: false,
   });
   
   // Density mode state - fixed to compact (density selector removed)
@@ -110,7 +111,24 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
   const toggleColumnVisibility = useCallback((column: keyof ColumnVisibility) => {
     setColumnVisibility(prev => ({ ...prev, [column]: !prev[column] }));
-  }, []);
+  }, [setColumnVisibility]);
+
+  // Map ViewOptionsPanel column keys to actual database field names
+  const getColumnVisibility = useCallback((dbField: string): boolean => {
+    const columnMap: Record<string, keyof ColumnVisibility> = {
+      'name': 'name',
+      'website': 'website', 
+      'contactphone': 'phone',
+      'email': 'email',
+      'address': 'address',
+      'notes': 'notes',
+      'isarchived': 'status',
+      'created_at': 'createdAt'
+    };
+    
+    const mappedKey = columnMap[dbField];
+    return mappedKey ? columnVisibility[mappedKey] : true;
+  }, [columnVisibility]);
 
   const formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -572,13 +590,13 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
     // Filter data columns based on visibility
     const visibleDataColumns = dataColumns.filter((column) => {
-      const accessor = (column as any).accessorKey as keyof ColumnVisibility;
-      return columnVisibility[accessor];
+      const accessor = (column as any).accessorKey as string;
+      return getColumnVisibility(accessor);
     });
 
     // Return action columns + visible data columns
     return [...actionColumns, ...visibleDataColumns];
-  }, [columnHelper, handleSort, renderSortIcon, formatDate, columnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRow]);
+  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRow]);
   // Table instance with pagination
   const table = useReactTable({
     data: filteredSuppliers,
@@ -674,6 +692,18 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
               </button>
             )}
+          </div>
+
+          {/* View Options Panel */}
+          <div className="flex items-center gap-2 relative">
+            <ViewOptionsPanel
+              columnVisibility={columnVisibility}
+              onColumnVisibilityChange={toggleColumnVisibility}
+              includeInactive={showInactive}
+              onIncludeInactiveChange={onToggleInactiveAction}
+              densityMode="compact"
+              onDensityModeChange={() => {}} // No-op since we're fixed to compact
+            />
           </div>
         </div>
       </div>
