@@ -37,19 +37,17 @@ interface TestSuppliersTableProps {
   onToggleInactiveAction: (show: boolean) => void;
 }
 
-// Column visibility configuration
+  // Column visibility configuration
 interface ColumnVisibility {
   name: boolean;
   website: boolean;
   contactphone: boolean;
-  contactemail: boolean;
+  email: boolean;
   address: boolean;
   notes: boolean;
   isarchived: boolean;
   created_at: boolean;
-}
-
-export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
+}export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['testsuppliers', { showInactive }],
@@ -66,7 +64,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     name: true,
     website: true,
     contactphone: true,
-    contactemail: false,
+    email: true,
     address: false,
     notes: true,
     isarchived: true,
@@ -86,7 +84,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     name: 'name',
     website: 'website', 
     phone: 'contactphone',
-    email: 'contactemail',
+    email: 'email',
     address: 'address',
     notes: 'notes',
     status: 'isarchived',
@@ -110,7 +108,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       name: columnVisibility.name,
       website: columnVisibility.website,
       phone: columnVisibility.contactphone,
-      email: columnVisibility.contactemail,
+      email: columnVisibility.email,
       address: columnVisibility.address,
       notes: columnVisibility.notes,
       status: columnVisibility.isarchived,
@@ -258,6 +256,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         supplier.name.toLowerCase().includes(searchLower) ||
         supplier.website?.toLowerCase().includes(searchLower) ||
         supplier.contactphone?.toLowerCase().includes(searchLower) ||
+        supplier.email?.toLowerCase().includes(searchLower) ||
         supplier.address?.toLowerCase().includes(searchLower) ||
         supplier.notes?.toLowerCase().includes(searchLower)
       );
@@ -402,11 +401,11 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         minSize: 100,
         enableSorting: true,
       }),
-      columnHelper.accessor('contactemail' as any, {
+      columnHelper.accessor('email', {
         header: () => (
-          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('contactemail')}>
+          <div className="flex items-center cursor-pointer select-none hover:bg-gray-100 px-3 py-1 rounded" onClick={() => handleSort('email')}>
             <span className="font-medium text-gray-900">Email</span>
-            {renderSortIcon('contactemail')}
+            {renderSortIcon('email')}
           </div>
         ),
         cell: info => (
@@ -605,65 +604,63 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
       {/* Table */}
       <div className="w-full bg-white">
-        <div className="overflow-x-auto">
-          <table className="divide-y divide-gray-200" style={{ tableLayout: 'fixed' }}>
-            <thead className="bg-gray-50">
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    key={header.id}
-                    style={{ width: header.getSize() }}
-                    className={densityClasses.header}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {table.getRowModel().rows.map((row, index) => (
-              <tr 
-                key={row.id} 
-                className={`
-                  ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}
-                  hover:bg-gray-100/50 
-                  ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
-                  ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
-                  transition-colors duration-150
-                `}
-              >
-                {row.getVisibleCells().map(cell => (
-                  <td 
-                    key={cell.id} 
-                    style={{ width: cell.column.getSize() }}
-                    className={densityClasses.cell}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {filteredSuppliers.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-500">
-              {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
-            </div>
-            {searchValue && (
-              <button
-                onClick={() => setSearchValue('')}
-                className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
-              >
-                Clear search
-              </button>
-            )}
+        <table className="w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed', minWidth: 'max-content' }}>
+          <thead className="bg-gray-50">
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th
+                  key={header.id}
+                  style={{ width: header.getSize() }}
+                  className={densityClasses.header}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {table.getRowModel().rows.map((row, index) => (
+            <tr 
+              key={row.id} 
+              className={`
+                ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}
+                hover:bg-gray-100/50 
+                ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
+                ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
+                transition-colors duration-150
+              `}
+            >
+              {row.getVisibleCells().map(cell => (
+                <td 
+                  key={cell.id} 
+                  style={{ width: cell.column.getSize() }}
+                  className={densityClasses.cell}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      
+      {filteredSuppliers.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-gray-500">
+            {searchValue ? 'No suppliers found matching your search' : 'No suppliers found'}
           </div>
-        )}
+          {searchValue && (
+            <button
+              onClick={() => setSearchValue('')}
+              className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+            >
+              Clear search
+            </button>
+          )}
         </div>
+      )}
       </div>
 
       {/* Bottom pagination */}

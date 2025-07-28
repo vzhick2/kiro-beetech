@@ -456,6 +456,7 @@ export type Database = {
           address: string | null;
           contactphone: string | null;
           created_at: string | null;
+          email: string | null;
           isarchived: boolean | null;
           name: string;
           notes: string | null;
@@ -466,6 +467,7 @@ export type Database = {
           address?: string | null;
           contactphone?: string | null;
           created_at?: string | null;
+          email?: string | null;
           isarchived?: boolean | null;
           name: string;
           notes?: string | null;
@@ -476,6 +478,7 @@ export type Database = {
           address?: string | null;
           contactphone?: string | null;
           created_at?: string | null;
+          email?: string | null;
           isarchived?: boolean | null;
           name?: string;
           notes?: string | null;
