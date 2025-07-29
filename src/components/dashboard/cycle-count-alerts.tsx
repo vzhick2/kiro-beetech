@@ -4,12 +4,13 @@ import React from 'react';
 import { useCycleCountAlerts } from '@/hooks/use-dashboard';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { paginationSettings } from '@/config/app-config';
 
 interface CycleCountAlertsProps {
   limit?: number;
 }
 
-export function CycleCountAlerts({ limit = 5 }: CycleCountAlertsProps) {
+export function CycleCountAlerts({ limit = paginationSettings.pageSizes.dashboard.cycleCountAlerts }: CycleCountAlertsProps) {
   const { data: alerts, isLoading, error } = useCycleCountAlerts(limit);
 
   if (isLoading) {

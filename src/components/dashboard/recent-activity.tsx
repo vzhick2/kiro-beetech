@@ -4,12 +4,13 @@ import React from 'react';
 import { useRecentActivity } from '@/hooks/use-dashboard';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
+import { paginationSettings } from '@/config/app-config';
 
 interface RecentActivityProps {
   limit?: number;
 }
 
-export function RecentActivity({ limit = 10 }: RecentActivityProps) {
+export function RecentActivity({ limit = paginationSettings.pageSizes.dashboard.recentActivity }: RecentActivityProps) {
   const { data: activities, isLoading, error } = useRecentActivity(limit);
 
   if (isLoading) {

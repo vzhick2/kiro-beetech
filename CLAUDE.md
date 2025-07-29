@@ -135,6 +135,64 @@ Based on `.cursorrules`:
 - **🔐 Ask Permission**: New features, schema changes, business logic modifications
 - **90% Confidence Threshold**: Only proceed autonomously if solution confidence ≥ 90%
 
+### Documentation Maintenance Responsibilities
+
+**CRITICAL**: Always maintain documentation consistency with code changes.
+
+#### Pre-Task Documentation Review
+Before starting any significant task:
+1. **Read relevant documentation first** - Check `docs/` folder for context
+2. **Identify affected docs** - Which files might need updates after your changes?
+3. **Note current state** - What documentation claims might become outdated?
+
+#### Post-Task Documentation Updates
+After completing any task that changes:
+- **Architecture/Patterns** → Update `docs/developer-guide.md`
+- **Database schema** → Update `docs/technical-reference.md` 
+- **Business logic/rules** → Update `docs/product-specification.md`
+- **AI workflow patterns** → Update `CLAUDE.md`
+- **Development commands** → Update README.md and `docs/developer-guide.md`
+
+#### Documentation Update Checklist
+✅ **Read** - Review affected documentation before changes  
+✅ **Code** - Implement the requested changes  
+✅ **Update** - Modify documentation to reflect changes  
+✅ **Verify** - Ensure no contradictions between docs and code  
+✅ **Date** - Update `last_updated` dates in YAML frontmatter  
+
+#### Common Documentation Patterns
+- **New config values** → Document in developer-guide.md config section
+- **New components** → Add to UI patterns section
+- **New database functions** → Add to technical-reference.md
+- **Changed business rules** → Update both product-specification.md and config examples
+- **New development workflows** → Update developer-guide.md and README.md
+
+#### Documentation Consistency Rules
+- **Never create files** unless explicitly requested (follow `.cursorrules`)
+- **Always update last_updated dates** when making substantial changes
+- **Cross-reference related docs** in YAML frontmatter  
+- **Use consistent terminology** across all documentation
+- **Include code examples** that match actual implementation
+
+#### Complex Problem Analysis
+For particularly complex architectural decisions, debugging challenges, or system design questions, consider using **parallel analysis** with multiple AI models to get diverse perspectives:
+
+```bash
+# Use MCP Zen tools with more powerful models for complex analysis
+mcp__zen__chat with model="gemini-2.5-pro" thinking_mode="high"
+mcp__zen__thinkdeep with model="o3" 
+mcp__zen__consensus with multiple models for critical decisions
+```
+
+**When to use parallel analysis:**
+- Complex architectural decisions affecting multiple systems
+- Performance optimization with unclear trade-offs  
+- Security architecture and threat modeling
+- Debugging complex multi-component issues
+- Strategic technical planning and roadmaps
+
+This approach provides both **comprehensive long-term vision** and **pragmatic implementation focus**.
+
 ### AI Behavior Guidelines
 **CRITICAL**: Distinguish between analysis requests and implementation requests:
 
@@ -156,6 +214,8 @@ Based on `.cursorrules`:
 ## Critical Files to Understand
 
 ### Documentation (Read These First)
+**ALWAYS read relevant documentation before starting any task** to understand context and identify what needs updating.
+
 - `docs/product-specification.md` - Business requirements authority
 - `docs/technical-reference.md` - Database schema and APIs  
 - `docs/developer-guide.md` - Technical patterns and standards
@@ -170,6 +230,7 @@ Based on `.cursorrules`:
 - `src/app/actions/purchases.ts` - Purchase workflow and cost allocation
 - `src/lib/utils/business.ts` - Business logic utilities
 - `src/hooks/use-items.ts` - Items state management pattern
+- `src/config/app-config.ts` - **Single configuration file** with all app settings
 
 ### UI Patterns
 - `src/components/items/items-table.tsx` - Complex table with inline editing
@@ -204,6 +265,28 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
 - Mobile-responsive interactions
 
 ## Common Patterns
+
+### Application Configuration
+
+The application uses a **single configuration file** (`src/config/app-config.ts`) for all settings:
+
+```typescript
+import { getTableConfig, businessRules, displaySettings } from '@/config/app-config';
+
+// Table configurations
+const suppliersConfig = getTableConfig('suppliers');
+const defaultColumnVisibility = getDefaultColumnVisibility('suppliers');
+
+// Business rules
+const defaultLeadTime = businessRules.inventory.defaultLeadTimeDays;
+const trackingMode = businessRules.inventory.defaultTrackingMode;
+
+// Display settings
+const densityMode = displaySettings.defaults.densityMode;
+const pageSize = paginationSettings.pageSizes.tables.default;
+```
+
+**IMPORTANT**: When adding new config values, always update the configuration documentation in `docs/developer-guide.md` to maintain consistency.
 
 ### Error Handling
 ```typescript

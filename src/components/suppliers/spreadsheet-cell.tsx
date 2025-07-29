@@ -12,20 +12,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { DisplaySupplier } from '@/types/data-table';
 
-interface SpreadsheetCellProps {
+
+import type { Supplier } from '@/types/index';
+
+type SpreadsheetCellProps = {
   value: any;
-  field: keyof DisplaySupplier;
+  field: keyof Supplier;
   rowId: string;
   rowIndex: number;
   colIndex: number;
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
-  onChange: (field: keyof DisplaySupplier, value: any) => void;
-  onLocalChange: (field: keyof DisplaySupplier, value: any, rowId: string) => void;
+  onChangeAction: (field: keyof Supplier, value: any) => void;
+  onLocalChangeAction: (field: keyof Supplier, value: any, rowId: string) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
-}
+};
+
+
 
 export const SpreadsheetCell = ({
   value,
@@ -35,8 +39,8 @@ export const SpreadsheetCell = ({
   colIndex,
   isSpreadsheetMode,
   hasChanges,
-  onChange,
-  onLocalChange,
+  onChangeAction,
+  onLocalChangeAction,
   onKeyDown,
 }: SpreadsheetCellProps) => {
   const [localValue, setLocalValue] = useState(value);
@@ -63,14 +67,26 @@ export const SpreadsheetCell = ({
   const handleBlur = () => {
     // Compare against original value, not current value (which might be updated by onLocalChange)
     if (localValue !== originalValueRef.current) {
-      onChange(field, localValue);
-      // Call onLocalChange here for visual feedback (counter update)
-      onLocalChange(field, localValue, rowId);
+      let safeValue = localValue;
+      // If editing a timestamp, always send as string or null
+      if (field === 'created_at') {
+        if (localValue instanceof Date) {
+          safeValue = localValue.toISOString();
+        } else if (typeof localValue === 'string' || localValue == null) {
+          safeValue = localValue;
+        } else {
+          // fallback: try to coerce
+          safeValue = String(localValue);
+        }
+      }
+      onChangeAction(field, safeValue);
+      // Call onLocalChangeAction here for visual feedback (counter update)
+      onLocalChangeAction(field, safeValue, rowId);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (field === 'status') {
+    if (field === 'isarchived') {
       // Handle arrow keys for status dropdown
       if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         e.preventDefault();
@@ -160,10 +176,10 @@ export const SpreadsheetCell = ({
     // Simplified - let global table styling handle font sizes
     const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
     
-    if (field === 'status') {
+    if (field === 'isarchived') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-green-100 text-green-800">
-          {value === 'archived' ? 'Inactive' : 'Active'}
+          {value ? 'Inactive' : 'Active'}
         </span>
       );
     }
@@ -189,15 +205,15 @@ export const SpreadsheetCell = ({
   const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''}`;
   const containerClass = `w-full py-2 px-3 ${hasChanges ? 'bg-blue-50' : 'bg-white'}`;
 
-  if (field === 'status') {
+  if (field === 'isarchived') {
     return (
       <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
         <Select
-          value={localValue}
+          value={localValue ? 'archived' : 'active'}
           onValueChange={newValue => {
-            setLocalValue(newValue);
-            onChange(field, newValue);
-            onLocalChange(field, newValue, rowId);
+            setLocalValue(newValue === 'archived');
+            onChangeAction(field, newValue === 'archived');
+            onLocalChangeAction(field, newValue === 'archived', rowId);
           }}
           open={isSelectOpen}
           onOpenChange={setIsSelectOpen}

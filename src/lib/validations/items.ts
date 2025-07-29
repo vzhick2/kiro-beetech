@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { InventoryUnit, ItemType, TrackingMode } from '@/types';
+import { businessRules } from '@/config/app-config';
 
 // Base item validation schema
 export const ItemSchema = z.object({
@@ -41,11 +42,11 @@ export const ItemSchema = z.object({
     .number()
     .min(1, 'Lead time must be at least 1 day')
     .max(365, 'Lead time cannot exceed 1 year')
-    .default(7),
+    .default(businessRules.inventory.defaultLeadTimeDays),
   trackingmode: z
     .enum(['fully_tracked', 'cost_added'] as const)
     .refine((val): val is TrackingMode => true)
-    .default('fully_tracked'),
+    .default(businessRules.inventory.defaultTrackingMode),
   isarchived: z.boolean().default(false),
 });
 

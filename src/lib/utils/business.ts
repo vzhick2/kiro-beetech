@@ -9,6 +9,7 @@ import {
   PurchaseLineItem,
   Recipe /* RecipeIngredient */,
 } from '@/types';
+import { paginationSettings } from '@/config/app-config';
 
 /**
  * Calculate cycle count alert priority score
@@ -41,7 +42,7 @@ export function calculateCycleCountPriority(item: Item): number {
  */
 export function generateCycleCountAlerts(
   items: Item[],
-  limit: number = 5
+  limit: number = paginationSettings.pageSizes.dashboard.cycleCountAlerts
 ): CycleCountAlert[] {
   const alerts: CycleCountAlert[] = items
     .filter(item => !item.isarchived)

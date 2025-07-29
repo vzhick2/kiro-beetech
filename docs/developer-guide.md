@@ -2,7 +2,7 @@
 title: 'Developer Guide'
 description: 'Complete development setup, architecture, standards, and AI guidelines for internal business application'
 purpose: 'Unified reference for developers covering setup, technical decisions, and development philosophy'
-last_updated: 'July 23, 2025'
+last_updated: 'July 29, 2025'
 doc_type: 'developer-reference'
 related:
   [
@@ -167,6 +167,8 @@ src/
 │   │   ├── supabase/      # Supabase client setup
 │   │   ├── utils/         # Business logic utilities
 │   │   └── validations/   # Zod validation schemas
+│   ├── config/            # Application configuration
+│   │   └── app-config.ts  # Single source of truth for all app settings
 │   └── types/             # TypeScript type definitions
 ```
 
@@ -344,6 +346,7 @@ Before finalizing any output for this inventory project:
 - **Negative Inventory**: Supported with proper alerting
 - **Mutable Transactions**: Allow corrections with audit timestamps
 - **Smart Delete Strategy**: Archive-first approach with conditional delete for clean records
+- **Single Config File**: Centralized configuration for all app settings
 
 ### Component Architecture
 
@@ -422,6 +425,205 @@ export async function deleteSupplier(supplierId: string) {
 - **Test Cleanup**: Unused test records can be permanently removed
 - **User Clarity**: Clear guidance on when to use each action
 - **Consistency**: Same pattern works across all entity types
+
+### Application Configuration System
+
+The application uses a single configuration file (`src/config/app-config.ts`) as the **centralized source of truth** for all hardcoded values, business rules, and UI settings. This eliminates scattered magic numbers and provides consistent configuration across all components.
+
+#### Configuration Categories
+
+**1. Table Configurations**
+```typescript
+export const tableConfigs = {
+  suppliers: {
+    tableName: 'suppliers',
+    displayName: 'Suppliers',
+    columns: {
+      supplierid: { label: 'ID', visible: false, required: false, type: 'uuid' },
+      name: { label: 'Name', visible: true, required: true, type: 'text' },
+      contactphone: { label: 'Phone', visible: true, required: false, type: 'phone' },
+      // ... other columns
+    }
+  }
+} as const;
+```
+
+**2. Display Settings**
+```typescript
+export const displaySettings = {
+  densityModes: {
+    compact: {
+      rowHeight: '32px',
+      headerHeight: '40px', 
+      lineHeight: '1.3',
+      maxLines: 1,
+      characterLimits: { short: 25, long: 30 }
+    },
+    normal: {
+      rowHeight: '40px',
+      headerHeight: '48px',
+      lineHeight: '1.4', 
+      maxLines: 2,
+      characterLimits: { short: 40, long: 60 }
+    },
+    comfortable: {
+      rowHeight: '48px',
+      headerHeight: '56px',
+      lineHeight: '1.5',
+      maxLines: 3,
+      characterLimits: { short: 80, long: 120 }
+    }
+  },
+  defaults: {
+    densityMode: 'normal' as const,
+    leadTimeDays: 7
+  }
+}
+```
+
+**3. Business Logic Rules**
+```typescript
+export const businessRules = {
+  inventory: {
+    defaultLeadTimeDays: 7,
+    defaultTrackingMode: 'fully_tracked' as const,
+    reorderThresholds: {
+      low: 10,    // Standard reorder point
+      critical: 5  // Critical stock level
+    },
+    negativeInventoryAlert: true,
+    cycleCountDaysThreshold: 30
+  },
+  purchases: {
+    draftRetentionDays: 30,
+    maxLineItemsPerPurchase: 100,
+    allowBackdating: true
+  }
+}
+```
+
+**4. Pagination & Performance**
+```typescript
+export const paginationSettings = {
+  pageSizes: {
+    tables: {
+      default: 25,
+      options: [10, 25, 50, 100]
+    },
+    dashboard: {
+      recentActivity: 10,
+      cycleCountAlerts: 5
+    },
+    modals: {
+      itemSelection: 15
+    }
+  },
+  apiLimits: {
+    maxBulkOperations: 50,
+    searchResults: 100
+  }
+}
+```
+
+**5. Feature Flags**
+```typescript
+export const featureFlags = {
+  enableAdvancedFiltering: true,
+  enableBulkOperations: true,
+  enableExportFeatures: true,
+  enablePrintLabels: false // Future feature
+}
+```
+
+#### Helper Functions
+
+```typescript
+// Type-safe table configuration access
+export function getTableConfig<T extends TableName>(tableName: T) {
+  return tableConfigs[tableName];
+}
+
+// Default column visibility from config
+export function getDefaultColumnVisibility<T extends TableName>(tableName: T) {
+  const config = getTableConfig(tableName);
+  return Object.fromEntries(
+    Object.entries(config.columns).map(([key, columnConfig]) => [
+      key,
+      columnConfig.visible
+    ])
+  );
+}
+
+// User-friendly column labels
+export function getColumnLabel<T extends TableName>(
+  tableName: T, 
+  columnKey: ColumnKeys<T>
+) {
+  return (tableConfigs[tableName].columns as any)[columnKey]?.label || columnKey;
+}
+
+// Currency formatting
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: displaySettings.currency.code,
+    minimumFractionDigits: displaySettings.currency.decimalPlaces,
+    maximumFractionDigits: displaySettings.currency.decimalPlaces,
+  }).format(amount);
+}
+```
+
+#### Integration Examples
+
+**Component Usage:**
+```typescript
+// Table components
+import { getTableConfig, getDefaultColumnVisibility } from '@/config/app-config';
+
+const suppliersConfig = getTableConfig('suppliers'); 
+const defaultVisibility = getDefaultColumnVisibility('suppliers');
+
+// Validation schemas
+import { businessRules } from '@/config/app-config';
+
+const ItemSchema = z.object({
+  leadtimedays: z.number().min(1).default(businessRules.inventory.defaultLeadTimeDays),
+  trackingmode: z.enum(['fully_tracked', 'cost_added']).default(businessRules.inventory.defaultTrackingMode)
+});
+
+// UI Components
+import { displaySettings, paginationSettings } from '@/config/app-config';
+
+const [densityMode, setDensityMode] = useState(displaySettings.defaults.densityMode);
+const pageSize = paginationSettings.pageSizes.tables.default;
+```
+
+#### Components Updated with Config
+
+- ✅ **TestSuppliersTable** - Column visibility, pagination, density modes
+- ✅ **ViewOptionsPanel** - Config-driven columns and labels  
+- ✅ **ModernDataTable** - Density modes and character limits
+- ✅ **SmartCell** - Dynamic truncation and line limits
+- ✅ **ItemsTable** - Business rule defaults
+- ✅ **Dashboard Components** - Pagination limits
+- ✅ **Validation Schemas** - Default values from config
+
+#### Benefits
+
+- **Single Source of Truth**: All configuration in one place
+- **Type Safety**: Full TypeScript support with proper inference
+- **Consistency**: Same values used across all components
+- **Maintainability**: Easy to update business rules and UI settings
+- **Environment Flexibility**: Easy to customize for different deployments
+- **Developer Experience**: Clear documentation of all configurable values
+
+#### Best Practices
+
+1. **Always use config**: Never hardcode values that could be configurable
+2. **Type safety**: Use helper functions for type-safe access
+3. **Documentation**: Document config changes in component usage
+4. **Testing**: Verify config changes work across all affected components
+5. **Validation**: Use config values in Zod schemas for consistency
 
 ## 📦 Dependency Management
 

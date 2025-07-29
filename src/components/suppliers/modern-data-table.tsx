@@ -54,6 +54,7 @@ import { useSpreadsheetMode } from '@/hooks/use-spreadsheet-mode';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { FloatingControls } from './floating-controls';
 import { PurchaseHistoryModal } from './purchase-history-modal';
+import { displaySettings, type DensityMode } from '@/config/app-config';
 
 const columnHelper = createColumnHelper<DisplaySupplier>();
 
@@ -93,7 +94,7 @@ export const ModernDataTable = () => {
 
   // Local state for table functionality - updated for hybrid approach
   const [includeInactive, setIncludeInactive] = useState(false);
-  const [densityMode, setDensityMode] = useState<'compact' | 'normal' | 'comfortable'>('normal');
+  const [densityMode, setDensityMode] = useState<DensityMode>(displaySettings.defaults.densityMode);
   
 
 
@@ -141,7 +142,7 @@ export const ModernDataTable = () => {
     setIncludeInactive(include);
   }, []);
 
-  const handleDensityModeChange = useCallback((mode: 'compact' | 'normal' | 'comfortable') => {
+  const handleDensityModeChange = useCallback((mode: DensityMode) => {
     setDensityMode(mode);
   }, []);
 
@@ -395,7 +396,7 @@ export const ModernDataTable = () => {
             value={getValue()} 
             type="multiline" 
             densityMode={densityMode}
-            maxLength={densityMode === 'compact' ? 40 : densityMode === 'normal' ? 80 : 120}
+            maxLength={displaySettings.densityModes[densityMode].characterLimits.short}
           />
         ) : null,
         size: 250,
@@ -410,7 +411,7 @@ export const ModernDataTable = () => {
             value={getValue()} 
             type="multiline" 
             densityMode={densityMode}
-            maxLength={densityMode === 'compact' ? 50 : densityMode === 'normal' ? 100 : 150}
+            maxLength={displaySettings.densityModes[densityMode].characterLimits.medium}
           />
         ) : null,
         size: 300,
@@ -833,7 +834,7 @@ export const ModernDataTable = () => {
                 table.getRowModel().rows.map((row, index) => (
                   <React.Fragment key={row.id}>
                     <EditableSupplierRow
-                      supplier={getRowData(row.original.id, row.original)}
+                      supplier={getRowData(row.original.id, row.original) as any}
                       isSelected={row.getIsSelected()}
                       isFocused={focusedRowIndex === index}
                       onSelect={(selected, event) =>
@@ -848,7 +849,7 @@ export const ModernDataTable = () => {
                       isExpanded={false} // Placeholder - no longer needed
                       isSpreadsheetMode={isSpreadsheetMode}
                       hasRowChanges={hasRowChanges(row.original.id)}
-                      onSpreadsheetChange={updateRowData}
+                      onSpreadsheetChange={updateRowData as any}
                       onUndoRowChanges={() => undoRowChanges(row.original.id)}
                       onShowPurchaseHistory={() =>
                         handleShowPurchaseHistory(row.original)
@@ -973,18 +974,14 @@ export const ModernDataTable = () => {
         .responsive-table {
           /* Dynamic row height based on density mode */
           --row-height: ${
-            densityMode === 'compact' ? '44px' : 
-            densityMode === 'normal' ? '56px' : 
-            '72px' // comfortable
+            displaySettings.densityModes[densityMode].rowHeight // comfortable
           };
         }
 
         @media (max-width: 768px) {
           .responsive-table {
             --row-height: ${
-              densityMode === 'compact' ? '48px' : 
-              densityMode === 'normal' ? '60px' : 
-              '76px' // comfortable  
+              displaySettings.densityModes[densityMode].headerHeight // comfortable  
             };
           }
         }
@@ -1013,18 +1010,15 @@ export const ModernDataTable = () => {
         .responsive-table :global(.cell-content) {
           display: -webkit-box;
           -webkit-line-clamp: ${
-            densityMode === 'compact' ? 1 : 
-            densityMode === 'normal' ? 2 : 
-            3 // comfortable
+            displaySettings.densityModes[densityMode].maxLines // comfortable
           };
           -webkit-box-orient: vertical;
           overflow: hidden;
-          line-height: ${densityMode === 'compact' ? '1.3' : '1.4'};
+          line-height: ${displaySettings.densityModes[densityMode].lineHeight};
           max-height: ${
-            densityMode === 'compact' ? '1.3em' : 
-            densityMode === 'normal' ? '2.8em' : 
-            '4.2em' // comfortable
-          };
+            parseFloat(displaySettings.densityModes[densityMode].lineHeight) * 
+            displaySettings.densityModes[densityMode].maxLines
+          }em;
           word-break: break-word;
           text-overflow: ellipsis;
         }

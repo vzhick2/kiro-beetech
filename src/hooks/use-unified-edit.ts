@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { DisplaySupplier } from '@/types/data-table';
+import type { Supplier } from '@/types/index';
 
 export type EditMode = 'none' | 'single' | 'all';
 
 export const useUnifiedEdit = () => {
   const [editMode, setEditMode] = useState<EditMode>('none');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
-  const [editedData, setEditedData] = useState<Map<string, Partial<DisplaySupplier>>>(new Map());
+  const [editedData, setEditedData] = useState<Map<string, Partial<Supplier>>>(new Map());
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   // Use ref to access current state without dependencies
@@ -44,7 +44,7 @@ export const useUnifiedEdit = () => {
   }, []);
 
   // Update data for a specific row
-  const updateRowData = useCallback((rowId: string, field: keyof DisplaySupplier, value: any) => {
+  const updateRowData = useCallback((rowId: string, field: keyof Supplier, value: any) => {
     setEditedData(prev => {
       const newMap = new Map(prev);
       const existingData = newMap.get(rowId) || {};
@@ -65,9 +65,9 @@ export const useUnifiedEdit = () => {
   }, []);
 
   // Get data for a specific row (original + changes)
-  const getRowData = useCallback((rowId: string, originalData: DisplaySupplier): DisplaySupplier => {
+  const getRowData = useCallback((rowId: string, originalData: Supplier): Supplier => {
     const editedRowData = editedDataRef.current.get(rowId);
-    return editedRowData ? { ...originalData, ...editedRowData } : originalData;
+  return editedRowData ? { ...originalData, ...editedRowData } : originalData;
   }, []);
 
   // Check if a row has changes

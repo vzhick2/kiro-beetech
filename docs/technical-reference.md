@@ -2,7 +2,7 @@
 title: 'Technical Reference'
 description: 'Complete database schema, APIs, and technical architecture for internal inventory management'
 purpose: 'Unified technical reference combining data model and API documentation'
-last_updated: 'July 22, 2025'
+last_updated: 'July 29, 2025'
 doc_type: 'technical-reference'
 related:
   ['README.md', 'developer-guide.md', 'product-specification.md', 'tasks.md']
@@ -50,6 +50,7 @@ Complete technical documentation for the internal BTINV inventory management sys
 - **Logic Strategy**: Store data now, add complex system behaviors in Phase 2 to protect MVP timeline
 - **Two-Mode Tracking**: Inventory management with 'fully_tracked' and 'cost_added' modes based on business impact
 - **Simple Audit Strategy**: Use existing transaction logs and item notes for tracking important changes rather than dedicated audit fields
+- **Single Configuration File**: Centralized configuration system in `src/config/app-config.ts` for all business rules, UI settings, and table configurations
 
 ### Tracking Mode Change Mitigations
 

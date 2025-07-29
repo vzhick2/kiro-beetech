@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
+import { displaySettings, type DensityMode } from '@/config/app-config';
 
 interface SmartCellProps {
   value?: string | null | undefined;
   type: 'text' | 'email' | 'phone' | 'website' | 'multiline';
-  densityMode: 'compact' | 'normal' | 'comfortable';
+  densityMode: DensityMode;
   maxLength?: number;
   className?: string;
 }
@@ -36,16 +37,10 @@ export const SmartCell = ({
   const getTruncationLength = () => {
     if (maxLength) return maxLength;
     
-    switch (densityMode) {
-      case 'compact':
-        return type === 'multiline' ? 30 : 25;
-      case 'normal':
-        return type === 'multiline' ? 60 : 40;
-      case 'comfortable':
-        return type === 'multiline' ? 120 : 80;
-      default:
-        return 40;
-    }
+    const config = displaySettings.densityModes[densityMode];
+    return type === 'multiline' 
+      ? config.characterLimits.long 
+      : config.characterLimits.short;
   };
 
   const truncateLength = getTruncationLength();
@@ -56,12 +51,7 @@ export const SmartCell = ({
   const getMaxLines = () => {
     if (type !== 'multiline') return 1;
     
-    switch (densityMode) {
-      case 'compact': return 1;
-      case 'normal': return 2;
-      case 'comfortable': return 3;
-      default: return 2;
-    }
+    return displaySettings.densityModes[densityMode].maxLines;
   };
 
   const maxLines = getMaxLines();
@@ -122,7 +112,7 @@ export const SmartCell = ({
               WebkitLineClamp: maxLines,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              lineHeight: densityMode === 'compact' ? '1.3' : '1.4',
+              lineHeight: displaySettings.densityModes[densityMode].lineHeight,
             }}
             title={shouldTruncate ? value : undefined}
           >

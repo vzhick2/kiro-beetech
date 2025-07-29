@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { businessRules } from '@/config/app-config';
 
 // Enum schemas
 export const ItemTypeSchema = z.enum(['ingredient', 'packaging', 'product']);
@@ -36,7 +37,7 @@ export const ItemSchema = z.object({
   reorderPoint: z.number().min(0).optional(),
   lastCountedDate: z.date().optional(),
   primarysupplierid: z.string().uuid().optional(),
-  leadTimeDays: z.number().int().min(1).default(7),
+  leadTimeDays: z.number().int().min(1).default(businessRules.inventory.defaultLeadTimeDays),
   isarchived: z.boolean().default(false),
   created_at: z.date(),
   updated_at: z.date().optional(),
@@ -142,7 +143,7 @@ export const CreateItemSchema = z.object({
   currentQuantity: z.number().min(0).default(0),
   reorderPoint: z.number().min(0).optional(),
   primarysupplierid: z.string().uuid().optional(),
-  leadTimeDays: z.number().int().min(1).default(7),
+  leadTimeDays: z.number().int().min(1).default(businessRules.inventory.defaultLeadTimeDays),
 });
 
 export const CreateSupplierSchema = z.object({

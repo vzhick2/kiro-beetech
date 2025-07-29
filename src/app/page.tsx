@@ -2,6 +2,7 @@ import { DashboardStats } from '@/components/dashboard/dashboard-stats';
 import { CycleCountAlerts } from '@/components/dashboard/cycle-count-alerts';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { ActionCenter } from '@/components/dashboard/action-center';
+import { paginationSettings } from '@/config/app-config';
 
 export default function Home() {
   return (
@@ -20,12 +21,12 @@ export default function Home() {
       <div className="grid gap-8 xl:grid-cols-3 lg:grid-cols-2">
         {/* Cycle Count Alerts - Takes full width on smaller screens, 2/3 on xl */}
         <div className="xl:col-span-2">
-          <CycleCountAlerts limit={5} />
+          <CycleCountAlerts limit={paginationSettings.pageSizes.dashboard.cycleCountAlerts} />
         </div>
 
         {/* Recent Activity - Takes 1/3 on xl, full width on smaller */}
         <div className="xl:col-span-1">
-          <RecentActivity limit={6} />
+          <RecentActivity limit={paginationSettings.pageSizes.dashboard.recentActivityHomepage} />
         </div>
 
         {/* Action Center - Takes full width on smaller screens, spans 2 columns on lg+ */}

@@ -20,6 +20,7 @@ import { useUnifiedEdit } from '@/hooks/use-unified-edit';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
+import { getTableConfig, getDefaultColumnVisibility, displaySettings, paginationSettings, type ColumnKeys } from '@/config/app-config';
 import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell';
 
 import { 
@@ -44,17 +45,10 @@ interface TestSuppliersTableProps {
   onToggleInactiveAction: (show: boolean) => void;
 }
 
-// Column visibility configuration
-interface ColumnVisibility {
-  name: boolean;
-  website: boolean;
-  phone: boolean;
-  email: boolean;
-  address: boolean;
-  notes: boolean;
-  status: boolean;
-  createdAt: boolean;
-}
+// Column visibility configuration from app config
+type ColumnVisibility = {
+  [K in ColumnKeys<'suppliers'>]: boolean;
+};
 
 export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
@@ -67,20 +61,14 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: paginationSettings.pageSizes.tables.default,
   });
 
-  // Use persistent column visibility with localStorage
-  const [columnVisibility, setColumnVisibility] = useColumnPreferences<ColumnVisibility>('testsuppliers', {
-    name: true,
-    website: true,
-    phone: true,
-    email: true,
-    address: false,
-    notes: true,
-    status: true,
-    createdAt: false,
-  });
+  // Use persistent column visibility with localStorage, defaults from config
+  const [columnVisibility, setColumnVisibility] = useColumnPreferences<ColumnVisibility>(
+    'testsuppliers', 
+    getDefaultColumnVisibility('suppliers') as ColumnVisibility
+  );
   
   // Density mode state - fixed to compact (density selector removed)
   const densityMode = 'compact';
@@ -144,19 +132,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
   // Map ViewOptionsPanel column keys to actual database field names
   const getColumnVisibility = useCallback((dbField: string): boolean => {
-    const columnMap: Record<string, keyof ColumnVisibility> = {
-      'name': 'name',
-      'website': 'website', 
-      'contactphone': 'phone',
-      'email': 'email',
-      'address': 'address',
-      'notes': 'notes',
-      'isarchived': 'status',
-      'created_at': 'createdAt'
-    };
-    
-    const mappedKey = columnMap[dbField];
-    return mappedKey ? columnVisibility[mappedKey] : true;
+  // All columns now use DB field names directly
+  return dbField in columnVisibility ? columnVisibility[dbField as keyof ColumnVisibility] : true;
   }, [columnVisibility]);
 
   const formatDate = useCallback((dateString: string) => {
@@ -419,35 +396,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     getRowId: (index: number) => filteredSuppliers[index]?.supplierid || '',
   });
 
-  // Helper function to convert Supplier to DisplaySupplier
-  const toDisplaySupplier = useCallback((supplier: Supplier): import('@/types/data-table').DisplaySupplier => {
-    const displaySupplier: import('@/types/data-table').DisplaySupplier = {
-      id: supplier.supplierid,
-      name: supplier.name,
-      status: supplier.isarchived ? 'archived' : 'active',
-      createdAt: supplier.created_at ? new Date(supplier.created_at) : new Date(),
-    };
-    
-    if (supplier.website) displaySupplier.website = supplier.website;
-    if (supplier.email) displaySupplier.email = supplier.email;
-    if (supplier.contactphone) displaySupplier.phone = supplier.contactphone;
-    if (supplier.address) displaySupplier.address = supplier.address;
-    if (supplier.notes) displaySupplier.notes = supplier.notes;
-    
-    return displaySupplier;
-  }, []);
 
-  // Helper function to get field value for a supplier (with edits if in edit mode)
-  const getFieldValue = useCallback((supplier: Supplier, field: keyof import('@/types/data-table').DisplaySupplier) => {
-    const original = toDisplaySupplier(supplier);
-    if (isRowEditable(supplier.supplierid)) {
-      return getRowData(supplier.supplierid, original)[field];
-    }
-    return original[field];
-  }, [isRowEditable, getRowData, toDisplaySupplier]);
-
-  // Save changes (works for both single row and all rows edit modes)
-  const handleSaveChanges = useCallback(async () => {
+  const handleSaveAllChanges = useCallback(async () => {
     const changes = getAllChanges();
     if (changes.length === 0) {
       alert('No changes to save');
@@ -456,28 +406,27 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
     try {
       if (editMode === 'single' && editingRowId) {
-        // Single row save
         const rowChanges = changes.find(change => change.rowId === editingRowId);
         if (rowChanges) {
           await saveRowChanges(editingRowId);
           exitEdit();
         }
       } else if (editMode === 'all') {
-        // Bulk save for all changes
         const updates = changes.map(({ rowId, changes }) => {
-          // Map DisplaySupplier fields back to database Supplier fields
-          const dbChanges: any = {};
-          
-          if (changes.name !== undefined) dbChanges.name = changes.name;
-          if (changes.website !== undefined) dbChanges.website = changes.website;
-          if (changes.email !== undefined) dbChanges.email = changes.email;
-          if (changes.phone !== undefined) dbChanges.contactphone = changes.phone; // phone → contactphone
-          if (changes.address !== undefined) dbChanges.address = changes.address;
-          if (changes.notes !== undefined) dbChanges.notes = changes.notes;
-          if (changes.status !== undefined) {
-            dbChanges.isarchived = changes.status === 'archived'; // status → isarchived
+          // Remove created_at from the spread, then add it back as string|null
+          const { created_at, ...rest } = changes;
+          let safeCreatedAt: string | null | undefined = created_at as any;
+          if (created_at !== undefined && created_at !== null && typeof created_at !== 'string') {
+            if (Object.prototype.toString.call(created_at) === '[object Date]') {
+              safeCreatedAt = (created_at as Date).toISOString();
+            } else {
+              safeCreatedAt = String(created_at);
+            }
           }
-
+          const dbChanges: any = { ...rest };
+          if (safeCreatedAt !== undefined) {
+            dbChanges.created_at = safeCreatedAt;
+          }
           return {
             supplierId: rowId,
             changes: dbChanges
@@ -574,7 +523,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'name');
+          const value = supplier.name;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -592,8 +541,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   colIndex={0}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -625,7 +574,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'website');
+          const value = supplier.website;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -642,8 +591,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   colIndex={1}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -685,7 +634,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'phone'); // Note: maps to 'phone' in DisplaySupplier
+          const value = supplier.contactphone;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -695,15 +644,15 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 2)}
               >
                 <SpreadsheetCell
-                  value={value}
-                  field="phone"
+                  value={supplier.contactphone}
+                  field="contactphone"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
                   colIndex={2}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -735,7 +684,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'email');
+          const value = supplier.email;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -752,8 +701,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   colIndex={3}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -793,7 +742,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'address');
+          const value = supplier.address;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -810,8 +759,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   colIndex={4}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -843,7 +792,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'notes');
+          const value = supplier.notes;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -860,8 +809,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   colIndex={5}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -893,7 +842,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = getFieldValue(supplier, 'status'); // Maps to 'status' in DisplaySupplier
+          const value = supplier.isarchived;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -903,15 +852,15 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 6)}
               >
                 <SpreadsheetCell
-                  value={value}
-                  field="status"
+                  value={supplier.isarchived}
+                  field="isarchived"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
                   colIndex={6}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={() => {}} // No longer needed with unified system
+                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
+                  onLocalChangeAction={() => {}}
                 />
               </div>
             );
@@ -1345,7 +1294,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   
                   {/* Save button */}
                   <button 
-                    onClick={handleSaveChanges}
+                    onClick={handleSaveAllChanges}
                     className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                     title="Save changes"
                     style={{ minWidth: '44px', minHeight: '44px' }}

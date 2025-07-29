@@ -6,6 +6,7 @@ import { ItemActionsDropdown } from './item-actions-dropdown';
 import { ItemDetailModal } from './item-detail-modal';
 import { getItems } from '@/app/actions/items';
 import { Item, TrackingMode } from '@/types';
+import { businessRules } from '@/config/app-config';
 
 interface ItemsTableProps {
   onItemAdded?: () => void;
@@ -37,8 +38,8 @@ export function ItemsTable({ onItemAdded }: ItemsTableProps) {
             ? new Date(item.lastcounteddate)
             : new Date(),
           primarysupplierid: item.primarysupplierid || undefined,
-          leadTimeDays: item.leadtimedays || 7,
-          trackingMode: (item.tracking_mode || 'fully_tracked') as TrackingMode,
+          leadTimeDays: item.leadtimedays || businessRules.inventory.defaultLeadTimeDays,
+          trackingMode: (item.tracking_mode || businessRules.inventory.defaultTrackingMode) as TrackingMode,
           isarchived: item.isarchived || false,
           created_at: new Date(item.created_at || Date.now()),
           updated_at: new Date(item.updated_at || Date.now()),

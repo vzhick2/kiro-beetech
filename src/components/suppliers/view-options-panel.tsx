@@ -5,17 +5,12 @@ import { Settings, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { getTableConfig, type ColumnKeys } from '@/config/app-config';
 
-export interface ColumnVisibility {
-  name: boolean;
-  website: boolean;
-  phone: boolean;
-  email: boolean;
-  address: boolean;
-  notes: boolean;
-  status: boolean;
-  createdAt: boolean;
-}
+// Generate ColumnVisibility type from config
+export type ColumnVisibility = {
+  [K in ColumnKeys<'suppliers'>]: boolean;
+};
 
 export interface DensityMode {
   mode: 'compact' | 'normal' | 'comfortable';
@@ -44,16 +39,13 @@ export const ViewOptionsPanel = React.memo(({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{ right: number | 'auto', left: number | 'auto' }>({ right: 0, left: 'auto' });
 
-  const columns = [
-    { key: 'name' as const, label: 'Supplier Name', required: true },
-    { key: 'website' as const, label: 'Website', required: false },
-    { key: 'phone' as const, label: 'Phone', required: false },
-    { key: 'email' as const, label: 'Email', required: false },
-    { key: 'address' as const, label: 'Address', required: false },
-    { key: 'notes' as const, label: 'Notes', required: false },
-    { key: 'status' as const, label: 'Status', required: false },
-    { key: 'createdAt' as const, label: 'Created Date', required: false },
-  ];
+  // Get columns from config
+  const suppliersConfig = getTableConfig('suppliers');
+  const columns = Object.entries(suppliersConfig.columns).map(([key, config]) => ({
+    key: key as ColumnKeys<'suppliers'>,
+    label: config.label,
+    required: config.required,
+  }));
 
   // Calculate dropdown position to prevent cutoff
   useEffect(() => {

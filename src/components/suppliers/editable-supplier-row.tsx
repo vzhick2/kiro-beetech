@@ -24,18 +24,18 @@ import {
 } from '@/components/ui/select';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Supplier, DisplaySupplier, EditingRow } from '@/types/data-table';
+import type { Supplier } from '@/types/index';
 import { StatusBadge } from './status-badge';
 
 interface EditableSupplierRowProps {
-  supplier: DisplaySupplier;
+  supplier: Supplier;
   isSelected: boolean;
   isFocused: boolean;
   onSelect: (selected: boolean, event?: React.MouseEvent) => void;
-  editingRow: EditingRow | null;
+  editingRow: { rowId: string; data: Partial<Supplier> } | null;
   isSaving: boolean;
-  onEdit: (rowId: string, data: Partial<DisplaySupplier>) => void;
-  onSave: (data: Partial<DisplaySupplier>) => void;
+  onEdit: (rowId: string, data: Partial<Supplier>) => void;
+  onSave: (data: Partial<Supplier>) => void;
   onCancel: () => void;
   onToggleExpand: () => void;
   isExpanded: boolean;
@@ -43,7 +43,7 @@ interface EditableSupplierRowProps {
   hasRowChanges?: boolean;
   onSpreadsheetChange?: (
     rowId: string,
-    field: keyof DisplaySupplier,
+    field: keyof Supplier,
     value: any
   ) => void;
   onUndoRowChanges?: () => void;
@@ -74,15 +74,15 @@ export const EditableSupplierRow = ({
   rowIndex,
   columnWidths,
 }: EditableSupplierRowProps) => {
-  const isEditing = editingRow?.rowId === supplier.id;
-  const [formData, setFormData] = useState<Partial<DisplaySupplier>>({
+  const isEditing = editingRow?.rowId === supplier.supplierid;
+  const [formData, setFormData] = useState<Partial<Supplier>>({
     name: supplier.name,
     website: supplier.website || '',
-    phone: supplier.phone || '',
+    contactphone: supplier.contactphone || '',
     email: supplier.email || '',
     address: supplier.address || '',
     notes: supplier.notes || '',
-    status: supplier.status,
+    isarchived: supplier.isarchived,
   });
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -104,11 +104,11 @@ export const EditableSupplierRow = ({
       setFormData({
         name: supplier.name,
         website: supplier.website || '',
-        phone: supplier.phone || '',
+        contactphone: supplier.contactphone || '',
         email: supplier.email || '',
         address: supplier.address || '',
         notes: supplier.notes || '',
-        status: supplier.status,
+        isarchived: supplier.isarchived,
       });
     }
   }, [isEditing, supplier]);
@@ -137,7 +137,7 @@ export const EditableSupplierRow = ({
         const target = e.target as HTMLElement;
         
         // More specific detection of clicks within this row
-        const row = target.closest(`[data-supplier-id="${supplier.id}"]`);
+  const row = target.closest(`[data-supplier-id="${supplier.supplierid}"]`);
         const isWithinRow = row !== null;
         
         // Check if click is on any interactive element that should NOT exit edit mode
@@ -148,11 +148,11 @@ export const EditableSupplierRow = ({
         // 2. No changes have been made, AND  
         // 3. Not clicking on any interactive elements
         if (!isWithinRow && !isInteractiveElement) {
+
           const hasChanges =
             formData.name !== supplier.name ||
             formData.website !== (supplier.website || '') ||
-            formData.phone !== (supplier.phone || '') ||
-            formData.status !== supplier.status;
+            formData.contactphone !== (supplier.contactphone || '');
 
           if (!hasChanges) {
             onCancel();
@@ -191,7 +191,7 @@ export const EditableSupplierRow = ({
   };
 
   const handleStartEdit = () => {
-    onEdit(supplier.id, formData);
+    onEdit(supplier.supplierid, formData);
   };
 
   const handleUndoRowChanges = () => {
@@ -222,9 +222,9 @@ export const EditableSupplierRow = ({
     }
   };
 
-  const handleSpreadsheetChange = (field: keyof DisplaySupplier, value: any) => {
+  const handleSpreadsheetChange = (field: keyof Supplier, value: any) => {
     if (onSpreadsheetChange) {
-      onSpreadsheetChange(supplier.id, field, value);
+      onSpreadsheetChange(supplier.supplierid, field, value);
     }
   };
 
@@ -311,22 +311,22 @@ export const EditableSupplierRow = ({
             placeholder="Website"
           />
         </TableCell>
-        <TableCell className="p-1 h-12" style={{ width: columnWidths.phone }}>
+        <TableCell className="p-1 h-12" style={{ width: columnWidths.contactphone }}>
           <Input
             ref={phoneInputRef}
-            value={formData.phone || ''}
-            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+            value={formData.contactphone || ''}
+            onChange={e => setFormData({ ...formData, contactphone: e.target.value })}
             onKeyDown={e => handleKeyDown(e, emailInputRef)}
             className="h-8 text-xs"
             disabled={isSaving}
             placeholder="Phone number"
           />
         </TableCell>
-        <TableCell className="p-1 h-12" style={{ width: columnWidths.status }}>
+        <TableCell className="p-1 h-12" style={{ width: columnWidths.isarchived }}>
           <Select
-            value={formData.status || 'active'}
+            value={formData.isarchived ? 'archived' : 'active'}
             onValueChange={(value: 'active' | 'archived') =>
-              setFormData({ ...formData, status: value })
+              setFormData({ ...formData, isarchived: value === 'archived' })
             }
             disabled={isSaving}
           >
@@ -386,7 +386,7 @@ export const EditableSupplierRow = ({
         isFocused ? 'ring-2 ring-blue-200/40' : ''
       } ${isExpanded ? 'bg-blue-50/30' : ''} ${hasRowChanges ? 'bg-yellow-50/40 border-l-4 border-yellow-400/60' : ''}`}
       data-state={isSelected && 'selected'}
-      data-supplier-id={supplier.id}
+      data-supplier-id={supplier.supplierid}
       onClick={handleRowClick}
     >
       <TableCell className="p-0 h-12" style={{ width: columnWidths.actions }}>
@@ -447,14 +447,14 @@ export const EditableSupplierRow = ({
           >
             <SpreadsheetCell
               value={supplier.name}
-              field="name"
-              rowId={supplier.id}
+              field={"name"}
+              rowId={supplier.supplierid}
               rowIndex={rowIndex}
               colIndex={0}
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
-              onChange={handleSpreadsheetChange}
-              onLocalChange={() => {}} // Dummy function - not used in this component
+              onChangeAction={handleSpreadsheetChange as any}
+              onLocalChangeAction={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
@@ -478,14 +478,14 @@ export const EditableSupplierRow = ({
           >
             <SpreadsheetCell
               value={supplier.website}
-              field="website"
-              rowId={supplier.id}
+              field={"website"}
+              rowId={supplier.supplierid}
               rowIndex={rowIndex}
               colIndex={1}
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
-              onChange={handleSpreadsheetChange}
-              onLocalChange={() => {}} // Dummy function - not used in this component
+              onChangeAction={handleSpreadsheetChange as any}
+              onLocalChangeAction={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
@@ -513,7 +513,7 @@ export const EditableSupplierRow = ({
       </TableCell>
       <TableCell
         className="text-xs p-1 h-12"
-        style={{ width: columnWidths.phone, maxWidth: columnWidths.phone }}
+        style={{ width: columnWidths.contactphone, maxWidth: columnWidths.contactphone }}
       >
         {isSpreadsheetMode ? (
           <div
@@ -521,24 +521,24 @@ export const EditableSupplierRow = ({
             className="h-full flex items-center"
           >
             <SpreadsheetCell
-              value={supplier.phone}
-              field="phone"
-              rowId={supplier.id}
+              value={supplier.contactphone}
+              field={"contactphone"}
+              rowId={supplier.supplierid}
               rowIndex={rowIndex}
               colIndex={2}
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
-              onChange={handleSpreadsheetChange}
-              onLocalChange={() => {}} // Dummy function - not used in this component
+              onChangeAction={handleSpreadsheetChange as any}
+              onLocalChangeAction={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
           <div
             className="h-full flex items-center"
           >
-            {supplier.phone ? (
-              <span className="text-xs" title={supplier.phone}>
-                <div className="cell-content">{supplier.phone}</div>
+            {supplier.contactphone ? (
+              <span className="text-xs" title={supplier.contactphone}>
+                <div className="cell-content">{supplier.contactphone}</div>
               </span>
             ) : (
               <span className="text-gray-400 italic text-sm">No phone</span>
@@ -548,7 +548,7 @@ export const EditableSupplierRow = ({
       </TableCell>
       <TableCell
         className="text-sm p-1 h-12"
-        style={{ width: columnWidths.status }}
+        style={{ width: columnWidths.isarchived }}
       >
         {isSpreadsheetMode ? (
           <div
@@ -556,20 +556,20 @@ export const EditableSupplierRow = ({
             className="h-full flex items-center"
           >
             <SpreadsheetCell
-              value={supplier.status}
-              field="status"
-              rowId={supplier.id}
+              value={supplier.isarchived ? 'archived' : 'active'}
+              field={"isarchived"}
+              rowId={supplier.supplierid}
               rowIndex={rowIndex}
               colIndex={3}
               isSpreadsheetMode={isSpreadsheetMode}
               hasChanges={hasRowChanges || false}
-              onChange={handleSpreadsheetChange}
-              onLocalChange={() => {}} // Dummy function - not used in this component
+              onChangeAction={handleSpreadsheetChange as any}
+              onLocalChangeAction={() => {}} // Dummy function - not used in this component
             />
           </div>
         ) : (
           <div className="h-full flex items-center">
-            <StatusBadge status={supplier.status} />
+            <StatusBadge status={supplier.isarchived ? 'archived' : 'active'} />
           </div>
         )}
       </TableCell>
