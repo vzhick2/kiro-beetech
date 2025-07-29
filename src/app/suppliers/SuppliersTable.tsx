@@ -1,4 +1,4 @@
-// TESTSUPPLIERS Table Component (Client Component) - Notion-inspired design
+// SUPPLIERS Table Component (Client Component) - Notion-inspired design
 'use client';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -40,7 +40,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 
-interface TestSuppliersTableProps {
+interface SuppliersTableProps {
   showInactive: boolean;
   onToggleInactiveAction: (show: boolean) => void;
 }
@@ -50,7 +50,7 @@ type ColumnVisibility = {
   [K in ColumnKeys<'suppliers'>]: boolean;
 };
 
-export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
+export function SuppliersTable({ showInactive, onToggleInactiveAction }: SuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['suppliers', { showInactive }],
@@ -87,7 +87,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     toggleSingleEdit,
     updateRowData,
     undoRowChanges,
-    // getRowData, // unused
+    getRowData,
     hasRowChanges,
     isRowEditable,
     // getChangedRowsCount, // unused
@@ -538,7 +538,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.name;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.name;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -549,7 +550,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
               >
                 <SpreadsheetCell
                   key={`${supplier.supplierid}-name`}
-                  value={value}
+                  value={currentSupplier.name}
                   field="name"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -589,7 +590,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.website;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.website;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -599,7 +601,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 1)}
               >
                 <SpreadsheetCell
-                  value={value}
+                  value={currentSupplier.website}
                   field="website"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -649,7 +651,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.contactphone;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.contactphone;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -659,7 +662,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 2)}
               >
                 <SpreadsheetCell
-                  value={supplier.contactphone}
+                  value={getRowData(supplier.supplierid, supplier).contactphone}
                   field="contactphone"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -699,7 +702,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.email;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.email;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -709,7 +713,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 3)}
               >
                 <SpreadsheetCell
-                  value={value}
+                  value={currentSupplier.email}
                   field="email"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -757,7 +761,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.address;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.address;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -767,7 +772,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 4)}
               >
                 <SpreadsheetCell
-                  value={value}
+                  value={currentSupplier.address}
                   field="address"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -807,7 +812,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.notes;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.notes;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -817,7 +823,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 5)}
               >
                 <SpreadsheetCell
-                  value={value}
+                  value={currentSupplier.notes}
                   field="notes"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -857,7 +863,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const value = supplier.isarchived;
+          const currentSupplier = getRowData(supplier.supplierid, supplier);
+          const value = currentSupplier.isarchived;
           const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
@@ -867,7 +874,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 onClick={() => handleCellClick(rowIndex, 6)}
               >
                 <SpreadsheetCell
-                  value={supplier.isarchived}
+                  value={getRowData(supplier.supplierid, supplier).isarchived}
                   field="isarchived"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}

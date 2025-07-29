@@ -600,7 +600,7 @@ const pageSize = paginationSettings.pageSizes.tables.default;
 
 #### Components Updated with Config
 
-- ✅ **TestSuppliersTable** - Column visibility, pagination, density modes
+- ✅ **SuppliersTable** - Column visibility, pagination, density modes
 - ✅ **ViewOptionsPanel** - Config-driven columns and labels  
 - ✅ **ModernDataTable** - Density modes and character limits
 - ✅ **SmartCell** - Dynamic truncation and line limits
