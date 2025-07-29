@@ -23,16 +23,20 @@ export const useUnifiedEdit = () => {
   const enterSingleEdit = useCallback((rowId: string) => {
     setEditMode('single');
     setEditingRowId(rowId);
-    setEditedData(new Map());
-    setHasUnsavedChanges(false);
+    // Don't clear existing edited data - preserve any unsaved changes
+    // setEditedData(new Map()); // REMOVED - was causing edits to disappear
+    // Only update unsaved changes flag if we actually have data
+    setHasUnsavedChanges(editedDataRef.current.size > 0);
   }, []);
 
   // Enter spreadsheet edit mode (all rows)
   const enterAllEdit = useCallback(() => {
     setEditMode('all');
     setEditingRowId(null);
-    setEditedData(new Map());
-    setHasUnsavedChanges(false);
+    // Don't clear existing edited data - preserve any unsaved changes
+    // setEditedData(new Map()); // REMOVED - was causing edits to disappear
+    // Only update unsaved changes flag if we actually have data
+    setHasUnsavedChanges(editedDataRef.current.size > 0);
   }, []);
 
   // Exit edit mode
@@ -59,9 +63,12 @@ export const useUnifiedEdit = () => {
     setEditedData(prev => {
       const newMap = new Map(prev);
       newMap.delete(rowId);
-      setHasUnsavedChanges(newMap.size > 0);
       return newMap;
     });
+    // Update unsaved changes flag after state update
+    setTimeout(() => {
+      setHasUnsavedChanges(editedDataRef.current.size > 0);
+    }, 0);
   }, []);
 
   // Get data for a specific row (original + changes)

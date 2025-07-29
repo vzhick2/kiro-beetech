@@ -6,7 +6,10 @@
  * - Static configurations that rarely change go here
  * - User preferences (column visibility, themes) stay in localStorage/settings UI
  * - Business logic constants centralized for easy maintenance
+ * - Environment-specific values loaded from environment variables
  */
+
+import { env } from './env';
 
 // =============================================================================
 // TABLE CONFIGURATIONS
@@ -260,14 +263,14 @@ export const businessRules = {
   inventory: {
     defaultTrackingMode: 'fully_tracked' as const,
     negativeInventoryAllowed: true,
-    defaultLeadTimeDays: 7,
+    defaultLeadTimeDays: env.DEFAULT_LEAD_TIME_DAYS,
   },
   
   // Low stock thresholds by item type
   lowStockThresholds: {
-    ingredient: 10,
-    packaging: 5, 
-    product: 3,
+    ingredient: env.LOW_STOCK_INGREDIENT,
+    packaging: env.LOW_STOCK_PACKAGING, 
+    product: env.LOW_STOCK_PRODUCT,
   },
   
   // Display ID generation patterns
@@ -292,8 +295,8 @@ export const businessRules = {
   // Cycle count and alerting
   alerts: {
     cycleCountScoring: {
-      maxDaysScore: 10, // Cap at 10 points
-      daysDivisor: 30,  // daysSinceCount / 30
+      maxDaysScore: env.CYCLE_COUNT_MAX_DAYS_SCORE, // Cap at 10 points
+      daysDivisor: env.CYCLE_COUNT_DAYS_DIVISOR,  // daysSinceCount / 30
       stockScores: {
         outOfStock: 5,
         belowReorder: 3,
@@ -321,12 +324,12 @@ export const paginationSettings = {
   // Default page sizes for different contexts
   pageSizes: {
     dashboard: {
-      cycleCountAlerts: 5,
-      recentActivity: 10, 
+      cycleCountAlerts: env.DASHBOARD_CYCLE_COUNT_ALERTS_LIMIT,
+      recentActivity: env.DASHBOARD_RECENT_ACTIVITY_LIMIT, 
       recentActivityHomepage: 6, // Different on homepage
     },
     tables: {
-      default: 50,
+      default: env.DEFAULT_PAGE_SIZE,
       minimum: 10,
       maximum: 100,
       options: [10, 20, 50, 100] as const,

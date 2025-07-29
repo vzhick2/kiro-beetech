@@ -53,34 +53,56 @@ export const SpreadsheetCell = ({
 
   // Only update localValue if value changed from external source (not from our own onChange)
   const lastValueRef = useRef(value);
+  
   useEffect(() => {
+    // Only update local value if this is an external change (not from our own editing)
     if (value !== lastValueRef.current) {
-      setLocalValue(value);
+      // Check if we have unsaved local changes
+      const hasLocalChanges = localValue !== originalValueRef.current;
+      
+      // Only update if we don't have local changes, or if this is a fresh prop change
+      // (e.g., from switching rows or initial load)
+      if (!hasLocalChanges || !hasChanges) {
+        setLocalValue(value);
+      }
+      
       lastValueRef.current = value;
+      
       // Update original value only if this is a fresh load (not a local change)
       if (!hasChanges) {
         originalValueRef.current = value;
       }
     }
-  }, [value, hasChanges]);
+  }, [value, hasChanges, localValue]);
 
   const handleBlur = () => {
     // Compare against original value, not current value (which might be updated by onLocalChange)
     if (localValue !== originalValueRef.current) {
       let safeValue = localValue;
-      // If editing a timestamp, always send as string or null
+      
+      // Handle different field types appropriately
       if (field === 'created_at') {
         if (localValue instanceof Date) {
           safeValue = localValue.toISOString();
         } else if (typeof localValue === 'string' || localValue == null) {
           safeValue = localValue;
         } else {
-          // fallback: try to coerce
           safeValue = String(localValue);
         }
+      } else if (field === 'isarchived') {
+        safeValue = Boolean(localValue);
+      } else {
+        // For text fields, ensure we handle null/undefined properly
+        safeValue = localValue == null ? '' : String(localValue);
       }
+      
+      // Save the change to the unified edit system
       onChangeAction(field, safeValue);
-      // Call onLocalChangeAction here for visual feedback (counter update)
+      
+      // Update original value to reflect the change has been registered
+      originalValueRef.current = safeValue;
+      
+      // Call onLocalChangeAction for any additional visual feedback
       onLocalChangeAction(field, safeValue, rowId);
     }
   };

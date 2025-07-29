@@ -177,13 +177,22 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       try {
         const changes = getAllChanges().find(change => change.rowId === rowId);
         if (changes) {
-          await updateSupplierMutation.mutateAsync({
+          // Perform the mutation and wait for success
+          const result = await updateSupplierMutation.mutateAsync({
             supplierId: rowId,
             updates: changes.changes,
           });
-          // Clear the saved changes for this row since they're now persisted
-          undoRowChanges(rowId);
-          return true;
+          
+          // Only clear the changes after successful persistence
+          if (result) {
+            undoRowChanges(rowId);
+            console.log('Successfully saved changes for row:', rowId);
+            return true;
+          } else {
+            console.error('Update mutation returned no result for row:', rowId);
+            alert('Failed to save changes. Please try again.');  
+            return false;
+          }
         }
       } catch (error) {
         console.error('Failed to save changes for row:', rowId, error);
@@ -408,8 +417,11 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       if (editMode === 'single' && editingRowId) {
         const rowChanges = changes.find(change => change.rowId === editingRowId);
         if (rowChanges) {
-          await saveRowChanges(editingRowId);
-          exitEdit();
+          const success = await saveRowChanges(editingRowId);
+          if (success) {
+            exitEdit();
+          }
+          // Don't exit edit mode if save failed
         }
       } else if (editMode === 'all') {
         const updates = changes.map(({ rowId, changes }) => {
@@ -440,15 +452,18 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         
         if (result.success) {
           alert(`Successfully updated ${result.updatedCount} supplier(s)`);
-          exitEdit();
+          // Only exit edit mode and clear changes after successful save
+          exitEdit(); // This will clear all changes
           refetch(); // Refresh the data
         } else {
           alert(result.error || 'Failed to save changes');
+          // Don't clear changes if save failed - keep them for retry
         }
       }
     } catch (error) {
       console.error('Error saving changes:', error);
       alert('Failed to save changes. Please try again.');
+      // Don't clear changes if save failed - keep them for retry
     }
   }, [editMode, editingRowId, getAllChanges, saveRowChanges, exitEdit, refetch]);
   const columnHelper = createColumnHelper<Supplier>();
