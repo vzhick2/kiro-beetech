@@ -1,7 +1,8 @@
 'use client';
 
 import type React from 'react';
-import { memo, useRef, useState } from 'react';
+
+import { useRef, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -21,12 +22,13 @@ type SpreadsheetCellProps = {
   colIndex: number;
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
+  originalValue: any; // Add originalValue prop for comparison
   onChangeAction: (field: keyof Supplier, value: any) => void;
   onLocalChangeAction: (field: keyof Supplier, value: any, rowId: string) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
 };
 
-const SpreadsheetCell = ({
+export const SpreadsheetCell = ({
   value,
   field,
   rowId,
@@ -34,17 +36,41 @@ const SpreadsheetCell = ({
   colIndex,
   isSpreadsheetMode,
   hasChanges,
+  originalValue,
   onChangeAction,
   onLocalChangeAction,
   onKeyDown,
 }: SpreadsheetCellProps) => {
+  // Controlled component - no local state for value, use centralized state only
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
 
-  const handleBlur = () => {
-    // No longer needed - changes are handled immediately in onChange
-    // This can be used for focus management or other side effects
+  const handleChange = (newValue: any) => {
+    // Immediately update centralized state - no local state needed
+    let safeValue = newValue;
+    
+    // Handle different field types appropriately
+    if (field === 'created_at') {
+      if (newValue instanceof Date) {
+        safeValue = newValue.toISOString();
+      } else if (typeof newValue === 'string' || newValue == null) {
+        safeValue = newValue;
+      } else {
+        safeValue = String(newValue);
+      }
+    } else if (field === 'isarchived') {
+      safeValue = Boolean(newValue);
+    } else {
+      // For text fields, ensure we handle null/undefined properly
+      safeValue = newValue == null ? '' : String(newValue);
+    }
+    
+    // Update centralized state immediately
+    onChangeAction(field, safeValue);
+    
+    // Call onLocalChangeAction for any additional visual feedback
+    onLocalChangeAction(field, safeValue, rowId);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -161,20 +187,26 @@ const SpreadsheetCell = ({
   
   const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
   
+  // Enhanced visual feedback for editing states - use centralized state
+  const hasLocalChanges = value !== originalValue;
+  const isPendingSave = hasLocalChanges && hasChanges;
+  
   // Match exact table cell styling: py-2 px-3 from table cells
   // Keep same height as display mode - no min-h constraints that change row height
-  const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''}`;
-  const containerClass = `w-full py-2 px-3 ${hasChanges ? 'bg-blue-50' : 'bg-white'}`;
+  const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''} ${hasLocalChanges ? 'ring-1 ring-blue-300' : ''}`;
+  const containerClass = `w-full py-2 px-3 relative ${hasChanges ? 'bg-blue-50' : 'bg-white'} ${hasLocalChanges ? 'bg-blue-100' : ''} ${isPendingSave ? 'border-l-2 border-orange-400' : ''}`;
 
   if (field === 'isarchived') {
     return (
       <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
+        {hasLocalChanges && (
+          <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full opacity-70 pointer-events-none z-10" 
+               title="Unsaved changes" />
+        )}
         <Select
           value={value ? 'archived' : 'active'}
           onValueChange={newValue => {
-            const boolValue = newValue === 'archived';
-            onChangeAction(field, boolValue);
-            onLocalChangeAction(field, boolValue, rowId);
+            handleChange(newValue === 'archived');
           }}
           open={isSelectOpen}
           onOpenChange={setIsSelectOpen}
@@ -197,15 +229,16 @@ const SpreadsheetCell = ({
 
   return (
     <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
+      {hasLocalChanges && (
+        <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full opacity-70 pointer-events-none z-10" 
+             title="Unsaved changes" />
+      )}
       <Textarea
         ref={inputRef}
         value={value || ''}
         onChange={e => {
-          // Update immediately through the centralized state
-          onChangeAction(field, e.target.value);
-          onLocalChangeAction(field, e.target.value, rowId);
+          handleChange(e.target.value);
         }}
-        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onClick={handleInputClick}
         onMouseDown={handleInputMouseDown}
@@ -230,6 +263,3 @@ const SpreadsheetCell = ({
     </div>
   );
 };
-
-// Export memoized component to prevent unnecessary re-renders
-export default memo(SpreadsheetCell);

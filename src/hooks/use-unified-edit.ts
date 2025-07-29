@@ -26,8 +26,8 @@ export const useUnifiedEdit = () => {
     // Don't clear existing edited data - preserve any unsaved changes
     // setEditedData(new Map()); // REMOVED - was causing edits to disappear
     // Only update unsaved changes flag if we actually have data
-    setHasUnsavedChanges(editedDataRef.current.size > 0);
-  }, []);
+    setHasUnsavedChanges(editedData.size > 0);
+  }, [editedData]);
 
   // Enter spreadsheet edit mode (all rows)
   const enterAllEdit = useCallback(() => {
@@ -36,8 +36,8 @@ export const useUnifiedEdit = () => {
     // Don't clear existing edited data - preserve any unsaved changes
     // setEditedData(new Map()); // REMOVED - was causing edits to disappear
     // Only update unsaved changes flag if we actually have data
-    setHasUnsavedChanges(editedDataRef.current.size > 0);
-  }, []);
+    setHasUnsavedChanges(editedData.size > 0);
+  }, [editedData]);
 
   // Exit edit mode
   const exitEdit = useCallback(() => {
@@ -73,14 +73,14 @@ export const useUnifiedEdit = () => {
 
   // Get data for a specific row (original + changes)
   const getRowData = useCallback((rowId: string, originalData: Supplier): Supplier => {
-    const editedRowData = editedDataRef.current.get(rowId);
-  return editedRowData ? { ...originalData, ...editedRowData } : originalData;
-  }, []);
+    const editedRowData = editedData.get(rowId);
+    return editedRowData ? { ...originalData, ...editedRowData } : originalData;
+  }, [editedData]);
 
   // Check if a row has changes
   const hasRowChanges = useCallback((rowId: string) => {
-    return editedDataRef.current.has(rowId);
-  }, []);
+    return editedData.has(rowId);
+  }, [editedData]);
 
   // Check if a row is editable in current mode
   const isRowEditable = useCallback((rowId: string) => {
@@ -92,16 +92,16 @@ export const useUnifiedEdit = () => {
 
   // Get count of changed rows
   const getChangedRowsCount = useCallback(() => {
-    return editedDataRef.current.size;
-  }, []);
+    return editedData.size;
+  }, [editedData]);
 
   // Get all changes
   const getAllChanges = useCallback(() => {
-    return Array.from(editedDataRef.current.entries()).map(([rowId, changes]) => ({
+    return Array.from(editedData.entries()).map(([rowId, changes]) => ({
       rowId,
       changes,
     }));
-  }, []);
+  }, [editedData]);
 
   // Toggle single row edit
   const toggleSingleEdit = useCallback((rowId: string) => {

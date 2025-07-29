@@ -16,12 +16,12 @@ import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers, bulkUpdateSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
-import { useEditableTable } from '@/hooks/use-editable-table';
+import { useUnifiedEdit } from '@/hooks/use-unified-edit';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
 import { getDefaultColumnVisibility, paginationSettings, type ColumnKeys } from '@/config/app-config';
-import SpreadsheetCell from '@/components/suppliers/spreadsheet-cell';
+import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell';
 
 import { 
   ChevronUp, 
@@ -76,34 +76,26 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
   // Selection state for bulk operations (archive, delete, export)
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   
-  // New editable table system with useReducer for centralized state management
+  // Unified edit system - replaces both spreadsheet mode and single row edit
   const {
     editMode,
-    activeRowId: editingRowId,
+    editingRowId,
     hasUnsavedChanges,
-    displayData,
-    startSingleEdit,
-    startBulkEdit: enterAllEdit,
+    // enterSingleEdit, // unused
+    enterAllEdit,
     exitEdit,
-    updateCell: updateRowData,
+    toggleSingleEdit,
+    updateRowData,
     undoRowChanges,
     getRowData,
     hasRowChanges,
     isRowEditable,
+    // getChangedRowsCount, // unused
     getAllChanges,
-  } = useEditableTable(suppliers);
+  } = useUnifiedEdit();
 
   // Single row edit updates  
   const updateSupplierMutation = useUpdateSupplier();
-  
-  // Helper function to maintain compatibility with existing code
-  const toggleSingleEdit = useCallback((rowId: string) => {
-    if (editMode === 'single' && editingRowId === rowId) {
-      exitEdit();
-    } else {
-      startSingleEdit(rowId);
-    }
-  }, [editMode, editingRowId, exitEdit, startSingleEdit]);
   
   // Debounced search with 350ms delay for better UX
   const { searchValue, debouncedSearchValue, updateSearch, clearSearch } = useDebouncedSearch('', 350);
@@ -378,7 +370,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
   // Filter suppliers based on search and showInactive
   const filteredSuppliers = useMemo(() => {
-    let filtered = displayData;
+    let filtered = suppliers;
     
     // Filter by search term (using debounced value)
     if (debouncedSearchValue.trim()) {
@@ -394,7 +386,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     }
     
     return filtered;
-  }, [displayData, debouncedSearchValue]);
+  }, [suppliers, debouncedSearchValue]);
 
   // Spreadsheet navigation - initialized after filteredSuppliers
   const { currentCell, handleCellClick } = useSpreadsheetNavigation({
@@ -559,6 +551,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 <SpreadsheetCell
                   key={`${supplier.supplierid}-name`}
                   value={currentSupplier.name}
+                  originalValue={supplier.name}
                   field="name"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -610,6 +603,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.website}
+                  originalValue={supplier.website}
                   field="website"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -671,6 +665,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.contactphone}
+                  originalValue={supplier.contactphone}
                   field="contactphone"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -722,6 +717,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.email}
+                  originalValue={supplier.email}
                   field="email"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -781,6 +777,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.address}
+                  originalValue={supplier.address}
                   field="address"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -832,6 +829,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.notes}
+                  originalValue={supplier.notes}
                   field="notes"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -883,6 +881,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   value={currentSupplier.isarchived}
+                  originalValue={supplier.isarchived}
                   field="isarchived"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -951,14 +950,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     manualPagination: false,
-    meta: {
-      editMode,
-      activeRowId: editingRowId,
-      updateCell: updateRowData,
-      hasRowChanges,
-      isRowEditable,
-      getRowData,
-    },
   });
 
   // Keyboard shortcuts
