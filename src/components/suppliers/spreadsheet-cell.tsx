@@ -191,9 +191,13 @@ export const SpreadsheetCell = ({
   };
 
   if (!isSpreadsheetMode) {
-    // Regular display mode - match table styling exactly
+    // Regular display mode - show edited value if it exists, otherwise show original value
     const isWebsiteField = field === 'website';
     const isEmailField = field === 'email';
+    
+    // For display mode, show the local value if we have changes, otherwise show the prop value
+    // This fixes the timing issue where edits disappear visually
+    const displayValue = hasChanges ? localValue : value;
     
     // Simplified - let global table styling handle font sizes
     const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
@@ -201,7 +205,7 @@ export const SpreadsheetCell = ({
     if (field === 'isarchived') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-green-100 text-green-800">
-          {value ? 'Inactive' : 'Active'}
+          {displayValue ? 'Inactive' : 'Active'}
         </span>
       );
     }
@@ -211,7 +215,7 @@ export const SpreadsheetCell = ({
         WebkitLineClamp: 3, 
         WebkitBoxOrient: 'vertical' 
       }}>
-        {value || <span className="text-gray-400 italic">—</span>}
+        {displayValue || <span className="text-gray-400 italic">—</span>}
       </div>
     );
   }
