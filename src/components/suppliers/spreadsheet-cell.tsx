@@ -1,9 +1,7 @@
 'use client';
 
 import type React from 'react';
-
-import { useState, useRef, useEffect } from 'react';
-// import { Input } from '@/components/ui/input'; // unused
+import { memo, useRef, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -12,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
 
 import type { Supplier } from '@/lib/supabase/suppliers';
 
@@ -29,9 +26,7 @@ type SpreadsheetCellProps = {
   onKeyDown?: (e: React.KeyboardEvent) => void;
 };
 
-
-
-export const SpreadsheetCell = ({
+const SpreadsheetCell = ({
   value,
   field,
   rowId,
@@ -43,68 +38,13 @@ export const SpreadsheetCell = ({
   onLocalChangeAction,
   onKeyDown,
 }: SpreadsheetCellProps) => {
-  const [localValue, setLocalValue] = useState(value);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
-  
-  // Keep track of the original value to compare against for saving
-  const originalValueRef = useRef(value);
-
-  // Only update localValue if value changed from external source (not from our own onChange)
-  const lastValueRef = useRef(value);
-  
-  useEffect(() => {
-    // Only update local value if this is an external change (not from our own editing)
-    if (value !== lastValueRef.current) {
-      // Check if we have unsaved local changes
-      const hasLocalChanges = localValue !== originalValueRef.current;
-      
-      // Only update if we don't have local changes AND no row changes
-      // (e.g., completely fresh/pristine state)
-      if (!hasLocalChanges && !hasChanges) {
-        setLocalValue(value);
-      }
-      
-      lastValueRef.current = value;
-      
-      // Update original value only if this is a fresh load (not a local change)
-      if (!hasChanges) {
-        originalValueRef.current = value;
-      }
-    }
-  }, [value, hasChanges, localValue]);
 
   const handleBlur = () => {
-    // Compare against original value, not current value (which might be updated by onLocalChange)
-    if (localValue !== originalValueRef.current) {
-      let safeValue = localValue;
-      
-      // Handle different field types appropriately
-      if (field === 'created_at') {
-        if (localValue instanceof Date) {
-          safeValue = localValue.toISOString();
-        } else if (typeof localValue === 'string' || localValue == null) {
-          safeValue = localValue;
-        } else {
-          safeValue = String(localValue);
-        }
-      } else if (field === 'isarchived') {
-        safeValue = Boolean(localValue);
-      } else {
-        // For text fields, ensure we handle null/undefined properly
-        safeValue = localValue == null ? '' : String(localValue);
-      }
-      
-      // Save the change to the unified edit system
-      onChangeAction(field, safeValue);
-      
-      // Update original value to reflect the change has been registered
-      originalValueRef.current = safeValue;
-      
-      // Call onLocalChangeAction for any additional visual feedback
-      onLocalChangeAction(field, safeValue, rowId);
-    }
+    // No longer needed - changes are handled immediately in onChange
+    // This can be used for focus management or other side effects
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -125,7 +65,6 @@ export const SpreadsheetCell = ({
       // For regular inputs
       if (e.key === 'Enter') {
         e.preventDefault();
-        handleBlur();
         // Move focus to next cell or blur current one
         if (inputRef.current) {
           inputRef.current.blur();
@@ -191,13 +130,9 @@ export const SpreadsheetCell = ({
   };
 
   if (!isSpreadsheetMode) {
-    // Regular display mode - show edited value if it exists, otherwise show original value
+    // Regular display mode - value is already from the centralized state
     const isWebsiteField = field === 'website';
     const isEmailField = field === 'email';
-    
-    // For display mode, show the local value if we have changes, otherwise show the prop value
-    // This fixes the timing issue where edits disappear visually
-    const displayValue = hasChanges ? localValue : value;
     
     // Simplified - let global table styling handle font sizes
     const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
@@ -205,7 +140,7 @@ export const SpreadsheetCell = ({
     if (field === 'isarchived') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-green-100 text-green-800">
-          {displayValue ? 'Inactive' : 'Active'}
+          {value ? 'Inactive' : 'Active'}
         </span>
       );
     }
@@ -215,7 +150,7 @@ export const SpreadsheetCell = ({
         WebkitLineClamp: 3, 
         WebkitBoxOrient: 'vertical' 
       }}>
-        {displayValue || <span className="text-gray-400 italic">—</span>}
+        {value || <span className="text-gray-400 italic">—</span>}
       </div>
     );
   }
@@ -235,11 +170,11 @@ export const SpreadsheetCell = ({
     return (
       <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
         <Select
-          value={localValue ? 'archived' : 'active'}
+          value={value ? 'archived' : 'active'}
           onValueChange={newValue => {
-            setLocalValue(newValue === 'archived');
-            onChangeAction(field, newValue === 'archived');
-            onLocalChangeAction(field, newValue === 'archived', rowId);
+            const boolValue = newValue === 'archived';
+            onChangeAction(field, boolValue);
+            onLocalChangeAction(field, boolValue, rowId);
           }}
           open={isSelectOpen}
           onOpenChange={setIsSelectOpen}
@@ -264,10 +199,11 @@ export const SpreadsheetCell = ({
     <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
       <Textarea
         ref={inputRef}
-        value={localValue || ''}
+        value={value || ''}
         onChange={e => {
-          setLocalValue(e.target.value);
-          // Don't call onLocalChange on every keystroke - only on blur
+          // Update immediately through the centralized state
+          onChangeAction(field, e.target.value);
+          onLocalChangeAction(field, e.target.value, rowId);
         }}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
@@ -294,3 +230,6 @@ export const SpreadsheetCell = ({
     </div>
   );
 };
+
+// Export memoized component to prevent unnecessary re-renders
+export default memo(SpreadsheetCell);
