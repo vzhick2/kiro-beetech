@@ -60,9 +60,9 @@ export const SpreadsheetCell = ({
       // Check if we have unsaved local changes
       const hasLocalChanges = localValue !== originalValueRef.current;
       
-      // Only update if we don't have local changes, or if this is a fresh prop change
-      // (e.g., from switching rows or initial load)
-      if (!hasLocalChanges || !hasChanges) {
+      // Only update if we don't have local changes AND no row changes
+      // (e.g., completely fresh/pristine state)
+      if (!hasLocalChanges && !hasChanges) {
         setLocalValue(value);
       }
       
