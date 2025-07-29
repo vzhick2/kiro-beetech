@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 
 
-import type { Supplier } from '@/types/index';
+import type { Supplier } from '@/lib/supabase/suppliers';
 
 type SpreadsheetCellProps = {
   value: any;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { Supplier } from '@/types/index';
+import type { Supplier } from '@/lib/supabase/suppliers';
 
 export type EditMode = 'none' | 'single' | 'all';
 
