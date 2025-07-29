@@ -662,7 +662,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 onClick={() => handleCellClick(rowIndex, 2)}
               >
                 <SpreadsheetCell
-                  value={getRowData(supplier.supplierid, supplier).contactphone}
+                  value={currentSupplier.contactphone}
                   field="contactphone"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -874,7 +874,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 onClick={() => handleCellClick(rowIndex, 6)}
               >
                 <SpreadsheetCell
-                  value={getRowData(supplier.supplierid, supplier).isarchived}
+                  value={currentSupplier.isarchived}
                   field="isarchived"
                   rowId={supplier.supplierid}
                   rowIndex={rowIndex}
@@ -928,7 +928,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
     // Return action columns + visible data columns
     return [...actionColumns, ...visibleDataColumns];
-  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRowId]);
+  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRowId, getRowData, hasRowChanges, isRowEditable, updateRowData, editMode, handleCellClick]);
   // Table instance with pagination
   const table = useReactTable({
     data: filteredSuppliers,
