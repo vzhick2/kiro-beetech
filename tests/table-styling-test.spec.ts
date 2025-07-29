@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Table styling test - full width, zebra stripes, hover effects', async ({ page }) => {
-  await page.goto('http://localhost:3000/testsuppliers');
+  await page.goto('http://localhost:3000/suppliers');
   await page.waitForLoadState('networkidle');
   
   // Wait for data to load

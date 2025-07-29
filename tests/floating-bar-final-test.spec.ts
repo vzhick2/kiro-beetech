@@ -8,7 +8,7 @@ test('Final floating bar test - bottom right with interactions', async ({ page }
     }
   });
 
-  await page.goto('http://localhost:3000/testsuppliers');
+  await page.goto('http://localhost:3000/suppliers');
   await page.waitForLoadState('networkidle');
   
   // Wait for data to load

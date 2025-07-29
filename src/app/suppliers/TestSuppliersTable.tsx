@@ -20,7 +20,7 @@ import { useUnifiedEdit } from '@/hooks/use-unified-edit';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
-import { getTableConfig, getDefaultColumnVisibility, displaySettings, paginationSettings, type ColumnKeys } from '@/config/app-config';
+import { getDefaultColumnVisibility, paginationSettings, type ColumnKeys } from '@/config/app-config';
 import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell';
 
 import { 
@@ -53,7 +53,7 @@ type ColumnVisibility = {
 export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: TestSuppliersTableProps) {
   // Fetch suppliers from Supabase (react-query)
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['testsuppliers', { showInactive }],
+    queryKey: ['suppliers', { showInactive }],
     queryFn: () => getSuppliers({ includeArchived: showInactive }),
   });
 
@@ -66,12 +66,12 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
   // Use persistent column visibility with localStorage, defaults from config
   const [columnVisibility, setColumnVisibility] = useColumnPreferences<ColumnVisibility>(
-    'testsuppliers', 
+    'suppliers', 
     getDefaultColumnVisibility('suppliers') as ColumnVisibility
   );
   
   // Density mode state - fixed to compact (density selector removed)
-  const densityMode = 'compact';
+  // const densityMode = 'compact'; // unused
   
   // Selection state for bulk operations (archive, delete, export)
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
@@ -81,16 +81,16 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     editMode,
     editingRowId,
     hasUnsavedChanges,
-    enterSingleEdit,
+    // enterSingleEdit, // unused
     enterAllEdit,
     exitEdit,
     toggleSingleEdit,
     updateRowData,
     undoRowChanges,
-    getRowData,
+    // getRowData, // unused
     hasRowChanges,
     isRowEditable,
-    getChangedRowsCount,
+    // getChangedRowsCount, // unused
     getAllChanges,
   } = useUnifiedEdit();
 

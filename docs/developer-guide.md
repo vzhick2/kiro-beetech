@@ -942,7 +942,7 @@ export function CustomDropdown({ trigger, children }: CustomDropdownProps) {
 
 **Files Modified in Fix**:
 - `src/components/suppliers/ViewOptionsPanel.tsx` - Complete rewrite
-- `src/app/testsuppliers/page.tsx` - Added relative positioning wrapper
+- `src/app/suppliers/page.tsx` - Added relative positioning wrapper
 
 **Testing Verification**:
 - ✅ Dropdown appears under trigger button (not on left side)

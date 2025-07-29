@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('CSS DEBUG: Why floating bar is invisible', async ({ page }) => {
-  await page.goto('http://localhost:3005/testsuppliers');
+  await page.goto('http://localhost:3005/suppliers');
   await page.waitForLoadState('networkidle');
   
   // Wait for data to load

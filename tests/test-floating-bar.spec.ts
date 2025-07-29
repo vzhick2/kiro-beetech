@@ -10,7 +10,7 @@ test('Test Suppliers floating bar functionality', async ({ page }) => {
   });
   
   // Navigate to the test suppliers page
-  await page.goto('http://localhost:3000/testsuppliers');
+  await page.goto('http://localhost:3000/suppliers');
   
   // Wait for the page to load
   await page.waitForLoadState('networkidle');
@@ -25,7 +25,7 @@ test('Test Suppliers floating bar functionality', async ({ page }) => {
   }
   
   // Take a screenshot of the current state
-  await page.screenshot({ path: 'testsuppliers-current-state.png', fullPage: true });
+  await page.screenshot({ path: 'suppliers-current-state.png', fullPage: true });
   
   // Check what state we're in
   const hasTable = await page.locator('table').count() > 0;
@@ -69,7 +69,7 @@ test('Test Suppliers floating bar functionality', async ({ page }) => {
       console.log(`"items selected" text visible: ${selectedTextVisible}`);
       
       // Take screenshot with selection
-      await page.screenshot({ path: 'testsuppliers-with-selection.png', fullPage: true });
+      await page.screenshot({ path: 'suppliers-with-selection.png', fullPage: true });
       
       if (!floatingBarVisible && !selectedTextVisible) {
         console.log('Floating bar not found! Checking for any fixed elements...');

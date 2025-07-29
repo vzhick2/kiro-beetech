@@ -198,7 +198,7 @@ This approach provides both **comprehensive long-term vision** and **pragmatic i
 
 **📊 Analysis Mode** (NO CODE CHANGES):
 - When users ask for "suggestions," "recommendations," "analysis," "reports," or "what can be done"
-- Strategic planning discussions about testsuppliers blueprint
+- Strategic planning discussions about suppliers blueprint
 - Code review and improvement suggestions
 - **Response**: Provide detailed analysis, recommendations, and strategic insights ONLY
 
@@ -209,7 +209,7 @@ This approach provides both **comprehensive long-term vision** and **pragmatic i
 
 **❓ When In Doubt**: Ask "Would you like me to implement these suggestions or just provide the analysis?"
 
-**Special Case - TestSuppliersTable**: This is the strategic blueprint component. Treat all requests about it as analysis/planning unless implementation is explicitly requested.
+**Special Case - SuppliersTable**: This is the strategic blueprint component. Treat all requests about it as analysis/planning unless implementation is explicitly requested.
 
 ## Critical Files to Understand
 

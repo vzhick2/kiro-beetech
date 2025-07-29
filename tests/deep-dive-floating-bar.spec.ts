@@ -27,8 +27,8 @@ test('DEEP DIVE: Floating action bar investigation', async ({ page }) => {
     }
   });
 
-  console.log('=== NAVIGATING TO http://localhost:3005/testsuppliers ===');
-  await page.goto('http://localhost:3005/testsuppliers');
+  console.log('=== NAVIGATING TO http://localhost:3005/suppliers ===');
+  await page.goto('http://localhost:3005/suppliers');
   
   // Wait for page to load
   await page.waitForLoadState('networkidle');

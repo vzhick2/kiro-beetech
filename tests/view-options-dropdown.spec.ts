@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('View Options Dropdown Positioning', () => {
   test('should appear under the "View Options" button', async ({ page }) => {
     // Navigate to the test suppliers page
-    await page.goto('/testsuppliers');
+    await page.goto('/suppliers');
 
     // Wait for the table header to be visible, indicating the table has loaded
     await expect(page.getByText('Supplier Name')).toBeVisible({ timeout: 15000 });

@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
-// General UI/feature checks for the TESTSUPPLIERS page
+// General UI/feature checks for the SUPPLIERS page
 
-test.describe('TESTSUPPLIERS Page', () => {
+test.describe('SUPPLIERS Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/testsuppliers');
+    await page.goto('/suppliers');
   });
 
   test('should render the page title and description', async ({ page }) => {

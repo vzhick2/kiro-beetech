@@ -33,7 +33,6 @@ const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Items', href: '/items', icon: Package },
   { name: 'Suppliers', href: '/suppliers', icon: Users },
-  { name: 'Test Suppliers', href: '/testsuppliers', icon: Users },
   { name: 'Purchases', href: '/purchases', icon: ShoppingCart },
   { type: 'separator' }, // Visual break
   // Production & Sales

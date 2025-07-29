@@ -1011,7 +1011,7 @@ export async function bulkArchiveSuppliers(supplierIds: string[]) {
     if (error) throw error;
 
     revalidatePath('/suppliers');
-    revalidatePath('/testsuppliers');
+    revalidatePath('/suppliers');
 
     return { 
       success: true, 
@@ -1046,7 +1046,7 @@ export async function bulkUnarchiveSuppliers(supplierIds: string[]) {
     if (error) throw error;
 
     revalidatePath('/suppliers');
-    revalidatePath('/testsuppliers');
+    revalidatePath('/suppliers');
 
     return { 
       success: true, 
@@ -1125,7 +1125,7 @@ export async function bulkDeleteSuppliers(supplierIds: string[]) {
     }
 
     revalidatePath('/suppliers');
-    revalidatePath('/testsuppliers');
+    revalidatePath('/suppliers');
 
     // Build response message
     let message = '';
