@@ -16,7 +16,7 @@ import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers, bulkUpdateSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
-import { useSpreadsheetMode } from '@/hooks/use-spreadsheet-mode';
+import { useUnifiedEdit } from '@/hooks/use-unified-edit';
 import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
@@ -85,23 +85,26 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   // Density mode state - fixed to compact (density selector removed)
   const densityMode = 'compact';
   
-  // Remove custom view options dropdown state
+  // Selection state for bulk operations (archive, delete, export)
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
-  const [editingRow, setEditingRow] = useState<string | null>(null);
   
-  // Spreadsheet mode state
+  // Unified edit system - replaces both spreadsheet mode and single row edit
   const {
-    isSpreadsheetMode,
+    editMode,
+    editingRowId,
     hasUnsavedChanges,
-    enterSpreadsheetMode,
-    exitSpreadsheetMode,
+    enterSingleEdit,
+    enterAllEdit,
+    exitEdit,
+    toggleSingleEdit,
     updateRowData,
     undoRowChanges,
     getRowData,
     hasRowChanges,
+    isRowEditable,
     getChangedRowsCount,
     getAllChanges,
-  } = useSpreadsheetMode();
+  } = useUnifiedEdit();
 
   // Single row edit updates  
   const updateSupplierMutation = useUpdateSupplier();
@@ -215,18 +218,18 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   }, [hasRowChanges, getAllChanges, updateSupplierMutation, undoRowChanges]);
 
   const handleEditRow = useCallback(async (rowId: string) => {
-    // If we're currently editing a different row and it has changes, confirm before switching
-    if (editingRow && editingRow !== rowId && hasRowChanges(editingRow)) {
+    // If we're currently editing in single mode and switching rows, handle unsaved changes
+    if (editMode === 'single' && editingRowId && editingRowId !== rowId && hasRowChanges(editingRowId)) {
       if (!confirm('You have unsaved changes. Are you sure you want to switch to editing another row? Your changes will be lost.')) {
         return;
       }
       // Clear the unsaved changes
-      undoRowChanges(editingRow);
+      undoRowChanges(editingRowId);
     }
     
-    // Toggle edit mode for the clicked row
-    setEditingRow(editingRow === rowId ? null : rowId);
-  }, [editingRow, hasRowChanges, undoRowChanges]);
+    // Toggle single edit mode for the clicked row
+    toggleSingleEdit(rowId);
+  }, [editMode, editingRowId, hasRowChanges, undoRowChanges, toggleSingleEdit]);
 
   // Batch action handlers
   const handleUnarchiveSelected = useCallback(async () => {
@@ -402,14 +405,14 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
   // Spreadsheet navigation - initialized after filteredSuppliers
   const { currentCell, handleCellClick } = useSpreadsheetNavigation({
     totalRows: filteredSuppliers.length,
-    isSpreadsheetMode,
+    isSpreadsheetMode: editMode === 'all',
     onExitSpreadsheetMode: () => {
       if (hasUnsavedChanges) {
         if (confirm('You have unsaved changes. Are you sure you want to exit edit mode?')) {
-          exitSpreadsheetMode();
+          exitEdit();
         }
       } else {
-        exitSpreadsheetMode();
+        exitEdit();
       }
     },
     expandedRows: new Set(filteredSuppliers.map(s => s.supplierid)),
@@ -434,83 +437,71 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
     return displaySupplier;
   }, []);
 
-  // Track all local changes across all cells
-  const [localChanges, setLocalChanges] = useState<Map<string, Partial<import('@/types/data-table').DisplaySupplier>>>(new Map());
-
-  // Handle local changes from cells (for visual feedback only)
-  const handleLocalChange = useCallback((field: keyof import('@/types/data-table').DisplaySupplier, value: any, rowId: string) => {
-    setLocalChanges(prev => {
-      const newMap = new Map(prev);
-      const existingData = newMap.get(rowId) || {};
-      newMap.set(rowId, { ...existingData, [field]: value });
-      return newMap;
-    });
-  }, []);
-
-  // Get current value (either local change or original)
-  const getCurrentValue = useCallback((supplier: Supplier, field: keyof import('@/types/data-table').DisplaySupplier) => {
-    const localChange = localChanges.get(supplier.supplierid);
-    if (localChange && field in localChange) {
-      return localChange[field];
-    }
-    return toDisplaySupplier(supplier)[field];
-  }, [localChanges, toDisplaySupplier]);
-
-  // Helper function to get field value for a supplier in either mode
+  // Helper function to get field value for a supplier (with edits if in edit mode)
   const getFieldValue = useCallback((supplier: Supplier, field: keyof import('@/types/data-table').DisplaySupplier) => {
-    if (isSpreadsheetMode) {
-      return getCurrentValue(supplier, field);
+    const original = toDisplaySupplier(supplier);
+    if (isRowEditable(supplier.supplierid)) {
+      return getRowData(supplier.supplierid, original)[field];
     }
-    return toDisplaySupplier(supplier)[field];
-  }, [isSpreadsheetMode, getCurrentValue, toDisplaySupplier]);
+    return original[field];
+  }, [isRowEditable, getRowData, toDisplaySupplier]);
 
-  // Save spreadsheet changes
-  const handleSaveSpreadsheetChanges = useCallback(async () => {
-    if (localChanges.size === 0) {
+  // Save changes (works for both single row and all rows edit modes)
+  const handleSaveChanges = useCallback(async () => {
+    const changes = getAllChanges();
+    if (changes.length === 0) {
       alert('No changes to save');
       return;
     }
 
     try {
-      // Convert localChanges to the format expected by bulkUpdateSuppliers
-      const updates = Array.from(localChanges.entries()).map(([id, changes]) => {
-        // Map DisplaySupplier fields back to database Supplier fields
-        const dbChanges: any = {};
-        
-        if (changes.name !== undefined) dbChanges.name = changes.name;
-        if (changes.website !== undefined) dbChanges.website = changes.website;
-        if (changes.email !== undefined) dbChanges.email = changes.email;
-        if (changes.phone !== undefined) dbChanges.contactphone = changes.phone; // phone → contactphone
-        if (changes.address !== undefined) dbChanges.address = changes.address;
-        if (changes.notes !== undefined) dbChanges.notes = changes.notes;
-        if (changes.status !== undefined) {
-          dbChanges.isarchived = changes.status === 'archived'; // status → isarchived
+      if (editMode === 'single' && editingRowId) {
+        // Single row save
+        const rowChanges = changes.find(change => change.rowId === editingRowId);
+        if (rowChanges) {
+          await saveRowChanges(editingRowId);
+          exitEdit();
         }
+      } else if (editMode === 'all') {
+        // Bulk save for all changes
+        const updates = changes.map(({ rowId, changes }) => {
+          // Map DisplaySupplier fields back to database Supplier fields
+          const dbChanges: any = {};
+          
+          if (changes.name !== undefined) dbChanges.name = changes.name;
+          if (changes.website !== undefined) dbChanges.website = changes.website;
+          if (changes.email !== undefined) dbChanges.email = changes.email;
+          if (changes.phone !== undefined) dbChanges.contactphone = changes.phone; // phone → contactphone
+          if (changes.address !== undefined) dbChanges.address = changes.address;
+          if (changes.notes !== undefined) dbChanges.notes = changes.notes;
+          if (changes.status !== undefined) {
+            dbChanges.isarchived = changes.status === 'archived'; // status → isarchived
+          }
 
-        return {
-          supplierId: id, // Note: supplierId not supplierid
-          changes: dbChanges
-        };
-      });
+          return {
+            supplierId: rowId,
+            changes: dbChanges
+          };
+        });
 
-      console.log('Saving supplier updates:', updates);
-      
-      // Call the bulk update server action
-      const result = await bulkUpdateSuppliers(updates);
-      
-      if (result.success) {
-        alert(`Successfully updated ${result.updatedCount} supplier(s)`);
-        setLocalChanges(new Map());
-        exitSpreadsheetMode();
-        refetch(); // Refresh the data
-      } else {
-        alert(result.error || 'Failed to save changes');
+        console.log('Saving supplier updates:', updates);
+        
+        // Call the bulk update server action
+        const result = await bulkUpdateSuppliers(updates);
+        
+        if (result.success) {
+          alert(`Successfully updated ${result.updatedCount} supplier(s)`);
+          exitEdit();
+          refetch(); // Refresh the data
+        } else {
+          alert(result.error || 'Failed to save changes');
+        }
       }
     } catch (error) {
       console.error('Error saving changes:', error);
       alert('Failed to save changes. Please try again.');
     }
-  }, [localChanges, exitSpreadsheetMode, refetch]);
+  }, [editMode, editingRowId, getAllChanges, saveRowChanges, exitEdit, refetch]);
   const columnHelper = createColumnHelper<Supplier>();
   const columns = useMemo(() => {
     const actionColumns = [
@@ -528,7 +519,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 checked={allCurrentSelected}
                 onChange={() => toggleAllRows(currentPageRows)}
                 className="rounded border-gray-300 w-4 h-4"
-                disabled={isSpreadsheetMode}
+                disabled={editMode !== 'none'}
               />
             </div>
           );
@@ -540,7 +531,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
               checked={selectedRows.has(row.original.supplierid)}
               onChange={() => toggleRowSelection(row.original.supplierid)}
               className="rounded border-gray-300 w-4 h-4"
-              disabled={isSpreadsheetMode}
+              disabled={editMode !== 'none'}
             />
           </div>
         ),
@@ -557,9 +548,9 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           <div className="flex items-center justify-center h-full py-1 px-1">
             <button
               onClick={() => handleEditRow(row.original.supplierid)}
-              className={`p-1 rounded hover:bg-gray-100 ${editingRow === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'} ${isSpreadsheetMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`p-1 rounded hover:bg-gray-100 ${editMode === 'single' && editingRowId === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'} ${editMode === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
               title="Edit row"
-              disabled={isSpreadsheetMode}
+              disabled={editMode === 'all'}
             >
               <Edit3 className="h-4 w-4" />
             </button>
@@ -584,7 +575,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'name');
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -602,7 +593,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -635,7 +626,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'website');
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -652,7 +643,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -695,7 +686,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'phone'); // Note: maps to 'phone' in DisplaySupplier
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -712,7 +703,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -745,7 +736,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'email');
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -762,7 +753,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -803,7 +794,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'address');
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -820,7 +811,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -853,7 +844,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'notes');
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -870,7 +861,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -903,7 +894,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           const supplier = info.row.original;
           const rowIndex = info.row.index;
           const value = getFieldValue(supplier, 'status'); // Maps to 'status' in DisplaySupplier
-          const isEditing = isSpreadsheetMode || editingRow === supplier.supplierid;
+          const isEditing = isRowEditable(supplier.supplierid);
           
           if (isEditing) {
             return (
@@ -920,7 +911,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
                   onChange={(field, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChange={handleLocalChange}
+                  onLocalChange={() => {}} // No longer needed with unified system
                 />
               </div>
             );
@@ -966,7 +957,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
 
     // Return action columns + visible data columns
     return [...actionColumns, ...visibleDataColumns];
-  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRow]);
+  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRowId]);
   // Table instance with pagination
   const table = useReactTable({
     data: filteredSuppliers,
@@ -1009,21 +1000,20 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
         e.preventDefault();
         setSelectedRows(new Set());
         
-        // If we're editing a row with changes, confirm before exiting
-        if (editingRow && hasRowChanges(editingRow)) {
+        // If we're editing with changes, confirm before exiting
+        if (editMode !== 'none' && hasUnsavedChanges) {
           if (confirm('You have unsaved changes. Are you sure you want to exit editing? Your changes will be lost.')) {
-            undoRowChanges(editingRow);
-            setEditingRow(null);
+            exitEdit();
           }
-        } else {
-          setEditingRow(null);
+        } else if (editMode !== 'none') {
+          exitEdit();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedRows, handleDeleteSelected, table, editingRow, hasRowChanges, undoRowChanges]);
+  }, [selectedRows, handleDeleteSelected, table, editMode, hasUnsavedChanges, exitEdit]);
 
   // Sync sticky horizontal scrollbar with main table
   useEffect(() => {
@@ -1202,7 +1192,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'}
                   hover:bg-gray-100/60 
                   ${selectedRows.has(row.original.supplierid) ? 'bg-blue-50' : ''} 
-                  ${editingRow === row.original.supplierid ? 'bg-yellow-50' : ''}
+                  ${editingRowId === row.original.supplierid ? 'bg-yellow-50' : ''}
                   transition-colors duration-150
                 `}
               >
@@ -1319,7 +1309,7 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
       </div>
 
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
-      {(selectedRows.size > 0 || isSpreadsheetMode || (!isSpreadsheetMode && selectedRows.size === 0)) && (
+      {(selectedRows.size > 0 || editMode !== 'none') && (
         <div 
           className="fixed bottom-4 right-4 z-[9999]"
           style={{ 
@@ -1338,25 +1328,24 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
           <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl w-fit">
             <div className="flex items-center gap-3 p-4">
               
-              {/* SPREADSHEET MODE - Save/Cancel Controls */}
-              {isSpreadsheetMode && (
+              {/* UNIFIED EDIT MODE - Save/Cancel Controls */}
+              {editMode !== 'none' && (
                 <>
                   {/* Changes count */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                     <FileSpreadsheet className="h-4 w-4" />
-                    <span>Edit Mode</span>
-                    {localChanges.size > 0 && (
+                    <span>{editMode === 'single' ? 'Single Edit' : 'All Edit'}</span>
+                    {hasUnsavedChanges && (
                       <>
                         <span className="text-blue-200">•</span>
-                        <span>{localChanges.size}</span>
-                        <span className="text-blue-200">changed</span>
+                        <span className="text-blue-200">unsaved</span>
                       </>
                     )}
                   </div>
                   
                   {/* Save button */}
                   <button 
-                    onClick={handleSaveSpreadsheetChanges}
+                    onClick={handleSaveChanges}
                     className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
                     title="Save changes"
                     style={{ minWidth: '44px', minHeight: '44px' }}
@@ -1367,13 +1356,12 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   {/* Cancel button */}
                   <button 
                     onClick={() => {
-                      if (localChanges.size > 0) {
+                      if (hasUnsavedChanges) {
                         if (confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-                          setLocalChanges(new Map());
-                          exitSpreadsheetMode();
+                          exitEdit();
                         }
                       } else {
-                        exitSpreadsheetMode();
+                        exitEdit();
                       }
                     }}
                     className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
@@ -1385,8 +1373,8 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                 </>
               )}
 
-              {/* BULK ACTIONS - When rows are selected */}
-              {selectedRows.size > 0 && !isSpreadsheetMode && (
+              {/* BULK ACTIONS - When rows are selected and not editing */}
+              {selectedRows.size > 0 && editMode === 'none' && (
                 <>
                   {/* Selection count */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
@@ -1445,67 +1433,39 @@ export function TestSuppliersTable({ showInactive, onToggleInactiveAction }: Tes
                   </button>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
 
-              {/* SINGLE ROW EDIT MODE - When editing a single row */}
-              {editingRow && !isSpreadsheetMode && (
-                <>
-                  {/* Editing row indicator */}
-                  <div className="flex items-center gap-2 px-3 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
-                    <Edit3 className="h-4 w-4" />
-                    <span>Editing Row</span>
-                    {hasRowChanges(editingRow) && (
-                      <>
-                        <span className="text-yellow-200">•</span>
-                        <span className="text-yellow-200">unsaved</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  {/* Save button */}
-                  <button 
-                    onClick={() => saveRowChanges(editingRow).then(() => setEditingRow(null))}
-                    className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                    title="Save changes"
-                    style={{ minWidth: '44px', minHeight: '44px' }}
-                  >
-                    <Save className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
-                  </button>
-                  
-                  {/* Cancel button */}
-                  <button 
-                    onClick={() => {
-                      if (hasRowChanges(editingRow)) {
-                        if (confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-                          undoRowChanges(editingRow);
-                          setEditingRow(null);
-                        }
-                      } else {
-                        setEditingRow(null);
-                      }
-                    }}
-                    className="group flex items-center justify-center w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                    title="Cancel editing"
-                    style={{ minWidth: '44px', minHeight: '44px' }}
-                  >
-                    <X className="h-5 w-5 text-gray-700 transition-transform duration-150 group-hover:scale-110" />
-                  </button>
-                </>
-              )}
-
-              {/* ENTER EDIT MODE - When no rows selected and not in spreadsheet mode */}
-              {selectedRows.size === 0 && !isSpreadsheetMode && !editingRow && (
-                <>
-                  {/* Enter Edit Mode button */}
-                  <button 
-                    onClick={enterSpreadsheetMode}
-                    className="group flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation text-sm font-medium"
-                    title="Enter spreadsheet edit mode"
-                  >
-                    <FileSpreadsheet className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
-                    <span>Enter Edit Mode</span>
-                  </button>
-                </>
-              )}
+      {/* Enter Edit Mode FAB - When no actions are showing */}
+      {selectedRows.size === 0 && editMode === 'none' && (
+        <div 
+          className="fixed bottom-4 right-4 z-[9999]"
+          style={{ 
+            position: 'fixed',
+            bottom: '16px',
+            right: '16px',
+            left: 'unset',
+            width: 'auto',
+            zIndex: 9999,
+            pointerEvents: 'auto',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            willChange: 'transform'
+          }}
+        >
+          <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-xl w-fit">
+            <div className="flex items-center gap-3 p-4">
+              {/* Enter All Edit Mode button */}
+              <button 
+                onClick={() => enterAllEdit()}
+                className="group flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation text-sm font-medium"
+                title="Enter edit mode for all rows"
+              >
+                <FileSpreadsheet className="h-4 w-4 transition-transform duration-150 group-hover:scale-110" />
+                <span>Enter Edit Mode</span>
+              </button>
             </div>
           </div>
         </div>
