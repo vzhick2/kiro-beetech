@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, memo } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -30,7 +30,7 @@ type SpreadsheetCellProps = {
   onKeyDown?: (e: React.KeyboardEvent) => void;
 };
 
-export const SpreadsheetCell = ({
+const SpreadsheetCellComponent = ({
   value,
   field,
   rowId,
@@ -45,6 +45,7 @@ export const SpreadsheetCell = ({
   onAutoSave,
   onKeyDown,
 }: SpreadsheetCellProps) => {
+  console.log(`🔄 [${rowId}:${field}] SpreadsheetCell render: editMode=${editMode}, value="${value}", isSpreadsheetMode=${isSpreadsheetMode}`);
   // Local state for input to prevent focus loss during typing
   // Don't initialize with value prop to prevent resets on re-render
   const [localValue, setLocalValue] = useState<any>(null);
@@ -445,3 +446,31 @@ export const SpreadsheetCell = ({
     </div>
   );
 };
+
+// Memoized component to prevent re-renders when props haven't changed
+export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextProps) => {
+  console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo comparison:
+    value: ${prevProps.value} → ${nextProps.value} ${prevProps.value === nextProps.value ? '✓' : '✗'}
+    editMode: ${prevProps.editMode} → ${nextProps.editMode} ${prevProps.editMode === nextProps.editMode ? '✓' : '✗'}
+    isSpreadsheetMode: ${prevProps.isSpreadsheetMode} → ${nextProps.isSpreadsheetMode} ${prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode ? '✓' : '✗'}
+    hasChanges: ${prevProps.hasChanges} → ${nextProps.hasChanges} ${prevProps.hasChanges === nextProps.hasChanges ? '✓' : '✗'}
+    originalValue: ${prevProps.originalValue} → ${nextProps.originalValue} ${prevProps.originalValue === nextProps.originalValue ? '✓' : '✗'}
+    callbacks equal: ${prevProps.onChangeAction === nextProps.onChangeAction && prevProps.onLocalChangeAction === nextProps.onLocalChangeAction && prevProps.onAutoSave === nextProps.onAutoSave ? '✓' : '✗'}`
+  );
+  
+  // Only re-render if these key props have actually changed
+  const propsEqual = (
+    prevProps.value === nextProps.value &&
+    prevProps.editMode === nextProps.editMode &&
+    prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode &&
+    prevProps.hasChanges === nextProps.hasChanges &&
+    prevProps.originalValue === nextProps.originalValue &&
+    prevProps.onChangeAction === nextProps.onChangeAction &&
+    prevProps.onLocalChangeAction === nextProps.onLocalChangeAction &&
+    prevProps.onAutoSave === nextProps.onAutoSave
+  );
+  
+  console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo result: ${propsEqual ? 'SKIP RE-RENDER' : 'RE-RENDER'}`);
+  
+  return propsEqual;
+});

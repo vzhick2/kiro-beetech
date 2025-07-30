@@ -174,6 +174,12 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     return editedRowData?.changes?.[fieldName] ?? supplier[fieldName];
   }, [allChanges]);
 
+  // Create stable row change checker that doesn't cause column recreations
+  const rowChangeChecker = useMemo(() => {
+    const changeMap = new Map(allChanges.map(change => [change.rowId, true]));
+    return (rowId: string) => changeMap.has(rowId);
+  }, [allChanges]);
+
   // Row selection handlers
   const toggleRowSelection = useCallback((rowId: string) => {
     setSelectedRows(prev => {
@@ -627,7 +633,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={0}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -683,7 +689,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={1}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -749,7 +755,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={2}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -805,7 +811,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={3}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -869,7 +875,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={4}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -925,7 +931,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={5}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -981,7 +987,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   rowIndex={rowIndex}
                   colIndex={6}
                   isSpreadsheetMode={isEditing}
-                  hasChanges={hasRowChanges(supplier.supplierid)}
+                  hasChanges={rowChangeChecker(supplier.supplierid)}
                   editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
@@ -1031,7 +1037,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
     // Return action columns + visible data columns
     return [...actionColumns, ...visibleDataColumns];
-  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editMode, handleCellClick, stableHandleCellChange, stableHandleLocalChange]);
+  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editMode, handleCellClick, stableHandleCellChange, stableHandleLocalChange, handleAutoSave, rowChangeChecker, getCurrentFieldValue]);
   // Table instance with pagination
   const table = useReactTable({
     data: filteredSuppliers,
