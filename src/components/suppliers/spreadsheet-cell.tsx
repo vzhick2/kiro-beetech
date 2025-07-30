@@ -97,21 +97,21 @@ export const SpreadsheetCell = ({
         if (success) {
           setSaveStatus('saved');
           // Keep local value stable during save - don't let external updates override
-          // Fade out saved indicator after 2 seconds
-          setTimeout(() => setSaveStatus('idle'), 2000);
+          // Fade out saved indicator after 1 second
+          setTimeout(() => setSaveStatus('idle'), 1000);
         } else {
           setSaveStatus('error');
-          setTimeout(() => setSaveStatus('idle'), 3000);
+          setTimeout(() => setSaveStatus('idle'), 2000);
         }
       } catch (error) {
         console.error('Auto-save failed:', error);
         setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 3000);
+        setTimeout(() => setSaveStatus('idle'), 2000);
       }
-    }, 1000); // 1000ms auto-save timer (faster saves)
+    }, 100); // Very fast save execution
   }, [onAutoSave, rowId, field]);
 
-  // Input debounce for UI updates (longer delay for comfortable typing)
+  // Input debounce for responsive auto-save (500ms after typing stops)
   const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Simple state update for spreadsheet mode (immediate, no debounce)
@@ -133,7 +133,7 @@ export const SpreadsheetCell = ({
     
     inputDebounceTimeoutRef.current = setTimeout(() => {
       handleAutoSave(newValue);
-    }, 10000); // 10000ms input debounce - long pause before triggering auto-save
+    }, 500); // 500ms input debounce - save quickly after stopping typing
   }, [handleAutoSave]);
 
   // Helper function to handle value type conversion
