@@ -199,7 +199,7 @@ export const SpreadsheetCell = ({
   }, []);
 
   const handleChange = (newValue: any) => {
-    console.log(`🔄 handleChange called: field=${field}, newValue="${newValue}", editMode=${editMode}`);
+    console.log(`🔄 [${rowId}:${field}] handleChange: newValue="${newValue}", editMode=${editMode}`);
     
     // Update local state immediately (no re-render of parent)
     setLocalValue(newValue);
@@ -268,22 +268,21 @@ export const SpreadsheetCell = ({
 
   // Enhanced cursor positioning - allow natural text selection and editing
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
-    e.stopPropagation();
-    // Let the browser naturally handle click positioning
+    // Don't stop propagation - allow parent to handle cell navigation
+    // Let the browser naturally handle click positioning within the text
   };
 
   // Allow natural text selection behavior
   const handleInputMouseDown = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     // Don't prevent default - this allows normal text selection behavior
-    e.stopPropagation();
+    // Don't stop propagation - allow parent to handle cell navigation
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is now focused to prevent external value updates
     isFocusedRef.current = true;
     
-    // Stop event propagation to prevent spreadsheet navigation from interfering
-    e.stopPropagation();
+    // Allow event propagation for spreadsheet navigation
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {

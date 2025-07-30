@@ -165,11 +165,14 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     // No longer needed with unified system - empty function
   }, []);
 
+  // Memoize getAllChanges to prevent recreating on every render
+  const allChanges = useMemo(() => getAllChanges(), [getAllChanges]);
+  
   // Helper function to get current field value without object recreation
   const getCurrentFieldValue = useCallback((supplier: Supplier, fieldName: keyof Supplier) => {
-    const editedRowData = getAllChanges().find(change => change.rowId === supplier.supplierid);
+    const editedRowData = allChanges.find(change => change.rowId === supplier.supplierid);
     return editedRowData?.changes?.[fieldName] ?? supplier[fieldName];
-  }, [getAllChanges]);
+  }, [allChanges]);
 
   // Row selection handlers
   const toggleRowSelection = useCallback((rowId: string) => {
@@ -611,11 +614,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 0);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 0);
                 }}
               >
                 <SpreadsheetCell
@@ -671,11 +671,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 1);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 1);
                 }}
               >
                 <SpreadsheetCell
@@ -740,11 +737,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 2);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 2);
                 }}
               >
                 <SpreadsheetCell
@@ -799,11 +793,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 3);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 3);
                 }}
               >
                 <SpreadsheetCell
@@ -866,11 +857,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 4);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 4);
                 }}
               >
                 <SpreadsheetCell
@@ -925,11 +913,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 5);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 5);
                 }}
               >
                 <SpreadsheetCell
@@ -984,11 +969,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
                 onClick={(e) => {
-                  // Only handle cell click if not clicking on the input/textarea inside
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('input, textarea, button[role="combobox"]')) {
-                    handleCellClick(rowIndex, 6);
-                  }
+                  // Always trigger cell navigation when clicking anywhere in the cell
+                  handleCellClick(rowIndex, 6);
                 }}
               >
                 <SpreadsheetCell
