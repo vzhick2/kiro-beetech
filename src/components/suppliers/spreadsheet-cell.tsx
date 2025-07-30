@@ -59,12 +59,29 @@ export const SpreadsheetCell = ({
   
   // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
-    // Only update local value if we're not currently editing AND not in a save operation
-    // This prevents external updates from overriding user input during typing or saving
-    if (!isFocusedRef.current && saveStatus !== 'saving') {
+    // In single row edit mode, maintain local state independence
+    // Only sync external changes if we're not in single row edit mode
+    if (editMode !== 'single') {
+      // For spreadsheet mode or display mode, sync normally
+      if (!isFocusedRef.current && saveStatus !== 'saving') {
+        setLocalValue(value);
+      }
+    } else {
+      // In single row edit mode, only sync on initial load (when local value is empty/undefined)
+      // This prevents external updates from overriding user edits in single row mode
+      if ((localValue === undefined || localValue === null || localValue === '') && value !== undefined && value !== null) {
+        setLocalValue(value);
+      }
+    }
+  }, [value, saveStatus, editMode, localValue]);
+  
+  // Reset local value when exiting single row edit mode
+  useEffect(() => {
+    // When switching from single edit mode to another mode, sync with current server value
+    if (editMode !== 'single') {
       setLocalValue(value);
     }
-  }, [value, saveStatus]);
+  }, [editMode, value]);
   
   // Auto-save for single row mode (separate from input debounce)
   const handleAutoSave = useCallback(async (newValue: any) => {
