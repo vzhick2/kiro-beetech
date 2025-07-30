@@ -3,6 +3,9 @@
 import type React from 'react';
 
 import { useRef, useState, useEffect, useCallback, memo } from 'react';
+
+// Global tracking of which cells are currently focused/editing
+const focusedCells = new Map<string, boolean>();
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -302,12 +305,20 @@ const SpreadsheetCellComponent = ({
     // Mark that this input is now focused to prevent external value updates
     isFocusedRef.current = true;
     
+    // Track globally that this cell is focused
+    const cellKey = `${rowId}-${field}`;
+    focusedCells.set(cellKey, true);
+    
     // Allow event propagation for spreadsheet navigation
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is no longer focused
     isFocusedRef.current = false;
+    
+    // Remove from global focus tracking
+    const cellKey = `${rowId}-${field}`;
+    focusedCells.delete(cellKey);
     
     // Force immediate save/update on blur to ensure data is captured
     if (editMode === 'single') {
@@ -468,9 +479,9 @@ const SpreadsheetCellComponent = ({
 
 // Memoized component to prevent re-renders when props haven't changed
 export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextProps) => {
-  // Special case: if this cell is actively being edited, prevent re-renders
-  // to maintain focus even if value changes (due to auto-save)
-  const isActivelyEditing = false; // TODO: Add proper active edit tracking if needed
+  // Check if this specific cell is currently focused
+  const cellKey = `${nextProps.rowId}-${nextProps.field}`;
+  const isActivelyEditing = focusedCells.has(cellKey) && nextProps.editMode === 'single';
   
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo comparison:
     value: ${prevProps.value} → ${nextProps.value} ${prevProps.value === nextProps.value ? '✓' : '✗'}
@@ -482,16 +493,21 @@ export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextPr
     isActivelyEditing: ${isActivelyEditing}`
   );
   
+  // If this cell is actively being edited, prevent ALL re-renders
+  if (isActivelyEditing) {
+    console.log(`🔒 [${cellKey}] BLOCKING RE-RENDER - Cell is actively being edited in single row mode`);
+    return true; // Never re-render while editing
+  }
+  
   // Only re-render if these key props have actually changed
   const propsEqual = (
-    (isActivelyEditing ? true : prevProps.value === nextProps.value) && // Ignore value changes during active editing
+    prevProps.value === nextProps.value &&
     prevProps.editMode === nextProps.editMode &&
     prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode &&
     prevProps.hasChanges === nextProps.hasChanges &&
     prevProps.originalValue === nextProps.originalValue &&
     prevProps.onChangeAction === nextProps.onChangeAction &&
     prevProps.onLocalChangeAction === nextProps.onLocalChangeAction &&
-    prevProps.onAutoSave === nextProps.onAutoSave &&
     prevProps.onAutoSave === nextProps.onAutoSave
   );
   
