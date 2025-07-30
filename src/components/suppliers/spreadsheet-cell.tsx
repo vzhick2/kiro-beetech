@@ -89,7 +89,7 @@ export const SpreadsheetCell = ({
       
       // Call onLocalChangeAction for any additional visual feedback
       onLocalChangeAction(field, safeValue, rowId);
-    }, 300); // 300ms debounce delay
+    }, 1500); // 1500ms debounce delay - allows for natural typing pauses
   }, [field, rowId, onChangeAction, onLocalChangeAction]);
   
   // Cleanup debounce timeout on unmount
@@ -159,6 +159,9 @@ export const SpreadsheetCell = ({
   const handleInputFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is now focused to prevent external value updates
     isFocusedRef.current = true;
+    
+    // Stop event propagation to prevent spreadsheet navigation from interfering
+    e.stopPropagation();
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {

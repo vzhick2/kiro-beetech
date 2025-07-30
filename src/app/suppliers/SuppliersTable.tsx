@@ -555,7 +555,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 0)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 0);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   key={`${supplier.supplierid}-name`}
@@ -608,7 +614,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 1)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 1);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.website}
@@ -670,7 +682,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 2)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 2);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.contactphone}
@@ -722,7 +740,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 3)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 3);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.email}
@@ -782,7 +806,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 4)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 4);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.address}
@@ -834,7 +864,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 5)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 5);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.notes}
@@ -886,7 +922,13 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={() => handleCellClick(rowIndex, 6)}
+                onClick={(e) => {
+                  // Only handle cell click if not clicking on the input/textarea inside
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('input, textarea, button[role="combobox"]')) {
+                    handleCellClick(rowIndex, 6);
+                  }
+                }}
               >
                 <SpreadsheetCell
                   value={currentSupplier.isarchived}
