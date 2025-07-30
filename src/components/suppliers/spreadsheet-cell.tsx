@@ -51,7 +51,6 @@ export const SpreadsheetCell = ({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Track if the component is currently being edited to prevent focus loss
@@ -59,26 +58,24 @@ export const SpreadsheetCell = ({
   
   // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
-    // In single row edit mode, maintain local state independence
-    // Only sync external changes if we're not in single row edit mode
-    if (editMode !== 'single') {
-      // For spreadsheet mode or display mode, sync normally
-      if (!isFocusedRef.current && saveStatus !== 'saving') {
-        setLocalValue(value);
-      }
+    // In ANY edit mode (single or spreadsheet), maintain local state independence
+    // Only sync external changes if we're in display mode (editMode === 'none')
+    if (editMode === 'none') {
+      // Display mode: always sync with server data
+      setLocalValue(value);
     } else {
-      // In single row edit mode, only sync on initial load (when local value is empty/undefined)
-      // This prevents external updates from overriding user edits in single row mode
+      // Edit modes (single or spreadsheet): only sync on initial load
+      // This prevents external updates from overriding user edits in ANY edit mode
       if ((localValue === undefined || localValue === null || localValue === '') && value !== undefined && value !== null) {
         setLocalValue(value);
       }
     }
-  }, [value, saveStatus, editMode, localValue]);
+  }, [value, editMode, localValue]);
   
-  // Reset local value when exiting single row edit mode
+  // Reset local value when exiting any edit mode
   useEffect(() => {
-    // When switching from single edit mode to another mode, sync with current server value
-    if (editMode !== 'single') {
+    // When switching from any edit mode to display mode, sync with current server value
+    if (editMode === 'none') {
       setLocalValue(value);
     }
   }, [editMode, value]);
@@ -117,21 +114,15 @@ export const SpreadsheetCell = ({
   // Input debounce for UI updates (longer delay for comfortable typing)
   const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Draft system for spreadsheet mode (immediate state update)
-  const debouncedUpdateCentralizedState = useCallback((newValue: any) => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
+  // Simple state update for spreadsheet mode (immediate, no debounce)
+  const updateCentralizedState = useCallback((newValue: any) => {
+    const safeValue = getSafeValue(newValue);
     
-    debounceTimeoutRef.current = setTimeout(() => {
-      const safeValue = getSafeValue(newValue);
-      
-      // Update centralized state after debounce delay
-      onChangeAction(rowId, field, safeValue);
-      
-      // Call onLocalChangeAction for any additional visual feedback
-      onLocalChangeAction(field, safeValue, rowId);
-    }, 2000); // 2000ms debounce delay - allows for natural typing pauses
+    // Update centralized state immediately for spreadsheet mode
+    onChangeAction(rowId, field, safeValue);
+    
+    // Call onLocalChangeAction for any additional visual feedback
+    onLocalChangeAction(field, safeValue, rowId);
   }, [field, rowId, onChangeAction, onLocalChangeAction]);
 
   // Input debounce system for single row mode (separate from auto-save)
@@ -167,9 +158,6 @@ export const SpreadsheetCell = ({
   // Cleanup debounce timeouts on unmount
   useEffect(() => {
     return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
@@ -192,10 +180,11 @@ export const SpreadsheetCell = ({
     if (editMode === 'single') {
       // Single row mode: use separate input debounce before auto-save
       debouncedAutoSave(newValue);
-    } else {
-      // Spreadsheet mode: update draft state after debounce
-      debouncedUpdateCentralizedState(newValue);
+    } else if (editMode === 'all') {
+      // Spreadsheet mode: update draft state immediately (no auto-save)
+      updateCentralizedState(newValue);
     }
+    // Note: editMode === 'none' (display mode) doesn't allow changes
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -268,13 +257,9 @@ export const SpreadsheetCell = ({
       }
       // Trigger immediate auto-save
       handleAutoSave(localValue);
-    } else {
-      // Spreadsheet mode: update draft state immediately
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-        // Trigger immediate update
-        debouncedUpdateCentralizedState(localValue);
-      }
+    } else if (editMode === 'all') {
+      // Spreadsheet mode: ensure final state update on blur
+      updateCentralizedState(localValue);
     }
   };
 
