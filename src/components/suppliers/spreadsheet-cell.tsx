@@ -151,16 +151,27 @@ export const SpreadsheetCell = ({
   // Input debounce for responsive auto-save (500ms after typing stops)
   const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Simple state update for spreadsheet mode (immediate, no debounce)
+  // Central state update debounce for spreadsheet mode (prevents re-render on every keystroke)
+  const centralStateDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Debounced state update for spreadsheet mode to prevent re-renders
   const updateCentralizedState = useCallback((newValue: any) => {
     const safeValue = getSafeValue(newValue);
     
-    // Update centralized state immediately for spreadsheet mode
-    onChangeAction(rowId, field, safeValue);
+    // Clear existing timeout
+    if (centralStateDebounceTimeoutRef.current) {
+      clearTimeout(centralStateDebounceTimeoutRef.current);
+    }
     
-    // Call onLocalChangeAction for any additional visual feedback
-    onLocalChangeAction(field, safeValue, rowId);
-  }, [field, rowId, onChangeAction, onLocalChangeAction]);
+    // Debounce central state updates to prevent re-renders during typing
+    centralStateDebounceTimeoutRef.current = setTimeout(() => {
+      // Update centralized state after brief delay
+      onChangeAction(rowId, field, safeValue);
+      
+      // Call onLocalChangeAction for any additional visual feedback
+      onLocalChangeAction(field, safeValue, rowId);
+    }, 50); // Very short delay, just enough to prevent re-render race conditions
+  }, [field, rowId, onChangeAction, onLocalChangeAction, getSafeValue]);
 
   // Input debounce system for single row mode (separate from auto-save)
   const debouncedAutoSave = useCallback((newValue: any) => {
@@ -185,6 +196,9 @@ export const SpreadsheetCell = ({
       }
       if (inputDebounceTimeoutRef.current) {
         clearTimeout(inputDebounceTimeoutRef.current);
+      }
+      if (centralStateDebounceTimeoutRef.current) {
+        clearTimeout(centralStateDebounceTimeoutRef.current);
       }
     };
   }, []);
@@ -293,8 +307,14 @@ export const SpreadsheetCell = ({
       // Trigger immediate auto-save
       handleAutoSave(localValue);
     } else if (editMode === 'all') {
-      // Spreadsheet mode: ensure final state update on blur
-      updateCentralizedState(localValue);
+      // Spreadsheet mode: clear debounce and trigger immediate state update on blur
+      if (centralStateDebounceTimeoutRef.current) {
+        clearTimeout(centralStateDebounceTimeoutRef.current);
+      }
+      // Trigger immediate central state update
+      const safeValue = getSafeValue(localValue);
+      onChangeAction(rowId, field, safeValue);
+      onLocalChangeAction(field, safeValue, rowId);
     }
   };
 

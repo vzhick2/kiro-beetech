@@ -91,7 +91,7 @@ export function useUpdateSupplier() {
       return result.data;
     },
     onSuccess: (updatedSupplier, { supplierId }) => {
-      // Update the suppliers list cache
+      // Update the suppliers list cache optimistically
       queryClient.setQueriesData(
         { queryKey: suppliersKeys.lists() },
         (oldData: Supplier[] | undefined) => {
@@ -106,8 +106,9 @@ export function useUpdateSupplier() {
         }
       );
 
-      // Invalidate related queries to ensure consistency
-      queryClient.invalidateQueries({ queryKey: suppliersKeys.lists() });
+      // REMOVED: Query invalidation that was causing race conditions during editing
+      // This was overriding local edits with fresh server data
+      // queryClient.invalidateQueries({ queryKey: suppliersKeys.lists() });
     },
   });
 }
