@@ -28,6 +28,8 @@ type SpreadsheetCellProps = {
   onLocalChangeAction: (field: keyof Supplier, value: any, rowId: string) => void;
   onAutoSave?: (rowId: string, field: keyof Supplier, value: any) => Promise<boolean>; // Auto-save callback for single mode
   onKeyDown?: (e: React.KeyboardEvent) => void;
+  onFocusChange?: (focused: boolean) => void; // Callback when focus changes
+  isActiveEdit?: boolean; // Whether this cell is currently being edited
 };
 
 const SpreadsheetCellComponent = ({
@@ -44,6 +46,8 @@ const SpreadsheetCellComponent = ({
   onLocalChangeAction,
   onAutoSave,
   onKeyDown,
+  onFocusChange,
+  isActiveEdit,
 }: SpreadsheetCellProps) => {
   console.log(`🔄 [${rowId}:${field}] SpreadsheetCell render: editMode=${editMode}, value="${value}", isSpreadsheetMode=${isSpreadsheetMode}`);
   // Local state for input to prevent focus loss during typing
@@ -61,22 +65,22 @@ const SpreadsheetCellComponent = ({
   
   // Initialize local value only once, then protect it during editing
   useEffect(() => {
-    console.log(`🔄 [${rowId}:${field}] useEffect: editMode=${editMode}, localValue="${localValue}", incomingValue="${value}", isInitialized=${isInitialized}, isFocused=${isFocusedRef.current}`);
+    console.log(`🔄 [${rowId}:${field}] useEffect: editMode=${editMode}, localValue="${localValue}", incomingValue="${value}", isInitialized=${isInitialized}, isFocused=${isFocusedRef.current}, isActiveEdit=${isActiveEdit}`);
     
     // Initialize local value on first render or when switching to display mode
     if (!isInitialized || editMode === 'none') {
       console.log(`🆕 [${rowId}:${field}] Initializing/syncing local value with: "${value}"`);
       setLocalValue(value);
       setIsInitialized(true);
-    } else if (editMode === 'single' && !isFocusedRef.current) {
-      // In single edit mode, only update if not focused (to handle external updates)
-      console.log(`🔄 [${rowId}:${field}] Single edit mode (not focused): syncing with server value "${value}"`);
+    } else if (editMode === 'single' && !isActiveEdit) {
+      // In single edit mode, only update if this cell is not actively being edited
+      console.log(`🔄 [${rowId}:${field}] Single edit mode (not active): syncing with server value "${value}"`);
       setLocalValue(value);
     } else {
-      // During active editing or spreadsheet mode, protect local state from external changes
+      // During active editing, protect local state from external changes
       console.log(`🔒 [${rowId}:${field}] Active edit: protecting local state "${localValue}" from server data "${value}"`);
     }
-  }, [value, editMode, field, rowId, isInitialized]); // Only sync when absolutely necessary
+  }, [value, editMode, field, rowId, isInitialized, isActiveEdit]); // Only sync when absolutely necessary
   
   // Reset local value when exiting any edit mode
   useEffect(() => {
@@ -302,12 +306,18 @@ const SpreadsheetCellComponent = ({
     // Mark that this input is now focused to prevent external value updates
     isFocusedRef.current = true;
     
+    // Notify parent that this cell is focused
+    onFocusChange?.(true);
+    
     // Allow event propagation for spreadsheet navigation
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is no longer focused
     isFocusedRef.current = false;
+    
+    // Notify parent that this cell is no longer focused
+    onFocusChange?.(false);
     
     // Force immediate save/update on blur to ensure data is captured
     if (editMode === 'single') {
@@ -468,9 +478,9 @@ const SpreadsheetCellComponent = ({
 
 // Memoized component to prevent re-renders when props haven't changed
 export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextProps) => {
-  // Special case: if we're in single edit mode and the field is being edited (focused),
-  // skip re-render to maintain focus even if value changes (due to auto-save)
-  const isEditingInSingleMode = nextProps.editMode === 'single' && nextProps.isSpreadsheetMode;
+  // Special case: if this cell is actively being edited, prevent re-renders
+  // to maintain focus even if value changes (due to auto-save)
+  const isActivelyEditing = nextProps.isActiveEdit && nextProps.editMode === 'single';
   
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo comparison:
     value: ${prevProps.value} → ${nextProps.value} ${prevProps.value === nextProps.value ? '✓' : '✗'}
@@ -478,20 +488,23 @@ export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextPr
     isSpreadsheetMode: ${prevProps.isSpreadsheetMode} → ${nextProps.isSpreadsheetMode} ${prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode ? '✓' : '✗'}
     hasChanges: ${prevProps.hasChanges} → ${nextProps.hasChanges} ${prevProps.hasChanges === nextProps.hasChanges ? '✓' : '✗'}
     originalValue: ${prevProps.originalValue} → ${nextProps.originalValue} ${prevProps.originalValue === nextProps.originalValue ? '✓' : '✗'}
+    isActiveEdit: ${prevProps.isActiveEdit} → ${nextProps.isActiveEdit} ${prevProps.isActiveEdit === nextProps.isActiveEdit ? '✓' : '✗'}
     callbacks equal: ${prevProps.onChangeAction === nextProps.onChangeAction && prevProps.onLocalChangeAction === nextProps.onLocalChangeAction && prevProps.onAutoSave === nextProps.onAutoSave ? '✓' : '✗'}
-    isEditingInSingleMode: ${isEditingInSingleMode}`
+    isActivelyEditing: ${isActivelyEditing}`
   );
   
   // Only re-render if these key props have actually changed
   const propsEqual = (
-    (isEditingInSingleMode ? true : prevProps.value === nextProps.value) && // Ignore value changes during single edit mode
+    (isActivelyEditing ? true : prevProps.value === nextProps.value) && // Ignore value changes during active editing
     prevProps.editMode === nextProps.editMode &&
     prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode &&
     prevProps.hasChanges === nextProps.hasChanges &&
     prevProps.originalValue === nextProps.originalValue &&
+    prevProps.isActiveEdit === nextProps.isActiveEdit &&
     prevProps.onChangeAction === nextProps.onChangeAction &&
     prevProps.onLocalChangeAction === nextProps.onLocalChangeAction &&
-    prevProps.onAutoSave === nextProps.onAutoSave
+    prevProps.onAutoSave === nextProps.onAutoSave &&
+    prevProps.onFocusChange === nextProps.onFocusChange
   );
   
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo result: ${propsEqual ? 'SKIP RE-RENDER' : 'RE-RENDER'}`);
