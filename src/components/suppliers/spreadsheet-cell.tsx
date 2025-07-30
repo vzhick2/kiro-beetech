@@ -470,7 +470,7 @@ const SpreadsheetCellComponent = ({
 export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextProps) => {
   // Special case: if this cell is actively being edited, prevent re-renders
   // to maintain focus even if value changes (due to auto-save)
-  const isActivelyEditing = nextProps.isActiveEdit && nextProps.editMode === 'single';
+  const isActivelyEditing = false; // TODO: Add proper active edit tracking if needed
   
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo comparison:
     value: ${prevProps.value} → ${nextProps.value} ${prevProps.value === nextProps.value ? '✓' : '✗'}
@@ -478,7 +478,6 @@ export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextPr
     isSpreadsheetMode: ${prevProps.isSpreadsheetMode} → ${nextProps.isSpreadsheetMode} ${prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode ? '✓' : '✗'}
     hasChanges: ${prevProps.hasChanges} → ${nextProps.hasChanges} ${prevProps.hasChanges === nextProps.hasChanges ? '✓' : '✗'}
     originalValue: ${prevProps.originalValue} → ${nextProps.originalValue} ${prevProps.originalValue === nextProps.originalValue ? '✓' : '✗'}
-    isActiveEdit: ${prevProps.isActiveEdit} → ${nextProps.isActiveEdit} ${prevProps.isActiveEdit === nextProps.isActiveEdit ? '✓' : '✗'}
     callbacks equal: ${prevProps.onChangeAction === nextProps.onChangeAction && prevProps.onLocalChangeAction === nextProps.onLocalChangeAction && prevProps.onAutoSave === nextProps.onAutoSave ? '✓' : '✗'}
     isActivelyEditing: ${isActivelyEditing}`
   );
@@ -490,11 +489,10 @@ export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextPr
     prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode &&
     prevProps.hasChanges === nextProps.hasChanges &&
     prevProps.originalValue === nextProps.originalValue &&
-    prevProps.isActiveEdit === nextProps.isActiveEdit &&
     prevProps.onChangeAction === nextProps.onChangeAction &&
     prevProps.onLocalChangeAction === nextProps.onLocalChangeAction &&
     prevProps.onAutoSave === nextProps.onAutoSave &&
-    prevProps.onFocusChange === nextProps.onFocusChange
+    prevProps.onAutoSave === nextProps.onAutoSave
   );
   
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo result: ${propsEqual ? 'SKIP RE-RENDER' : 'RE-RENDER'}`);

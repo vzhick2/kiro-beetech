@@ -657,8 +657,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'name', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'name'}
                 />
               </div>
             );
@@ -712,8 +710,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'website', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'website'}
                 />
               </div>
             );
@@ -777,8 +773,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'contactphone', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'contactphone'}
                 />
               </div>
             );
@@ -832,8 +826,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'email', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'email'}
                 />
               </div>
             );
@@ -895,8 +887,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'address', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'address'}
                 />
               </div>
             );
@@ -950,8 +940,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'notes', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'notes'}
                 />
               </div>
             );
@@ -1005,8 +993,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
                   onAutoSave={handleAutoSave}
-                  onFocusChange={(focused) => handleCellFocusChange(supplier.supplierid, 'isarchived', focused)}
-                  isActiveEdit={activeEditCell?.rowId === supplier.supplierid && activeEditCell?.field === 'isarchived'}
                 />
               </div>
             );
