@@ -58,25 +58,25 @@ export const SpreadsheetCell = ({
   
   // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
-    console.log(`🔄 useEffect triggered: field=${field}, editMode=${editMode}, localValue="${localValue}", incomingValue="${value}"`);
+    console.log(`🔄 [${rowId}:${field}] useEffect: editMode=${editMode}, localValue="${localValue}", incomingValue="${value}"`);
     
     // In ANY edit mode (single or spreadsheet), maintain local state independence
     // Only sync external changes if we're in display mode (editMode === 'none')
     if (editMode === 'none') {
       // Display mode: always sync with server data
-      console.log(`📥 Display mode: syncing with server data "${value}"`);
+      console.log(`📥 [${rowId}:${field}] Display mode: syncing with server data "${value}"`);
       setLocalValue(value);
     } else {
       // Edit modes (single or spreadsheet): only sync on initial load
       // This prevents external updates from overriding user edits in ANY edit mode
       if ((localValue === undefined || localValue === null || localValue === '') && value !== undefined && value !== null) {
-        console.log(`🆕 Edit mode initial load: syncing with server data "${value}"`);
+        console.log(`🆕 [${rowId}:${field}] Edit mode initial load: syncing with server data "${value}"`);
         setLocalValue(value);
       } else {
-        console.log(`🔒 Edit mode: protecting local state "${localValue}" from server data "${value}"`);
+        console.log(`🔒 [${rowId}:${field}] Edit mode: protecting local state "${localValue}" from server data "${value}"`);
       }
     }
-  }, [value, editMode, localValue, field]);
+  }, [value, editMode, field, rowId]); // REMOVED localValue from deps to prevent infinite re-render loop
   
   // Reset local value when exiting any edit mode
   useEffect(() => {

@@ -153,6 +153,12 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     // No longer needed with unified system - empty function
   }, []);
 
+  // Helper function to get current field value without object recreation
+  const getCurrentFieldValue = useCallback((supplier: Supplier, fieldName: keyof Supplier) => {
+    const editedRowData = getAllChanges().find(change => change.rowId === supplier.supplierid);
+    return editedRowData?.changes?.[fieldName] ?? supplier[fieldName];
+  }, [getAllChanges]);
+
   // Row selection handlers
   const toggleRowSelection = useCallback((rowId: string) => {
     setSelectedRows(prev => {
@@ -585,9 +591,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.name;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'name');
           
           if (isEditing) {
             return (
@@ -603,7 +608,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               >
                 <SpreadsheetCell
                   key={`${supplier.supplierid}-name`}
-                  value={currentSupplier.name}
+                  value={value}
                   originalValue={supplier.name}
                   field="name"
                   rowId={supplier.supplierid}
@@ -646,9 +651,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.website;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'website');
           
           if (isEditing) {
             return (
@@ -716,9 +720,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.contactphone;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'contactphone');
           
           if (isEditing) {
             return (
@@ -776,9 +779,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.email;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'email');
           
           if (isEditing) {
             return (
@@ -844,9 +846,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.address;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'address');
           
           if (isEditing) {
             return (
@@ -904,9 +905,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.notes;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'notes');
           
           if (isEditing) {
             return (
@@ -964,9 +964,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         cell: info => {
           const supplier = info.row.original;
           const rowIndex = info.row.index;
-          const currentSupplier = getRowData(supplier.supplierid, supplier);
-          const value = currentSupplier.isarchived;
           const isEditing = isRowEditable(supplier.supplierid);
+          const value = getCurrentFieldValue(supplier, 'isarchived');
           
           if (isEditing) {
             return (
