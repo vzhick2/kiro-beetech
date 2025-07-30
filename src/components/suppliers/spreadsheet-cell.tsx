@@ -58,84 +58,36 @@ export const SpreadsheetCell = ({
   
   // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
+    console.log(`🔄 useEffect triggered: field=${field}, editMode=${editMode}, localValue="${localValue}", incomingValue="${value}"`);
+    
     // In ANY edit mode (single or spreadsheet), maintain local state independence
     // Only sync external changes if we're in display mode (editMode === 'none')
     if (editMode === 'none') {
       // Display mode: always sync with server data
+      console.log(`📥 Display mode: syncing with server data "${value}"`);
       setLocalValue(value);
     } else {
       // Edit modes (single or spreadsheet): only sync on initial load
       // This prevents external updates from overriding user edits in ANY edit mode
       if ((localValue === undefined || localValue === null || localValue === '') && value !== undefined && value !== null) {
+        console.log(`🆕 Edit mode initial load: syncing with server data "${value}"`);
         setLocalValue(value);
+      } else {
+        console.log(`🔒 Edit mode: protecting local state "${localValue}" from server data "${value}"`);
       }
     }
-  }, [value, editMode, localValue]);
+  }, [value, editMode, localValue, field]);
   
   // Reset local value when exiting any edit mode
   useEffect(() => {
+    console.log(`🔄 Edit mode changed to: ${editMode}, field=${field}`);
     // When switching from any edit mode to display mode, sync with current server value
     if (editMode === 'none') {
+      console.log(`🚪 Exiting edit mode: resetting local value to server data "${value}"`);
       setLocalValue(value);
     }
-  }, [editMode, value]);
+  }, [editMode, value, field]);
   
-  // Auto-save for single row mode (separate from input debounce)
-  const handleAutoSave = useCallback(async (newValue: any) => {
-    if (!onAutoSave) return;
-    
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    
-    autoSaveTimeoutRef.current = setTimeout(async () => {
-      const safeValue = getSafeValue(newValue);
-      setSaveStatus('saving');
-      
-      try {
-        const success = await onAutoSave(rowId, field, safeValue);
-        if (success) {
-          setSaveStatus('saved');
-          // Keep local value stable during save - don't let external updates override
-          // Fade out saved indicator after 1 second
-          setTimeout(() => setSaveStatus('idle'), 1000);
-        } else {
-          setSaveStatus('error');
-          setTimeout(() => setSaveStatus('idle'), 2000);
-        }
-      } catch (error) {
-        console.error('Auto-save failed:', error);
-        setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 2000);
-      }
-    }, 100); // Very fast save execution
-  }, [onAutoSave, rowId, field]);
-
-  // Input debounce for responsive auto-save (500ms after typing stops)
-  const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  // Simple state update for spreadsheet mode (immediate, no debounce)
-  const updateCentralizedState = useCallback((newValue: any) => {
-    const safeValue = getSafeValue(newValue);
-    
-    // Update centralized state immediately for spreadsheet mode
-    onChangeAction(rowId, field, safeValue);
-    
-    // Call onLocalChangeAction for any additional visual feedback
-    onLocalChangeAction(field, safeValue, rowId);
-  }, [field, rowId, onChangeAction, onLocalChangeAction]);
-
-  // Input debounce system for single row mode (separate from auto-save)
-  const debouncedAutoSave = useCallback((newValue: any) => {
-    if (inputDebounceTimeoutRef.current) {
-      clearTimeout(inputDebounceTimeoutRef.current);
-    }
-    
-    inputDebounceTimeoutRef.current = setTimeout(() => {
-      handleAutoSave(newValue);
-    }, 500); // 500ms input debounce - save quickly after stopping typing
-  }, [handleAutoSave]);
-
   // Helper function to handle value type conversion
   const getSafeValue = useCallback((newValue: any) => {
     // Handle different field types appropriately
@@ -154,6 +106,76 @@ export const SpreadsheetCell = ({
       return newValue == null ? '' : String(newValue);
     }
   }, [field]);
+
+  // Auto-save for single row mode (separate from input debounce)
+  const handleAutoSave = useCallback(async (newValue: any) => {
+    console.log(`💾 handleAutoSave called with value: "${newValue}"`);
+    
+    if (!onAutoSave) {
+      console.log(`❌ No onAutoSave prop provided!`);
+      return;
+    }
+    
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      const safeValue = getSafeValue(newValue);
+      console.log(`📡 Starting database save: field=${field}, rowId=${rowId}, value="${safeValue}"`);
+      setSaveStatus('saving');
+      
+      try {
+        const success = await onAutoSave(rowId, field, safeValue);
+        console.log(`📡 Database save result: ${success ? 'SUCCESS' : 'FAILED'}`);
+        
+        if (success) {
+          setSaveStatus('saved');
+          console.log(`✅ Auto-save successful for ${field}: "${safeValue}"`);
+          // Keep local value stable during save - don't let external updates override
+          // Fade out saved indicator after 1 second
+          setTimeout(() => setSaveStatus('idle'), 1000);
+        } else {
+          setSaveStatus('error');
+          console.log(`❌ Auto-save returned false for ${field}: "${safeValue}"`);
+          setTimeout(() => setSaveStatus('idle'), 2000);
+        }
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      }
+    }, 100); // Very fast save execution
+  }, [onAutoSave, rowId, field, getSafeValue]);
+
+  // Input debounce for responsive auto-save (500ms after typing stops)
+  const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Simple state update for spreadsheet mode (immediate, no debounce)
+  const updateCentralizedState = useCallback((newValue: any) => {
+    const safeValue = getSafeValue(newValue);
+    
+    // Update centralized state immediately for spreadsheet mode
+    onChangeAction(rowId, field, safeValue);
+    
+    // Call onLocalChangeAction for any additional visual feedback
+    onLocalChangeAction(field, safeValue, rowId);
+  }, [field, rowId, onChangeAction, onLocalChangeAction]);
+
+  // Input debounce system for single row mode (separate from auto-save)
+  const debouncedAutoSave = useCallback((newValue: any) => {
+    console.log(`⏰ debouncedAutoSave called with value: "${newValue}"`);
+    
+    if (inputDebounceTimeoutRef.current) {
+      clearTimeout(inputDebounceTimeoutRef.current);
+      console.log(`🔄 Cleared previous auto-save timeout`);
+    }
+    
+    inputDebounceTimeoutRef.current = setTimeout(() => {
+      console.log(`🚀 Auto-save timeout triggered, calling handleAutoSave with: "${newValue}"`);
+      handleAutoSave(newValue);
+    }, 500); // 500ms input debounce - save quickly after stopping typing
+  }, [handleAutoSave]);
   
   // Cleanup debounce timeouts on unmount
   useEffect(() => {
@@ -168,8 +190,11 @@ export const SpreadsheetCell = ({
   }, []);
 
   const handleChange = (newValue: any) => {
+    console.log(`🔄 handleChange called: field=${field}, newValue="${newValue}", editMode=${editMode}`);
+    
     // Update local state immediately (no re-render of parent)
     setLocalValue(newValue);
+    console.log(`📝 Local state updated to: "${newValue}"`);
     
     // Reset save status when user starts typing again
     if (saveStatus !== 'idle') {
@@ -178,9 +203,11 @@ export const SpreadsheetCell = ({
     
     // Choose workflow based on edit mode
     if (editMode === 'single') {
+      console.log(`⏰ Single row mode: scheduling auto-save in 500ms`);
       // Single row mode: use separate input debounce before auto-save
       debouncedAutoSave(newValue);
     } else if (editMode === 'all') {
+      console.log(`📊 Spreadsheet mode: updating draft state immediately`);
       // Spreadsheet mode: update draft state immediately (no auto-save)
       updateCentralizedState(newValue);
     }
@@ -209,6 +236,14 @@ export const SpreadsheetCell = ({
         if (inputRef.current) {
           inputRef.current.blur();
         }
+      }
+      
+      // Handle ESC to exit single row edit mode
+      if (e.key === 'Escape' && editMode === 'single') {
+        e.preventDefault();
+        // Let parent component handle exiting single row edit mode
+        onKeyDown?.(e);
+        return;
       }
     }
     onKeyDown?.(e);
