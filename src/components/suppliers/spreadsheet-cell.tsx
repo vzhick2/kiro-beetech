@@ -422,28 +422,37 @@ const SpreadsheetCellComponent = ({
   // Clean visual feedback for editing states
   const hasLocalChanges = localValue !== originalValue;
   
-  // Visual feedback based on save status and edit mode
+  // Visual feedback based on save status and edit mode - using box-shadow instead of border
   const getSaveStatusStyles = () => {
     if (editMode === 'single') {
       switch (saveStatus) {
         case 'saving':
-          return 'border-l-2 border-orange-400 bg-orange-50/30';
+          return 'shadow-[-2px_0_0_0_rgb(251,146,60)]'; // orange-400
         case 'saved':
-          return 'border-l-2 border-green-400 bg-green-50/30';
+          return 'shadow-[-2px_0_0_0_rgb(74,222,128)]'; // green-400
         case 'error':
-          return 'border-l-2 border-red-400 bg-red-50/30';
+          return 'shadow-[-2px_0_0_0_rgb(248,113,113)]'; // red-400
         default:
-          return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : '';
+          return hasLocalChanges ? 'shadow-[-2px_0_0_0_rgb(96,165,250)]' : ''; // blue-400
       }
     } else {
       // Spreadsheet mode: only show draft state when focused
-      return hasLocalChanges && isFocusedRef.current ? 'border-l-2 border-blue-400 bg-blue-50/30' : '';
+      return hasLocalChanges && isFocusedRef.current ? 'shadow-[-2px_0_0_0_rgb(96,165,250)]' : '';
     }
+  };
+  
+  // Get background styles separately to avoid flashing
+  const getBackgroundStyles = () => {
+    if (editMode === 'single' && hasLocalChanges) {
+      return 'bg-blue-50/20';
+    }
+    return '';
   };
   
   // Subtle styling - just a gentle left border when editing
   const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`;
-  const containerClass = `w-full py-2 px-3 relative transition-all duration-200 ${getSaveStatusStyles()}`;
+  // Use shadow for visual feedback to prevent layout shift
+  const containerClass = `w-full py-2 px-3 relative ${getSaveStatusStyles()} ${getBackgroundStyles()}`;
 
   if (field === 'isarchived') {
     return (

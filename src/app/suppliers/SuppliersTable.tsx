@@ -640,7 +640,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 0)}
               >
                 <SpreadsheetCell
@@ -694,7 +694,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 1)}
               >
                 <SpreadsheetCell
@@ -757,7 +757,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 2)}
               >
                 <SpreadsheetCell
@@ -810,7 +810,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 3)}
               >
                 <SpreadsheetCell
@@ -871,7 +871,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 4)}
               >
                 <SpreadsheetCell
@@ -924,7 +924,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 5)}
               >
                 <SpreadsheetCell
@@ -977,7 +977,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           if (isEditing) {
             return (
               <div 
-                className="flex items-center h-full py-1 px-1 w-full"
+                className="flex items-center h-full w-full"
                 onClick={(e) => handleCellClickWithFocus(e, rowIndex, 6)}
               >
                 <SpreadsheetCell
