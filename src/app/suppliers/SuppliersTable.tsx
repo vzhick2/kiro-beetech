@@ -12,7 +12,8 @@ import {
   type SortingState,
   type PaginationState,
 } from '@tanstack/react-table';
-import { getSuppliers, Supplier } from '@/lib/supabase/suppliers';
+import { Supplier } from '@/lib/supabase/suppliers';
+import { getSuppliers } from '@/app/actions/suppliers';
 import { bulkArchiveSuppliers, bulkUnarchiveSuppliers, bulkDeleteSuppliers, bulkUpdateSuppliers } from '@/app/actions/suppliers';
 import { useColumnPreferences } from '@/hooks/use-local-storage';
 import { useDebouncedSearch } from '@/hooks/use-debounce';
@@ -51,10 +52,21 @@ type ColumnVisibility = {
 };
 
 export function SuppliersTable({ showInactive, onToggleInactiveAction }: SuppliersTableProps) {
-  // Fetch suppliers from Supabase (react-query)
+  // Fetch suppliers from Supabase (react-query) - use same pattern as hooks
   const { data: suppliers = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['suppliers', { showInactive }],
-    queryFn: () => getSuppliers({ includeArchived: showInactive }),
+    queryKey: ['suppliers', 'list', { showInactive }],
+    queryFn: async () => {
+      const result = await getSuppliers();
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      // Filter by showInactive if needed
+      let filteredData = result.data || [];
+      if (!showInactive) {
+        filteredData = filteredData.filter(supplier => !supplier.isarchived);
+      }
+      return filteredData;
+    },
   });
 
   // Table state
@@ -667,7 +679,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.website}
+                  value={value}
                   originalValue={supplier.website}
                   field="website"
                   rowId={supplier.supplierid}
@@ -736,7 +748,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.contactphone}
+                  value={value}
                   originalValue={supplier.contactphone}
                   field="contactphone"
                   rowId={supplier.supplierid}
@@ -795,7 +807,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.email}
+                  value={value}
                   originalValue={supplier.email}
                   field="email"
                   rowId={supplier.supplierid}
@@ -862,7 +874,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.address}
+                  value={value}
                   originalValue={supplier.address}
                   field="address"
                   rowId={supplier.supplierid}
@@ -921,7 +933,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.notes}
+                  value={value}
                   originalValue={supplier.notes}
                   field="notes"
                   rowId={supplier.supplierid}
@@ -980,7 +992,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 }}
               >
                 <SpreadsheetCell
-                  value={currentSupplier.isarchived}
+                  value={value}
                   originalValue={supplier.isarchived}
                   field="isarchived"
                   rowId={supplier.supplierid}

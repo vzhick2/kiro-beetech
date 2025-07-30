@@ -91,9 +91,9 @@ export function useUpdateSupplier() {
       return result.data;
     },
     onSuccess: (updatedSupplier, { supplierId }) => {
-      // Update the suppliers list cache optimistically
+      // Update all suppliers cache variations optimistically
       queryClient.setQueriesData(
-        { queryKey: suppliersKeys.lists() },
+        { queryKey: ['suppliers', 'list'] },
         (oldData: Supplier[] | undefined) => {
           if (!oldData) {
             return oldData;
