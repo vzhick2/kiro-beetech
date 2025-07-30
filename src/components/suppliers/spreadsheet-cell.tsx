@@ -166,7 +166,7 @@ const SpreadsheetCellComponent = ({
       
       // Call onLocalChangeAction for any additional visual feedback
       onLocalChangeAction(field, safeValue, rowId);
-    }, 50); // Very short delay, just enough to prevent re-render race conditions
+    }, 300); // Increased delay to prevent re-renders while typing
   }, [field, rowId, onChangeAction, onLocalChangeAction, getSafeValue]);
 
   // Input debounce system for single row mode (separate from auto-save)
@@ -359,11 +359,11 @@ const SpreadsheetCellComponent = ({
         case 'error':
           return 'border-l-2 border-red-400 bg-red-50/30';
         default:
-          return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : 'bg-white';
+          return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : '';
       }
     } else {
-      // Spreadsheet mode: show draft state
-      return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : 'bg-white';
+      // Spreadsheet mode: only show draft state when focused
+      return hasLocalChanges && isFocusedRef.current ? 'border-l-2 border-blue-400 bg-blue-50/30' : '';
     }
   };
   

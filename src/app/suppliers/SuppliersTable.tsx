@@ -142,6 +142,20 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     setColumnVisibility(prev => ({ ...prev, [column]: !prev[column] }));
   }, [setColumnVisibility]);
 
+  // Helper to handle cell click and focus
+  const handleCellClickWithFocus = useCallback((e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+    // Only trigger navigation if not clicking on the input itself
+    const target = e.target as HTMLElement;
+    if (!target.closest('textarea') && !target.closest('button')) {
+      handleCellClick(rowIndex, colIndex);
+      // Focus the input after navigation
+      setTimeout(() => {
+        const cell = document.querySelector(`[data-cell="${rowIndex}-${colIndex}"] textarea`) as HTMLTextAreaElement;
+        cell?.focus();
+      }, 0);
+    }
+  }, [handleCellClick]);
+
   // Map ViewOptionsPanel column keys to actual database field names
   const getColumnVisibility = useCallback((dbField: string): boolean => {
   // All columns now use DB field names directly
@@ -169,6 +183,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
   const allChanges = useMemo(() => getAllChanges(), [getAllChanges]);
   
   // Helper function to get current field value without object recreation
+  // IMPORTANT: This must be stable to prevent SpreadsheetCell re-renders
   const getCurrentFieldValue = useCallback((supplier: Supplier, fieldName: keyof Supplier) => {
     const editedRowData = allChanges.find(change => change.rowId === supplier.supplierid);
     return editedRowData?.changes?.[fieldName] ?? supplier[fieldName];
@@ -619,10 +634,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 0);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 0)}
               >
                 <SpreadsheetCell
                   key={`${supplier.supplierid}-name`}
@@ -676,10 +688,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 1);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 1)}
               >
                 <SpreadsheetCell
                   value={value}
@@ -742,10 +751,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 2);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 2)}
               >
                 <SpreadsheetCell
                   value={value}
@@ -798,10 +804,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 3);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 3)}
               >
                 <SpreadsheetCell
                   value={value}
@@ -862,10 +865,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 4);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 4)}
               >
                 <SpreadsheetCell
                   value={value}
@@ -918,10 +918,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 5);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 5)}
               >
                 <SpreadsheetCell
                   value={value}
@@ -974,10 +971,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             return (
               <div 
                 className="flex items-center h-full py-1 px-1 w-full"
-                onClick={(e) => {
-                  // Always trigger cell navigation when clicking anywhere in the cell
-                  handleCellClick(rowIndex, 6);
-                }}
+                onClick={(e) => handleCellClickWithFocus(e, rowIndex, 6)}
               >
                 <SpreadsheetCell
                   value={value}
