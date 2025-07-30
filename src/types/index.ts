@@ -1,3 +1,11 @@
+/**
+ * Field Naming Convention:
+ * - Database uses lowercase fields: itemid, purchaseid, currentquantity, tracking_mode
+ * - TypeScript uses camelCase: itemId, purchaseId, currentQuantity, trackingMode
+ * - Supabase client auto-converts many cases, but use field-mapping utilities for consistency
+ * - See src/lib/utils/field-mapping.ts for conversion utilities
+ */
+
 // Core data types
 export type ItemType = 'ingredient' | 'packaging' | 'product';
 export type InventoryUnit =
@@ -158,22 +166,12 @@ export interface CycleCountAlert {
 }
 
 export interface TwoModeAlert {
-  itemid: string;
+  itemId: string;
   sku: string;
   name: string;
-  tracking_mode: TrackingMode;
-  alert_type: 'LOW_STOCK' | 'CHECK_SUPPLY';
-  alert_message: string;
-  priority: number;
-}
-
-export interface TwoModeAlert {
-  itemid: string;
-  sku: string;
-  name: string;
-  tracking_mode: TrackingMode;
-  alert_type: 'LOW_STOCK' | 'CHECK_SUPPLY';
-  alert_message: string;
+  trackingMode: TrackingMode;
+  alertType: 'LOW_STOCK' | 'CHECK_SUPPLY';
+  alertMessage: string;
   priority: number;
 }
 

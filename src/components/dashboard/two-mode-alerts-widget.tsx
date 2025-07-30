@@ -97,11 +97,11 @@ export function TwoModeAlertsWidget() {
         <div className="space-y-3">
           {alerts.map(alert => (
             <div
-              key={alert.itemid}
+              key={alert.itemId}
               className="flex items-center justify-between p-3 border rounded-lg"
             >
               <div className="flex items-center gap-3">
-                {getAlertIcon(alert.alert_type)}
+                {getAlertIcon(alert.alertType)}
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{alert.name}</span>
@@ -112,19 +112,19 @@ export function TwoModeAlertsWidget() {
                       variant="outline"
                       className="flex items-center gap-1 text-xs"
                     >
-                      {getModeIcon(alert.tracking_mode)}
-                      {alert.tracking_mode === 'fully_tracked'
+                      {getModeIcon(alert.trackingMode)}
+                      {alert.trackingMode === 'fully_tracked'
                         ? 'Tracked'
                         : 'Cost Only'}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {alert.alert_message}
+                    {alert.alertMessage}
                   </p>
                 </div>
               </div>
               <Badge variant={getAlertVariant(alert.priority)}>
-                {alert.alert_type === 'LOW_STOCK' ? 'Low Stock' : 'Review Cost'}
+                {alert.alertType === 'LOW_STOCK' ? 'Low Stock' : 'Review Cost'}
               </Badge>
             </div>
           ))}

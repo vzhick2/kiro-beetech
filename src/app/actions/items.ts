@@ -339,7 +339,18 @@ export async function getTwoModeAlerts() {
       return handleError(error, 'getTwoModeAlerts');
     }
 
-    return handleSuccess(data || []);
+    // Map database fields to camelCase for TypeScript
+    const mappedData = (data || []).map((alert: any) => ({
+      itemId: alert.itemid,
+      sku: alert.sku,
+      name: alert.name,
+      trackingMode: alert.tracking_mode,
+      alertType: alert.alert_type,
+      alertMessage: alert.alert_message,
+      priority: alert.priority,
+    }));
+
+    return handleSuccess(mappedData);
   } catch (error) {
     return handleError(error, 'getTwoModeAlerts');
   }
