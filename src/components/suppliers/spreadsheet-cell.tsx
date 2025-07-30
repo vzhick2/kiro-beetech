@@ -23,8 +23,10 @@ type SpreadsheetCellProps = {
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
   originalValue: any; // Add originalValue prop for comparison
+  editMode: 'none' | 'single' | 'all'; // Add edit mode to determine workflow
   onChangeAction: (rowId: string, field: keyof Supplier, value: any) => void;
   onLocalChangeAction: (field: keyof Supplier, value: any, rowId: string) => void;
+  onAutoSave?: (rowId: string, field: keyof Supplier, value: any) => Promise<boolean>; // Auto-save callback for single mode
   onKeyDown?: (e: React.KeyboardEvent) => void;
 };
 
@@ -37,66 +39,125 @@ export const SpreadsheetCell = ({
   isSpreadsheetMode,
   hasChanges,
   originalValue,
+  editMode,
   onChangeAction,
   onLocalChangeAction,
+  onAutoSave,
   onKeyDown,
 }: SpreadsheetCellProps) => {
   // Local state for input to prevent focus loss during typing
   const [localValue, setLocalValue] = useState(value);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Track if the component is currently being edited to prevent focus loss
   const isFocusedRef = useRef(false);
   
   // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
-    // Only update local value if we're not currently editing (to avoid overriding user input)
-    if (!isFocusedRef.current) {
+    // Only update local value if we're not currently editing AND not in a save operation
+    // This prevents external updates from overriding user input during typing or saving
+    if (!isFocusedRef.current && saveStatus !== 'saving') {
       setLocalValue(value);
     }
-  }, [value]);
+  }, [value, saveStatus]);
   
-  // Debounced update to centralized state
+  // Auto-save for single row mode (separate from input debounce)
+  const handleAutoSave = useCallback(async (newValue: any) => {
+    if (!onAutoSave) return;
+    
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      const safeValue = getSafeValue(newValue);
+      setSaveStatus('saving');
+      
+      try {
+        const success = await onAutoSave(rowId, field, safeValue);
+        if (success) {
+          setSaveStatus('saved');
+          // Keep local value stable during save - don't let external updates override
+          // Fade out saved indicator after 2 seconds
+          setTimeout(() => setSaveStatus('idle'), 2000);
+        } else {
+          setSaveStatus('error');
+          setTimeout(() => setSaveStatus('idle'), 3000);
+        }
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      }
+    }, 1000); // 1000ms auto-save timer (faster saves)
+  }, [onAutoSave, rowId, field]);
+
+  // Input debounce for UI updates (longer delay for comfortable typing)
+  const inputDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Draft system for spreadsheet mode (immediate state update)
   const debouncedUpdateCentralizedState = useCallback((newValue: any) => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
     
     debounceTimeoutRef.current = setTimeout(() => {
-      let safeValue = newValue;
-      
-      // Handle different field types appropriately
-      if (field === 'created_at') {
-        if (newValue instanceof Date) {
-          safeValue = newValue.toISOString();
-        } else if (typeof newValue === 'string' || newValue == null) {
-          safeValue = newValue;
-        } else {
-          safeValue = String(newValue);
-        }
-      } else if (field === 'isarchived') {
-        safeValue = Boolean(newValue);
-      } else {
-        // For text fields, ensure we handle null/undefined properly
-        safeValue = newValue == null ? '' : String(newValue);
-      }
+      const safeValue = getSafeValue(newValue);
       
       // Update centralized state after debounce delay
       onChangeAction(rowId, field, safeValue);
       
       // Call onLocalChangeAction for any additional visual feedback
       onLocalChangeAction(field, safeValue, rowId);
-    }, 1500); // 1500ms debounce delay - allows for natural typing pauses
+    }, 2000); // 2000ms debounce delay - allows for natural typing pauses
   }, [field, rowId, onChangeAction, onLocalChangeAction]);
+
+  // Input debounce system for single row mode (separate from auto-save)
+  const debouncedAutoSave = useCallback((newValue: any) => {
+    if (inputDebounceTimeoutRef.current) {
+      clearTimeout(inputDebounceTimeoutRef.current);
+    }
+    
+    inputDebounceTimeoutRef.current = setTimeout(() => {
+      handleAutoSave(newValue);
+    }, 10000); // 10000ms input debounce - long pause before triggering auto-save
+  }, [handleAutoSave]);
+
+  // Helper function to handle value type conversion
+  const getSafeValue = useCallback((newValue: any) => {
+    // Handle different field types appropriately
+    if (field === 'created_at') {
+      if (newValue instanceof Date) {
+        return newValue.toISOString();
+      } else if (typeof newValue === 'string' || newValue == null) {
+        return newValue;
+      } else {
+        return String(newValue);
+      }
+    } else if (field === 'isarchived') {
+      return Boolean(newValue);
+    } else {
+      // For text fields, ensure we handle null/undefined properly
+      return newValue == null ? '' : String(newValue);
+    }
+  }, [field]);
   
-  // Cleanup debounce timeout on unmount
+  // Cleanup debounce timeouts on unmount
   useEffect(() => {
     return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
+      }
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+      if (inputDebounceTimeoutRef.current) {
+        clearTimeout(inputDebounceTimeoutRef.current);
       }
     };
   }, []);
@@ -105,8 +166,19 @@ export const SpreadsheetCell = ({
     // Update local state immediately (no re-render of parent)
     setLocalValue(newValue);
     
-    // Debounce update to centralized state to prevent focus loss
-    debouncedUpdateCentralizedState(newValue);
+    // Reset save status when user starts typing again
+    if (saveStatus !== 'idle') {
+      setSaveStatus('idle');
+    }
+    
+    // Choose workflow based on edit mode
+    if (editMode === 'single') {
+      // Single row mode: use separate input debounce before auto-save
+      debouncedAutoSave(newValue);
+    } else {
+      // Spreadsheet mode: update draft state after debounce
+      debouncedUpdateCentralizedState(newValue);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -168,11 +240,24 @@ export const SpreadsheetCell = ({
     // Mark that this input is no longer focused
     isFocusedRef.current = false;
     
-    // Force immediate update to centralized state on blur to ensure data is saved
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-      // Trigger immediate update
-      debouncedUpdateCentralizedState(localValue);
+    // Force immediate save/update on blur to ensure data is captured
+    if (editMode === 'single') {
+      // Single row mode: clear both debounce timers and trigger immediate auto-save
+      if (inputDebounceTimeoutRef.current) {
+        clearTimeout(inputDebounceTimeoutRef.current);
+      }
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+      // Trigger immediate auto-save
+      handleAutoSave(localValue);
+    } else {
+      // Spreadsheet mode: update draft state immediately
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+        // Trigger immediate update
+        debouncedUpdateCentralizedState(localValue);
+      }
     }
   };
 
@@ -208,22 +293,35 @@ export const SpreadsheetCell = ({
   
   const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
   
-  // Enhanced visual feedback for editing states - use local state for immediate feedback
+  // Clean visual feedback for editing states
   const hasLocalChanges = localValue !== originalValue;
-  const isPendingSave = hasLocalChanges && hasChanges;
   
-  // Match exact table cell styling: py-2 px-3 from table cells
-  // Keep same height as display mode - no min-h constraints that change row height
-  const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ${hasChanges ? 'bg-blue-50' : ''} ${hasLocalChanges ? 'ring-1 ring-blue-300' : ''}`;
-  const containerClass = `w-full py-2 px-3 relative ${hasChanges ? 'bg-blue-50' : 'bg-white'} ${hasLocalChanges ? 'bg-blue-100' : ''} ${isPendingSave ? 'border-l-2 border-orange-400' : ''}`;
+  // Visual feedback based on save status and edit mode
+  const getSaveStatusStyles = () => {
+    if (editMode === 'single') {
+      switch (saveStatus) {
+        case 'saving':
+          return 'border-l-2 border-orange-400 bg-orange-50/30';
+        case 'saved':
+          return 'border-l-2 border-green-400 bg-green-50/30';
+        case 'error':
+          return 'border-l-2 border-red-400 bg-red-50/30';
+        default:
+          return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : 'bg-white';
+      }
+    } else {
+      // Spreadsheet mode: show draft state
+      return hasLocalChanges ? 'border-l-2 border-blue-400 bg-blue-50/30' : 'bg-white';
+    }
+  };
+  
+  // Subtle styling - just a gentle left border when editing
+  const cellClass = `w-full ${textColor} leading-tight resize-none border-0 bg-transparent outline-none focus:ring-0 focus:border-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`;
+  const containerClass = `w-full py-2 px-3 relative transition-all duration-200 ${getSaveStatusStyles()}`;
 
   if (field === 'isarchived') {
     return (
       <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
-        {hasLocalChanges && (
-          <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full opacity-70 pointer-events-none z-10" 
-               title="Unsaved changes" />
-        )}
         <Select
           value={localValue ? 'archived' : 'active'}
           onValueChange={newValue => {
@@ -250,10 +348,6 @@ export const SpreadsheetCell = ({
 
   return (
     <div data-cell={`${rowIndex}-${colIndex}`} className={containerClass}>
-      {hasLocalChanges && (
-        <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full opacity-70 pointer-events-none z-10" 
-             title="Unsaved changes" />
-      )}
       <Textarea
         ref={inputRef}
         value={localValue || ''}
@@ -282,6 +376,21 @@ export const SpreadsheetCell = ({
           margin: 0,
         }}
       />
+      
+      {/* Save status indicator for single row mode */}
+      {editMode === 'single' && saveStatus !== 'idle' && (
+        <div className="absolute top-1 right-1 flex items-center">
+          {saveStatus === 'saving' && (
+            <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" title="Saving..." />
+          )}
+          {saveStatus === 'saved' && (
+            <div className="w-2 h-2 bg-green-400 rounded-full" title="Saved" />
+          )}
+          {saveStatus === 'error' && (
+            <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" title="Save failed" />
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -180,6 +180,27 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     });
   }, [selectedRows]);
 
+  // Auto-save function for single row mode (direct database save)
+  const handleAutoSave = useCallback(async (rowId: string, field: keyof Supplier, value: any): Promise<boolean> => {
+    try {
+      const result = await updateSupplierMutation.mutateAsync({
+        supplierId: rowId,
+        updates: { [field]: value },
+      });
+      
+      if (result) {
+        console.log(`Auto-saved ${field} for row:`, rowId);
+        return true;
+      } else {
+        console.error('Auto-save returned no result for row:', rowId);
+        return false;
+      }
+    } catch (error) {
+      console.error('Auto-save failed for row:', rowId, error);
+      return false;
+    }
+  }, [updateSupplierMutation]);
+
   // Helper function to save changes for a specific row
   const saveRowChanges = useCallback(async (rowId: string) => {
     if (hasRowChanges(rowId)) {
@@ -397,6 +418,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     return filtered;
   }, [suppliers, debouncedSearchValue]);
 
+  // We'll add the auto-save backstop after handleSaveAllChanges is defined
+
   // Spreadsheet navigation - initialized after filteredSuppliers
   const { currentCell, handleCellClick } = useSpreadsheetNavigation({
     totalRows: filteredSuppliers.length,
@@ -475,6 +498,21 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
       // Don't clear changes if save failed - keep them for retry
     }
   }, [editMode, editingRowId, getAllChanges, saveRowChanges, exitEdit, refetch]);
+
+  // Auto-save backstop for spreadsheet mode (every 60 seconds)
+  useEffect(() => {
+    if (editMode !== 'all' || !hasUnsavedChanges) return;
+    
+    const autoSaveInterval = setInterval(async () => {
+      if (editMode === 'all' && hasUnsavedChanges) {
+        console.log('Auto-save backstop triggered for spreadsheet mode');
+        // Save all changes silently
+        await handleSaveAllChanges();
+      }
+    }, 60000); // 60 seconds
+    
+    return () => clearInterval(autoSaveInterval);
+  }, [editMode, hasUnsavedChanges, handleSaveAllChanges]);
   const columnHelper = createColumnHelper<Supplier>();
   const columns = useMemo(() => {
     const actionColumns = [
@@ -573,8 +611,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={0}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -631,8 +671,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={1}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -699,8 +741,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={2}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -757,8 +801,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={3}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -823,8 +869,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={4}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -881,8 +929,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={5}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -939,8 +989,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={6}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
+                  editMode={editMode}
                   onChangeAction={stableHandleCellChange}
                   onLocalChangeAction={stableHandleLocalChange}
+                  onAutoSave={handleAutoSave}
                 />
               </div>
             );
@@ -1360,27 +1412,44 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               {/* UNIFIED EDIT MODE - Save/Cancel Controls */}
               {editMode !== 'none' && (
                 <>
-                  {/* Changes count */}
+                  {/* Clean edit mode indicator with draft count for spreadsheet mode */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                     <FileSpreadsheet className="h-4 w-4" />
-                    <span>{editMode === 'single' ? 'Single Edit' : 'All Edit'}</span>
+                    {editMode === 'single' ? (
+                      <span>Editing Row</span>
+                    ) : (
+                      <span>Editing • {getAllChanges().length} unsaved</span>
+                    )}
                     {hasUnsavedChanges && (
-                      <>
-                        <span className="text-blue-200">•</span>
-                        <span className="text-blue-200">unsaved</span>
-                      </>
+                      <div className="w-2 h-2 bg-amber-300 rounded-full animate-pulse" title="Unsaved changes" />
                     )}
                   </div>
                   
-                  {/* Save button */}
+                  {/* Save button - different labels for different modes */}
                   <button 
                     onClick={handleSaveAllChanges}
                     className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                    title="Save changes"
+                    title={editMode === 'single' ? "Save row changes" : "Save all draft changes"}
                     style={{ minWidth: '44px', minHeight: '44px' }}
                   >
                     <Save className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
                   </button>
+                  
+                  {/* Undo button for spreadsheet mode only */}
+                  {editMode === 'all' && getAllChanges().length > 0 && (
+                    <button 
+                      onClick={() => {
+                        if (confirm('Are you sure you want to undo all draft changes?')) {
+                          exitEdit();
+                        }
+                      }}
+                      className="group flex items-center justify-center w-11 h-11 bg-orange-100 hover:bg-orange-200 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
+                      title="Undo all draft changes"
+                      style={{ minWidth: '44px', minHeight: '44px' }}
+                    >
+                      <RotateCcw className="h-5 w-5 text-orange-700 transition-transform duration-150 group-hover:scale-110" />
+                    </button>
+                  )}
                   
                   {/* Cancel button */}
                   <button 
