@@ -3,10 +3,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Supplier } from '@/lib/supabase/suppliers';
 
-export type EditMode = 'none' | 'single' | 'all';
+export type EditMode = 'viewing' | 'quickEdit' | 'bulkEdit';
+
+// Legacy mappings for backward compatibility
+export type LegacyEditMode = 'none' | 'single' | 'all';
 
 export const useUnifiedEdit = () => {
-  const [editMode, setEditMode] = useState<EditMode>('none');
+  const [editMode, setEditMode] = useState<EditMode>('viewing');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [editedData, setEditedData] = useState<Map<string, Partial<Supplier>>>(new Map());
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -19,9 +22,9 @@ export const useUnifiedEdit = () => {
     editedDataRef.current = editedData;
   }, [editedData]);
 
-  // Enter single row edit mode
+  // Enter quick edit mode (single row)
   const enterSingleEdit = useCallback((rowId: string) => {
-    setEditMode('single');
+    setEditMode('quickEdit');
     setEditingRowId(rowId);
     // Don't clear existing edited data - preserve any unsaved changes
     // setEditedData(new Map()); // REMOVED - was causing edits to disappear
@@ -29,9 +32,9 @@ export const useUnifiedEdit = () => {
     setHasUnsavedChanges(editedData.size > 0);
   }, [editedData]);
 
-  // Enter spreadsheet edit mode (all rows)
+  // Enter bulk edit mode (all rows)
   const enterAllEdit = useCallback(() => {
-    setEditMode('all');
+    setEditMode('bulkEdit');
     setEditingRowId(null);
     // Don't clear existing edited data - preserve any unsaved changes
     // setEditedData(new Map()); // REMOVED - was causing edits to disappear
@@ -41,7 +44,7 @@ export const useUnifiedEdit = () => {
 
   // Exit edit mode
   const exitEdit = useCallback(() => {
-    setEditMode('none');
+    setEditMode('viewing');
     setEditingRowId(null);
     setEditedData(new Map());
     setHasUnsavedChanges(false);
@@ -84,9 +87,9 @@ export const useUnifiedEdit = () => {
 
   // Check if a row is editable in current mode
   const isRowEditable = useCallback((rowId: string) => {
-    if (editMode === 'none') return false;
-    if (editMode === 'single') return rowId === editingRowId;
-    if (editMode === 'all') return true;
+    if (editMode === 'viewing') return false;
+    if (editMode === 'quickEdit') return rowId === editingRowId;
+    if (editMode === 'bulkEdit') return true;
     return false;
   }, [editMode, editingRowId]);
 
@@ -105,7 +108,7 @@ export const useUnifiedEdit = () => {
 
   // Toggle single row edit
   const toggleSingleEdit = useCallback((rowId: string) => {
-    if (editMode === 'single' && editingRowId === rowId) {
+    if (editMode === 'quickEdit' && editingRowId === rowId) {
       exitEdit();
     } else {
       enterSingleEdit(rowId);

@@ -22,7 +22,7 @@ import { useSpreadsheetNavigation } from '@/hooks/use-spreadsheet-navigation';
 import { useUpdateSupplier } from '@/hooks/use-suppliers';
 import { ViewOptionsPanel } from '@/components/suppliers/view-options-panel';
 import { getDefaultColumnVisibility, paginationSettings, type ColumnKeys } from '@/config/app-config';
-import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell';
+import { SpreadsheetCell } from '@/components/suppliers/spreadsheet-cell-v2';
 
 import { 
   ChevronUp, 
@@ -271,7 +271,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
   const handleEditRow = useCallback(async (rowId: string) => {
     // If we're currently editing in single mode and switching rows, handle unsaved changes
-    if (editMode === 'single' && editingRowId && editingRowId !== rowId && hasRowChanges(editingRowId)) {
+    if (editMode === 'quickEdit' && editingRowId && editingRowId !== rowId && hasRowChanges(editingRowId)) {
       if (!confirm('You have unsaved changes. Are you sure you want to switch to editing another row? Your changes will be lost.')) {
         return;
       }
@@ -459,7 +459,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
   // Spreadsheet navigation - initialized after filteredSuppliers
   const { currentCell, handleCellClick } = useSpreadsheetNavigation({
     totalRows: filteredSuppliers.length,
-    isSpreadsheetMode: editMode === 'all',
+    isSpreadsheetMode: editMode === 'bulkEdit',
     onExitSpreadsheetMode: () => {
       if (hasUnsavedChanges) {
         if (confirm('You have unsaved changes. Are you sure you want to exit edit mode?')) {
@@ -495,7 +495,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     }
 
     try {
-      if (editMode === 'single' && editingRowId) {
+      if (editMode === 'quickEdit' && editingRowId) {
         const rowChanges = changes.find(change => change.rowId === editingRowId);
         if (rowChanges) {
           const success = await saveRowChanges(editingRowId);
@@ -504,7 +504,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           }
           // Don't exit edit mode if save failed
         }
-      } else if (editMode === 'all') {
+      } else if (editMode === 'bulkEdit') {
         const updates = changes.map(({ rowId, changes }) => {
           // Remove created_at from the spread, then add it back as string|null
           const { created_at, ...rest } = changes;
@@ -550,10 +550,10 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
   // Auto-save backstop for spreadsheet mode (every 60 seconds)
   useEffect(() => {
-    if (editMode !== 'all' || !hasUnsavedChanges) return;
+    if (editMode !== 'bulkEdit' || !hasUnsavedChanges) return;
     
     const autoSaveInterval = setInterval(async () => {
-      if (editMode === 'all' && hasUnsavedChanges) {
+      if (editMode === 'bulkEdit' && hasUnsavedChanges) {
         console.log('Auto-save backstop triggered for spreadsheet mode');
         // Save all changes silently
         await handleSaveAllChanges();
@@ -579,7 +579,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                 checked={allCurrentSelected}
                 onChange={() => toggleAllRows(currentPageRows)}
                 className="rounded border-gray-300 w-4 h-4"
-                disabled={editMode !== 'none'}
+                disabled={editMode !== 'viewing'}
               />
             </div>
           );
@@ -591,7 +591,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               checked={selectedRows.has(row.original.supplierid)}
               onChange={() => toggleRowSelection(row.original.supplierid)}
               className="rounded border-gray-300 w-4 h-4"
-              disabled={editMode !== 'none'}
+              disabled={editMode !== 'viewing'}
             />
           </div>
         ),
@@ -608,9 +608,9 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
           <div className="flex items-center justify-center h-full py-1 px-1">
             <button
               onClick={() => handleEditRow(row.original.supplierid)}
-              className={`p-1 rounded hover:bg-gray-100 ${editMode === 'single' && editingRowId === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'} ${editMode === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`p-1 rounded hover:bg-gray-100 ${editMode === 'quickEdit' && editingRowId === row.original.supplierid ? 'bg-blue-100 text-blue-600' : 'text-gray-400'} ${editMode === 'bulkEdit' ? 'opacity-50 cursor-not-allowed' : ''}`}
               title="Edit row"
-              disabled={editMode === 'all'}
+              disabled={editMode === 'bulkEdit'}
             >
               <Edit3 className="h-4 w-4" />
             </button>
@@ -1082,11 +1082,11 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
         setSelectedRows(new Set());
         
         // If we're editing with changes, confirm before exiting
-        if (editMode !== 'none' && hasUnsavedChanges) {
+        if (editMode !== 'viewing' && hasUnsavedChanges) {
           if (confirm('You have unsaved changes. Are you sure you want to exit editing? Your changes will be lost.')) {
             exitEdit();
           }
-        } else if (editMode !== 'none') {
+        } else if (editMode !== 'viewing') {
           exitEdit();
         }
       }
@@ -1390,7 +1390,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
       </div>
 
       {/* Floating Action Bar - Bottom Right with Fixed Positioning */}
-      {(selectedRows.size > 0 || editMode !== 'none') && (
+      {(selectedRows.size > 0 || editMode !== 'viewing') && (
         <div 
           className="fixed bottom-4 right-4 z-[9999]"
           style={{ 
@@ -1410,12 +1410,12 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
             <div className="flex items-center gap-3 p-4">
               
               {/* UNIFIED EDIT MODE - Save/Cancel Controls */}
-              {editMode !== 'none' && (
+              {editMode !== 'viewing' && (
                 <>
                   {/* Clean edit mode indicator with draft count for spreadsheet mode */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">
                     <FileSpreadsheet className="h-4 w-4" />
-                    {editMode === 'single' ? (
+                    {editMode === 'quickEdit' ? (
                       <span>Editing Row</span>
                     ) : (
                       <span>Editing • {getAllChanges().length} unsaved</span>
@@ -1429,14 +1429,14 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   <button 
                     onClick={handleSaveAllChanges}
                     className="group flex items-center justify-center w-11 h-11 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95 touch-manipulation"
-                    title={editMode === 'single' ? "Save row changes" : "Save all draft changes"}
+                    title={editMode === 'quickEdit' ? "Save row changes" : "Save all draft changes"}
                     style={{ minWidth: '44px', minHeight: '44px' }}
                   >
                     <Save className="h-5 w-5 text-white transition-transform duration-150 group-hover:scale-110" />
                   </button>
                   
                   {/* Undo button for spreadsheet mode only */}
-                  {editMode === 'all' && getAllChanges().length > 0 && (
+                  {editMode === 'bulkEdit' && getAllChanges().length > 0 && (
                     <button 
                       onClick={() => {
                         if (confirm('Are you sure you want to undo all draft changes?')) {
@@ -1472,7 +1472,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
               )}
 
               {/* BULK ACTIONS - When rows are selected and not editing */}
-              {selectedRows.size > 0 && editMode === 'none' && (
+              {selectedRows.size > 0 && editMode === 'viewing' && (
                 <>
                   {/* Selection count */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium whitespace-nowrap">
@@ -1537,7 +1537,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
       )}
 
       {/* Enter Edit Mode FAB - When no actions are showing */}
-      {selectedRows.size === 0 && editMode === 'none' && (
+      {selectedRows.size === 0 && editMode === 'viewing' && (
         <div 
           className="fixed bottom-4 right-4 z-[9999]"
           style={{ 
