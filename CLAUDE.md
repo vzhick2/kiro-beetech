@@ -10,38 +10,11 @@ BTINV is a **private internal inventory management system** for small businesses
 
 ## Essential Commands
 
-### Development
 ```bash
-pnpm dev                    # Start development server (port 3000)
-pnpm build                  # Build for production
-pnpm lint                   # Run ESLint
-pnpm type-check             # Run TypeScript checks
-pnpm format                 # Format with Prettier
-```
-
-### Database & Types
-```bash
-pnpm db:generate            # Generate TypeScript types from Supabase
-pnpm db:start               # Start local Supabase (if using local)
-pnpm db:stop                # Stop local Supabase
-```
-
-### Testing
-```bash
-pnpm test                   # Run Playwright tests
-pnpm test:ui                # Run Playwright with UI mode
-```
-
-### Single Test Execution
-```bash
-# Run specific test file
-npx playwright test tests/specific-test.spec.ts
-
-# Run specific test with UI
-npx playwright test tests/specific-test.spec.ts --ui
-
-# Run test in specific browser
-npx playwright test --project=chromium
+# Development: pnpm dev|build|lint|type-check|format
+# Database: pnpm db:generate|db:start|db:stop  
+# Testing: pnpm test|test:ui
+# Playwright: npx playwright test [file] [--ui] [--project=browser]
 ```
 
 ## Core Architecture Concepts
@@ -239,30 +212,11 @@ This approach provides both **comprehensive long-term vision** and **pragmatic i
 
 ## Environment Setup
 
-### Supabase Configuration
-- **Project ID**: `jjpklpivpvywagmjjwpu`
-- **Project Name**: `btinv-beetech`
-- **Region**: `us-east-2`
-
-### Required Environment Variables
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://jjpklpivpvywagmjjwpu.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_remote_anon_key
+```bash
+# Supabase: jjpklpivpvywagmjjwpu (btinv-beetech, us-east-2)
+# Test port: 3001 (not 3000)
+# Required: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
-
-## Testing Approach
-
-### Playwright Configuration
-- **Base URL**: `http://localhost:3001` (not 3000)
-- **Web Server**: Automatically starts `pnpm dev` for tests
-- **Browsers**: Chromium, Firefox, WebKit support
-- **Focus**: Critical business workflows over unit tests
-
-### Key Test Scenarios
-- Inventory workflows: add item → purchase → receive → adjust → sell
-- Purchase cost allocation and WAC calculations
-- Two-mode tracking behavior differences
-- Mobile-responsive interactions
 
 ## Common Patterns
 

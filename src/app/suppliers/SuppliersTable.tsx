@@ -144,6 +144,15 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     });
   }, []);
 
+  // Create stable function references that don't depend on changing state
+  const stableHandleCellChange = useCallback((rowId: string, field: keyof Supplier, newValue: any) => {
+    updateRowData(rowId, field, newValue);
+  }, [updateRowData]);
+
+  const stableHandleLocalChange = useCallback(() => {
+    // No longer needed with unified system - empty function
+  }, []);
+
   // Row selection handlers
   const toggleRowSelection = useCallback((rowId: string) => {
     setSelectedRows(prev => {
@@ -558,8 +567,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={0}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}} // No longer needed with unified system
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -610,8 +619,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={1}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -672,8 +681,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={2}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -724,8 +733,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={3}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -784,8 +793,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={4}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -836,8 +845,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={5}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -888,8 +897,8 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
                   colIndex={6}
                   isSpreadsheetMode={isEditing}
                   hasChanges={hasRowChanges(supplier.supplierid)}
-                  onChangeAction={(field: keyof Supplier, newValue) => updateRowData(supplier.supplierid, field, newValue)}
-                  onLocalChangeAction={() => {}}
+                  onChangeAction={stableHandleCellChange}
+                  onLocalChangeAction={stableHandleLocalChange}
                 />
               </div>
             );
@@ -935,7 +944,7 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
 
     // Return action columns + visible data columns
     return [...actionColumns, ...visibleDataColumns];
-  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editingRowId, getRowData, hasRowChanges, isRowEditable, updateRowData, editMode, handleCellClick]);
+  }, [columnHelper, handleSort, renderSortIcon, formatDate, getColumnVisibility, selectedRows, toggleAllRows, toggleRowSelection, handleEditRow, editMode, handleCellClick, stableHandleCellChange, stableHandleLocalChange]);
   // Table instance with pagination
   const table = useReactTable({
     data: filteredSuppliers,

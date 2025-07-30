@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -23,7 +23,7 @@ type SpreadsheetCellProps = {
   isSpreadsheetMode: boolean;
   hasChanges: boolean;
   originalValue: any; // Add originalValue prop for comparison
-  onChangeAction: (field: keyof Supplier, value: any) => void;
+  onChangeAction: (rowId: string, field: keyof Supplier, value: any) => void;
   onLocalChangeAction: (field: keyof Supplier, value: any, rowId: string) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
 };
@@ -45,6 +45,21 @@ export const SpreadsheetCell = ({
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
+  
+  // Track if the component is currently being edited to prevent focus loss
+  const isFocusedRef = useRef(false);
+  
+  // Preserve focus and cursor position during re-renders
+  useEffect(() => {
+    if (isFocusedRef.current && inputRef.current && document.activeElement !== inputRef.current) {
+      // Re-focus the input if it was focused before the re-render
+      const input = inputRef.current;
+      const currentLength = input.value.length;
+      input.focus();
+      // Restore cursor to end of text (most natural for typing)
+      input.setSelectionRange(currentLength, currentLength);
+    }
+  });
 
   const handleChange = (newValue: any) => {
     // Immediately update centralized state - no local state needed
@@ -67,7 +82,7 @@ export const SpreadsheetCell = ({
     }
     
     // Update centralized state immediately
-    onChangeAction(field, safeValue);
+    onChangeAction(rowId, field, safeValue);
     
     // Call onLocalChangeAction for any additional visual feedback
     onLocalChangeAction(field, safeValue, rowId);
@@ -140,6 +155,9 @@ export const SpreadsheetCell = ({
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // Mark that this input is now focused to prevent focus loss during re-renders
+    isFocusedRef.current = true;
+    
     // When input receives focus via keyboard navigation (not click),
     // we can optionally select all text for quick editing
     const input = e.currentTarget;
@@ -153,6 +171,11 @@ export const SpreadsheetCell = ({
         // User can still click to position cursor wherever they want
       }
     }, 0);
+  };
+  
+  const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // Mark that this input is no longer focused
+    isFocusedRef.current = false;
   };
 
   if (!isSpreadsheetMode) {
@@ -243,6 +266,7 @@ export const SpreadsheetCell = ({
         onClick={handleInputClick}
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
         className={cellClass}
         placeholder={
           field === 'name'
