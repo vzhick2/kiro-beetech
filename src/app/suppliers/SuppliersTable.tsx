@@ -142,20 +142,6 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     setColumnVisibility(prev => ({ ...prev, [column]: !prev[column] }));
   }, [setColumnVisibility]);
 
-  // Helper to handle cell click and focus
-  const handleCellClickWithFocus = useCallback((e: React.MouseEvent, rowIndex: number, colIndex: number) => {
-    // Only trigger navigation if not clicking on the input itself
-    const target = e.target as HTMLElement;
-    if (!target.closest('textarea') && !target.closest('button')) {
-      handleCellClick(rowIndex, colIndex);
-      // Focus the input after navigation
-      setTimeout(() => {
-        const cell = document.querySelector(`[data-cell="${rowIndex}-${colIndex}"] textarea`) as HTMLTextAreaElement;
-        cell?.focus();
-      }, 0);
-    }
-  }, [handleCellClick]);
-
   // Map ViewOptionsPanel column keys to actual database field names
   const getColumnVisibility = useCallback((dbField: string): boolean => {
   // All columns now use DB field names directly
@@ -479,6 +465,19 @@ export function SuppliersTable({ showInactive, onToggleInactiveAction }: Supplie
     getRowId: (index: number) => filteredSuppliers[index]?.supplierid || '',
   });
 
+  // Helper to handle cell click and focus
+  const handleCellClickWithFocus = useCallback((e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+    // Only trigger navigation if not clicking on the input itself
+    const target = e.target as HTMLElement;
+    if (!target.closest('textarea') && !target.closest('button')) {
+      handleCellClick(rowIndex, colIndex);
+      // Focus the input after navigation
+      setTimeout(() => {
+        const cell = document.querySelector(`[data-cell="${rowIndex}-${colIndex}"] textarea`) as HTMLTextAreaElement;
+        cell?.focus();
+      }, 0);
+    }
+  }, [handleCellClick]);
 
   const handleSaveAllChanges = useCallback(async () => {
     const changes = getAllChanges();
