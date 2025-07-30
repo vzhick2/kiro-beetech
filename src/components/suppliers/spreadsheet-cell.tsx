@@ -61,16 +61,20 @@ const SpreadsheetCellComponent = ({
   
   // Initialize local value only once, then protect it during editing
   useEffect(() => {
-    console.log(`🔄 [${rowId}:${field}] useEffect: editMode=${editMode}, localValue="${localValue}", incomingValue="${value}", isInitialized=${isInitialized}`);
+    console.log(`🔄 [${rowId}:${field}] useEffect: editMode=${editMode}, localValue="${localValue}", incomingValue="${value}", isInitialized=${isInitialized}, isFocused=${isFocusedRef.current}`);
     
     // Initialize local value on first render or when switching to display mode
     if (!isInitialized || editMode === 'none') {
       console.log(`🆕 [${rowId}:${field}] Initializing/syncing local value with: "${value}"`);
       setLocalValue(value);
       setIsInitialized(true);
+    } else if (editMode === 'single' && !isFocusedRef.current) {
+      // In single edit mode, only update if not focused (to handle external updates)
+      console.log(`🔄 [${rowId}:${field}] Single edit mode (not focused): syncing with server value "${value}"`);
+      setLocalValue(value);
     } else {
-      // During editing, protect local state from external changes
-      console.log(`🔒 [${rowId}:${field}] Edit mode: protecting local state "${localValue}" from server data "${value}"`);
+      // During active editing or spreadsheet mode, protect local state from external changes
+      console.log(`🔒 [${rowId}:${field}] Active edit: protecting local state "${localValue}" from server data "${value}"`);
     }
   }, [value, editMode, field, rowId, isInitialized]); // Only sync when absolutely necessary
   
@@ -128,7 +132,22 @@ const SpreadsheetCellComponent = ({
         if (success) {
           setSaveStatus('saved');
           console.log(`✅ Auto-save successful for ${field}: "${safeValue}"`);
-          // Keep local value stable during save - don't let external updates override
+          
+          // Maintain focus after successful save
+          if (isFocusedRef.current && inputRef.current) {
+            const currentSelectionStart = inputRef.current.selectionStart;
+            const currentSelectionEnd = inputRef.current.selectionEnd;
+            
+            // Re-focus the input if it lost focus during save
+            requestAnimationFrame(() => {
+              if (inputRef.current && !document.activeElement?.isSameNode(inputRef.current)) {
+                inputRef.current.focus();
+                // Restore cursor position
+                inputRef.current.setSelectionRange(currentSelectionStart, currentSelectionEnd);
+              }
+            });
+          }
+          
           // Fade out saved indicator after 1 second
           setTimeout(() => setSaveStatus('idle'), 1000);
         } else {
@@ -449,18 +468,23 @@ const SpreadsheetCellComponent = ({
 
 // Memoized component to prevent re-renders when props haven't changed
 export const SpreadsheetCell = memo(SpreadsheetCellComponent, (prevProps, nextProps) => {
+  // Special case: if we're in single edit mode and the field is being edited (focused),
+  // skip re-render to maintain focus even if value changes (due to auto-save)
+  const isEditingInSingleMode = nextProps.editMode === 'single' && nextProps.isSpreadsheetMode;
+  
   console.log(`🔍 [${nextProps.rowId}:${nextProps.field}] Memo comparison:
     value: ${prevProps.value} → ${nextProps.value} ${prevProps.value === nextProps.value ? '✓' : '✗'}
     editMode: ${prevProps.editMode} → ${nextProps.editMode} ${prevProps.editMode === nextProps.editMode ? '✓' : '✗'}
     isSpreadsheetMode: ${prevProps.isSpreadsheetMode} → ${nextProps.isSpreadsheetMode} ${prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode ? '✓' : '✗'}
     hasChanges: ${prevProps.hasChanges} → ${nextProps.hasChanges} ${prevProps.hasChanges === nextProps.hasChanges ? '✓' : '✗'}
     originalValue: ${prevProps.originalValue} → ${nextProps.originalValue} ${prevProps.originalValue === nextProps.originalValue ? '✓' : '✗'}
-    callbacks equal: ${prevProps.onChangeAction === nextProps.onChangeAction && prevProps.onLocalChangeAction === nextProps.onLocalChangeAction && prevProps.onAutoSave === nextProps.onAutoSave ? '✓' : '✗'}`
+    callbacks equal: ${prevProps.onChangeAction === nextProps.onChangeAction && prevProps.onLocalChangeAction === nextProps.onLocalChangeAction && prevProps.onAutoSave === nextProps.onAutoSave ? '✓' : '✗'}
+    isEditingInSingleMode: ${isEditingInSingleMode}`
   );
   
   // Only re-render if these key props have actually changed
   const propsEqual = (
-    prevProps.value === nextProps.value &&
+    (isEditingInSingleMode ? true : prevProps.value === nextProps.value) && // Ignore value changes during single edit mode
     prevProps.editMode === nextProps.editMode &&
     prevProps.isSpreadsheetMode === nextProps.isSpreadsheetMode &&
     prevProps.hasChanges === nextProps.hasChanges &&
