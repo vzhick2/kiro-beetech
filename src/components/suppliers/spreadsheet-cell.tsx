@@ -5,7 +5,8 @@ import type React from 'react';
 import { useRef, useState, useEffect, useCallback, memo } from 'react';
 
 // Global tracking of which cells are currently focused/editing
-const focusedCells = new Map<string, boolean>();
+// Store cursor position as well as focus state
+const focusedCells = new Map<string, boolean | { start: number; end: number }>();
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -80,6 +81,26 @@ const SpreadsheetCellComponent = ({
       console.log(`🔒 [${rowId}:${field}] Active edit: protecting local state "${localValue}" from server data "${value}"`);
     }
   }, [value, editMode, field, rowId, isInitialized]); // Only sync when absolutely necessary
+  
+  // Restore focus after component re-renders if this cell was previously focused
+  useEffect(() => {
+    const cellKey = `${rowId}-${field}`;
+    if (focusedCells.has(cellKey) && inputRef.current && editMode === 'single') {
+      // Use RAF to ensure DOM is ready
+      requestAnimationFrame(() => {
+        if (inputRef.current && !document.activeElement?.isSameNode(inputRef.current)) {
+          console.log(`🎯 [${cellKey}] Restoring focus after re-render`);
+          inputRef.current.focus();
+          
+          // Restore cursor position if we have it stored
+          const cursorPos = focusedCells.get(cellKey);
+          if (typeof cursorPos === 'object' && cursorPos.start !== undefined) {
+            inputRef.current.setSelectionRange(cursorPos.start, cursorPos.end);
+          }
+        }
+      });
+    }
+  }, [rowId, field, editMode]); // Re-run when component mounts or edit mode changes
   
   // Reset local value when exiting any edit mode
   useEffect(() => {
@@ -309,12 +330,35 @@ const SpreadsheetCellComponent = ({
     const cellKey = `${rowId}-${field}`;
     focusedCells.set(cellKey, true);
     
+    // Start tracking cursor position
+    const trackCursor = () => {
+      if (inputRef.current && isFocusedRef.current) {
+        focusedCells.set(cellKey, {
+          start: inputRef.current.selectionStart,
+          end: inputRef.current.selectionEnd
+        });
+      }
+    };
+    
+    // Track cursor position periodically while focused
+    const intervalId = setInterval(trackCursor, 100);
+    
+    // Store interval ID on the element so we can clear it on blur
+    (e.target as any)._cursorTrackingInterval = intervalId;
+    
     // Allow event propagation for spreadsheet navigation
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is no longer focused
     isFocusedRef.current = false;
+    
+    // Clear cursor tracking interval
+    const intervalId = (e.target as any)._cursorTrackingInterval;
+    if (intervalId) {
+      clearInterval(intervalId);
+      delete (e.target as any)._cursorTrackingInterval;
+    }
     
     // Remove from global focus tracking
     const cellKey = `${rowId}-${field}`;
