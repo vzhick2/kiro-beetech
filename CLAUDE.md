@@ -147,24 +147,6 @@ After completing any task that changes:
 - **Use consistent terminology** across all documentation
 - **Include code examples** that match actual implementation
 
-#### Complex Problem Analysis
-For particularly complex architectural decisions, debugging challenges, or system design questions, consider using **parallel analysis** with multiple AI models to get diverse perspectives:
-
-```bash
-# Use MCP Zen tools with more powerful models for complex analysis
-mcp__zen__chat with model="gemini-2.5-pro" thinking_mode="high"
-mcp__zen__thinkdeep with model="o3" 
-mcp__zen__consensus with multiple models for critical decisions
-```
-
-**When to use parallel analysis:**
-- Complex architectural decisions affecting multiple systems
-- Performance optimization with unclear trade-offs  
-- Security architecture and threat modeling
-- Debugging complex multi-component issues
-- Strategic technical planning and roadmaps
-
-This approach provides both **comprehensive long-term vision** and **pragmatic implementation focus**.
 
 ### AI Behavior Guidelines
 **CRITICAL**: Distinguish between analysis requests and implementation requests:

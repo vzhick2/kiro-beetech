@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -41,51 +41,72 @@ export const SpreadsheetCell = ({
   onLocalChangeAction,
   onKeyDown,
 }: SpreadsheetCellProps) => {
-  // Controlled component - no local state for value, use centralized state only
+  // Local state for input to prevent focus loss during typing
+  const [localValue, setLocalValue] = useState(value);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLButtonElement>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Track if the component is currently being edited to prevent focus loss
   const isFocusedRef = useRef(false);
   
-  // Preserve focus and cursor position during re-renders
+  // Sync local value when centralized value changes (from external updates)
   useEffect(() => {
-    if (isFocusedRef.current && inputRef.current && document.activeElement !== inputRef.current) {
-      // Re-focus the input if it was focused before the re-render
-      const input = inputRef.current;
-      const currentLength = input.value.length;
-      input.focus();
-      // Restore cursor to end of text (most natural for typing)
-      input.setSelectionRange(currentLength, currentLength);
+    // Only update local value if we're not currently editing (to avoid overriding user input)
+    if (!isFocusedRef.current) {
+      setLocalValue(value);
     }
-  });
+  }, [value]);
+  
+  // Debounced update to centralized state
+  const debouncedUpdateCentralizedState = useCallback((newValue: any) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      let safeValue = newValue;
+      
+      // Handle different field types appropriately
+      if (field === 'created_at') {
+        if (newValue instanceof Date) {
+          safeValue = newValue.toISOString();
+        } else if (typeof newValue === 'string' || newValue == null) {
+          safeValue = newValue;
+        } else {
+          safeValue = String(newValue);
+        }
+      } else if (field === 'isarchived') {
+        safeValue = Boolean(newValue);
+      } else {
+        // For text fields, ensure we handle null/undefined properly
+        safeValue = newValue == null ? '' : String(newValue);
+      }
+      
+      // Update centralized state after debounce delay
+      onChangeAction(rowId, field, safeValue);
+      
+      // Call onLocalChangeAction for any additional visual feedback
+      onLocalChangeAction(field, safeValue, rowId);
+    }, 300); // 300ms debounce delay
+  }, [field, rowId, onChangeAction, onLocalChangeAction]);
+  
+  // Cleanup debounce timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleChange = (newValue: any) => {
-    // Immediately update centralized state - no local state needed
-    let safeValue = newValue;
+    // Update local state immediately (no re-render of parent)
+    setLocalValue(newValue);
     
-    // Handle different field types appropriately
-    if (field === 'created_at') {
-      if (newValue instanceof Date) {
-        safeValue = newValue.toISOString();
-      } else if (typeof newValue === 'string' || newValue == null) {
-        safeValue = newValue;
-      } else {
-        safeValue = String(newValue);
-      }
-    } else if (field === 'isarchived') {
-      safeValue = Boolean(newValue);
-    } else {
-      // For text fields, ensure we handle null/undefined properly
-      safeValue = newValue == null ? '' : String(newValue);
-    }
-    
-    // Update centralized state immediately
-    onChangeAction(rowId, field, safeValue);
-    
-    // Call onLocalChangeAction for any additional visual feedback
-    onLocalChangeAction(field, safeValue, rowId);
+    // Debounce update to centralized state to prevent focus loss
+    debouncedUpdateCentralizedState(newValue);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -126,26 +147,7 @@ export const SpreadsheetCell = ({
   // Enhanced cursor positioning - allow natural text selection and editing
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     e.stopPropagation();
-    const input = e.currentTarget;
-
-    // Get click position relative to input
-    const rect = input.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    
-    // Let the browser naturally position the cursor based on click position
-    // We don't force any cursor positioning - this allows normal text selection
-    
-    // Optional: If you want to ensure the input is fully focused for keyboard navigation
-    // but preserve click-based cursor positioning, we can just ensure focus without
-    // interfering with selection
-    setTimeout(() => {
-      if (document.activeElement === input) {
-        // Input is focused, cursor position was set by the click - don't override
-        return;
-      }
-      // If for some reason focus was lost, refocus and position at click location
-      input.focus();
-    }, 0);
+    // Let the browser naturally handle click positioning
   };
 
   // Allow natural text selection behavior
@@ -155,27 +157,20 @@ export const SpreadsheetCell = ({
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    // Mark that this input is now focused to prevent focus loss during re-renders
+    // Mark that this input is now focused to prevent external value updates
     isFocusedRef.current = true;
-    
-    // When input receives focus via keyboard navigation (not click),
-    // we can optionally select all text for quick editing
-    const input = e.currentTarget;
-    
-    // Check if this was a click-based focus (preserve cursor) or keyboard focus (select all)
-    // We'll use a simple heuristic: if the last interaction was very recent, assume it was a click
-    setTimeout(() => {
-      // Only select all if no selection exists (meaning it wasn't a click-to-position)
-      if (input.selectionStart === input.selectionEnd && input.selectionStart === input.value.length) {
-        // Cursor is at end with no selection - this was likely keyboard navigation
-        // User can still click to position cursor wherever they want
-      }
-    }, 0);
   };
   
   const handleInputBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     // Mark that this input is no longer focused
     isFocusedRef.current = false;
+    
+    // Force immediate update to centralized state on blur to ensure data is saved
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+      // Trigger immediate update
+      debouncedUpdateCentralizedState(localValue);
+    }
   };
 
   if (!isSpreadsheetMode) {
@@ -210,8 +205,8 @@ export const SpreadsheetCell = ({
   
   const textColor = (isWebsiteField || isEmailField) ? 'text-blue-600' : 'text-gray-700';
   
-  // Enhanced visual feedback for editing states - use centralized state
-  const hasLocalChanges = value !== originalValue;
+  // Enhanced visual feedback for editing states - use local state for immediate feedback
+  const hasLocalChanges = localValue !== originalValue;
   const isPendingSave = hasLocalChanges && hasChanges;
   
   // Match exact table cell styling: py-2 px-3 from table cells
@@ -227,7 +222,7 @@ export const SpreadsheetCell = ({
                title="Unsaved changes" />
         )}
         <Select
-          value={value ? 'archived' : 'active'}
+          value={localValue ? 'archived' : 'active'}
           onValueChange={newValue => {
             handleChange(newValue === 'archived');
           }}
@@ -258,7 +253,7 @@ export const SpreadsheetCell = ({
       )}
       <Textarea
         ref={inputRef}
-        value={value || ''}
+        value={localValue || ''}
         onChange={e => {
           handleChange(e.target.value);
         }}
