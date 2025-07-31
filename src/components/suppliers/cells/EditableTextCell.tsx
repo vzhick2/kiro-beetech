@@ -50,49 +50,12 @@ export function EditableTextCell({
     editMode,
   });
 
-  // Preserve focus during re-renders and track cursor position
-  const cursorPositionRef = useRef<{ start: number; end: number } | null>(null);
+  // Preserve focus during re-renders
   const { handleFocus, handleBlur } = useFocusPreservation(
     inputRef,
     cellKey,
     isEditable && editMode === 'quickEdit'
   );
-
-  // Track cursor position continuously while editing
-  useEffect(() => {
-    if (!inputRef.current || editMode !== 'quickEdit') return;
-
-    const trackCursor = () => {
-      if (inputRef.current && document.activeElement === inputRef.current) {
-        cursorPositionRef.current = {
-          start: inputRef.current.selectionStart || 0,
-          end: inputRef.current.selectionEnd || 0,
-        };
-      }
-    };
-
-    // Track cursor position more frequently during quick edit
-    const intervalId = setInterval(trackCursor, 50);
-    return () => clearInterval(intervalId);
-  }, [editMode]);
-
-  // Restore cursor position after value updates
-  useEffect(() => {
-    if (
-      inputRef.current && 
-      document.activeElement === inputRef.current && 
-      cursorPositionRef.current &&
-      editMode === 'quickEdit'
-    ) {
-      const { start, end } = cursorPositionRef.current;
-      // Use RAF to ensure DOM is updated
-      requestAnimationFrame(() => {
-        if (inputRef.current && document.activeElement === inputRef.current) {
-          inputRef.current.setSelectionRange(start, end);
-        }
-      });
-    }
-  }, [localValue, editMode]);
 
   // Handle value changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -123,17 +86,22 @@ export function EditableTextCell({
 
   // Handle keyboard events
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Only handle specific navigation keys, let normal typing work
     if (e.key === 'Enter') {
       e.preventDefault();
       inputRef.current?.blur();
-    } else if (e.key === 'Escape' && editMode === 'quickEdit') {
-      e.preventDefault();
-      // Let parent handle exit
       onKeyDown?.(e);
-      return;
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onKeyDown?.(e);
+    } else if (e.key === 'Tab') {
+      // Let tab navigation work
+      onKeyDown?.(e);
+    } else {
+      // For all other keys (normal typing), stop propagation to prevent spreadsheet navigation
+      e.stopPropagation();
     }
-    onKeyDown?.(e);
-  }, [editMode, onKeyDown]);
+  }, [onKeyDown]);
 
   // Determine text color based on field type
   const isWebsiteField = field === 'website';

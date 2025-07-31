@@ -41,14 +41,18 @@ export function useEditableValue({
     } else if (editMode === 'quickEdit') {
       // During quickEdit, only update if:
       // 1. Not currently focused AND
-      // 2. Server value changed from external source (not our own save)
-      if (!isFocusedRef.current && serverValue !== lastSavedValueRef.current) {
+      // 2. Server value actually changed from a different source
+      // 3. We're not in the middle of saving
+      if (!isFocusedRef.current && 
+          serverValue !== localValue && 
+          serverValue !== lastSavedValueRef.current &&
+          saveStatus !== 'saving') {
         setLocalValue(serverValue);
         lastSavedValueRef.current = serverValue;
       }
     }
     // In bulkEdit mode, keep local changes until save/cancel
-  }, [serverValue, editMode, isInitialized]);
+  }, [serverValue, editMode, isInitialized, saveStatus]);
 
   // Clear timeout on unmount
   useEffect(() => {
