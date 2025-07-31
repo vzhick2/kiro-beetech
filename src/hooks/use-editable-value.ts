@@ -30,15 +30,22 @@ export function useEditableValue({
   // Track if we're currently focused to prevent external updates
   const isFocusedRef = useRef(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedValueRef = useRef(serverValue);
 
   // Initialize or sync with server value
   useEffect(() => {
     if (!isInitialized || editMode === 'viewing') {
       setLocalValue(serverValue);
+      lastSavedValueRef.current = serverValue;
       setIsInitialized(true);
-    } else if (editMode === 'quickEdit' && !isFocusedRef.current) {
-      // Only sync if not actively editing
-      setLocalValue(serverValue);
+    } else if (editMode === 'quickEdit') {
+      // During quickEdit, only update if:
+      // 1. Not currently focused AND
+      // 2. Server value changed from external source (not our own save)
+      if (!isFocusedRef.current && serverValue !== lastSavedValueRef.current) {
+        setLocalValue(serverValue);
+        lastSavedValueRef.current = serverValue;
+      }
     }
     // In bulkEdit mode, keep local changes until save/cancel
   }, [serverValue, editMode, isInitialized]);
@@ -60,6 +67,8 @@ export function useEditableValue({
     try {
       const success = await onSave(value);
       if (success) {
+        // Update our reference to prevent flashing when server syncs
+        lastSavedValueRef.current = value;
         setSaveStatus('saved');
         setTimeout(() => setSaveStatus('idle'), 1000);
       } else {

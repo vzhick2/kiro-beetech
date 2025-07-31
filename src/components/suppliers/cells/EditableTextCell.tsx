@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useEditableValue } from '@/hooks/use-editable-value';
 import { useFocusPreservation } from '@/hooks/use-focus-preservation';
@@ -50,12 +50,49 @@ export function EditableTextCell({
     editMode,
   });
 
-  // Preserve focus during re-renders
+  // Preserve focus during re-renders and track cursor position
+  const cursorPositionRef = useRef<{ start: number; end: number } | null>(null);
   const { handleFocus, handleBlur } = useFocusPreservation(
     inputRef,
     cellKey,
     isEditable && editMode === 'quickEdit'
   );
+
+  // Track cursor position continuously while editing
+  useEffect(() => {
+    if (!inputRef.current || editMode !== 'quickEdit') return;
+
+    const trackCursor = () => {
+      if (inputRef.current && document.activeElement === inputRef.current) {
+        cursorPositionRef.current = {
+          start: inputRef.current.selectionStart || 0,
+          end: inputRef.current.selectionEnd || 0,
+        };
+      }
+    };
+
+    // Track cursor position more frequently during quick edit
+    const intervalId = setInterval(trackCursor, 50);
+    return () => clearInterval(intervalId);
+  }, [editMode]);
+
+  // Restore cursor position after value updates
+  useEffect(() => {
+    if (
+      inputRef.current && 
+      document.activeElement === inputRef.current && 
+      cursorPositionRef.current &&
+      editMode === 'quickEdit'
+    ) {
+      const { start, end } = cursorPositionRef.current;
+      // Use RAF to ensure DOM is updated
+      requestAnimationFrame(() => {
+        if (inputRef.current && document.activeElement === inputRef.current) {
+          inputRef.current.setSelectionRange(start, end);
+        }
+      });
+    }
+  }, [localValue, editMode]);
 
   // Handle value changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -106,12 +143,12 @@ export function EditableTextCell({
   // Visual feedback styles
   const getCellStyles = () => {
     if (editMode === 'quickEdit') {
-      if (saveStatus === 'saving') return 'ring-1 ring-orange-300';
-      if (saveStatus === 'saved') return 'ring-1 ring-green-300';
-      if (saveStatus === 'error') return 'ring-1 ring-red-300';
-      if (hasChanges) return 'ring-1 ring-blue-300';
+      if (saveStatus === 'saving') return 'ring-2 ring-orange-400 bg-orange-50';
+      if (saveStatus === 'saved') return 'ring-2 ring-green-400 bg-green-50';
+      if (saveStatus === 'error') return 'ring-2 ring-red-400 bg-red-50';
+      if (hasChanges) return 'ring-2 ring-blue-400 bg-blue-50';
     } else if (editMode === 'bulkEdit' && (hasChanges || externalHasChanges)) {
-      return 'ring-1 ring-blue-300';
+      return 'ring-2 ring-blue-400 bg-blue-50';
     }
     return '';
   };

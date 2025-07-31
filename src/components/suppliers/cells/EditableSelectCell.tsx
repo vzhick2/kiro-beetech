@@ -98,12 +98,12 @@ export function EditableSelectCell({
   // Visual feedback styles
   const getCellStyles = () => {
     if (editMode === 'quickEdit') {
-      if (saveStatus === 'saving') return 'ring-1 ring-orange-300';
-      if (saveStatus === 'saved') return 'ring-1 ring-green-300';
-      if (saveStatus === 'error') return 'ring-1 ring-red-300';
-      if (hasChanges) return 'ring-1 ring-blue-300';
+      if (saveStatus === 'saving') return 'ring-2 ring-orange-400 bg-orange-50';
+      if (saveStatus === 'saved') return 'ring-2 ring-green-400 bg-green-50';
+      if (saveStatus === 'error') return 'ring-2 ring-red-400 bg-red-50';
+      if (hasChanges) return 'ring-2 ring-blue-400 bg-blue-50';
     } else if (editMode === 'bulkEdit' && (hasChanges || externalHasChanges)) {
-      return 'ring-1 ring-blue-300';
+      return 'ring-2 ring-blue-400 bg-blue-50';
     }
     return '';
   };
