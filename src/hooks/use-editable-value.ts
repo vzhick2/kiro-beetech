@@ -98,7 +98,7 @@ export function useEditableValue({
   }, [handleAutoSave, debounceMs]);
 
   // Handle value changes
-  const updateValue = useCallback((newValue: any) => {
+  const updateValue = useCallback((newValue: any, skipAutoSave = false) => {
     setLocalValue(newValue);
     
     // Reset save status when typing
@@ -106,12 +106,23 @@ export function useEditableValue({
       setSaveStatus('idle');
     }
 
-    // Auto-save in quickEdit mode
-    if (editMode === 'quickEdit') {
+    // Auto-save in quickEdit mode (unless explicitly skipped for revert operations)
+    if (editMode === 'quickEdit' && !skipAutoSave) {
       debouncedSave(newValue);
     }
     // In bulkEdit mode, changes are held locally until manual save
   }, [editMode, debouncedSave, saveStatus]);
+
+  // Handle value revert (without triggering autosave)
+  const revertValue = useCallback(() => {
+    setLocalValue(serverValue);
+    setSaveStatus('idle');
+    // Clear any pending autosave
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+  }, [serverValue]);
 
   // Handle focus state
   const setFocused = useCallback((focused: boolean) => {
@@ -143,6 +154,7 @@ export function useEditableValue({
     value: localValue,
     displayValue: getDisplayValue(),
     updateValue,
+    revertValue,
     saveStatus,
     hasChanges,
     setFocused,

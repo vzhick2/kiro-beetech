@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useEditableValue } from '@/hooks/use-editable-value';
 import { useFocusPreservation } from '@/hooks/use-focus-preservation';
@@ -36,11 +36,15 @@ export function EditableTextCell({
 }: EditableTextCellProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const cellKey = `${rowId}-${field}`;
+  
+  // Track cursor position to preserve it during re-renders
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
   // Manage value and save state
   const {
     value: localValue,
     updateValue,
+    revertValue,
     saveStatus,
     hasChanges,
     setFocused,
@@ -57,9 +61,21 @@ export function EditableTextCell({
     isEditable && editMode === 'quickEdit'
   );
 
+  // Preserve cursor position after value updates (fixes cursor jumping to start)
+  useLayoutEffect(() => {
+    if (inputRef.current && cursorPosition !== null && document.activeElement === inputRef.current) {
+      // Only restore cursor position if this input is currently focused
+      inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    }
+  }, [localValue, cursorPosition]);
+
   // Handle value changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
+    const currentCursorPosition = e.target.selectionStart;
+    
+    // Store cursor position before updating value
+    setCursorPosition(currentCursorPosition);
     updateValue(newValue);
     
     // Update parent state for bulkEdit mode
@@ -93,6 +109,12 @@ export function EditableTextCell({
       onKeyDown?.(e);
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      // Revert to server value and exit edit mode
+      if (editMode === 'quickEdit') {
+        revertValue();
+        setCursorPosition(null); // Reset cursor position
+      }
+      inputRef.current?.blur();
       onKeyDown?.(e);
     } else if (e.key === 'Tab') {
       // Let tab navigation work
@@ -101,7 +123,7 @@ export function EditableTextCell({
       // For all other keys (normal typing), stop propagation to prevent spreadsheet navigation
       e.stopPropagation();
     }
-  }, [onKeyDown]);
+  }, [onKeyDown, editMode, revertValue]);
 
   // Determine text color based on field type
   const isWebsiteField = field === 'website';
